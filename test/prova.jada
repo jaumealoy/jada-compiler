@@ -1,0 +1,7 @@
+proc main() begin
+    int a, b, c;
+end main;
+
+func suma(int a, int b) : int begin
+    return a;
+end suma;

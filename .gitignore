@@ -1,0 +1,4 @@
+bin/
+*.o
+src/Lexic.cpp
+.vscode
