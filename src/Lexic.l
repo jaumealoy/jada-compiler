@@ -17,15 +17,33 @@ end_bloc end
 colon :
 semicolon ;
 coma ,
+function func
+procedure proc
+left_paran \(
+right_paran \)
 
 new_line ['\n', '\r', '\r\n']
 blank [' '|'\t']+
 
 %%
-
+{begin_bloc} { return TokenType::TK_BEGIN; }
+{end_bloc} { return TokenType::TK_END; }
+{function} { return TokenType::TK_FUNC; }
+{procedure} { return TokenType::TK_PROC; }
+{colon} { return TokenType::TK_COLON; }
+{semicolon} { return TokenType::TK_SEMICOLON; }
+{coma} { return TokenType::TK_COMA; }
+{left_paran} { return TokenType::TK_LEFTPARAN; }
+{right_paran} { return TokenType::TK_RIGHTPARAN; }
 {id} { 
-	//cout << "Identificador: " << this->YYText() << endl;
+	cout << "Identificador: " << this->YYText() << endl;
 	return TokenType::TK_ID; 
+}
+{new_line} { 
+	// TODO: sumar linia, reiniciar columnes 
+}
+{blank} { 
+	// TODO: sumar columnes 
 }
 
 <<EOF>> {

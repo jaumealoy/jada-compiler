@@ -1,4 +1,6 @@
 bin/
 *.o
 src/Lexic.cpp
+src/Syntax.cpp
+src/Syntax.tab.*
 .vscode

@@ -1,0 +1,20 @@
+%skeleton "lalr1.cc"
+%require "3.4"
+
+%defines 
+%define api.parser.class {MySyntax}
+
+%{
+#include "tree/Node.h"
+%}
+
+%union {
+    Node_Program *programa;
+    Node_DeclarationList *declaracions;
+    Node_Declaration *declaracio;
+}
+%start program
+%%
+program : ;
+%%
+// Codi de les funcions pròpies del sintàctic

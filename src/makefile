@@ -1,5 +1,5 @@
-SOURCES = main.cpp Lexic.cpp
-HEADERS = Lexic.h Token.h
+SOURCES = main.cpp Lexic.cpp tree/Node.cpp
+HEADERS = Lexic.h Token.h tree/Node.h
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 

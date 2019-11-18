@@ -1,4 +1,4 @@
-s -> declList
+programa -> declList
 declList -> declList Decl | Decl
 Decl ->  VarDecl | FuncDecl | ProcDecl
 VarDecl -> Const Tipo VarDeclList VarInit ;
