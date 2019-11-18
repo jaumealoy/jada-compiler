@@ -17,6 +17,10 @@ end_bloc end
 colon :
 semicolon ;
 coma ,
+
+new_line ['\n', '\r', '\r\n']
+blank [' '|'\t']+
+
 %%
 
 {id} { 
@@ -25,7 +29,7 @@ coma ,
 }
 
 <<EOF>> {
-    return TokenType::TK_EOF;
+	return TokenType::TK_EOF;
 }
 
 %%
@@ -41,7 +45,7 @@ Lexic::Lexic(char * filename)
 		this->switch_streams(in);
 	}catch(std::ifstream::failure e){
 		cerr << "Error processant el fitxer d'entrada " << endl;
-        cerr << e.what() << endl;
+		cerr << e.what() << endl;
 	}
 }
 
@@ -50,5 +54,5 @@ Lexic::~Lexic(){
 }
 
 TokenType Lexic::getToken(){
-    return (TokenType) this->yylex();
+	return (TokenType) this->yylex();
 }

@@ -10,15 +10,15 @@
 // Definir la classe de l'analitzador lèxic
 class Lexic : public yyFlexLexer {
 private:
-    int currentLine;
-    int currentColumn;
+	int currentLine;
+	int currentColumn;
 
-    int yylex(); // funció pròpia del Flex
+	int yylex(); // funció pròpia del Flex
 public:
-    Lexic(char *);
-    ~Lexic();
+	Lexic(char *);
+	~Lexic();
 
-    TokenType getToken();
+	TokenType getToken();	
 };
 
 #endif

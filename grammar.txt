@@ -1,0 +1,35 @@
+s -> declList
+declList -> declList Decl | Decl
+Decl ->  VarDecl | FuncDecl | ProcDecl
+VarDecl -> Const Tipo VarDeclList VarInit ;
+VarDeclList ->  id | VarDeclList , id
+VarInit -> lambda | = expr
+FuncDecl -> func iid ( args ) : tipo begin Bloc end
+Args -> ArgList | lambda
+ArgList -> Tipo id ArgList2
+ArgList2 -> , ArgList | lambda
+
+Const -> const | lambda
+
+ProcDecl -> proc id (Args) begin Bloc end
+
+Bloc-> statement ; Bloc | lambda
+statement -> varDecl | iterationStatement | CondStatement | returnStatement | break
+Iteration -> forIteration | whileIteration
+	init -> Tipo id ExprSimple
+	cond -> ExprSimple
+WhileStatement -> while ( cond ) do Bloc end
+
+CondStatement -> ifStatement | switchStatement
+ifStatement -> if exprSimple do Bloc ElseIfStatement end
+ElseIfStatement -> elseif exprSimple do Bloc ElseIfStatement | ElseStatement
+ElseStatement -> else do Bloc | lambda
+
+returnStatement -> return exprSimple;
+
+switchStatement -> switch ( exprSimple ) do/begin caseBlock end
+caseBlock -> case Valor do Bloc end | default do Bloc end | lambda
+
+ExprSimple -> id | Value | (ExprSimple operador ExprSimple) | lambda
+
+
