@@ -17,3 +17,9 @@ all: $(OBJECTS)
 .PHONY: clean
 clean: 
 	rm -f $(OBJECTS) *.o
+
+flex:
+	flex -+ -o Lexic.cpp < Lexic.l
+
+bison:
+	bison -d Syntax.ypp
