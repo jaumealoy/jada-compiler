@@ -1,5 +1,5 @@
-SOURCES = main.cpp Lexic.cpp tree/Node.cpp
-HEADERS = Lexic.h Token.h tree/Node.h
+SOURCES = main.cpp Lexic.cpp Syntax.tab.cpp tree/Node.cpp Driver.cpp
+HEADERS = tree/Node.h location.hh Driver.h Syntax.tab.hpp Lexic.h Token.h 
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 
@@ -22,4 +22,4 @@ flex:
 	flex -+ -o Lexic.cpp < Lexic.l
 
 bison:
-	bison -d Syntax.ypp
+	bison -dv Syntax.ypp

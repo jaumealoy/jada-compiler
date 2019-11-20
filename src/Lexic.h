@@ -7,6 +7,9 @@
 #include "FlexLexer.h"
 #endif
 
+#include "Syntax.tab.hpp"
+#include "location.hh"
+
 // Definir la classe de l'analitzador lèxic
 class Lexic : public yyFlexLexer {
 private:
@@ -18,7 +21,6 @@ public:
 	Lexic(char *);
 	~Lexic();
 
-	TokenType getToken();	
+	yy::Syntax::token_type getToken(yy::Syntax::semantic_type *yylval, yy::location *);	
 };
-
 #endif

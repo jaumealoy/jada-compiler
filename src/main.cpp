@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Lexic.h"
+#include "Syntax.tab.hpp"
+#include "Driver.h"
 
 using namespace std;
 
@@ -9,12 +11,13 @@ int main(int argc, char **argv){
 		return EXIT_FAILURE;
 	}
 
-	Lexic myLexic(argv[1]);
+	//Lexic myLexic(argv[1]);
+	//yy::Syntax mySyntax(&myLexic);
+	Driver myDriver(argv[1]);
 
-	TokenType tk;
-	while((tk = myLexic.getToken()) != TokenType::TK_EOF){
-		cout << "Token: " << tk << endl;
-	}
+	Node_Program *root = myDriver.parse();
+	ofstream fileSave("tree.dot");
+	root->toDotFile(fileSave, nullptr);
 
 	cout << "Fi" << endl;
 	

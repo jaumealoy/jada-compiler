@@ -26,14 +26,20 @@ private:
     // indica el tipus del node
     NodeType type;
 
+    // identificador del node (per imprimir l'arbre)
+    int id;
+
 public:
+    static int totalNodes;
     Node(NodeType type);
     ~Node();
 
     NodeType getType();
 
     // per representar l'arbre
-    virtual void toDotFile(ofstream * file);
+    virtual void toDotFile(ofstream &file, Node *parent);
+
+    int getId();
 };
 
 // Node Declaracio
@@ -43,6 +49,7 @@ private:
 public:
     Node_Declaracio();
     ~Node_Declaracio();
+    void toDotFile(ofstream &file, Node *parent);
 };
 
 // Node Llista Declaracions
@@ -56,6 +63,7 @@ public:
 
     void setDeclaracio(Node_Declaracio *node);
     void setDeclaracions(Node_DeclarationList *node);
+    void toDotFile(ofstream &file, Node *parent);
 };
 
 // Node Programa
@@ -67,8 +75,7 @@ public:
     ~Node_Program();
 
     void setDeclaracions(Node_DeclarationList *declaracions);
+    void toDotFile(ofstream &file, Node *parent);
 };
-
-
 
 #endif

@@ -3,4 +3,7 @@ bin/
 src/Lexic.cpp
 src/Syntax.cpp
 src/Syntax.tab.*
+src/Syntax.output
+src/location.hh
+*.dot
 .vscode

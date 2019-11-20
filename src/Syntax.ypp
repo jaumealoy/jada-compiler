@@ -2,19 +2,77 @@
 %require "3.4"
 
 %defines 
-%define api.parser.class {MySyntax}
+%define api.parser.class {Syntax}
 
-%{
-#include "tree/Node.h"
-%}
+%locations
 
-%union {
-    Node_Program *programa;
-    Node_DeclarationList *declaracions;
-    Node_Declaration *declaracio;
+// codi que s'injecta al hpp
+%code requires{
+    #include "tree/Node.h"
+    class Driver;
+    class Lexic;
 }
+
+// paràmetres del constructor del sintàctic
+%parse-param { Lexic *myScanner }
+%parse-param { Driver *driver }
+
+// codi que s'injecta al cpp
+%code{
+    #include "Lexic.h"
+    #include "tree/Node.h"
+
+    #include "Driver.h"
+    #undef yylex
+    #define yylex myScanner->getToken   
+}
+
+// tokens, quedaran definits a <filename>.tab.hpp
+%token ID
+%token PROC
+%token FUNC
+%token SEMICOLON
+%token COLON
+%token TBEGIN
+%token COMA
+%token LEFTPARAN
+%token RIGHTPARAN
+%token TEND
+%token ENDFILE 0
+
+// %type <Tipus> <no terminal>
+%define api.value.type variant
+%type <Node_Program *> program
+%type <Node_DeclarationList *> declList
+%type <Node_Declaracio *> decl
+
 %start program
 %%
-program : ;
+
+program : declList {
+    $$ = new Node_Program();
+    $$->setDeclaracions($1);
+    this->driver->setRoot($$);
+    cout << "Programa trobat" << endl; 
+    };
+declList : declList COMA decl {
+    $$ = new Node_DeclarationList();
+    $$->setDeclaracions($1);
+    $$->setDeclaracio($3);
+};
+    | decl {
+        $$ = new Node_DeclarationList();
+        $$->setDeclaracio($1);
+};
+decl : ID { 
+    cout << "Declaració resolta" << endl;
+    $$ = new Node_Declaracio(); 
+};
+
 %%
+
 // Codi de les funcions pròpies del sintàctic
+void yy::Syntax::error(const location_type& loc, const std::string& msg)
+{
+   std::cerr << "Error: " << msg << " at " << loc << "\n";
+}

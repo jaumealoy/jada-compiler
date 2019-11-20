@@ -6,6 +6,8 @@
 #include "Lexic.h"
 
 using namespace std;
+using token = yy::Syntax::token;
+
 %}
 
 %option noyywrap 
@@ -26,18 +28,20 @@ new_line ['\n', '\r', '\r\n']
 blank [' '|'\t']+
 
 %%
-{begin_bloc} { return TokenType::TK_BEGIN; }
-{end_bloc} { return TokenType::TK_END; }
-{function} { return TokenType::TK_FUNC; }
-{procedure} { return TokenType::TK_PROC; }
-{colon} { return TokenType::TK_COLON; }
-{semicolon} { return TokenType::TK_SEMICOLON; }
-{coma} { return TokenType::TK_COMA; }
-{left_paran} { return TokenType::TK_LEFTPARAN; }
-{right_paran} { return TokenType::TK_RIGHTPARAN; }
+{begin_bloc} { return token::TBEGIN; }
+{end_bloc} { return token::TEND; }
+{function} { return token::FUNC; }
+{procedure} { return token::PROC; }
+{colon} { return token::COLON; }
+{semicolon} { return token::SEMICOLON; }
+{coma} { 
+	cout << "Coma" << endl;
+	return token::COMA; }
+{left_paran} { return token::LEFTPARAN; }
+{right_paran} { return token::RIGHTPARAN; }
 {id} { 
 	cout << "Identificador: " << this->YYText() << endl;
-	return TokenType::TK_ID; 
+	return token::ID; 
 }
 {new_line} { 
 	// TODO: sumar linia, reiniciar columnes 
@@ -47,7 +51,8 @@ blank [' '|'\t']+
 }
 
 <<EOF>> {
-	return TokenType::TK_EOF;
+	cout << "End of file" << endl;
+	return token::ENDFILE;
 }
 
 %%
@@ -71,6 +76,6 @@ Lexic::~Lexic(){
 
 }
 
-TokenType Lexic::getToken(){
-	return (TokenType) this->yylex();
+yy::Syntax::token_type Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
+	return (yy::Syntax::token_type) this->yylex();
 }
