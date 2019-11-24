@@ -23,9 +23,14 @@ function func
 procedure proc
 left_paran \(
 right_paran \)
+dquote \"
+squote '
 
 new_line ['\n', '\r', '\r\n']
 blank [' '|'\t']+
+
+/* Modes de scan */
+%x STRING_LITERAL
 
 %%
 {begin_bloc} { return token::TBEGIN; }
@@ -43,6 +48,12 @@ blank [' '|'\t']+
 	cout << "Identificador: " << this->YYText() << endl;
 	return token::ID; 
 }
+
+\" {
+	cout << "Comença string literal" << endl;
+	BEGIN(STRING_LITERAL);
+}
+
 {new_line} { 
 	// TODO: sumar linia, reiniciar columnes 
 }
@@ -54,6 +65,27 @@ blank [' '|'\t']+
 	cout << "End of file" << endl;
 	return token::ENDFILE;
 }
+
+<STRING_LITERAL>\\\" {
+	//cout << "DQUOTE escapada dins STRINGLITERAL" << endl;
+}
+
+
+<STRING_LITERAL>\" {
+	cout << "End string literal" << endl;
+	cout << "Trobat $" << this->YYText() <<"$"<< endl;
+	BEGIN(INITIAL);
+	return token::STR_LITERAL;
+}
+
+<STRING_LITERAL>\n {
+	// final de línia inesperat
+	this->LexerError("Error! final de línia sobtat.");
+}
+
+<STRING_LITERAL>. {
+}
+
 
 %%
 // Codi que inclourà l'arxiu, en concret, el body de les funcions

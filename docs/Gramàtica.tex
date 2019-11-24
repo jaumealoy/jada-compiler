@@ -1,0 +1,67 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{array}
+\usepackage{slashed}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{makecell}
+\usepackage{mathtools}
+\allowdisplaybreaks
+
+\begin{document}
+\section{Gramàtica}
+Els símbols terminals o tokens estan marcats en \textbf{negreta}. 
+\begin{align*}
+		program &\rightarrow declList 	\\
+		declList &\rightarrow declList \; decl \\
+				&\mid decl \\
+		declList &\rightarrow varDecl \\
+			&\mid funcDecl \\
+			&\mid procDecl \\
+		varDecl &\rightarrow const \; type \; varDeclList \; varInit \; \textbf{;} \\
+		varDeclList &\rightarrow \textbf{ID} \\
+			&\mid varDeclList \; \textbf{,} \; \textbf{ID} \\
+		varInit &\rightarrow \textbf{= } exprSimple \\
+			&\mid \lambda \\
+		const &\rightarrow \textbf{const} \\
+			&\mid \lambda \\
+		funcDecl &\rightarrow \textbf{func} \; \textbf{ID} \; \textbf{(} \; args \; \textbf{)} \; \textbf{:} \; type \; \textbf{begin} \; bloc \; \textbf{end } \textbf{ID ;} \\
+		procDecl &\rightarrow \textbf{proc} \; \textbf{ID} \; \textbf{(} \; args \; \textbf{)} \; \textbf{begin} \; bloc \; \textbf{end } \textbf{ID ;} \\
+		args &\rightarrow argList \\
+			&\mid \lambda \\
+		argList &\rightarrow type \; \textbf{id} \; argListCont \\
+		argListCont &\rightarrow \textbf{, } argList \\
+			&\mid \lambda \\
+		bloc &\rightarrow statement \; \textbf{; } bloc \\
+			&\mid \lambda \\
+		statement &\rightarrow varDecl \\
+			&\mid iterationStatement \\
+			&\mid conditionalStatement \\
+			&\mid returnStatement \\
+			&\mid \textbf{break} \\
+		iterationStatement &\rightarrow forIteration \\
+			&\mid whileIteration \\
+		forIteration &\rightarrow \textbf{for} \; \textbf{(} \; forInit \; \textbf{;} \; exprSimple \; \textbf{;} \; forPostExpression \; \textbf{)} \; \textbf{do} \; bloc \; \textbf{end ;} \\
+		forInit &\rightarrow expression \\
+			&\mid \lambda \\
+		forPostExrpession &\rightarrow expression \\
+			&\mid \lambda \\
+		whileIteration &\rightarrow \textbf{while} \; \textbf{(} \; exprSimple \; \textbf{)} \; \textbf{do} \; bloc \; \textbf{end} \\
+		condStatement &\rightarrow ifStatement \\
+			&\mid switchStatement	 \\
+		ifStatement &\rightarrow \textbf{if} \; exprSimple \; \textbf{do} \; bloc \; elseIfStatement \; \textbf{end} \\
+		elseIfStatement &\rightarrow \textbf{else if} \; exprSimple \; \textbf{do} \; bloc \; elseIfStatement \\
+			&\mid elseStatement \\
+		elseStatement &\rightarrow \textbf{else do} \; bloc \\
+			&\rightarrow \lambda \\
+		switchStatement &\rightarrow \textbf{switch (}  \;  exprSimple \; \textbf{)} \; \textbf{begin} \; caseBloc \; \textbf{end} \\
+		caseBloc &\rightarrow \textbf{case} \; literal? \; \textbf{do} \; bloc \; \textbf{end} \; caseBloc \\
+			&\mid \textbf{default do} \; bloc \; \textbf{end} \\
+			&\mid \lambda
+\end{align*}
+
+\end{document}

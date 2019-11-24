@@ -38,6 +38,9 @@
 %token LEFTPARAN
 %token RIGHTPARAN
 %token TEND
+%token SQUOTE
+%token DQUOTE
+%token STR_LITERAL
 %token ENDFILE 0
 
 // %type <Tipus> <no terminal>

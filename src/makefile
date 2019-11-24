@@ -1,5 +1,5 @@
-SOURCES = main.cpp Lexic.cpp Syntax.tab.cpp tree/Node.cpp Driver.cpp
-HEADERS = tree/Node.h location.hh Driver.h Syntax.tab.hpp Lexic.h Token.h 
+SOURCES = main.cpp TaulaSimbols.cpp Lexic.cpp Syntax.tab.cpp tree/Node.cpp Driver.cpp
+HEADERS = tree/Node.h TaulaSimbols.h location.hh Driver.h Syntax.tab.hpp Lexic.h Token.h 
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 
