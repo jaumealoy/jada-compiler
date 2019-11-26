@@ -39,7 +39,6 @@ private:
     struct HashBloc{
         std::string id;
         int index;
-//        int next;
     };
     struct HashBloc td[MAX_SIMBOLS];
 

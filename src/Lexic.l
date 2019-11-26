@@ -33,8 +33,8 @@ blank [' '|'\t']+
 %x STRING_LITERAL
 
 %%
-{begin_bloc} { return token::TBEGIN; }
-{end_bloc} { return token::TEND; }
+{begin_bloc} { return token::BBEGIN; }
+{end_bloc} { return token::BEND; }
 {function} { return token::FUNC; }
 {procedure} { return token::PROC; }
 {colon} { return token::COLON; }

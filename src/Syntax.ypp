@@ -24,30 +24,71 @@
 
     #include "Driver.h"
     #undef yylex
-    #define yylex myScanner->getToken   
+    #define yylex myScanner->getToken
 }
 
 // tokens, quedaran definits a <filename>.tab.hpp
 %token ID
-%token PROC
-%token FUNC
+%token STR_LITERAL
+
+%token ENDFILE 0
+
+// operadors aritmètics
+%token OP_ADD
+%token OP_MINUS
+%token OP_TIMES
+%token OP_DIV
+%token OP_MOD
+
+// operadors relacionals
+%token OP_GT
+%token OP_LT
+%token OP_EQ
+%token OP_NEQ
+%token OP_GTE
+%token OP_LTE
+
+// símbols reservats
+%token SQUOTE
+%token DQUOTE
+%token EQ
 %token SEMICOLON
 %token COLON
-%token TBEGIN
 %token COMA
 %token LEFTPARAN
 %token RIGHTPARAN
-%token TEND
-%token SQUOTE
-%token DQUOTE
-%token STR_LITERAL
-%token ENDFILE 0
+
+// paraules reservades
+%token PROC
+%token FUNC
+%token BBEGIN
+%token BEND
+%token DO
+%token AND
+%token OR
+%token NOT
+%token FOR
+%token WHILE
+%token IF
+%token ELSE
+%token CONST
+%token BREAK
+%token RETURN
+%token SWITCH
+%token CASE
+%token DEFAULT
+
 
 // %type <Tipus> <no terminal>
 %define api.value.type variant
 %type <Node_Program *> program
 %type <Node_DeclarationList *> declList
 %type <Node_Declaracio *> decl
+%type <int> exprSimple
+%type <void> varDecl
+%type <void> funcDecl
+%type <void> procDecl
+
 
 %start program
 %%
@@ -57,20 +98,240 @@ program : declList {
     $$->setDeclaracions($1);
     this->driver->setRoot($$);
     cout << "Programa trobat" << endl; 
-    };
-declList : declList COMA decl {
-    $$ = new Node_DeclarationList();
-    $$->setDeclaracions($1);
-    $$->setDeclaracio($3);
 };
-    | decl {
+
+declList : declList decl 
+    {
+        $$ = new Node_DeclarationList();
+        $$->setDeclaracions($1);
+        $$->setDeclaracio($2);
+    };
+    | decl 
+    {
         $$ = new Node_DeclarationList();
         $$->setDeclaracio($1);
-};
-decl : ID { 
-    cout << "Declaració resolta" << endl;
-    $$ = new Node_Declaracio(); 
-};
+    };
+
+decl : varDecl 
+    {
+        // TODO
+    };
+    | funcDecl
+    {
+        // TODO
+    };
+    | procDecl {
+        // TODO
+    };
+
+varDecl : const type varDeclList varInit COMA 
+    {
+        // TODO
+    };
+
+varDeclList : varDeclList COMA ID
+    {
+        // TODO
+    };
+    | ID
+    {
+        // TODO
+    };
+
+varInit : EQ exprSimple
+const : CONST
+    {
+        // TODO
+    };
+    |
+    {
+        // TODO
+    }
+
+funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND SEMICOLON
+    {
+        // TODO
+    };
+
+procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND SEMICOLON
+    {
+        // TODO
+    };
+
+args : argList
+    {
+
+    };
+    |
+    {
+        // TODO
+        // Producció buida (no hi ha arguments)
+    };
+
+argList : type ID argListCont
+    {
+
+    };
+argListCont : COMA argList 
+    {
+
+    };
+    |
+    {
+
+    };
+
+bloc : statement SEMICOLON bloc
+    {
+
+    };
+    |
+    {
+
+    };
+
+statement : varDecl
+    {
+
+    };
+    | iterationStatement
+    {
+
+    };
+    | conditionStatement
+    {
+
+    };
+    | returnStatement 
+    {
+
+    };
+    | BREAK
+    {
+
+    };
+
+iterationStatement : forIteration
+    | whileIteration
+
+
+forIteration : FOR LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND 
+    {
+        // TODO
+    };
+
+forInit : expression 
+    {
+
+    };
+    |
+
+forPostExpression : expression
+    {
+
+    };
+    |
+
+whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND
+    {
+        // TODO
+    };
+
+conditionStatement : ifStatement 
+    | switchStatement
+
+ifStatement : IF exprSimple DO bloc elseIfStatement BEND
+    {
+
+    };
+
+elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement
+    {
+
+    };
+    | elseStatement {}
+
+elseStatement : ELSE DO bloc
+    {
+
+    };
+
+switchStatement : SWITCH LEFTPARAN exprSimple RIGHTPARAN BBEGIN caseBloc BEND
+    {
+
+    };
+
+caseBloc : CASE literal DO bloc BEND caseBloc
+    {
+
+    };
+    | DEFAULT DO bloc BEND
+    {
+
+    };
+    |
+
+
+
+exprSimple : exprSimple OR andExpression {};
+    | andExpression {};
+
+andExpression : andExpression AND unaryExpression {};
+    | unaryExpression {};
+
+unaryExpression : LEFTPARAN exprSimple RIGHTPARAN {};
+    | NOT exprSimple {}
+    | relExpr
+    | aritExpr {};
+
+aritExpr : aritExpr OP_ADD factorExpr {};
+    | aritExpr OP_MINUS factorExpr {};
+    | factorExpr {};
+
+factorExpr : factorExpr OP_TIMES simpleTerm {};
+    | factorExpr OP_DIV simpleTerm {};
+    | simpleTerm {};
+
+simpleTerm : LEFTPARAN aritExpr RIGHTPARAN {};
+    | OP_MINUS aritExpr {};
+    | operand {};
+
+relExpr : exprSimple relOp exprSimple {};
+
+relOp : OP_EQ {};
+    | OP_NEQ {};
+    | OP_GT {};
+    | OP_GTE {};
+    | OP_LT {};
+    | OP_LTE {};
+
+operand : mutable {}
+    | immutable {}
+
+mutable : ID
+immutable : literal {}
+    | funcCall {}
+
+funcCall : ID LEFTPARAN largs RIGHTPARAN
+    {
+
+    };
+
+largs : operand contlargs
+    | 
+contlargs : COMA operand contlargs
+    {
+
+    }
+    |
+
+returnStatement : RETURN exprSimple
+
+literal : STR_LITERAL
+type : ID
+
+expression : mutable EQ exprSimple {}
+    | mutable OP_ADD EQ exprSimple {}
 
 %%
 
