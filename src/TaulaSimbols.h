@@ -2,6 +2,7 @@
 #define _H_TAULASIMBOLS
 
 #include <string>
+#include <exception>
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
@@ -38,7 +39,7 @@ private:
     struct HashBloc{
         std::string id;
         int index;
-        int next;
+//        int next;
     };
     struct HashBloc td[MAX_SIMBOLS];
 
@@ -46,6 +47,10 @@ private:
 
 
 public:
+    class NomExistent : public std::exception {
+
+    };
+
     TaulaSimbols();
     ~TaulaSimbols();
 
@@ -56,5 +61,4 @@ public:
     void posar(std::string id);
     void print();
 };
-
 #endif

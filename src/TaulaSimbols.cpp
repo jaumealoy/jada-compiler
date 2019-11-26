@@ -19,7 +19,7 @@ void TaulaSimbols::buida(){
     for(int i = 0; i < MAX_SIMBOLS; i++){
         // taula de dispersió
         this->td[i].id.clear();
-        this->td[i].next = TaulaSimbols::NUL;
+        this->td[i].index = TaulaSimbols::NUL;
 
         // taules pròpies de la taula de símbols
         this->tDescripcio[i].next = i + 1;
@@ -51,15 +51,13 @@ void TaulaSimbols::posar(std::string id){
 
     // inserció dins la taula de dispersió
     int tries = 0;
-    while(this->td[index + tries * tries].next != TaulaSimbols::NUL && this->td[index + tries * tries].id == id){
+    int finalIndex = index;
+    while(this->td[finalIndex].index != TaulaSimbols::NUL && this->td[finalIndex].id.compare(id)){
         tries++;
+        finalIndex = (index + tries * tries) % MAX_SIMBOLS;
     }
     
-    int finalIndex = index + tries * tries;
-    std::cout << "Index: " << finalIndex << std::endl;
-
-
-    if(this->td[finalIndex].next != TaulaSimbols::NUL){
+    if(this->td[finalIndex].index != TaulaSimbols::NUL){
         int tmp = this->td[finalIndex].index;
 
         // ja existeix una entrada amb aquest nom
@@ -67,6 +65,7 @@ void TaulaSimbols::posar(std::string id){
         if(this->nivellProfunditat == this->tDescripcio[this->td[finalIndex].index].nivellProfunditat){
             // error! aquest símbol ja està definit en aquest nivell
             // de profunditat
+            throw NomExistent();
         }else{
             // moure el símbol a la taula d'expansió
 
@@ -78,6 +77,9 @@ void TaulaSimbols::posar(std::string id){
             this->tExpansio[indexExpansio].nivellProfunditat = this->tDescripcio[tmp].nivellProfunditat;
             this->tExpansio[indexExpansio].next = -1;
             this->tExpansio[indexExpansio].identificador = this->tDescripcio[tmp].identificador;
+
+            // actualitzar l'entrada de la taula de descripció
+            this->tDescripcio[tmp].nivellProfunditat = this->nivellProfunditat;
         }
     }else{
         // crear una nova entrada a la taula de descripció
@@ -86,7 +88,6 @@ void TaulaSimbols::posar(std::string id){
 
         this->td[finalIndex].index = indexDescripcio;
         this->td[finalIndex].id = id;
-        this->td[finalIndex].next = TaulaSimbols::NUL;
 
         // omplir la informació
         this->tDescripcio[indexDescripcio].identificador = id;
@@ -98,6 +99,9 @@ void TaulaSimbols::posar(std::string id){
 void TaulaSimbols::entrarBloc(){
     // indicar que s'ha entrat a un bloc
     this->nivellProfunditat++;
+
+    // i actualitzar l'entrada del nivell actual a la taula d'àmbit
+    this->tAmbit[this->nivellProfunditat] = this->tAmbit[this->nivellProfunditat - 1];
 }
 
 void TaulaSimbols::surtirBloc(){
@@ -122,15 +126,7 @@ void TaulaSimbols::surtirBloc(){
 }
 
 void TaulaSimbols::print(){
-    int index = 0;
-
-    while(true){
-        std::cout << "ID: " << this->tDescripcio[index].identificador << std::endl;
-
-        if(this->tDescripcio[index].next == TaulaSimbols::NUL){
-            break;
-        }
-
-        index++;
+    for(int i = 0; i < this->indexLliure; i++){
+        std::cout << "Index " << i << " - ID: " << this->tDescripcio[i].identificador << " - NP: " << this->tDescripcio[i].nivellProfunditat << std::endl;
     }
 }

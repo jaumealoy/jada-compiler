@@ -22,12 +22,25 @@ int main(int argc, char **argv){
 	//root->toDotFile(fileSave, nullptr);
 
 	TaulaSimbols ts;
-	ts.posar(string("hola"));
+	ts.posar(string("a"));
+	ts.posar(string("b"));
+	ts.posar(string("c"));
+
+	ts.entrarBloc();
+
+	ts.posar(string("a"));
+	ts.posar(string("b"));
 	ts.print();
 
-	ts.posar(string("hola2"));
-	cout << "S'ha inserit" << endl;
+	ts.entrarBloc();
+	ts.posar(string("c"));
+	// ts.posar(string("c")); // ja existeix aquest element!
 	ts.print();
+
+	ts.surtirBloc();
+	ts.print();
+
+
 	cout << "Fi" << endl;
 	
 	return EXIT_SUCCESS;
