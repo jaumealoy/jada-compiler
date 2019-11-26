@@ -61,6 +61,33 @@ Els símbols terminals o tokens estan marcats en \textbf{negreta}.
 		switchStatement &\rightarrow \textbf{switch (}  \;  exprSimple \; \textbf{)} \; \textbf{begin} \; caseBloc \; \textbf{end} \\
 		caseBloc &\rightarrow \textbf{case} \; literal? \; \textbf{do} \; bloc \; \textbf{end} \; caseBloc \\
 			&\mid \textbf{default do} \; bloc \; \textbf{end} \\
+			&\mid \lambda \\
+		exprSimple &\rightarrow exprSimple \; \textbf{and} \; exprSimple \\
+			&\mid exprSimple \; \textbf{or} \; exprSimple \\
+			&\mid exprSimple \; \textbf{not} \; exprSimple \\
+			&\mid \textbf{(} \; exprSimple \; \textbf{)} \\
+			&\mid relExpr \\
+			&\mid aritExptr \\
+		aritExpr &\rightarrow aritExpr \; \textbf{+} \; aritExpr \\
+			&\mid aritExpr \; \textbf{/} \; aritExpr \\
+			&\mid aritExpr \; \textbf{*} \; aritExpr \\
+			&\mid aritExpr \; \textbf{+} \; aritExpr \\
+			&\mid operand \\
+		relExpr &\rightarrow exprSimple \; \textbf{==} \; exprSimple \\
+			&\mid exprSimple \; \textbf{!=} \; exprSimple \\
+			&\mid exprSimple \; \textbf{\textless=} \; exprSimple \\
+			&\mid exprSimple \; \textbf{\textless} \; exprSimple \\
+			&\mid exprSimple \; \textbf{\textgreater=} \; exprSimple \\
+			&\mid exprSimple \; \textbf{\textgreater} \; exprSimple \\
+		operand &\rightarrow mutable \\
+			&\mid immutable \\
+		mutable &\rightarrow \textbf{id} \\
+		immutable &\rightarrow literal \\
+			&\mid funcCall \\
+		funcCall &\rightarrow \textbf{id} \; \textbf{(} \; largs \; \textbf{)} \\
+		largs &\rightarrow operand \; contlargs \\
+			&\mid \lambda \\
+		contlargs &\rightarrow \textbf{,} \; operand \; largs \\
 			&\mid \lambda
 \end{align*}
 
