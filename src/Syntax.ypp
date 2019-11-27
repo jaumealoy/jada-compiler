@@ -4,6 +4,7 @@
 %defines 
 %define api.parser.class {Syntax}
 
+
 %locations
 
 // codi que s'injecta al hpp
@@ -84,14 +85,18 @@
 // Tipus dels símbols no terminals
 // %type <Tipus> <no terminal>
 %define api.value.type variant
-%type <Node_Program *> program
-%type <Node_DeclarationList *> declList
-%type <Node_Declaracio *> decl
-%type <int> exprSimple
-%type <int> varDecl
-%type <int> funcDecl
-%type <int> procDecl
+%define parse.assert
 
+%type <Node_Program> program
+%type <Node_DeclarationList> declList
+%type <Node_Declaracio> decl
+%type <Node_Declaracio> exprSimple
+%type <Node_Declaracio> varDecl
+%type <Node_Declaracio> funcDecl
+%type <Node_Declaracio> procDecl
+%type <Node_Declaracio> args;
+%type <Node_Declaracio> argList;
+%type <Node_Declaracio> argListCont;
 
 %start program
 %%
@@ -142,6 +147,8 @@ varDeclList : varDeclList COMA ID
     };
 
 varInit : EQ exprSimple
+    |
+    ;
 const : CONST
     {
         // TODO
@@ -149,7 +156,7 @@ const : CONST
     |
     {
         // TODO
-    }
+    };
 
 funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND ID SEMICOLON
     {
@@ -273,6 +280,7 @@ caseBloc : CASE literal DO bloc BEND caseBloc
 
     };
     |
+    ;
 
 exprSimple : NOT exprSimple {}
     | orExpression {}
@@ -322,9 +330,9 @@ funcCall : ID LEFTPARAN largs RIGHTPARAN
 
     };
 
-largs : operand contlargs
+largs : exprSimple contlargs
     | 
-contlargs : COMA operand contlargs
+contlargs : COMA exprSimple contlargs
     {
 
     }

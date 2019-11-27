@@ -1,5 +1,5 @@
 proc main() begin
-    int a, b, c = 5;
+    int a, b, c = 56258;
 end main;
 
 func suma(int a, int b) : int begin

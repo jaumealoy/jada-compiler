@@ -21,6 +21,6 @@ public:
 	Lexic(char *);
 	~Lexic();
 
-	yy::Syntax::token_type getToken(yy::Syntax::semantic_type *yylval, yy::location *);	
+	int getToken(yy::Syntax::semantic_type *yylval, yy::location *);	
 };
 #endif

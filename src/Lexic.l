@@ -7,7 +7,7 @@
 #include "strings/StringBuffer.h"
 
 #undef  YY_DECL
-#define YY_DECL int Lexic::yylex( yy::Syntax::semantic_type * const yylval, yy::Syntax::location_type *location )
+#define YY_DECL int Lexic::yylex( yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location )
 
 using namespace std;
 using token = yy::Syntax::token;
@@ -32,10 +32,10 @@ op_lte <=
 op_eq ==
 op_neq !=
 
-op_add +
+op_add \+
 op_minus -
-op_div /
-op_mul *
+op_div \/
+op_mul \*
 
 /* Símbols */
 sym_eq =
@@ -70,6 +70,19 @@ blank [' '|'\t']+
 %x CHAR_LITERAL	
 
 %%
+{op_gte}		{ return token::OP_GTE; }
+{op_gt}			{ return token::OP_GT; }
+{op_lte}		{ return token::OP_LTE; }
+{op_lt}			{ return token::OP_LT; }
+{op_eq}			{ return token::OP_EQ; }
+{op_neq}		{ return token::OP_NEQ; }
+
+{op_add}		{ return token::OP_ADD; }
+{op_minus}		{ return token::OP_MINUS; }
+{op_div}		{ return token::OP_TIMES; }
+{op_mul}		{ return token::OP_DIV; }
+
+
 {sym_eq}		{ return token::EQ; }
 {sym_squote}	{ return token::SQUOTE; }
 {sym_dquote}	{ 
@@ -98,10 +111,11 @@ blank [' '|'\t']+
 {integer}		{
 	// TODO: fer que torni el valor que toca amb
 	// ajuda de this->YYText()
-	yylval->emplace<int>(0);
+	lval->emplace<int>() = atoi(this->YYText());
 	return token::INT_LITERAL;
 }
 {id} 			{ 
+	lval->emplace<std::string>() = this->YYText();
 	return token::ID; 
 }
 
@@ -126,7 +140,8 @@ blank [' '|'\t']+
 	cout << "Trobat $" << strBuilder.getString() <<"$"<< endl;
 	BEGIN(INITIAL);
 
-	yylval->emplace<std::string>(strBuilder.getString());
+	cout << lval << endl;
+	lval->emplace<std::string>(strBuilder.getString());
 	return token::STR_LITERAL;
 }
 <STRING_LITERAL>\n {
@@ -156,8 +171,8 @@ Lexic::~Lexic(){
 
 }
 
-yy::Syntax::token_type Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
-	yy::Syntax::token_type tk = (yy::Syntax::token_type) this->yylex(yylval, l);
+int Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
+	int tk = this->yylex(yylval, l);
 	cout << "Token " << tk << " (" << this->YYText() << ")" << endl;
 	return tk;
 }
