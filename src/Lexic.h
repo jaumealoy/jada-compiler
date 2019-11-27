@@ -16,7 +16,7 @@ private:
 	int currentLine;
 	int currentColumn;
 
-	int yylex(); // funció pròpia del Flex
+	int yylex(yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location); // funció pròpia del Flex
 public:
 	Lexic(char *);
 	~Lexic();

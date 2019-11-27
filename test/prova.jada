@@ -1,7 +1,15 @@
 proc main() begin
-    int a, b, c;
+    int a, b, c = 5;
 end main;
 
 func suma(int a, int b) : int begin
     return a;
 end suma;
+
+func factorial(int n) : int begin
+    if n == 1 do
+        return 1;
+    else do
+        return factorial(n - 1);
+    end;
+end factorial;

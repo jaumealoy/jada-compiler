@@ -27,9 +27,12 @@
     #define yylex myScanner->getToken
 }
 
+%token-table
+
 // tokens, quedaran definits a <filename>.tab.hpp
-%token ID
-%token STR_LITERAL
+%token <std::string> ID
+%token <std::string> STR_LITERAL
+%token <int> INT_LITERAL
 
 %token ENDFILE 0
 
@@ -78,38 +81,38 @@
 %token CASE
 %token DEFAULT
 
-
+// Tipus dels símbols no terminals
 // %type <Tipus> <no terminal>
 %define api.value.type variant
 %type <Node_Program *> program
 %type <Node_DeclarationList *> declList
 %type <Node_Declaracio *> decl
 %type <int> exprSimple
-%type <void> varDecl
-%type <void> funcDecl
-%type <void> procDecl
+%type <int> varDecl
+%type <int> funcDecl
+%type <int> procDecl
 
 
 %start program
 %%
 
 program : declList {
-    $$ = new Node_Program();
-    $$->setDeclaracions($1);
-    this->driver->setRoot($$);
+    //$$ = new Node_Program();
+    //$$->setDeclaracions($1);
+    //this->driver->setRoot($$);
     cout << "Programa trobat" << endl; 
 };
 
 declList : declList decl 
     {
-        $$ = new Node_DeclarationList();
-        $$->setDeclaracions($1);
-        $$->setDeclaracio($2);
+        //$$ = new Node_DeclarationList();
+        //$$->setDeclaracions($1);
+        //$$->setDeclaracio($2);
     };
     | decl 
     {
-        $$ = new Node_DeclarationList();
-        $$->setDeclaracio($1);
+        //$$ = new Node_DeclarationList();
+        //$$->setDeclaracio($1);
     };
 
 decl : varDecl 
@@ -124,7 +127,7 @@ decl : varDecl
         // TODO
     };
 
-varDecl : const type varDeclList varInit COMA 
+varDecl : const type varDeclList varInit 
     {
         // TODO
     };
@@ -148,12 +151,12 @@ const : CONST
         // TODO
     }
 
-funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND SEMICOLON
+funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND ID SEMICOLON
     {
         // TODO
     };
 
-procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND SEMICOLON
+procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON
     {
         // TODO
     };
@@ -271,32 +274,34 @@ caseBloc : CASE literal DO bloc BEND caseBloc
     };
     |
 
+exprSimple : NOT exprSimple {}
+    | orExpression {}
 
-
-exprSimple : exprSimple OR andExpression {};
+orExpression : orExpression OR andExpression {};
     | andExpression {};
 
 andExpression : andExpression AND unaryExpression {};
     | unaryExpression {};
 
-unaryExpression : LEFTPARAN exprSimple RIGHTPARAN {};
-    | NOT exprSimple {}
-    | relExpr
+unaryExpression :  relExpr
     | aritExpr {};
 
-aritExpr : aritExpr OP_ADD factorExpr {};
-    | aritExpr OP_MINUS factorExpr {};
+
+aritExpr : OP_MINUS aritExpr {}
+    | sumExpression
+
+sumExpression : sumExpression OP_ADD factorExpr {};
+    | sumExpression OP_MINUS factorExpr {};
     | factorExpr {};
 
 factorExpr : factorExpr OP_TIMES simpleTerm {};
     | factorExpr OP_DIV simpleTerm {};
     | simpleTerm {};
 
-simpleTerm : LEFTPARAN aritExpr RIGHTPARAN {};
-    | OP_MINUS aritExpr {};
+simpleTerm : LEFTPARAN exprSimple RIGHTPARAN {};
     | operand {};
 
-relExpr : exprSimple relOp exprSimple {};
+relExpr : operand relOp operand {};
 
 relOp : OP_EQ {};
     | OP_NEQ {};
@@ -328,6 +333,7 @@ contlargs : COMA operand contlargs
 returnStatement : RETURN exprSimple
 
 literal : STR_LITERAL
+    | INT_LITERAL
 type : ID
 
 expression : mutable EQ exprSimple {}

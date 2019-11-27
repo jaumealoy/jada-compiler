@@ -15,17 +15,17 @@ int main(int argc, char **argv){
 
 	//Lexic myLexic(argv[1]);
 	//yy::Syntax mySyntax(&myLexic);
-	//Driver myDriver(argv[1]);
+	Driver myDriver(argv[1]);
 
-	//Node_Program *root = myDriver.parse();
+	Node_Program *root = myDriver.parse();
 	//ofstream fileSave("tree.dot");
 	//root->toDotFile(fileSave, nullptr);
 
-	TaulaSimbols ts;
+	/*TaulaSimbols ts;
 	ts.posar(string("a"));
 	ts.posar(string("b"));
 	ts.posar(string("c"));
-
+        
 	ts.entrarBloc();
 
 	ts.posar(string("a"));
@@ -38,8 +38,7 @@ int main(int argc, char **argv){
 	ts.print();
 
 	ts.surtirBloc();
-	ts.print();
-
+	ts.print();*/
 
 	cout << "Fi" << endl;
 	
