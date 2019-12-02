@@ -4,6 +4,8 @@
 #include <string>
 #include <exception>
 
+#include "Descripcio.h"
+
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
 
@@ -23,6 +25,9 @@ private:
 
         // posició original dins la taula de descripció
         int original;
+
+        // descripció
+        Descripcio declaracio;
     };
     
     // nivell de profunditat actual
@@ -58,6 +63,7 @@ public:
     void surtirBloc();
     void posar(char *id);
     void posar(std::string id);
+    void posar(std::string id, Descripcio declaracio);
     void print();
 };
 #endif

@@ -3,7 +3,7 @@
 #include "Syntax.tab.hpp"
 #include "Driver.h"
 
-#include "TaulaSimbols.h"
+#include "taulasimbols/TaulaSimbols.h"
 
 using namespace std;
 

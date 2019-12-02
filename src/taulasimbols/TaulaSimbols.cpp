@@ -44,6 +44,10 @@ void TaulaSimbols::posar(char *id){
 }
 
 void TaulaSimbols::posar(std::string id){
+    this->posar(id, Descripcio(Tipus::NUL));
+}
+
+void TaulaSimbols::posar(std::string id, Descripcio declaracio){
     // TODO: què passa si la taula de símbols és plena? indexLliure = -1
 
     // comprovar si ja existeix aquesta entrada
@@ -77,9 +81,11 @@ void TaulaSimbols::posar(std::string id){
             this->tExpansio[indexExpansio].nivellProfunditat = this->tDescripcio[tmp].nivellProfunditat;
             this->tExpansio[indexExpansio].next = -1;
             this->tExpansio[indexExpansio].identificador = this->tDescripcio[tmp].identificador;
+            this->tExpansio[indexExpansio].declaracio = this->tDescripcio[tmp].declaracio;
 
             // actualitzar l'entrada de la taula de descripció
             this->tDescripcio[tmp].nivellProfunditat = this->nivellProfunditat;
+            this->tDescripcio[tmp].declaracio = declaracio;
         }
     }else{
         // crear una nova entrada a la taula de descripció
@@ -91,6 +97,7 @@ void TaulaSimbols::posar(std::string id){
 
         // omplir la informació
         this->tDescripcio[indexDescripcio].identificador = id;
+        this->tDescripcio[indexDescripcio].declaracio = declaracio;
         this->tDescripcio[indexDescripcio].next = TaulaSimbols::NUL;
     }
 

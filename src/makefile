@@ -1,12 +1,14 @@
-SOURCES = main.cpp TaulaSimbols.cpp Lexic.cpp Syntax.tab.cpp tree/Node.cpp Driver.cpp
-HEADERS = tree/Node.h strings/StringBuffer.cpp TaulaSimbols.h location.hh Driver.h Syntax.tab.hpp Lexic.h Token.h 
+SOURCES_DIR = taulasimbols
+
+SOURCES = $(wildcard $(SOURCES_DIR)/*.cpp) main.cpp Lexic.cpp Syntax.tab.cpp tree/Node.cpp Driver.cpp
+HEADERS = $(wildcard $(SOURCES_DIR)/*.h) tree/Node.h strings/StringBuffer.cpp location.hh Driver.h Syntax.tab.hpp Lexic.h Token.h 
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 
 # The executable file that will be created at the end                 
 EXEC = jada                                                      
 # The flags to use for compilation                                    
-FLAGS = -Wall                                                    
+FLAGS = -Wall -g                                                    
 # The code compiler to use for compilation                            
 CC = g++                                                    
 

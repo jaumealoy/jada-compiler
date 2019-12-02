@@ -170,7 +170,7 @@ procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON
 
 args : argList
     {
-
+        std::cout << "Resolt arguments" << std::endl;
     };
     |
     {
@@ -180,7 +180,7 @@ args : argList
 
 argList : type ID argListCont
     {
-
+        std::cout << "Resolt argument" << std::endl;
     };
 argListCont : COMA argList 
     {
