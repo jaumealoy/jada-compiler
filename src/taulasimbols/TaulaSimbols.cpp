@@ -132,6 +132,29 @@ void TaulaSimbols::surtirBloc(){
     }
 }
 
+
+Descripcio TaulaSimbols::consulta(std::string id){
+    // hem de fer una cerca sobre la taula de dispersió
+    int index = this->hash(id) % MAX_SIMBOLS;
+    int tries = 0;
+
+    // aplicant rehasing quadràtic
+    int finalIndex = index;
+    while(this->td[finalIndex].id != id && this->td[finalIndex].index != TaulaSimbols::NUL){
+        tries++;
+        finalIndex = (index + tries * tries) % MAX_SIMBOLS;
+    }
+
+    if(this->td[finalIndex].index == TaulaSimbols::NUL){
+        // no existeix aquest identificador a la taula de símbols
+        throw NomNoExistent();
+    }
+
+    // s'ha trobat un nom vàlid, retornar la seva descripció
+    return this->tDescripcio[this->td[finalIndex].index].declaracio;
+}
+
+
 void TaulaSimbols::print(){
     for(int i = 0; i < this->indexLliure; i++){
         std::cout << "Index " << i << " - ID: " << this->tDescripcio[i].identificador << " - NP: " << this->tDescripcio[i].nivellProfunditat << std::endl;

@@ -51,9 +51,8 @@ private:
 
 
 public:
-    class NomExistent : public std::exception {
-
-    };
+    class NomExistent : public std::exception {};
+    class NomNoExistent : public std::exception {};
 
     TaulaSimbols();
     ~TaulaSimbols();
@@ -65,5 +64,7 @@ public:
     void posar(std::string id);
     void posar(std::string id, Descripcio declaracio);
     void print();
+
+    Descripcio consulta(std::string id);
 };
 #endif
