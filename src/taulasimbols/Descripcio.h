@@ -19,6 +19,8 @@ public:
     Descripcio();
     Descripcio(Tipus type);
     ~Descripcio();
+
+    Tipus getTipus();
 };
 
 #endif

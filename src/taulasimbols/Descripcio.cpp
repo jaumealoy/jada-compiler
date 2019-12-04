@@ -11,3 +11,7 @@ Descripcio::Descripcio(Tipus type){
 Descripcio::~Descripcio(){
     
 }
+
+Tipus Descripcio::getTipus(){
+    return this->type;
+}

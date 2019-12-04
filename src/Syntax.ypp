@@ -97,6 +97,7 @@
 %type <Node_Declaracio> args;
 %type <Node_Declaracio> argList;
 %type <Node_Declaracio> argListCont;
+%type <std::string> type;
 
 %start program
 %%
@@ -180,7 +181,17 @@ args : argList
 
 argList : type ID argListCont
     {
-        std::cout << "Resolt argument" << std::endl;
+        try{
+            Descripcio d = this->driver->ts.consulta($1);
+
+            if(d.getTipus() != Tipus::TIPUS){
+                std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
+            }
+            
+            std::cout << "Resolt argument " << $1 << " - " << $2 << std::endl;
+        }catch(TaulaSimbols::NomNoExistent ex){
+            std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
+        }
     };
 argListCont : COMA argList 
     {
@@ -342,7 +353,9 @@ returnStatement : RETURN exprSimple
 
 literal : STR_LITERAL
     | INT_LITERAL
-type : ID
+type : ID {
+    $$ = $1;
+}
 
 expression : mutable EQ exprSimple {}
     | mutable OP_ADD EQ exprSimple {}

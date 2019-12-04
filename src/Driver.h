@@ -4,6 +4,10 @@
 #include "Lexic.h"
 #include "Syntax.tab.hpp"
 
+#include "taulasimbols/TaulaSimbols.h"
+#include "taulasimbols/DescripcioTipus.h"
+#include "taulasimbols/DescripcioTipus.h"
+
 using namespace yy;
 
 class Driver{
@@ -17,6 +21,8 @@ public:
     ~Driver();
 
     Node_Program * parse();
+
+    TaulaSimbols ts;
 
     void setRoot(Node_Program *root);
 };
