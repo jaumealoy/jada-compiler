@@ -5,6 +5,7 @@
 #include <exception>
 
 #include "Descripcio.h"
+#include "DescripcioTipus.h"
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
@@ -64,6 +65,7 @@ public:
     void posar(std::string id);
     void posar(std::string id, Descripcio declaracio);
     void print();
+    void posarParam(std::string func, std::string nom, DescripcioTipus tipus);
 
     Descripcio consulta(std::string id);
 };

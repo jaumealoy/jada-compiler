@@ -160,3 +160,8 @@ void TaulaSimbols::print(){
         std::cout << "Index " << i << " - ID: " << this->tDescripcio[i].identificador << " - NP: " << this->tDescripcio[i].nivellProfunditat << std::endl;
     }
 }
+
+void TaulaSimbols::posarParam(std::string func, std::string nom, DescripcioTipus tipus){
+    //Descripcio desc(Tipus.PARAMETRE);
+    //this->posar(nom, desc);
+}
