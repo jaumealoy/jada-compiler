@@ -99,6 +99,9 @@
 %type <Node_Declaracio> argListCont;
 %type <std::string> type;
 
+%left OP_ADD OP_MINUS OR
+%left OP_TIMES OP_DIV AND NOT
+
 %start program
 %%
 
@@ -109,43 +112,33 @@ program : declList {
     cout << "Programa trobat" << endl; 
 };
 
-declList : declList decl 
-    {
-        //$$ = new Node_DeclarationList();
-        //$$->setDeclaracions($1);
-        //$$->setDeclaracio($2);
-    };
-    | decl 
-    {
-        //$$ = new Node_DeclarationList();
-        //$$->setDeclaracio($1);
-    };
+declList : declList decl {
 
-decl : varDecl 
-    {
-        // TODO
-    };
-    | funcDecl
-    {
-        // TODO
-    };
+};
+    | decl {
+
+};
+
+decl : varDecl {
+    // TODO
+};
+    | funcDecl {
+    // TODO
+};
     | procDecl {
-        // TODO
-    };
+    // TODO
+};
 
-varDecl : const type varDeclList varInit 
-    {
-        // TODO
-    };
+varDecl : const type varDeclList varInit {
+    // TODO
+};
 
-varDeclList : varDeclList COMA ID
-    {
-        // TODO
-    };
-    | ID
-    {
-        // TODO
-    };
+varDeclList : varDeclList COMA ID {
+    // TODO
+};
+    | ID {
+    // TODO
+};
 
 varInit : EQ exprSimple
     |
@@ -294,31 +287,18 @@ caseBloc : CASE literal DO bloc BEND caseBloc
     ;
 
 exprSimple : NOT exprSimple {}
-    | orExpression {}
+    | LEFTPARAN exprSimple RIGHTPARAN {}
+    | exprSimple AND exprSimple {}
+    | exprSimple OR exprSimple {}
+    | aritExpr {}
 
-orExpression : orExpression OR andExpression {};
-    | andExpression {};
-
-andExpression : andExpression AND unaryExpression {};
-    | unaryExpression {};
-
-unaryExpression :  relExpr
-    | aritExpr {};
-
-
-aritExpr : OP_MINUS aritExpr {}
-    | sumExpression
-
-sumExpression : sumExpression OP_ADD factorExpr {};
-    | sumExpression OP_MINUS factorExpr {};
-    | factorExpr {};
-
-factorExpr : factorExpr OP_TIMES simpleTerm {};
-    | factorExpr OP_DIV simpleTerm {};
-    | simpleTerm {};
-
-simpleTerm : LEFTPARAN exprSimple RIGHTPARAN {};
-    | operand {};
+aritExpr : OP_MINUS exprSimple {}
+    | exprSimple OP_ADD exprSimple {}
+    | exprSimple OP_MINUS exprSimple {}
+    | exprSimple OP_TIMES exprSimple {}
+    | exprSimple OP_DIV exprSimple {}
+    | relExpr {}
+    | operand
 
 relExpr : operand relOp operand {};
 

@@ -162,6 +162,6 @@ void TaulaSimbols::print(){
 }
 
 void TaulaSimbols::posarParam(std::string func, std::string nom, DescripcioTipus tipus){
-    //Descripcio desc(Tipus.PARAMETRE);
+    Descripcio desc(Tipus::ARGUMENT);
     //this->posar(nom, desc);
 }
