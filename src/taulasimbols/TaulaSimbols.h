@@ -6,6 +6,8 @@
 
 #include "Descripcio.h"
 #include "DescripcioTipus.h"
+#include "DescripcioArgument.h"
+
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
@@ -49,6 +51,8 @@ private:
     struct HashBloc td[MAX_SIMBOLS];
 
     std::hash<std::string> hash;
+
+    int getIndex(std::string id);
 
 
 public:

@@ -161,7 +161,62 @@ void TaulaSimbols::print(){
     }
 }
 
-void TaulaSimbols::posarParam(std::string func, std::string nom, DescripcioTipus tipus){
-    Descripcio desc(Tipus::ARGUMENT);
-    //this->posar(nom, desc);
+/**
+ * Funció per obtenir l'índex d'un identificador a la taula de dispersió
+ * 
+ * returns = NUL si no es troba l'element
+ *           valor >= 0 en cas d'exisitir l'element
+ */
+int TaulaSimbols::getIndex(std::string id){
+    int index = TaulaSimbols::NUL;
+
+    int tries = 0;
+    int finalIndex = index;
+    while(this->td[finalIndex].index != TaulaSimbols::NUL && this->td[finalIndex].id.compare(id)){
+        tries++;
+        finalIndex = (index + tries * tries) % MAX_SIMBOLS;
+    }
+
+    return index;
+}
+
+
+void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioTipus tipus){
+    // suposar que idSubprograma és un subprograma existent a la taula de símbols
+    // ja que si no ho és haurà estat filtrar a la rutina semàntica
+
+    int indexSubPrograma = this->td[this->getIndex(idSubprograma)].index;
+
+    // reservar un slot a la taula d'expansió
+    // la taula d'àmbit apunta al darrer lloc escrit a la taula d'expansió
+    int nouIndex = ++this->tAmbit[this->nivellProfunditat];
+
+    // els paràmetres s'insereixen al final de la llista enllaçada d'arguments
+    int previ, actual = TaulaSimbols::NUL;
+    actual = 0;
+
+    while(actual != TaulaSimbols::NUL && this->tExpansio[actual].identificador != idParam){
+        previ = actual;
+        actual = this->tExpansio[actual].next;
+    }
+    
+    if(actual != TaulaSimbols::NUL){
+        // aquest paràmetre ja existeix a la funció
+        // error: no hi pot haver dos paràmetres formals amb el mateix nom
+        // TODO: mostrar l'error
+    }else{
+        // el paràmetre no existeix
+        if(previ == TaulaSimbols::NUL){
+            // inserció al prinicipi de la llista
+            this->tDescripcio[indexSubPrograma].next = nouIndex;
+        }else{
+            // inserció al final de la llista (actual = NUL)
+            this->tExpansio[previ].next = nouIndex;
+        }
+
+        this->tExpansio[nouIndex].identificador = idParam;
+        
+        // TODO: indicar el tipus de descripció i assignar el tipus al paràmetre
+        // this->tExpansio[nouIndex].declaracio = DescripcioTipus();
+    }
 }

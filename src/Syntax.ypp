@@ -10,6 +10,8 @@
 // codi que s'injecta al hpp
 %code requires{
     #include "tree/Node.h"
+    #include "simbols/Simbols.h"
+
     class Driver;
     class Lexic;
 }
@@ -22,6 +24,7 @@
 %code{
     #include "Lexic.h"
     #include "tree/Node.h"
+    #include "simbols/Simbols.h"
 
     #include "Driver.h"
     #undef yylex
@@ -88,12 +91,12 @@
 %define parse.assert
 
 %type <Node_Program> program
-%type <Node_DeclarationList> declList
-%type <Node_Declaracio> decl
+%type <SimbolDeclList> declList
+%type <SimbolProcDecl> decl
 %type <Node_Declaracio> exprSimple
-%type <Node_Declaracio> varDecl
-%type <Node_Declaracio> funcDecl
-%type <Node_Declaracio> procDecl
+%type <SimbolProcDecl> varDecl
+%type <SimbolProcDecl> funcDecl
+%type <SimbolProcDecl> procDecl
 %type <Node_Declaracio> args;
 %type <Node_Declaracio> argList;
 %type <Node_Declaracio> argListCont;
@@ -109,14 +112,24 @@ program : declList {
     //$$ = new Node_Program();
     //$$->setDeclaracions($1);
     //this->driver->setRoot($$);
-    cout << "Programa trobat" << endl; 
+    cout << "Programa trobat" << endl;
+
+    if(!$1.getTeMain()){
+        std::cout << "Error: no s'ha trobat un procediment main!" << std::endl;
+    }
 };
 
 declList : declList decl {
-
+    if(!$1.getTeMain()){
+        // fins ara no hem trobat un main
+        $$.setTeMain($2.getEsMain());
+    }else{
+        // ja existeix un main
+        $$.setTeMain($1.getTeMain());
+    }
 };
     | decl {
-
+        $$.setTeMain($1.getEsMain());
 };
 
 decl : varDecl {
@@ -126,7 +139,9 @@ decl : varDecl {
     // TODO
 };
     | procDecl {
-    // TODO
+    if($1.getEsMain()){
+        $$.setEsMain(true);
+    }
 };
 
 varDecl : const type varDeclList varInit {
@@ -152,15 +167,16 @@ const : CONST
         // TODO
     };
 
-funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND ID SEMICOLON
-    {
-        // TODO
-    };
+funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND ID SEMICOLON {
+    // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
+    // amb el tipus indicat per type
+};
 
-procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON
-    {
-        // TODO
-    };
+procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON {
+    if($2 == "main"){
+        $$.setEsMain(true);
+    }
+};
 
 args : argList
     {
