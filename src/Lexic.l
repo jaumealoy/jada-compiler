@@ -67,6 +67,10 @@ r_return return
 new_line ['\n', '\r', '\r\n']
 blank [' '|'\t']+
 
+/* Comentaris */
+comment "//"([^\n])*
+ml_comment "/*"((.|{new_line})*)"*/"
+
 /* Modes de scan */
 %x STRING_LITERAL
 %x CHAR_LITERAL	
@@ -98,6 +102,9 @@ blank [' '|'\t']+
 {sym_coma}		{ return token::COMA; }
 {sym_lbracket}	{ return token::LEFTBRACKET; }
 {sym_rbracket}	{ return token::RIGHTBRACKET; }
+
+{comment} 		{ }
+{ml_comment} 	{ }
 
 {r_if}			{ return token::IF; }
 {r_else}		{ return token::ELSE; }

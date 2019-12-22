@@ -1,3 +1,4 @@
-proc main(int a, int b) begin
-    int a = 3;
+proc main(int a, int b) begin /* Multi
+    polla */
+    int a = 3; //Provapolla22
 end main;
