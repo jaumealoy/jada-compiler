@@ -4,8 +4,6 @@ Driver::Driver(char *filename){
     this->scanner = new Lexic(filename);
     this->parser = new Syntax(this->scanner, this);
 
-    this->root = nullptr;
-
     // inicialitzar la taula de símbols
     this->ts = TaulaSimbols();
     this->ts.buida();
@@ -26,11 +24,7 @@ Driver::~Driver(){
 
 }
 
-Node_Program * Driver::parse(){
+void Driver::parse(){
     parser->parse();
-    return this->root;
 }
 
-void Driver::setRoot(Node_Program *root){
-    this->root = root;
-}

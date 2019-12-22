@@ -1,7 +1,12 @@
 #ifndef _H_SIMBOLPROGRAMA
 #define _H_SIMBOLPROGRAMA
 
-class SimbolPrograma {
+#include "Simbol.h"
+#include "SimbolDeclList.h"
+
+#include <iostream>
+
+class SimbolPrograma : public Simbol {
 private:
     // determina si el programa té un programa principal o no
     bool teMain;
@@ -12,6 +17,10 @@ public:
 
     bool getTeMain();
     void setTeMain(bool teMain);
+
+    void make(SimbolDeclList declList);
+
+    void toDotFile();
 };
 
 #endif

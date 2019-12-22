@@ -1,14 +1,17 @@
 #ifndef _H_SIMBOLPROCDECL
 #define _H_SIMBOLPROCDECL
 
-class SimbolProcDecl {
+#include "Simbol.h"
+
+class SimbolProcDecl : Simbol {
 private:
     // per controlar si aquest procediment és un candidat vàlid per ser
     // un procediment principal
     bool esMain;
 
 public:
-    SimbolProcDecl(){
+    SimbolProcDecl() : Simbol(){
+        this->driver = nullptr;
         this->esMain = false;
     }
 

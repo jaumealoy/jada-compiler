@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 	//yy::Syntax mySyntax(&myLexic);
 	Driver myDriver(argv[1]);
 
-	Node_Program *root = myDriver.parse();
+	myDriver.parse();
 	//ofstream fileSave("tree.dot");
 	//root->toDotFile(fileSave, nullptr);
 

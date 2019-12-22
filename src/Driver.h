@@ -5,8 +5,7 @@
 #include "Syntax.tab.hpp"
 
 #include "taulasimbols/TaulaSimbols.h"
-#include "taulasimbols/DescripcioTipus.h"
-#include "taulasimbols/DescripcioTipus.h"
+
 
 using namespace yy;
 
@@ -15,15 +14,12 @@ private:
     Lexic *scanner;
     Syntax *parser;
 
-    Node_Program *root;
 public:
     Driver(char *filename);
     ~Driver();
 
-    Node_Program * parse();
+    void parse();
 
     TaulaSimbols ts;
-
-    void setRoot(Node_Program *root);
 };
 #endif

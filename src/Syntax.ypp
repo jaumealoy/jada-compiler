@@ -9,11 +9,10 @@
 
 // codi que s'injecta al hpp
 %code requires{
-    #include "tree/Node.h"
-    #include "simbols/Simbols.h"
-
     class Driver;
     class Lexic;
+    
+    #include "simbols/Simbols.h"
 }
 
 // paràmetres del constructor del sintàctic
@@ -22,11 +21,10 @@
 
 // codi que s'injecta al cpp
 %code{
-    #include "Lexic.h"
-    #include "tree/Node.h"
     #include "simbols/Simbols.h"
-
+    #include "Lexic.h"
     #include "Driver.h"
+    
     #undef yylex
     #define yylex myScanner->getToken
 }
@@ -64,6 +62,8 @@
 %token COMA
 %token LEFTPARAN
 %token RIGHTPARAN
+%token LEFTBRACKET
+%token RIGHTBRACKET
 
 // paraules reservades
 %token PROC
@@ -90,17 +90,19 @@
 %define api.value.type variant
 %define parse.assert
 
-%type <Node_Program> program
+%type <SimbolPrograma> program
 %type <SimbolDeclList> declList
 %type <SimbolProcDecl> decl
-%type <Node_Declaracio> exprSimple
+%type <int> exprSimple
 %type <SimbolProcDecl> varDecl
 %type <SimbolProcDecl> funcDecl
 %type <SimbolProcDecl> procDecl
-%type <Node_Declaracio> args;
-%type <Node_Declaracio> argList;
-%type <Node_Declaracio> argListCont;
-%type <std::string> type;
+//%type <Node_Declaracio> args;
+//%type <Node_Declaracio> argList;
+//%type <Node_Declaracio> argListCont;
+%type <std::string> Tipus;
+%type <SimbolTipusArray> array;
+%type <SimbolTipusArray> contArray;
 
 %left OP_ADD OP_MINUS OR
 %left OP_TIMES OP_DIV AND NOT
@@ -109,14 +111,7 @@
 %%
 
 program : declList {
-    //$$ = new Node_Program();
-    //$$->setDeclaracions($1);
-    //this->driver->setRoot($$);
-    cout << "Programa trobat" << endl;
-
-    if(!$1.getTeMain()){
-        std::cout << "Error: no s'ha trobat un procediment main!" << std::endl;
-    }
+    $$.make($1);
 };
 
 declList : declList decl {
@@ -144,7 +139,7 @@ decl : varDecl {
     }
 };
 
-varDecl : const type varDeclList varInit {
+varDecl : const Tipus varDeclList varInit {
     // TODO
 };
 
@@ -167,18 +162,30 @@ const : CONST
         // TODO
     };
 
-funcDecl : FUNC ID LEFTPARAN args RIGHTPARAN COLON type BBEGIN bloc BEND ID SEMICOLON {
+funcDecl : FUNC ID LEFTPARAN  RIGHTPARAN COLON Tipus BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
     // amb el tipus indicat per type
 };
 
-procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON {
+/*procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON {
     if($2 == "main"){
         $$.setEsMain(true);
     }
+};*/
+
+procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
+    //$$.make();
 };
 
-args : argList
+procCap : procContCap RIGHTPARAN {}
+    | ID LEFTPARAN RIGHTPARAN {} ;
+
+procContCap : ID LEFTPARAN Tipus ID {}
+    | procContCap COMA Tipus ID {};
+
+
+
+/*args : argList
     {
         std::cout << "Resolt arguments" << std::endl;
     };
@@ -210,7 +217,7 @@ argListCont : COMA argList
     {
 
     };
-
+*/
 bloc : statement SEMICOLON bloc
     {
 
@@ -349,9 +356,28 @@ returnStatement : RETURN exprSimple
 
 literal : STR_LITERAL
     | INT_LITERAL
-type : ID {
+
+Tipus : ID {
     $$ = $1;
 }
+    | array {
+    $$ = $1.toString();
+    std::cout << "Nom array: " << $1.toString() << std::endl;
+}
+
+// Aquesta serà la primera dimensió
+array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
+    $$ = $1;
+    $$.make($3);
+};
+
+contArray : ID {
+    $$.make($1);
+}
+    | contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
+    $$ = $1;
+    $$.make($3);
+};
 
 expression : mutable EQ exprSimple {}
     | mutable OP_ADD EQ exprSimple {}

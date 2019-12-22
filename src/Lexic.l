@@ -46,6 +46,8 @@ sym_rparan \)
 sym_colon :
 sym_semicolon ;
 sym_coma ,
+sym_lbracket \[
+sym_rbracket \]
 
 /* Paraules reservades */
 r_if if
@@ -94,6 +96,8 @@ blank [' '|'\t']+
 {sym_colon}		{ return token::COLON; }
 {sym_semicolon}	{ return token::SEMICOLON; }
 {sym_coma}		{ return token::COMA; }
+{sym_lbracket}	{ return token::LEFTBRACKET; }
+{sym_rbracket}	{ return token::RIGHTBRACKET; }
 
 {r_if}			{ return token::IF; }
 {r_else}		{ return token::ELSE; }

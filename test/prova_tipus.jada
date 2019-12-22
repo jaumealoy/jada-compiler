@@ -1,0 +1,5 @@
+proc main() begin
+    int[50][75][150] b;
+    int a;
+    char[128] input;
+end main;
