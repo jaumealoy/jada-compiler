@@ -27,6 +27,29 @@ func suma(int[128] v, int n) : int begin
     
 end suma;
 
+// aquesta funció també és correcte
+func prova2() : int begin
+  return 5;
+end prova2;
+
+// aquesta funció és correcta
+func prova1(int v) : int begin
+
+end prova1;
+
+// aquesta té un tipus de retorn desconegut
+func prova3() : patata begin
+
+end prova3;
+
+// aquesta retorna un array, encara està per determinar
+// si hauria de ser un error o no
+func prova4() : int[50] begin
+
+end prova4;
+
+// Aquesta funció ha de provocar error perquè té
+// dos paràmetres amb el mateix nom
 func provaError(int v, char v) : int begin
 
 end provaError;

@@ -170,8 +170,8 @@ funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // amb el tipus indicat per type
 };
 
-funcCap : funcContCap RIGHTPARAN COLON Tipus {}
-    | ID LEFTPARAN RIGHTPARAN COLON Tipus {}
+funcCap : funcContCap RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $4); }
+    | ID LEFTPARAN RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $5); }
 
 funcContCap : ID LEFTPARAN Tipus ID {
     $$.make(this->driver, $1, $3, $4);
@@ -225,14 +225,19 @@ argListCont : COMA argList
 
     };
 */
-bloc : statement SEMICOLON bloc
+/*bloc : statement SEMICOLON bloc
     {
 
     };
     |
     {
 
-    };
+    };*/
+
+bloc : A statementList {}
+A : { this->driver->ts.entrarBloc(); };
+statementList :  statement SEMICOLON statementList {}
+    | {};
 
 statement : varDecl
     {

@@ -4,6 +4,9 @@
 SimbolFuncCap::SimbolFuncCap() : Simbol() {}
 SimbolFuncCap::~SimbolFuncCap() {}
 
+// TODO: impedir que es puguin retornar arrays
+// TODO: entrarBloc i definir variables com a variables locals
+
 /**
  * Insereix una funció a la taula de símbols si no existeix
  * funcCap -> ID () : Tipus
@@ -25,7 +28,11 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, std::string tipus){
     }
 
     // Crear una funció sense paràmetres
-    DescripcioFuncio d();
+    DescripcioFuncio *d = new DescripcioFuncio();
+    d->setTipusRetorn(tipus);
+    
+    // inserir la funció
+    driver->ts.posar(nom, d);
 }
 
 /**
@@ -38,11 +45,12 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipu
     Descripcio *d = driver->ts.consulta(cap.getNomFuncio());
 
     if(d->getTipus() == Descripcio::Tipus::FUNCIO){
-        DescripcioFuncio *df = dynamic_cast<DescripcioFuncio*>(d);
+        DescripcioFuncio *df = (DescripcioFuncio *) d;
         df->setTipusRetorn(tipus);
 
         // actualitzar l'entrada de la taula de símbols
-        driver->ts.actualitza(cap.getNomFuncio(), df);
+        // hem modificat el contingut d'un punter, no importa
+        // actualitzar res més
     }
 
 }

@@ -90,6 +90,9 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, std::string 
     } catch (TaulaSimbols::NomExistent ex) {
         driver->error("la funció ja té definit aquest paràmetre");
     }
+
+    // s'ha de passar el nom a les altres produccions
+    this->nomFuncio = cap.getNomFuncio();
 }
 
 std::string SimbolFuncContCap::getNomFuncio(){
