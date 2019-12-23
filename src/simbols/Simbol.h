@@ -11,6 +11,10 @@ private:
 
 protected:
     Driver *driver;
+
+    // indica si és una derivació a lambda
+    bool _empty;
+
 public:
     static int totalSimbols;
 
@@ -18,6 +22,10 @@ public:
     Simbol(Driver *&driver){ this->driver = driver; }
 
     ~Simbol();
+
+    // controla les derivacions a lambda
+    void makeEmpty();
+    bool isEmpty();
 
     void toDotFile(){};
 };

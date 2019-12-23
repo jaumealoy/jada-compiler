@@ -33,6 +33,8 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, std::string tipus){
     
     // inserir la funció
     driver->ts.posar(nom, d);
+
+    this->nom = nom;
 }
 
 /**
@@ -53,6 +55,7 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipu
         // actualitzar res més
     }
 
+    this->nom = cap.getNomFuncio();
 }
 
 std::string SimbolFuncCap::getNomFuncio(){

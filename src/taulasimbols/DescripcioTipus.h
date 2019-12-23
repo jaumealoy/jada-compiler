@@ -23,6 +23,8 @@ public:
     ~DescripcioTipus();
 
     DescripcioTipus::Tipus getTipus();
+
+    TipusSubjacentBasic getTSB();
 };
 
 class DescripcioTipusBasic : public DescripcioTipus {

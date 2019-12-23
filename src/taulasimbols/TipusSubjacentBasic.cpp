@@ -18,3 +18,11 @@ TipusSubjacentBasic::TipusSubjacentBasic(int ocupacio){
 TipusSubjacentBasic::~TipusSubjacentBasic(){
     
 }
+
+bool TipusSubjacentBasic::operator!=(TipusSubjacentBasic const &obj){
+    
+}
+
+bool TipusSubjacentBasic::operator==(TipusSubjacentBasic const &obj){
+
+}
