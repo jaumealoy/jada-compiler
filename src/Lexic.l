@@ -14,6 +14,8 @@ using token = yy::Syntax::token;
 
 StringBuffer strBuilder;
 
+char foundCh;
+
 %}
 
 %option debug
@@ -90,8 +92,11 @@ ml_comment "/*"((.|{new_line})*)"*/"
 
 
 {sym_eq}		{ return token::EQ; }
-{sym_squote}	{ return token::SQUOTE; }
-{sym_dquote}	{ 
+{sym_squote}	{
+	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL" << endl;
+	BEGIN(CHAR_LITERAL);
+}
+{sym_dquote}	{
 	strBuilder.clear();
 	BEGIN(STRING_LITERAL);
 }
@@ -159,6 +164,23 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	// final de línia inesperat
 	this->LexerError("Error! final de línia sobtat.");
 }
+
+<CHAR_LITERAL>[^\\'\n\t]* { cout << "Encontrado caracter" << endl; foundCh = *(this->YYText()); }
+<CHAR_LITERAL>\\n { cout << "Encontrado salto línea" << endl; foundCh = '\n'; }
+<CHAR_LITERAL>\\t { cout << "Encontrado tabulador" << endl; foundCh = '\t'; }
+
+<CHAR_LITERAL>\\' { foundCh = '\''; cout << "Encontrada comilla escapada" << endl; }
+<CHAR_LITERAL>\' {
+	cout << "Encontrado final de caracter. Comilla final." << endl;
+	cout << "Found %" << foundCh << "%" << endl;
+	BEGIN(INITIAL);
+
+	cout << lval << endl;
+	lval->emplace<char>(foundCh);
+	return token::STR_LITERAL;
+}
+	
+
 
 %%
 
