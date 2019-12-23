@@ -97,6 +97,8 @@
 %type <int> exprSimple
 %type <SimbolProcDecl> varDecl
 %type <SimbolProcDecl> funcDecl
+%type <SimbolFuncCap> funcCap
+%type <SimbolFuncContCap> funcContCap
 %type <SimbolProcDecl> procDecl
 //%type <Node_Declaracio> args;
 //%type <Node_Declaracio> argList;
@@ -171,8 +173,12 @@ funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
 funcCap : funcContCap RIGHTPARAN COLON Tipus {}
     | ID LEFTPARAN RIGHTPARAN COLON Tipus {}
 
-funcContCap : ID LEFTPARAN Tipus ID {}
-    | funcContCap COMA Tipus ID {}
+funcContCap : ID LEFTPARAN Tipus ID {
+    $$.make(this->driver, $1, $3, $4);
+};
+    | funcContCap COMA Tipus ID {
+    $$.make(this->driver, $1, $3, $4);
+};
 
 procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
     //$$.make();

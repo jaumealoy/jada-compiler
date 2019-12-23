@@ -23,7 +23,7 @@ public:
     std::string getTipusArgument();
 
     void make(Driver *driver, std::string nomFuncio, std::string tipus, std::string nomParametre);
-    void make(Driver *driver, std::string tipus, std::string nomParametre);
+    void make(Driver *driver, SimbolFuncContCap cap, std::string tipus, std::string nomParametre);
 };
 
 #endif

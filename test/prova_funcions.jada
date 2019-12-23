@@ -26,3 +26,7 @@ func suma(int[128] v, int n) : int begin
     // end;
     
 end suma;
+
+func provaError(int v, char v) : int begin
+
+end provaError;

@@ -1,6 +1,9 @@
 #include "SimbolFuncCap.h"
 #include "../Driver.h"
 
+SimbolFuncCap::SimbolFuncCap() : Simbol() {}
+SimbolFuncCap::~SimbolFuncCap() {}
+
 /**
  * Insereix una funció a la taula de símbols si no existeix
  * funcCap -> ID () : Tipus

@@ -1,5 +1,5 @@
 #ifndef _H_SIMBOL_FUNCCAP
-#define _H_SIMBOL_FUNCAP
+#define _H_SIMBOL_FUNCCAP
 
 #include "Simbol.h"
 #include "SimbolFuncContCap.h"

@@ -21,6 +21,8 @@ private:
 public:
     DescripcioTipus(TipusSubjacentBasic tsb, DescripcioTipus::Tipus tipus);
     ~DescripcioTipus();
+
+    DescripcioTipus::Tipus getTipus();
 };
 
 class DescripcioTipusBasic : public DescripcioTipus {

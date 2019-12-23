@@ -71,7 +71,7 @@ public:
     void posar(std::string id, Descripcio *declaracio);
     void actualitza(std::string id, Descripcio *descripcio);
     void print();
-    void posarParam(std::string func, std::string nom, DescripcioTipus tipus);
+    void posarParam(std::string func, std::string nom, DescripcioArgument *arg);
 
     Descripcio * consulta(std::string id);
 };

@@ -1,5 +1,6 @@
 #include "SimbolTipusArray.h"
 #include "../Driver.h"
+#include <iostream>
 
 SimbolTipusArray::SimbolTipusArray() : Simbol(), dimensions() {}
 SimbolTipusArray::~SimbolTipusArray() {}
@@ -33,6 +34,8 @@ void SimbolTipusArray::make(Driver *driver, std::string tipusBasic) {
  * array -> contArray [ INT_LITERAL ]
  */
 void SimbolTipusArray::make(Driver *driver) {
+    std::cout << "Final array!" << std::endl;
+
     // inserir l'array a la taula de símbols
     std::string nomTipus = this->toString();
 

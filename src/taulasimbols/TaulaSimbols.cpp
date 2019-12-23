@@ -182,7 +182,7 @@ int TaulaSimbols::getIndex(std::string id){
 }
 
 
-void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioTipus tipus){
+void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioArgument *arg){
     // suposar que idSubprograma és un subprograma existent a la taula de símbols
     // ja que si no ho és haurà estat filtrar a la rutina semàntica
 
@@ -193,8 +193,8 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
     int nouIndex = ++this->tAmbit[this->nivellProfunditat];
 
     // els paràmetres s'insereixen al final de la llista enllaçada d'arguments
-    int previ, actual = TaulaSimbols::NUL;
-    actual = 0;
+    int previ = TaulaSimbols::NUL, actual = TaulaSimbols::NUL;
+    actual = this->tDescripcio[indexSubPrograma].next;
 
     while(actual != TaulaSimbols::NUL && this->tExpansio[actual].identificador != idParam){
         previ = actual;
@@ -205,6 +205,7 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
         // aquest paràmetre ja existeix a la funció
         // error: no hi pot haver dos paràmetres formals amb el mateix nom
         // TODO: mostrar l'error
+        throw NomExistent();
     }else{
         // el paràmetre no existeix
         if(previ == TaulaSimbols::NUL){
@@ -216,9 +217,7 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
         }
 
         this->tExpansio[nouIndex].identificador = idParam;
-        
-        // TODO: indicar el tipus de descripció i assignar el tipus al paràmetre
-        // this->tExpansio[nouIndex].declaracio = DescripcioTipus();
+        this->tExpansio[nouIndex].declaracio = arg;
     }
 }
 
