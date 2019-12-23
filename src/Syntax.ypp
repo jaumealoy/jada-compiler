@@ -35,6 +35,7 @@
 %token <std::string> ID
 %token <std::string> STR_LITERAL
 %token <int> INT_LITERAL
+%token <char> CH_LITERAL
 
 %token ENDFILE 0
 
