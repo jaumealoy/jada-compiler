@@ -15,6 +15,7 @@ using token = yy::Syntax::token;
 StringBuffer strBuilder;
 
 char foundCh;
+bool finalpossible;
 
 %}
 
@@ -71,11 +72,12 @@ blank [' '|'\t']+
 
 /* Comentaris */
 comment "//"([^\n])*
-ml_comment "/*"((.|{new_line})*)"*/"
+begin_comment "/*"
 
 /* Modes de scan */
 %x STRING_LITERAL
 %x CHAR_LITERAL	
+%x COMENTARI
 
 %%
 {op_gte}		{ return token::OP_GTE; }
@@ -109,7 +111,10 @@ ml_comment "/*"((.|{new_line})*)"*/"
 {sym_rbracket}	{ return token::RIGHTBRACKET; }
 
 {comment} 		{ }
-{ml_comment} 	{ }
+{begin_comment} 	{
+	cout << "Començam a llegir un comentari. mode COMENTARI" << endl;
+	BEGIN(COMENTARI);
+ }
 
 {r_if}			{ return token::IF; }
 {r_else}		{ return token::ELSE; }
@@ -180,7 +185,16 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	return token::STR_LITERAL;
 }
 	
-
+<COMENTARI>[^*\/]* { cout << "Caràcter trobat." << endl; finalpossible = false; }
+<COMENTARI>\* {
+	finalpossible = true;
+}
+<COMENTARI>"/" {
+	if (finalpossible){
+		cout << "Final de comentari." << endl;
+		BEGIN(INITIAL);
+	}
+}
 
 %%
 
