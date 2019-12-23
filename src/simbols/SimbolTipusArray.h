@@ -13,11 +13,12 @@ private:
 
 public:
     SimbolTipusArray();
+
     ~SimbolTipusArray();
 
-    void make(int dimensio);
-
-    void make(std::string tipusBasic);
+    void make(Driver *driver);
+    void make(Driver *driver, int dimensio);
+    void make(Driver *driver, std::string tipusBasic);
 
     void toDotFile();
 

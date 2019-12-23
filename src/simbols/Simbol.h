@@ -15,6 +15,7 @@ public:
     static int totalSimbols;
 
     Simbol();
+    Simbol(Driver *&driver){ this->driver = driver; }
 
     ~Simbol();
 

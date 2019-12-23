@@ -7,6 +7,7 @@
 #include "Descripcio.h"
 #include "DescripcioTipus.h"
 #include "DescripcioArgument.h"
+#include "DescripcioFuncio.h"
 
 
 #define MAX_PROFUNDITAT 20
@@ -30,7 +31,7 @@ private:
         int original;
 
         // descripció
-        Descripcio declaracio;
+        Descripcio *declaracio;
     };
     
     // nivell de profunditat actual
@@ -67,10 +68,11 @@ public:
     void surtirBloc();
     void posar(char *id);
     void posar(std::string id);
-    void posar(std::string id, Descripcio declaracio);
+    void posar(std::string id, Descripcio *declaracio);
+    void actualitza(std::string id, Descripcio *descripcio);
     void print();
     void posarParam(std::string func, std::string nom, DescripcioTipus tipus);
 
-    Descripcio consulta(std::string id);
+    Descripcio * consulta(std::string id);
 };
 #endif

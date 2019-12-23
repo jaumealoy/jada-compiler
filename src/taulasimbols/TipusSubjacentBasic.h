@@ -16,6 +16,8 @@ public:
 extern TipusSubjacentBasic BOOLEAN;
 extern TipusSubjacentBasic CHAR;
 extern TipusSubjacentBasic INT;
+extern TipusSubjacentBasic ARRAY;
+extern TipusSubjacentBasic NUL;
 
 };
 

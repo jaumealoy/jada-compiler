@@ -162,16 +162,16 @@ const : CONST
         // TODO
     };
 
-funcDecl : FUNC ID LEFTPARAN  RIGHTPARAN COLON Tipus BBEGIN bloc BEND ID SEMICOLON {
+funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
     // amb el tipus indicat per type
 };
 
-/*procDecl : PROC ID LEFTPARAN args RIGHTPARAN BBEGIN bloc BEND ID SEMICOLON {
-    if($2 == "main"){
-        $$.setEsMain(true);
-    }
-};*/
+funcCap : funcContCap RIGHTPARAN COLON Tipus {}
+    | ID LEFTPARAN RIGHTPARAN COLON Tipus {}
+
+funcContCap : ID LEFTPARAN Tipus ID {}
+    | funcContCap COMA Tipus ID {}
 
 procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
     //$$.make();
@@ -365,18 +365,19 @@ Tipus : ID {
     std::cout << "Nom array: " << $1.toString() << std::endl;
 }
 
-// Aquesta serà la primera dimensió
+// Aquesta serà la darrera dimensió
 array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
     $$ = $1;
-    $$.make($3);
+    $$.make(this->driver, $3);
+    $$.make(this->driver);
 };
 
 contArray : ID {
-    $$.make($1);
+    $$.make(this->driver, $1);
 }
     | contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
     $$ = $1;
-    $$.make($3);
+    $$.make(this->driver, $3);
 };
 
 expression : mutable EQ exprSimple {}
