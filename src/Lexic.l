@@ -182,7 +182,7 @@ ml_comment "/*"((.|{new_line})*)"*/"
 
 	cout << lval << endl;
 	lval->emplace<char>(foundCh);
-	return token::STR_LITERAL;
+	return token::CHAR_LITERAL;
 }
 	
 
