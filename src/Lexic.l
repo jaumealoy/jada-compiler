@@ -15,6 +15,7 @@ using token = yy::Syntax::token;
 StringBuffer strBuilder;
 
 char foundCh;
+int charLen;
 
 %}
 
@@ -170,19 +171,23 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL>[^\\'\n\t]* { cout << "Encontrado caracter" << endl; foundCh = *(this->YYText()); }
-<CHAR_LITERAL>\\n { cout << "Encontrado salto línea" << endl; foundCh = '\n'; }
-<CHAR_LITERAL>\\t { cout << "Encontrado tabulador" << endl; foundCh = '\t'; }
+<CHAR_LITERAL>[^\\'\n\t] { cout << "Encontrado caracter" << endl; charLen++ ; foundCh = *(this->YYText()); }
+<CHAR_LITERAL>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
+<CHAR_LITERAL>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
 
-<CHAR_LITERAL>\\' { foundCh = '\''; cout << "Encontrada comilla escapada" << endl; }
+<CHAR_LITERAL>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
 <CHAR_LITERAL>\' {
 	cout << "Encontrado final de caracter. Comilla final." << endl;
 	cout << "Found %" << foundCh << "%" << endl;
 	BEGIN(INITIAL);
 
+	if (charLen > 1) {
+		this->LexerError("Error! char amb més d'una lletra");
+	}
+
 	cout << lval << endl;
 	lval->emplace<char>(foundCh);
-	return token::STR_LITERAL;
+	return token::CHAR_LITERAL;
 }
 	
 
