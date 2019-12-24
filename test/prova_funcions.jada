@@ -1,0 +1,55 @@
+/**
+  * Calcula de manera recursiva el factorial d'un nombre enter positiu
+  * n: enter positiu
+  * return: enter positiu
+  */
+func factorial(int n) : int begin
+    if n == 1 do
+        // cas base
+        return 1;
+    else do
+        // crides recursives
+        return factorial(n - 1);
+    end;
+end factorial;
+
+/**
+  * Calcula la suma d'un vector de longitud n
+  * return: enter
+  */
+func suma(int[128] v, int n) : int begin 
+    int tmp = 0;
+
+     
+    // for (int i = 0; i < n; i++) do
+    //    tmp = tmp + v[i];    
+    // end;
+    
+end suma;
+
+// aquesta funció també és correcte
+func prova2() : int begin
+  return 5;
+end prova2;
+
+// aquesta funció és correcta
+func prova1(int v) : int begin
+
+end prova1;
+
+// aquesta té un tipus de retorn desconegut
+func prova3() : patata begin
+
+end prova3;
+
+// aquesta retorna un array, encara està per determinar
+// si hauria de ser un error o no
+func prova4() : int[50] begin
+
+end prova4;
+
+// Aquesta funció ha de provocar error perquè té
+// dos paràmetres amb el mateix nom
+func provaError(int v, char v) : int begin
+
+end provaError;

@@ -1,0 +1,5 @@
+func prova(int a, char b) : char begin
+    while ( true ) do
+        break;
+    end;
+end prova;

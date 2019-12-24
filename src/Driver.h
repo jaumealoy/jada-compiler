@@ -21,5 +21,7 @@ public:
     void parse();
 
     TaulaSimbols ts;
+
+    void error(std::string msg);
 };
 #endif

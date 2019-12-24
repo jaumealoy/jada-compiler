@@ -1,26 +1,29 @@
 #ifndef _H_DECLARACIO
 #define _H_DECLARACIO
 
-enum Tipus {
-    NUL,
-    CONSTANT,
-    VARIABLE,
-    TIPUS,
-    FUNCIO,
-    PROCEDIMENT,
-    ARGUMENT,
-};
+
 
 class Descripcio {
+public:
+    enum Tipus {
+        NUL,
+        CONSTANT,
+        VARIABLE,
+        TIPUS,
+        FUNCIO,
+        PROCEDIMENT,
+        ARGUMENT,
+    };
+
 private:
     Tipus type;
 
 public:
     Descripcio();
-    Descripcio(Tipus type);
-    ~Descripcio();
+    Descripcio(Descripcio::Tipus type);
+    virtual ~Descripcio();
 
-    Tipus getTipus();
+    Descripcio::Tipus getTipus();
 };
 
 #endif

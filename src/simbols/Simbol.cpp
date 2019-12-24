@@ -9,3 +9,11 @@ Simbol::Simbol(){
 }
 
 Simbol::~Simbol(){}
+
+void Simbol::makeEmpty(){
+    this->_empty = true;
+}
+
+bool Simbol::isEmpty(){
+    return this->_empty;
+}

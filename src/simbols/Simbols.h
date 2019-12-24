@@ -2,8 +2,17 @@
 #define _H_SIMBOLS
 #include "Simbol.h"
 #include "SimbolPrograma.h"
+#include "SimbolBloc.h"
+#include "SimbolFuncCap.h"
+#include "SimbolFuncDecl.h"
+#include "SimbolFuncContCap.h"
 #include "SimbolProcDecl.h"
 #include "SimbolDeclList.h"
 #include "SimbolDecl.h"
 #include "SimbolTipusArray.h"
+
+#include "SimbolStatementList.h"
+#include "SimbolStatement.h"
+#include "SimbolWhileStatement.h"
+#include "SimbolIfStatement.h"
 #endif

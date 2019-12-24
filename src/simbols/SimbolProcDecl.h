@@ -11,7 +11,6 @@ private:
 
 public:
     SimbolProcDecl() : Simbol(){
-        this->driver = nullptr;
         this->esMain = false;
     }
 

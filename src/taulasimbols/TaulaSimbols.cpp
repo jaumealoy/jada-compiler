@@ -44,10 +44,10 @@ void TaulaSimbols::posar(char *id){
 }
 
 void TaulaSimbols::posar(std::string id){
-    this->posar(id, Descripcio(Tipus::NUL));
+    this->posar(id, nullptr);
 }
 
-void TaulaSimbols::posar(std::string id, Descripcio declaracio){
+void TaulaSimbols::posar(std::string id, Descripcio *declaracio){
     // TODO: què passa si la taula de símbols és plena? indexLliure = -1
 
     // comprovar si ja existeix aquesta entrada
@@ -133,19 +133,15 @@ void TaulaSimbols::surtirBloc(){
 }
 
 
-Descripcio TaulaSimbols::consulta(std::string id){
+Descripcio *TaulaSimbols::consulta(std::string id){
     // hem de fer una cerca sobre la taula de dispersió
     int index = this->hash(id) % MAX_SIMBOLS;
     int tries = 0;
 
     // aplicant rehasing quadràtic
-    int finalIndex = index;
-    while(this->td[finalIndex].id != id && this->td[finalIndex].index != TaulaSimbols::NUL){
-        tries++;
-        finalIndex = (index + tries * tries) % MAX_SIMBOLS;
-    }
+    int finalIndex = this->getIndex(id);
 
-    if(this->td[finalIndex].index == TaulaSimbols::NUL){
+    if(finalIndex == TaulaSimbols::NUL){
         // no existeix aquest identificador a la taula de símbols
         throw NomNoExistent();
     }
@@ -171,17 +167,22 @@ int TaulaSimbols::getIndex(std::string id){
     int index = TaulaSimbols::NUL;
 
     int tries = 0;
-    int finalIndex = index;
+    int finalIndex = this->hash(id) % MAX_SIMBOLS;
+
     while(this->td[finalIndex].index != TaulaSimbols::NUL && this->td[finalIndex].id.compare(id)){
         tries++;
         finalIndex = (index + tries * tries) % MAX_SIMBOLS;
+    }
+
+    if(this->td[finalIndex].index != TaulaSimbols::NUL){
+        index = finalIndex;
     }
 
     return index;
 }
 
 
-void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioTipus tipus){
+void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioArgument *arg){
     // suposar que idSubprograma és un subprograma existent a la taula de símbols
     // ja que si no ho és haurà estat filtrar a la rutina semàntica
 
@@ -192,8 +193,8 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
     int nouIndex = ++this->tAmbit[this->nivellProfunditat];
 
     // els paràmetres s'insereixen al final de la llista enllaçada d'arguments
-    int previ, actual = TaulaSimbols::NUL;
-    actual = 0;
+    int previ = TaulaSimbols::NUL, actual = TaulaSimbols::NUL;
+    actual = this->tDescripcio[indexSubPrograma].next;
 
     while(actual != TaulaSimbols::NUL && this->tExpansio[actual].identificador != idParam){
         previ = actual;
@@ -204,6 +205,7 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
         // aquest paràmetre ja existeix a la funció
         // error: no hi pot haver dos paràmetres formals amb el mateix nom
         // TODO: mostrar l'error
+        throw NomExistent();
     }else{
         // el paràmetre no existeix
         if(previ == TaulaSimbols::NUL){
@@ -215,8 +217,11 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
         }
 
         this->tExpansio[nouIndex].identificador = idParam;
-        
-        // TODO: indicar el tipus de descripció i assignar el tipus al paràmetre
-        // this->tExpansio[nouIndex].declaracio = DescripcioTipus();
+        this->tExpansio[nouIndex].declaracio = arg;
     }
+}
+
+
+void TaulaSimbols::actualitza(std::string id, Descripcio *descripcio){
+
 }
