@@ -78,7 +78,7 @@ ml_comment "/*"((.|{new_line})*)"*/"
 
 /* Modes de scan */
 %x STRING_LITERAL
-%x CHAR_LITERAL	
+%x CHAR_LITERAL_MODE	
 
 %%
 {op_gte}		{ return token::OP_GTE; }
@@ -97,7 +97,7 @@ ml_comment "/*"((.|{new_line})*)"*/"
 {sym_eq}		{ return token::EQ; }
 {sym_squote}	{
 	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL" << endl;
-	BEGIN(CHAR_LITERAL);
+	BEGIN(CHAR_LITERAL_MODE);
 }
 {sym_dquote}	{
 	strBuilder.clear();
@@ -171,12 +171,12 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL>[^\\'\n\t] { cout << "Encontrado caracter" << endl; charLen++ ; foundCh = *(this->YYText()); }
-<CHAR_LITERAL>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
-<CHAR_LITERAL>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
+<CHAR_LITERAL_MODE>[^\\'\n\t] { cout << "Encontrado caracter" << endl; charLen++ ; foundCh = *(this->YYText()); }
+<CHAR_LITERAL_MODE>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
+<CHAR_LITERAL_MODE>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
 
-<CHAR_LITERAL>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
-<CHAR_LITERAL>\' {
+<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
+<CHAR_LITERAL_MODE>\' {
 	cout << "Encontrado final de caracter. Comilla final." << endl;
 	cout << "Found %" << foundCh << "%" << endl;
 	BEGIN(INITIAL);

@@ -35,7 +35,7 @@
 %token <std::string> ID
 %token <std::string> STR_LITERAL
 %token <int> INT_LITERAL
-%token <char> CH_LITERAL
+%token <char> CHAR_LITERAL
 
 %token ENDFILE 0
 
@@ -354,7 +354,7 @@ returnStatement : RETURN exprSimple ;
 
 literal : STR_LITERAL
     | INT_LITERAL
-    | CH_LITERAL ;
+    | CHAR_LITERAL ;
 
 Tipus : ID {
     $$ = $1;
