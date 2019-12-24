@@ -3,7 +3,7 @@
 
 %defines 
 %define api.parser.class {Syntax}
-
+%define parse.error verbose
 
 %locations
 
@@ -254,7 +254,7 @@ statement :
     varDecl {}
     | forIteration {}
     | whileIteration {}
-    | ifStatement {}
+    | ifStatement { $$.make(this->driver, $1); }
     | switchStatement {}
     | returnStatement {}
     | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); };
@@ -281,19 +281,14 @@ whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND {
 
 
 ifStatement : IF exprSimple DO bloc elseIfStatement BEND {
-
+    $$.make(this->driver, $4);
 };
 
-elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement
-    {
+elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement {}
+    | elseStatement {} ;
 
-    };
-    | elseStatement {}
-
-elseStatement : ELSE DO bloc
-    {
-
-    };
+elseStatement : ELSE DO bloc {}
+    | {};
 
 switchStatement : SWITCH LEFTPARAN exprSimple RIGHTPARAN BBEGIN caseBloc BEND
     {
@@ -353,7 +348,7 @@ contlargs : COMA exprSimple contlargs
     {
 
     }
-    | ;
+    | ; 
 
 returnStatement : RETURN exprSimple ;
 
@@ -385,8 +380,7 @@ contArray : ID {
 };
 
 expression : mutable EQ exprSimple {}
-    | mutable OP_ADD EQ exprSimple {}
-
+    | mutable OP_ADD EQ exprSimple {};
 %%
 
 // Codi de les funcions pròpies del sintàctic

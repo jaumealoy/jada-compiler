@@ -4,6 +4,8 @@
 #include "Simbol.h"
 #include "ControlInstruccions.h"
 
+class SimbolIfStatement;
+
 class SimbolStatement : public Simbol, public ControlInstruccions {
 public:
     enum Tipus {
@@ -22,6 +24,7 @@ public:
     SimbolStatement();
     ~SimbolStatement();
 
+    void make(Driver *driver, SimbolIfStatement ifStmt);
     void make(Driver *driver, SimbolStatement::Tipus tipus);
 };
 

@@ -64,6 +64,8 @@ r_do do
 r_function func
 r_procedure proc
 r_return return
+r_while while
+r_for for
 
 /* Altres */
 new_line ['\n', '\r', '\r\n']
@@ -123,6 +125,9 @@ ml_comment "/*"((.|{new_line})*)"*/"
 {r_function}	{ return token::FUNC; }
 {r_procedure}	{ return token::PROC; }
 {r_return}		{ return token::RETURN; }
+{r_while}		{ return token::WHILE; }
+{r_for}			{ return token::FOR; }
+
 
 {integer}		{
 	// TODO: fer que torni el valor que toca amb

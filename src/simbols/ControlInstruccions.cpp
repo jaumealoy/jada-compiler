@@ -27,9 +27,11 @@ void ControlInstruccions::propaga(ControlInstruccions obj){
     this->tsbReturn = obj.tsbReturn;
 }
 
+#include <iostream>
 
 void ControlInstruccions::propaga(ControlInstruccions &a, ControlInstruccions &b){
     // Si un dels dos té break, aquest també
+    std::cout << "A = " << a._conteBreak << " - B: " << b._conteBreak << std::endl;
     this->_conteBreak = (a._conteBreak || b._conteBreak) ? true : false;
 
     // TODO: decidir que passa amb els returns
