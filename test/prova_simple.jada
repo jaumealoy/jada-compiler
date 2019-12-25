@@ -1,4 +1,5 @@
 proc main(int a, int b) begin /* Multi
     polla */
     int a = 3; //Provapolla22
+    /* Multi polla 2*/
 end main;
