@@ -4,6 +4,7 @@
 #include "Simbol.h"
 #include "SimbolStatement.h"
 #include "SimbolBloc.h"
+#include "SimbolExpressio.h"
 
 class SimbolWhileStatement : public SimbolStatement {
 private:
@@ -11,8 +12,7 @@ public:
     SimbolWhileStatement();
     ~SimbolWhileStatement();
 
-    // TODO: falta afegir un paràmetre de l'expressió booleana
-    void make(Driver *driver, SimbolBloc bloc);
+    void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc);
 };
 
 #endif

@@ -5,8 +5,6 @@
 #include "TipusSubjacentBasic.h"
 #include <string>
 
-using namespace TSB;
-
 class DescripcioTipus : public Descripcio {
 public:
     enum Tipus {
@@ -17,14 +15,18 @@ public:
 private:
     TipusSubjacentBasic tsb;
     DescripcioTipus::Tipus tipus;
+    int ocupacio;
 
 public:
-    DescripcioTipus(TipusSubjacentBasic tsb, DescripcioTipus::Tipus tipus);
+    DescripcioTipus(TipusSubjacentBasic tsb, DescripcioTipus::Tipus tipus, int ocupacio);
     ~DescripcioTipus();
 
     DescripcioTipus::Tipus getTipus();
 
     TipusSubjacentBasic getTSB();
+
+    int getOcupacio();
+    void setOcupacio(int ocupacio);
 };
 
 class DescripcioTipusBasic : public DescripcioTipus {
@@ -33,7 +35,7 @@ private:
     long limitSuperior;
 
 public:
-    DescripcioTipusBasic(TipusSubjacentBasic tsb, long min, long max);
+    DescripcioTipusBasic(TipusSubjacentBasic tsb, long min, long max, int ocupacio);
     ~DescripcioTipusBasic();
 };
 
@@ -41,9 +43,9 @@ class DescripcioTipusArray : public DescripcioTipus {
 private:
     std::string tipusElement;
 public:
-    DescripcioTipusArray(std::string tipus) : DescripcioTipus(ARRAY, DescripcioTipus::Tipus::ARRAY) {
-    
-    }
+    DescripcioTipusArray(std::string tipus) : DescripcioTipus(TipusSubjacentBasic::ARRAY, DescripcioTipus::Tipus::ARRAY, 0) { }
+
+    std::string getTipusElement() { return this->tipusElement; }
 };
 
 #endif

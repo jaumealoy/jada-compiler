@@ -6,9 +6,9 @@
 
 #include "Descripcio.h"
 #include "DescripcioTipus.h"
-#include "DescripcioArgument.h"
 #include "DescripcioFuncio.h"
-
+#include "DescripcioArgument.h"
+#include "DescripcioDimensio.h"
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
@@ -71,7 +71,12 @@ public:
     void posar(std::string id, Descripcio *declaracio);
     void actualitza(std::string id, Descripcio *descripcio);
     void print();
+    
+    // Gestió dels paràmetres de subprogrames
     void posarParam(std::string func, std::string nom, DescripcioArgument *arg);
+
+    // Gestió de les dimensions d'un array
+    void posarDimensio(std::string tipusArray, DescripcioDimensio *dim);
 
     Descripcio * consulta(std::string id);
 };

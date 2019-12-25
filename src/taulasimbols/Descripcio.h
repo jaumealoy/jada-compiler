@@ -13,6 +13,7 @@ public:
         FUNCIO,
         PROCEDIMENT,
         ARGUMENT,
+        DIMENSIO
     };
 
 private:

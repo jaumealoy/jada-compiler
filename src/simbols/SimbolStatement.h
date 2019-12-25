@@ -3,7 +3,9 @@
 
 #include "Simbol.h"
 #include "ControlInstruccions.h"
+#include "SimbolExpressio.h"
 
+class SimbolWhileStatement;
 class SimbolIfStatement;
 
 class SimbolStatement : public Simbol, public ControlInstruccions {
@@ -24,7 +26,9 @@ public:
     SimbolStatement();
     ~SimbolStatement();
 
+    void make(Driver *driver, SimbolWhileStatement whileStmt);
     void make(Driver *driver, SimbolIfStatement ifStmt);
+    void make(Driver *driver, SimbolExpressio exp);
     void make(Driver *driver, SimbolStatement::Tipus tipus);
 };
 

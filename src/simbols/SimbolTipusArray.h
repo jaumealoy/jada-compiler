@@ -23,6 +23,7 @@ public:
     void toDotFile();
 
     std::string toString();
+    std::string getTipusUnitari();
 };
 
 #endif

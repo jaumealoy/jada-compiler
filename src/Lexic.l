@@ -42,7 +42,7 @@ op_mul \*
 
 /* Símbols */
 sym_eq =
-sym_squote \'
+sym_squote '
 sym_dquote \"
 sym_lparan \(
 sym_rparan \)
@@ -69,8 +69,8 @@ r_while while
 r_for for
 
 /* Altres */
-new_line ['\n', '\r', '\r\n']
-blank [' '|'\t']+
+new_line ([\\n\\r]|(\\n\\r))*
+blank [ \\t]+
 
 /* Comentaris */
 comment "//"([^\n])*
@@ -96,7 +96,7 @@ ml_comment "/*"((.|{new_line})*)"*/"
 
 {sym_eq}		{ return token::EQ; }
 {sym_squote}	{
-	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL" << endl;
+	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL "<< this->YYText() << "  " << endl;
 	BEGIN(CHAR_LITERAL_MODE);
 }
 {sym_dquote}	{
@@ -112,7 +112,6 @@ ml_comment "/*"((.|{new_line})*)"*/"
 {sym_rbracket}	{ return token::RIGHTBRACKET; }
 
 {comment} 		{ }
-{ml_comment} 	{ }
 
 {r_if}			{ return token::IF; }
 {r_else}		{ return token::ELSE; }
@@ -142,7 +141,7 @@ ml_comment "/*"((.|{new_line})*)"*/"
 }
 
 {new_line} { 
-	// TODO: sumar linia, reiniciar columnes 
+	// TODO: sumar linia, reiniciar columnes
 }
 {blank} { 
 	// TODO: sumar columnes 
@@ -171,12 +170,15 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL_MODE>[^\\'\n\t] { cout << "Encontrado caracter" << endl; charLen++ ; foundCh = *(this->YYText()); }
+<CHAR_LITERAL_MODE>[^\\'\\n\\t] { 
+	charLen++ ; 
+	foundCh = this->YYText()[0]; 
+	cout << "Encontrado caracter (" <<  foundCh << ")" << endl; 
+}
 <CHAR_LITERAL_MODE>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
 <CHAR_LITERAL_MODE>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
-
 <CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
-<CHAR_LITERAL_MODE>\' {
+<CHAR_LITERAL_MODE>' {
 	cout << "Encontrado final de caracter. Comilla final." << endl;
 	cout << "Found %" << foundCh << "%" << endl;
 	BEGIN(INITIAL);
@@ -189,7 +191,8 @@ ml_comment "/*"((.|{new_line})*)"*/"
 	lval->emplace<char>(foundCh);
 	return token::CHAR_LITERAL;
 }
-	
+
+. { cout << "ERROR: " << this->YYText() << endl; }
 
 
 %%

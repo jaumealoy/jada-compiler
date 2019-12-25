@@ -185,12 +185,7 @@ int TaulaSimbols::getIndex(std::string id){
 void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioArgument *arg){
     // suposar que idSubprograma és un subprograma existent a la taula de símbols
     // ja que si no ho és haurà estat filtrar a la rutina semàntica
-
     int indexSubPrograma = this->td[this->getIndex(idSubprograma)].index;
-
-    // reservar un slot a la taula d'expansió
-    // la taula d'àmbit apunta al darrer lloc escrit a la taula d'expansió
-    int nouIndex = ++this->tAmbit[this->nivellProfunditat];
 
     // els paràmetres s'insereixen al final de la llista enllaçada d'arguments
     int previ = TaulaSimbols::NUL, actual = TaulaSimbols::NUL;
@@ -207,6 +202,10 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
         // TODO: mostrar l'error
         throw NomExistent();
     }else{
+        // reservar un slot a la taula d'expansió
+        // la taula d'àmbit apunta al darrer lloc escrit a la taula d'expansió
+        int nouIndex = ++this->tAmbit[this->nivellProfunditat];
+
         // el paràmetre no existeix
         if(previ == TaulaSimbols::NUL){
             // inserció al prinicipi de la llista
@@ -218,9 +217,35 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
 
         this->tExpansio[nouIndex].identificador = idParam;
         this->tExpansio[nouIndex].declaracio = arg;
+
+        // no s'ha de canviar de taula en fer un surtBloc
+        this->tExpansio[nouIndex].nivellProfunditat = TaulaSimbols::NUL;
     }
 }
 
+/**
+ * Afegeix una dimensió a un tipus array
+ * Les dimensions formaran una llista enllaçada ordenades (la primera, serà la primera dimensió)
+ * Nota: la inserció s'ha de fer amb ordre invers
+ */
+void TaulaSimbols::posarDimensio(std::string nomTipus, DescripcioDimensio *dim){
+    // suposarem que nomTipus ja està inserit a la taula de símbols
+    // perquè posarDimensio només es cridarà una vegada s'hagi inserit l'array
+    int indexArray = this->td[this->getIndex(nomTipus)].index;
+
+    // reservar un espai a la taula d'expansió
+    int nouIndex = ++this->tAmbit[this->nivellProfunditat];
+
+    // guardar la descripció de la dimensió
+    this->tExpansio[nouIndex].declaracio = dim;
+    
+    // i marcar que aquest element no s'ha de transllardar de taula
+    this->tExpansio[nouIndex].nivellProfunditat = TaulaSimbols::NUL;
+
+    // afegir el nou element al prinicipi de la llista (d'aquí l'ordre invers de la inserció) 
+    this->tExpansio[nouIndex].next = this->tDescripcio[indexArray].next;
+    this->tDescripcio[indexArray].next = nouIndex;
+}
 
 void TaulaSimbols::actualitza(std::string id, Descripcio *descripcio){
 
