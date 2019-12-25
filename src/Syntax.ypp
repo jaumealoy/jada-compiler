@@ -3,7 +3,7 @@
 
 %defines 
 %define api.parser.class {Syntax}
-
+%define parse.error verbose
 
 %locations
 
@@ -35,7 +35,7 @@
 %token <std::string> ID
 %token <std::string> STR_LITERAL
 %token <int> INT_LITERAL
-%token <char> CH_LITERAL
+%token <char> CHAR_LITERAL
 
 %token ENDFILE 0
 
@@ -96,9 +96,10 @@
 %type <SimbolProcDecl> decl
 %type <int> exprSimple
 %type <SimbolProcDecl> varDecl
-%type <SimbolProcDecl> funcDecl
+%type <SimbolFuncDecl> funcDecl
 %type <SimbolFuncCap> funcCap
 %type <SimbolFuncContCap> funcContCap
+%type <SimbolBloc> bloc
 %type <SimbolProcDecl> procDecl
 //%type <Node_Declaracio> args;
 //%type <Node_Declaracio> argList;
@@ -106,6 +107,11 @@
 %type <std::string> Tipus;
 %type <SimbolTipusArray> array;
 %type <SimbolTipusArray> contArray;
+
+%type <SimbolStatementList> statementList
+%type <SimbolStatement> statement;
+%type <SimbolWhileStatement> whileIteration
+%type <SimbolIfStatement> ifStatement
 
 %left OP_ADD OP_MINUS OR
 %left OP_TIMES OP_DIV AND NOT
@@ -168,6 +174,7 @@ const : CONST
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
     // amb el tipus indicat per type
+    $$.make(this->driver, $2, $4, $6);
 };
 
 funcCap : funcContCap RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $4); }
@@ -234,40 +241,27 @@ argListCont : COMA argList
 
     };*/
 
-bloc : A statementList {}
+bloc : A statementList { 
+    $$.make(this->driver, $2);
+    // TODO: surt bloc
+};
+
 A : { this->driver->ts.entrarBloc(); };
-statementList :  statement SEMICOLON statementList {}
-    | {};
+statementList :  statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
+    | { $$.makeEmpty(); };
 
-statement : varDecl
-    {
+statement : 
+    varDecl {}
+    | forIteration {}
+    | whileIteration {}
+    | ifStatement { $$.make(this->driver, $1); }
+    | switchStatement {}
+    | returnStatement {}
+    | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); };
 
-    };
-    | iterationStatement
-    {
+forIteration : FOR LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND {
 
-    };
-    | conditionStatement
-    {
-
-    };
-    | returnStatement 
-    {
-
-    };
-    | BREAK
-    {
-
-    };
-
-iterationStatement : forIteration
-    | whileIteration
-
-
-forIteration : FOR LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND 
-    {
-        // TODO
-    };
+};
 
 forInit : expression 
     {
@@ -281,29 +275,20 @@ forPostExpression : expression
     };
     |
 
-whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND
-    {
-        // TODO
-    };
+whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND {
+    // TODO
+};
 
-conditionStatement : ifStatement 
-    | switchStatement
 
-ifStatement : IF exprSimple DO bloc elseIfStatement BEND
-    {
+ifStatement : IF exprSimple DO bloc elseIfStatement BEND {
+    $$.make(this->driver, $4);
+};
 
-    };
+elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement {}
+    | elseStatement {} ;
 
-elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement
-    {
-
-    };
-    | elseStatement {}
-
-elseStatement : ELSE DO bloc
-    {
-
-    };
+elseStatement : ELSE DO bloc {}
+    | {};
 
 switchStatement : SWITCH LEFTPARAN exprSimple RIGHTPARAN BBEGIN caseBloc BEND
     {
@@ -321,19 +306,20 @@ caseBloc : CASE literal DO bloc BEND caseBloc
     |
     ;
 
+
 exprSimple : NOT exprSimple {}
     | LEFTPARAN exprSimple RIGHTPARAN {}
     | exprSimple AND exprSimple {}
     | exprSimple OR exprSimple {}
-    | aritExpr {}
+    | aritExpr {};
 
 aritExpr : OP_MINUS exprSimple {}
     | exprSimple OP_ADD exprSimple {}
     | exprSimple OP_MINUS exprSimple {}
     | exprSimple OP_TIMES exprSimple {}
     | exprSimple OP_DIV exprSimple {}
-    | relExpr {}
     | operand
+    | relExpr {};
 
 relExpr : operand relOp operand {};
 
@@ -345,11 +331,11 @@ relOp : OP_EQ {};
     | OP_LTE {};
 
 operand : mutable {}
-    | immutable {}
+    | immutable {};
 
-mutable : ID
+mutable : ID {};
 immutable : literal {}
-    | funcCall {}
+    | funcCall {};
 
 funcCall : ID LEFTPARAN largs RIGHTPARAN
     {
@@ -362,12 +348,13 @@ contlargs : COMA exprSimple contlargs
     {
 
     }
-    |
+    | ; 
 
-returnStatement : RETURN exprSimple
+returnStatement : RETURN exprSimple ;
 
 literal : STR_LITERAL
     | INT_LITERAL
+    | CHAR_LITERAL ;
 
 Tipus : ID {
     $$ = $1;
@@ -375,7 +362,7 @@ Tipus : ID {
     | array {
     $$ = $1.toString();
     std::cout << "Nom array: " << $1.toString() << std::endl;
-}
+};
 
 // Aquesta serà la darrera dimensió
 array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
@@ -393,8 +380,7 @@ contArray : ID {
 };
 
 expression : mutable EQ exprSimple {}
-    | mutable OP_ADD EQ exprSimple {}
-
+    | mutable OP_ADD EQ exprSimple {};
 %%
 
 // Codi de les funcions pròpies del sintàctic

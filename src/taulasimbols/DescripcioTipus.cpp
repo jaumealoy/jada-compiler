@@ -13,6 +13,10 @@ DescripcioTipus::Tipus DescripcioTipus::getTipus() {
     return this->tipus;
 }
 
+TipusSubjacentBasic DescripcioTipus::getTSB(){
+    return this->tsb;
+}
+
 
 // Descripcio Tipus Basic
 DescripcioTipusBasic::DescripcioTipusBasic(TipusSubjacentBasic tsb, long min, long max)

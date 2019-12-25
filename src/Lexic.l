@@ -15,7 +15,11 @@ using token = yy::Syntax::token;
 StringBuffer strBuilder;
 
 char foundCh;
+<<<<<<< HEAD
 bool finalpossible;
+=======
+int charLen;
+>>>>>>> 6b5eb60fc24903fb969462e61af078b68d13c65b
 
 %}
 
@@ -65,6 +69,8 @@ r_do do
 r_function func
 r_procedure proc
 r_return return
+r_while while
+r_for for
 
 /* Altres */
 new_line ['\n', '\r', '\r\n']
@@ -76,8 +82,8 @@ begin_comment "/*"
 
 /* Modes de scan */
 %x STRING_LITERAL
-%x CHAR_LITERAL	
-%x COMENTARI
+%x CHAR_LITERAL_MODE
+%x COMENTARI	
 
 %%
 {op_gte}		{ return token::OP_GTE; }
@@ -96,7 +102,7 @@ begin_comment "/*"
 {sym_eq}		{ return token::EQ; }
 {sym_squote}	{
 	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL" << endl;
-	BEGIN(CHAR_LITERAL);
+	BEGIN(CHAR_LITERAL_MODE);
 }
 {sym_dquote}	{
 	strBuilder.clear();
@@ -128,6 +134,9 @@ begin_comment "/*"
 {r_function}	{ return token::FUNC; }
 {r_procedure}	{ return token::PROC; }
 {r_return}		{ return token::RETURN; }
+{r_while}		{ return token::WHILE; }
+{r_for}			{ return token::FOR; }
+
 
 {integer}		{
 	// TODO: fer que torni el valor que toca amb
@@ -170,19 +179,23 @@ begin_comment "/*"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL>[^\\'\n\t]* { cout << "Encontrado caracter" << endl; foundCh = *(this->YYText()); }
-<CHAR_LITERAL>\\n { cout << "Encontrado salto línea" << endl; foundCh = '\n'; }
-<CHAR_LITERAL>\\t { cout << "Encontrado tabulador" << endl; foundCh = '\t'; }
+<CHAR_LITERAL_MODE>[^\\'\n\t] { cout << "Encontrado caracter" << endl; charLen++ ; foundCh = *(this->YYText()); }
+<CHAR_LITERAL_MODE>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
+<CHAR_LITERAL_MODE>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
 
-<CHAR_LITERAL>\\' { foundCh = '\''; cout << "Encontrada comilla escapada" << endl; }
-<CHAR_LITERAL>\' {
+<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
+<CHAR_LITERAL_MODE>\' {
 	cout << "Encontrado final de caracter. Comilla final." << endl;
 	cout << "Found %" << foundCh << "%" << endl;
 	BEGIN(INITIAL);
 
+	if (charLen > 1) {
+		this->LexerError("Error! char amb més d'una lletra");
+	}
+
 	cout << lval << endl;
 	lval->emplace<char>(foundCh);
-	return token::STR_LITERAL;
+	return token::CHAR_LITERAL;
 }
 	
 <COMENTARI>[^*\/]* { cout << "Caràcter trobat." << endl; finalpossible = false; }

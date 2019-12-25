@@ -25,6 +25,7 @@ func suma(int[128] v, int n) : int begin
     //    tmp = tmp + v[i];    
     // end;
     
+    return 0;
 end suma;
 
 // aquesta funció també és correcte
@@ -45,7 +46,7 @@ end prova3;
 // aquesta retorna un array, encara està per determinar
 // si hauria de ser un error o no
 func prova4() : int[50] begin
-
+  break;
 end prova4;
 
 // Aquesta funció ha de provocar error perquè té

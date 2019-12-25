@@ -1,0 +1,26 @@
+func prova(int a, char b) : char begin
+    while ( true ) do
+        if a do
+            break;
+        else do
+            while ( false ) do
+                if a do
+                    if c do 
+                        break;
+                    end;
+                end;
+            end;
+        end;
+    end;
+end prova;
+
+// Aquesta funció és invàlida perquè no pot contenir un break
+func prova2(int a, int c) : char begin 
+    if a do
+        if b do
+            if c do
+                break;
+            end;
+        end;
+    end;
+end prova2;

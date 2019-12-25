@@ -11,6 +11,9 @@ public:
     TipusSubjacentBasic();
     TipusSubjacentBasic(int ocupacio);
     ~TipusSubjacentBasic();
+
+    bool operator !=(TipusSubjacentBasic const &obj);
+    bool operator ==(TipusSubjacentBasic const &obj);
 };
 
 extern TipusSubjacentBasic BOOLEAN;
