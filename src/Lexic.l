@@ -15,11 +15,8 @@ using token = yy::Syntax::token;
 StringBuffer strBuilder;
 
 char foundCh;
-<<<<<<< HEAD
 bool finalpossible;
-=======
 int charLen;
->>>>>>> 6b5eb60fc24903fb969462e61af078b68d13c65b
 
 %}
 
