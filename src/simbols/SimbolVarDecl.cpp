@@ -30,13 +30,13 @@ void SimbolVarDecl::make(Driver *driver, Simbol constant, std::string tipus, std
         }
         DescripcioConstant* desc = new DescripcioConstant(tipus);
         driver->ts.posar(id, desc);
-        std::cout << "Trobada variable " << id << " de tipus " << tipus << std::endl;
+        std::cout << "Trobada constant " << id << " de tipus " << tipus << std::endl;
 
     }
     else{
         DescripcioVariable* desc = new DescripcioVariable(tipus);
         driver->ts.posar(id, desc);
-        std::cout << "Trobada constant " << id << " de tipus " << tipus << std::endl;
+        std::cout << "Trobada variable " << id << " de tipus " << tipus << std::endl;
     }
 
 }
