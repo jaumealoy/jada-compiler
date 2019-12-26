@@ -1,0 +1,7 @@
+proc provaoprel() begin
+int c = 2 < 3;
+char x = ;
+String a = "Holaa" > 4;
+while ( 4 == 'c') do end;
+	
+end provaoprel;

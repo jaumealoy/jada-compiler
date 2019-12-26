@@ -20,6 +20,8 @@
 #include "SimbolIfStatement.h"
 
 #include "SimbolExpressio.h"
+#include "SimbolRelExpr.h"
+
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"

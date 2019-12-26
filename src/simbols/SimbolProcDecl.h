@@ -5,7 +5,7 @@
 #include "SimbolProcCap.h"
 #include "SimbolBloc.h"
 
-class SimbolProcDecl : Simbol {
+class SimbolProcDecl : public Simbol {
 private:
     // per controlar si aquest procediment és un candidat vàlid per ser
     // un procediment principal

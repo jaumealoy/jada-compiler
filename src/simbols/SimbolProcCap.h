@@ -6,7 +6,7 @@
 #include "SimbolProcContCap.h"
 #include <string>
 
-class SimbolProcCap : Simbol {
+class SimbolProcCap : public Simbol {
 private:
     // nom de la funció
     std::string nom;

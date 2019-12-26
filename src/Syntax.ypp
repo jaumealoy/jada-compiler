@@ -117,6 +117,7 @@
 %type <SimbolWhileStatement> whileIteration
 %type <SimbolIfStatement> ifStatement
 
+%type <SimbolRelExpr> relExpr
 %type <SimbolExpressio> exprSimple
 %type <SimbolReferencia> referencia
 %type <SimbolSubProgramCall> subProgramCall
@@ -312,12 +313,12 @@ aritExpr : OP_MINUS exprSimple {}
     | exprSimple OP_DIV exprSimple {}
     | relExpr {};
 
-relExpr : exprSimple OP_NEQ exprSimple {}
-    | exprSimple OP_EQ exprSimple {}
-    | exprSimple OP_GT exprSimple {}
-    | exprSimple OP_GTE exprSimple {}
-    | exprSimple OP_LT exprSimple {}
-    | exprSimple OP_LTE exprSimple {};
+relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3); }
+    | exprSimple OP_EQ exprSimple { $$.make(this->driver, $1, $3); }
+    | exprSimple OP_GT exprSimple { $$.make(this->driver, $1, $3); }
+    | exprSimple OP_GTE exprSimple { $$.make(this->driver, $1, $3); }
+    | exprSimple OP_LT exprSimple { $$.make(this->driver, $1, $3); }
+    | exprSimple OP_LTE exprSimple { $$.make(this->driver, $1, $3); };
 
 
 referencia : ID { $$.make(this->driver, $1); }
