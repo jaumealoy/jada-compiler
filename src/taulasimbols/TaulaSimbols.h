@@ -11,6 +11,8 @@
 
 #include "DescripcioArgument.h"
 #include "DescripcioDimensio.h"
+#include "DescripcioVar.h"
+#include "DescripcioConstant.h"
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033

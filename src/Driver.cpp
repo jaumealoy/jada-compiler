@@ -54,6 +54,13 @@ void Driver::error(std::string msg){
     std::cerr << msg << std::endl;
 }
 
+void Driver::error(std::string msg, bool atura){
+    std::cerr << msg << std::endl;
+    if (atura){
+        throw TaulaSimbols::NomNoExistent();
+    }
+}
+
 void Driver::writeToTree(std::string data){
     this->treeFile << data << std::endl;
 }

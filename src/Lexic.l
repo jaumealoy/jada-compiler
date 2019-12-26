@@ -68,6 +68,7 @@ r_procedure proc
 r_return return
 r_while while
 r_for for
+r_const const
 
 /* Altres */
 new_line ([\\n\\r]|(\\n\\r))*
@@ -133,7 +134,7 @@ begin_comment "/*"
 {r_return}		{ return token::RETURN; }
 {r_while}		{ return token::WHILE; }
 {r_for}			{ return token::FOR; }
-
+{r_const}		{ return token::CONST; }
 
 {integer}		{
 	// TODO: fer que torni el valor que toca amb

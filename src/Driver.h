@@ -5,6 +5,7 @@
 #include "Syntax.tab.hpp"
 #include "taulasimbols/TaulaSimbols.h"
 #include <fstream>
+#include <exception>
 
 using namespace yy;
 
@@ -25,6 +26,7 @@ public:
     TaulaSimbols ts;
 
     void error(std::string msg);
+    void error(std::string msg, bool atura);
 
     // Per guardar l'arbre sintàctic
     void writeToTree(std::string data);
