@@ -129,3 +129,12 @@ TipusSubjacentBasic SimbolExpressio::getTSB(){
 SimbolExpressio::Mode SimbolExpressio::getMode(){
     return this->mode;
 }
+
+bool SimbolExpressio::isNull() {
+    return this->tsb == TipusSubjacentBasic::NUL && this->tipus.empty();
+}
+
+void SimbolExpressio::makeNull() {
+    this->tsb = NUL;
+    this->tipus.clear();
+}

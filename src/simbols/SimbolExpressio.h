@@ -15,7 +15,7 @@ public:
         RESULTAT
     };
 
-private:
+protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
     SimbolExpressio::Mode mode;
@@ -37,6 +37,7 @@ public:
     std::string getTipus();
     TipusSubjacentBasic getTSB();
     SimbolExpressio::Mode getMode();
+
 };
 
 #endif

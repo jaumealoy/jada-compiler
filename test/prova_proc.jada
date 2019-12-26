@@ -1,0 +1,11 @@
+proc factorial(int n) begin
+	break;
+	return 0;
+    if n == 1 do
+        // cas base
+        return 1;
+    else do
+        // crides recursives
+        return factorial(n - 1);
+    end;
+end factorial;

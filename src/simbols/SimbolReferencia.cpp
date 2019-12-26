@@ -16,6 +16,8 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     } catch (TaulaSimbols::NomNoExistent ex) {
         // error! no existeix aquest nom
         driver->error(nom + " no reconegut");
+        this->makeNull();
+        return;
     }
 
     // Comprovar que és una variable o constant
@@ -23,7 +25,8 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
         driver->error("error, no és una variable ni una constants");
         
         // Indicar id nul
-        this->id.clear();
+        this->makeNull();
+        return;
     }
 
     // Obtenir els tipus de la constant i el subjacent bàsic
@@ -42,4 +45,16 @@ bool SimbolReferencia::isNull(){
 
 std::string SimbolReferencia::getId(){
     return this->id;
+}
+
+TipusSubjacentBasic SimbolReferencia::getTSB(){
+    return this->tsb;
+}
+
+SimbolReferencia::ModeMVP SimbolReferencia::getMode(){
+    return this->mode;
+}
+
+std::string SimbolReferencia::getTipus(){
+    return this->tipus;
 }

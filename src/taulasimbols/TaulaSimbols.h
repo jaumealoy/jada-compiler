@@ -7,6 +7,8 @@
 #include "Descripcio.h"
 #include "DescripcioTipus.h"
 #include "DescripcioFuncio.h"
+#include "DescripcioProc.h"
+
 #include "DescripcioArgument.h"
 #include "DescripcioDimensio.h"
 
