@@ -103,7 +103,6 @@
 %type <SimbolProcCap> procCap
 %type <SimbolProcContCap> procContCap
 
-%type <Simbol> const;
 
 //%type <Node_Declaracio> args;
 //%type <Node_Declaracio> argList;
@@ -125,8 +124,8 @@
 %type <SimbolLiteral> literal
 %type <SimbolVarInit> varInit 
 
-%left OP_ADD OP_MINUS OR
 %left OP_TIMES OP_DIV AND NOT
+%left OP_ADD OP_MINUS OR
 %left OP_EQ OP_GT OP_GTE OP_LT OP_LTE OP_NEQ
 
 %start program
@@ -134,6 +133,7 @@
 
 program : declList {
     $$.make(this->driver, $1);
+    this->driver->ts.print();
 };
 
 declList : declList decl {
@@ -143,28 +143,22 @@ declList : declList decl {
         $$.make(this->driver, $1);
 };
 
-decl : varDecl {
-    // TODO
-};
-    | funcDecl {
-    // TODO
-};
+decl : varDecl SEMICOLON { };
+    | varDecl error decl { };
+    | funcDecl { };
     | procDecl {
 
 };
 
-varDecl : const Tipus ID varInit {
-    $$.make(this->driver, $1, $2, $3, $4);
-};
-    | varDecl COMA ID varInit {
-    $$.make(this->driver, $1, $3, $4);
-};
+varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
+    | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
+    | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
 varInit : EQ exprSimple{}
     |{};
 
-const : CONST { };
-    | { $$.makeEmpty(); };
+/*const : CONST { };
+    | { $$.makeEmpty(); };*/
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
@@ -238,15 +232,19 @@ argListCont : COMA argList
 
 bloc : A statementList { 
     $$.make(this->driver, $2);
-    // TODO: surt bloc
+    this->driver->ts.surtirBloc();
 };
 
 A : { this->driver->ts.entrarBloc(); };
-statementList :  statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
+
+statementList : statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
+    | statement error statementList { $$.make(this->driver, $1, $3); }
     | { $$.makeEmpty(); };
 
 statement : 
     varDecl {}
+    | expression {}
+    | subProgramCall {}
     | forIteration {}
     | whileIteration { $$.make(this->driver, $1); }
     | ifStatement { $$.make(this->driver, $1); }
@@ -321,11 +319,11 @@ relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3); }
 
 referencia : ID { $$.make(this->driver, $1); }
     | subProgramCall {}
-    | referenciaArray {};
+    | array {};
 
-referenciaArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {};
-referenciaContArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {}
-    | ID {};
+/*referenciaArray : referenciaContArray RIGHTBRACKET {};
+referenciaContArray : referenciaContArray RIGHTBRACKET LEFTBRACKET exprSimple {}
+    | ID LEFTBRACKET exprSimple {};*/
 
 subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
     | subProgramContCall RIGHTPARAN { $$.make(this->driver, $1); };
@@ -337,31 +335,34 @@ literal : STR_LITERAL { $$.make(this->driver, $1); }
     | INT_LITERAL { $$.make(this->driver, $1); }
     | CHAR_LITERAL { $$.make(this->driver, $1); };
 
-Tipus : ID {
-    $$ = $1;
-}
+Tipus : ID { $$ = $1; }
     | array {
+    if($1.isReferencia()){
+        this->driver->error("no és un tipus vàlid", true);
+        return -1;
+    }
     $$ = $1.toString();
     std::cout << "Nom array: " << $1.toString() << std::endl;
 };
 
 // Aquesta serà la darrera dimensió
-array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
-    $$.make(this->driver, $1, $3);
+array : contArray {
+    $$ = $1;
     $$.make(this->driver);
 };
 
-contArray : ID {
-    $$.make(this->driver, $1);
-}
-    | contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
+contArray : ID LEFTBRACKET exprSimple RIGHTBRACKET { $$.make(this->driver, $1, $3);}
+    | contArray LEFTBRACKET exprSimple RIGHTBRACKET {
     $$.make(this->driver, $1, $3);
 };
 
+
 expression : referencia EQ exprSimple {}
     | referencia OP_ADD EQ exprSimple {}
+    | referencia OP_DIV EQ exprSimple {}
+    | referencia OP_TIMES EQ exprSimple {}
     | referencia OP_MINUS EQ exprSimple {}
-    | referencia OP_MINUS OP_MINUS EQ exprSimple {}
+    | referencia OP_MINUS OP_MINUS {}
     | referencia OP_ADD OP_ADD {};
 %%
 

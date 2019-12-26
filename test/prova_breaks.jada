@@ -5,7 +5,7 @@ func prova(int a, char b) : char begin
         else do
             while ( false ) do
                 if a do
-                    if c do 
+                    if c do     
                         break;
                     end;
                 end;

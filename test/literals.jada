@@ -1,4 +1,4 @@
-func suma() : int begin
+func suma(int[55] b) : int begin
     if (7 > 5) do
         return "hola";
     end;
@@ -9,3 +9,7 @@ func suma() : int begin
 
     return 'a';
 end suma;
+
+func prova() : char begin
+    return 5;
+end prova;

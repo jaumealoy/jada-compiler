@@ -1,7 +1,9 @@
 #include "Driver.h"
 
-Driver::Driver(char *filename) : treeFile("tree.dot", std::fstream::out) {
-    this->scanner = new Lexic(filename);
+Driver::Driver(char *filename) : 
+        treeFile("tree.dot", std::fstream::out),
+        tokensFile("tokens.txt", std::fstream::out) {
+    this->scanner = new Lexic(filename, tokensFile);
     this->parser = new Syntax(this->scanner, this);
 
     // inicialitzar la taula de símbols
@@ -65,7 +67,11 @@ void Driver::writeToTree(std::string data){
     this->treeFile << data << std::endl;
 }
 
-void Driver::closeTreeFile(){
+void Driver::closeFiles(){
+    // tancar l'arbre sintàctic
     this->writeToTree("}");
     this->treeFile.close();
+
+    // tancar la seqüència de tokens
+    this->tokensFile.close();
 }

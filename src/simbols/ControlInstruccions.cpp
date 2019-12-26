@@ -27,7 +27,6 @@ void ControlInstruccions::propaga(ControlInstruccions obj){
 
 void ControlInstruccions::propaga(ControlInstruccions &a, ControlInstruccions &b){
     // Si un dels dos té break, aquest també
-    std::cout << "A = " << a._conteBreak << " - B: " << b._conteBreak << std::endl;
     this->_conteBreak = (a._conteBreak || b._conteBreak) ? true : false;
 
     // Afegir els returs de a i b

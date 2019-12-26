@@ -17,6 +17,10 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     this->tipus = literal.getTipus();
     this->tsb = literal.getTSB();
     
+    if(this->tsb == TipusSubjacentBasic::INT){
+        this->intValue = literal.getIntValue();
+    }
+
     // prové d'un literal, és una expressió constant
     this->mode = SimbolExpressio::Mode::CONST;
 }
@@ -137,4 +141,8 @@ bool SimbolExpressio::isNull() {
 void SimbolExpressio::makeNull() {
     this->tsb = NUL;
     this->tipus.clear();
+}
+
+int SimbolExpressio::getIntValue(){
+    return this->intValue;
 }

@@ -10,15 +10,20 @@
 #include "Syntax.tab.hpp"
 #include "location.hh"
 
+#include <fstream>
+
+
 // Definir la classe de l'analitzador lèxic
 class Lexic : public yyFlexLexer {
 private:
 	int currentLine;
 	int currentColumn;
 
+	std::fstream tokensFile;
+
 	int yylex(yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location); // funció pròpia del Flex
 public:
-	Lexic(char *);
+	Lexic(char *, std::fstream &);
 	~Lexic();
 
 	int getToken(yy::Syntax::semantic_type *yylval, yy::location *);	

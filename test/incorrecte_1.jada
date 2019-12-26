@@ -1,0 +1,8 @@
+/**
+ * Aquest programa és incorrecte perquè es defineix una funció
+ * amb que té instruccions de retorn amb un tipus incompatible
+ * de l'esperat
+ */
+func suma(int a, int b) : int begin
+    
+end suma;

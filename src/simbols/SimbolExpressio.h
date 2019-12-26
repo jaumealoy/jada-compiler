@@ -20,6 +20,7 @@ protected:
     TipusSubjacentBasic tsb;
     SimbolExpressio::Mode mode;
 
+    int intValue;
 
 public:
     SimbolExpressio();
@@ -33,6 +34,8 @@ public:
     // Per marcar com una referència errònia
     bool isNull();
     void makeNull();
+
+    int getIntValue();
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();

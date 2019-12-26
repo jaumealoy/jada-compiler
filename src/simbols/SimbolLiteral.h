@@ -10,6 +10,9 @@ private:
     std::string tipus;
     TipusSubjacentBasic tsb;
 
+    int intValue;
+    char charValue;
+
 public:
     SimbolLiteral();
     ~SimbolLiteral();
@@ -20,6 +23,9 @@ public:
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();
+
+    // obtenció de valors
+    int getIntValue();
 };
 
 #endif
