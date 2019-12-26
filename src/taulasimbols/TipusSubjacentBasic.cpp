@@ -1,5 +1,5 @@
 #include "TipusSubjacentBasic.h"
-
+/*
 using namespace TSB;
 
 TipusSubjacentBasic TSB::BOOLEAN(1);
@@ -25,4 +25,4 @@ bool TipusSubjacentBasic::operator!=(TipusSubjacentBasic const &obj){
 
 bool TipusSubjacentBasic::operator==(TipusSubjacentBasic const &obj){
 
-}
+}*/

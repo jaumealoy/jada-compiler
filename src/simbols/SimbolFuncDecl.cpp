@@ -22,23 +22,30 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
         // 1. Obtenir el tipus de retorn de la funció
         DescripcioFuncio *df = (DescripcioFuncio *) driver->ts.consulta(cap.getNomFuncio());
 
-        // 2. És possible que el valor de retorn sigui anònim (constant, resultat)
-        if(bloc.getTipusReturn().empty()){
-            // no es té un tipus concret
-            // comprovar si els tipus subjacents són compatibles (del mateix tipus)
-            // 2.1 Obtenir el tipus subjacent bàsic associat al tipus de retorn de la funció
-            DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(df->getTipusRetorn());
+        // Hem de comprovar que cada un dels returns és compatible amb el valor de 
+        // retorn de la funció
+        std::vector<struct ControlInstruccions::ReturnData> returns = bloc.getReturns();
+        for(int i = 0; i < returns.size(); i++){
+            struct ControlInstruccions::ReturnData ret = returns[i];
 
-            // TODO: revisar implementació dels TSB. S'hauria d'afegir un enumerat dels diferents TSB?
-            /*if(dt->getTSB() != bloc.getTSBReturn()){
-                // error tipus incompatibles
-                driver->error("valor de retorn incompatible (tsb)");
-            }*/           
-        }else{
-            // comprovació forta de tipus
-            if(bloc.getTipusReturn() != df->getTipusRetorn()){
-                // error tipus incompatibles
-                driver->error("valor de retorn incompatible");
+            // 2. És possible que el valor de retorn sigui anònim (constant, resultat)
+            if(ret.tipus.empty()){
+                // no es té un tipus concret
+                // comprovar si els tipus subjacents són compatibles (del mateix tipus)
+                // 2.1 Obtenir el tipus subjacent bàsic associat al tipus de retorn de la funció
+                DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(df->getTipusRetorn());
+
+                // TODO: revisar implementació dels TSB. S'hauria d'afegir un enumerat dels diferents TSB?
+                if(dt->getTSB() != ret.tsb){
+                    // error tipus incompatibles
+                    driver->error("valor de retorn incompatible (tsb)");
+                }           
+            }else{
+                // comprovació forta de tipus
+                if(ret.tipus != df->getTipusRetorn()){
+                    // error tipus incompatibles
+                    driver->error("valor de retorn incompatible");
+                }
             }
         }
     }else{

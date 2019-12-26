@@ -3,31 +3,40 @@
 
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include <string>
+#include <vector>
 
 /**
  * Dades necessàries per controlar blocs d'instruccions i llistes d'instruccions
  */
 class ControlInstruccions {
+public:
+    struct ReturnData {
+        std::string tipus;
+        TipusSubjacentBasic tsb;
+
+        // incloure altre informació sobre el return
+        // línia
+        // columna
+    };
+
 protected:
     // Per comprovar si té break
     bool _conteBreak;
 
     // Per comprovar si conté returns i el seu tipus
-    bool _conteReturn;
-    std::string tipusReturn;
-    TSB::TipusSubjacentBasic tsbReturn;
+    std::vector<struct ReturnData> _returns;
 
     void propaga(ControlInstruccions obj);
     void propaga(ControlInstruccions &a, ControlInstruccions &b);
 
+    
 public:
     // funcions per comprovar break
     bool conteBreak();
     
     // funcions per comprovar returns
+    std::vector<struct ReturnData> getReturns();
     bool conteReturn();
-    std::string getTipusReturn();
-    TSB::TipusSubjacentBasic getTSBReturn();
 };
 
 #endif

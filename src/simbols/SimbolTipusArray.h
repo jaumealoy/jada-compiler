@@ -17,12 +17,12 @@ public:
     ~SimbolTipusArray();
 
     void make(Driver *driver);
-    void make(Driver *driver, int dimensio);
+    void make(Driver *driver, SimbolTipusArray contArray, int dimensio);
     void make(Driver *driver, std::string tipusBasic);
 
-    void toDotFile();
 
     std::string toString();
+    std::string getTipusUnitari();
 };
 
 #endif

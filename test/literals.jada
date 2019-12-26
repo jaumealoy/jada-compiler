@@ -1,0 +1,11 @@
+func suma() : int begin
+    if (7 > 5) do
+        return "hola";
+    end;
+
+    while (7) do
+        break;
+    end;
+
+    return 'a';
+end suma;

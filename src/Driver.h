@@ -3,9 +3,8 @@
 
 #include "Lexic.h"
 #include "Syntax.tab.hpp"
-
 #include "taulasimbols/TaulaSimbols.h"
-
+#include <fstream>
 
 using namespace yy;
 
@@ -13,6 +12,9 @@ class Driver{
 private:
     Lexic *scanner;
     Syntax *parser;
+
+    // fitxers per guarddar l'arbre sintàctic
+    std::fstream treeFile;
 
 public:
     Driver(char *filename);
@@ -23,5 +25,9 @@ public:
     TaulaSimbols ts;
 
     void error(std::string msg);
+
+    // Per guardar l'arbre sintàctic
+    void writeToTree(std::string data);
+    void closeTreeFile();
 };
 #endif

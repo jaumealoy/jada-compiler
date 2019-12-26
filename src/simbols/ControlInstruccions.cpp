@@ -4,16 +4,15 @@ bool ControlInstruccions::conteBreak(){
     return this->_conteBreak;
 }
 
-bool ControlInstruccions::conteReturn(){
-    return this->_conteReturn;
+std::vector<struct ControlInstruccions::ReturnData> ControlInstruccions::getReturns() {
+    return this->_returns;
 }
 
-std::string ControlInstruccions::getTipusReturn(){
-    return this->tipusReturn;
-}
-
-TSB::TipusSubjacentBasic ControlInstruccions::getTSBReturn(){
-    return this->tsbReturn;
+/**
+ * Comprova si existeix un o més returns
+ */
+bool ControlInstruccions::conteReturn() {
+    return this->_returns.size() > 0;
 }
 
 /**
@@ -21,10 +20,7 @@ TSB::TipusSubjacentBasic ControlInstruccions::getTSBReturn(){
  */
 void ControlInstruccions::propaga(ControlInstruccions obj){
     this->_conteBreak = obj._conteBreak;
-
-    this->_conteReturn = obj._conteReturn;
-    this->tipusReturn = obj.tipusReturn;
-    this->tsbReturn = obj.tsbReturn;
+    this->_returns = obj._returns;
 }
 
 #include <iostream>
@@ -34,5 +30,9 @@ void ControlInstruccions::propaga(ControlInstruccions &a, ControlInstruccions &b
     std::cout << "A = " << a._conteBreak << " - B: " << b._conteBreak << std::endl;
     this->_conteBreak = (a._conteBreak || b._conteBreak) ? true : false;
 
-    // TODO: decidir que passa amb els returns
+    // Afegir els returs de a i b
+    this->_returns = a._returns;
+    for(int i = b._returns.size() - 1; i >= 0; i--) {
+        this->_returns.push_back(b._returns[i]);
+    }
 }

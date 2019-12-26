@@ -1,7 +1,9 @@
 #ifndef _H_SIMBOLDECL
 #define _H_SIMBOLDECL
 
-class SimbolDecl {
+#include "Simbol.h"
+
+class SimbolDecl : public Simbol {
 private:
     // per controlar que la declaracio té un procediment main
     bool teMain;

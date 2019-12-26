@@ -2,11 +2,26 @@
 #include "../Driver.h"
 #include <iostream>
 
-SimbolTipusArray::SimbolTipusArray() : Simbol(), dimensions() {}
+SimbolTipusArray::SimbolTipusArray() : Simbol("ContArray"), dimensions() {}
 SimbolTipusArray::~SimbolTipusArray() {}
 
-void SimbolTipusArray::make(Driver *driver, int dimensio){
+/**
+ * Insereix una dimensió a l'array actual
+ */
+void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, int dimensio){
+    if(dimensio < 0) {
+        driver->error("la dimensió d'un array ha de ser positiva");
+    }
+
+    this->tipusBasic = contArray.tipusBasic;
+    this->dimensions = contArray.dimensions;
     this->dimensions.push_back(dimensio);
+
+    // afegir fills
+    this->fills.push_back(std::to_string(contArray.getNodeId()));
+    driver->writeToTree("\"" + std::to_string(this->nodeId) +  "_dim\"[shape=plaintext, label=\"" + std::to_string(dimensio) + "\"]");
+    this->fills.push_back("\""+std::to_string(this->nodeId) +  "_dim\"");
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -27,6 +42,9 @@ void SimbolTipusArray::make(Driver *driver, std::string tipusBasic) {
     }
 
     this->tipusBasic = tipusBasic;
+
+    this->nomNode.swap(tipusBasic);
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -34,8 +52,6 @@ void SimbolTipusArray::make(Driver *driver, std::string tipusBasic) {
  * array -> contArray [ INT_LITERAL ]
  */
 void SimbolTipusArray::make(Driver *driver) {
-    std::cout << "Final array!" << std::endl;
-
     // inserir l'array a la taula de símbols
     std::string nomTipus = this->toString();
 
@@ -48,12 +64,25 @@ void SimbolTipusArray::make(Driver *driver) {
         // si existeix, segur que serà una descripció de tipus
     } catch(TaulaSimbols::NomNoExistent ex) {
         // el nom no existeix, s'ha d'inserir el tipus
-        DescripcioTipusArray *dt = new DescripcioTipusArray(nomTipus);
+        DescripcioTipusArray *dt = new DescripcioTipusArray(this->tipusBasic);
         driver->ts.posar(nomTipus, dt);
+
+        // obtenir la mida del tipus unitari
+        // sabem que existeix perquè si no ja no s'hauria arribat fins aquest punt
+        DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(this->tipusBasic);
+
+        int ocupacio = dte->getOcupacio();
+
+        // i crear les dimensions, inserint-les en ordre invers
+        for(int i = this->dimensions.size() - 1; i >= 0; i--){
+            ocupacio *= this->dimensions[i];
+            driver->ts.posarDimensio(nomTipus, new DescripcioDimensio(this->dimensions[i]));
+        }
+
+        // actualitzar l'entrada de la taula de símbols
+        dt->setOcupacio(ocupacio);
     }
 }
-
-void SimbolTipusArray::toDotFile(){}
 
 /**
  * Obté el nom que representa un array.

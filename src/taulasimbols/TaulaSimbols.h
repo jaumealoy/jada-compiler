@@ -6,10 +6,11 @@
 
 #include "Descripcio.h"
 #include "DescripcioTipus.h"
-#include "DescripcioArgument.h"
 #include "DescripcioFuncio.h"
 #include "DescripcioProc.h"
 
+#include "DescripcioArgument.h"
+#include "DescripcioDimensio.h"
 
 #define MAX_PROFUNDITAT 20
 #define MAX_SIMBOLS 1033
@@ -61,6 +62,24 @@ public:
     class NomExistent : public std::exception {};
     class NomNoExistent : public std::exception {};
 
+    class Iterator {
+    private:
+        TaulaSimbols *ts;
+        Descripcio::Tipus tipus;
+        Descripcio *current;
+        int index;
+
+    public:
+        Iterator();
+        Iterator(TaulaSimbols *ts, Descripcio::Tipus tipus);        
+        ~Iterator();
+
+        void first(std::string id);
+        void next();
+        bool valid();
+        Descripcio *get();
+    };
+
     TaulaSimbols();
     ~TaulaSimbols();
 
@@ -70,10 +89,18 @@ public:
     void posar(char *id);
     void posar(std::string id);
     void posar(std::string id, Descripcio *declaracio);
+    Descripcio *consulta(std::string id);
     void actualitza(std::string id, Descripcio *descripcio);
     void print();
+    
+    // Gestió dels paràmetres de subprogrames
     void posarParam(std::string func, std::string nom, DescripcioArgument *arg);
 
-    Descripcio * consulta(std::string id);
+    // Gestió de les dimensions d'un array
+    void posarDimensio(std::string tipusArray, DescripcioDimensio *dim);
+
+    // Per recòrrer dimensions o paràmetres
+    Iterator getParametres();
+    Iterator getDimensions();
 };
 #endif

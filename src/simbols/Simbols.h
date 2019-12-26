@@ -18,4 +18,10 @@
 #include "SimbolStatement.h"
 #include "SimbolWhileStatement.h"
 #include "SimbolIfStatement.h"
+
+#include "SimbolExpressio.h"
+#include "SimbolReferencia.h"
+#include "SimbolSubProgramCall.h"
+#include "SimbolSubProgramContCall.h"
+#include "SimbolLiteral.h"
 #endif

@@ -1,7 +1,7 @@
 #ifndef _H_TSB
 #define _H_TSB 1
 
-namespace TSB {
+/*namespace TSB {
 
 class TipusSubjacentBasic {
 private:
@@ -22,6 +22,14 @@ extern TipusSubjacentBasic INT;
 extern TipusSubjacentBasic ARRAY;
 extern TipusSubjacentBasic NUL;
 
+};*/
+
+enum TipusSubjacentBasic {
+    BOOLEAN,
+    CHAR,
+    INT,
+    ARRAY,
+    NUL
 };
 
 
