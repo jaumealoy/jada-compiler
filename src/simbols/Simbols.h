@@ -21,4 +21,7 @@
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"
 #include "SimbolLiteral.h"
+
+#include "SimbolVarInit.h"
+#include "SimbolVarDecl.h"
 #endif

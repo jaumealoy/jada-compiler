@@ -6,6 +6,8 @@
 
 class SimbolVarDecl : public Simbol {
 private:
+    bool esConst;
+    std::string tipus;
 public:
     SimbolVarDecl();
     ~SimbolVarDecl();
