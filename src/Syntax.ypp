@@ -150,7 +150,7 @@ decl : varDecl {
 };
 
 varDecl : const Tipus ID varInit {};
-    | varDecl, ID varInit {};
+    | varDecl COMA ID varInit {};
 
 varInit : EQ exprSimple
     |
@@ -295,12 +295,12 @@ caseBloc : CASE literal DO bloc BEND caseBloc
     ;
 
 
-exprSimple : NOT exprSimple {}
-    | LEFTPARAN exprSimple RIGHTPARAN {}
-    | exprSimple AND exprSimple {}
-    | exprSimple OR exprSimple {}
+exprSimple : NOT exprSimple { $$.make(this->driver, $1, 0); }
+    | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $1, 1); }
+    | exprSimple AND exprSimple { $$.make(this->driver, $1, $2, 0); }
+    | exprSimple OR exprSimple { $$.make(this->driver, $1, $2, 1); }
     | aritExpr {}
-    | referencia {}
+    | referencia { $$.make(this->driver, $1); }
     | literal { $$.make(this->driver, $1); };
 
 aritExpr : OP_MINUS exprSimple {}

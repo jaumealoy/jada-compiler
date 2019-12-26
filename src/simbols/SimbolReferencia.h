@@ -36,6 +36,7 @@ public:
     std::string getId();
     std::string getTipus();
     TipusSubjacentBasic getTSB();
+    SimbolReferencia::ModeMVP getMode();
 };
 
 #endif
