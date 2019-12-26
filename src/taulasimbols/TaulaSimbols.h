@@ -8,6 +8,7 @@
 #include "DescripcioTipus.h"
 #include "DescripcioArgument.h"
 #include "DescripcioFuncio.h"
+#include "DescripcioProc.h"
 
 
 #define MAX_PROFUNDITAT 20

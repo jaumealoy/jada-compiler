@@ -2,6 +2,8 @@
 #define _H_SIMBOLPROCDECL
 
 #include "Simbol.h"
+#include "SimbolProcCap.h"
+#include "SimbolBloc.h"
 
 class SimbolProcDecl : Simbol {
 private:
@@ -14,6 +16,10 @@ public:
         this->esMain = false;
     }
 
+    ~SimbolProcDecl() {
+        
+    }
+
     void setEsMain(bool main){
         this->esMain = main;
     }
@@ -21,6 +27,8 @@ public:
     bool getEsMain(){
         return this->esMain;
     }
+
+    void make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, std::string nom);
 };
 
 #endif
