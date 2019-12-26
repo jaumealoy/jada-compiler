@@ -30,3 +30,16 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     
 
 }
+
+void SimbolReferencia::makeNull(){
+    this->tsb = TipusSubjacentBasic::NUL;
+    this->id.clear();
+}
+
+bool SimbolReferencia::isNull(){
+    return this->tsb == TipusSubjacentBasic::NUL && this->id.empty();
+}
+
+std::string SimbolReferencia::getId(){
+    return this->id;
+}

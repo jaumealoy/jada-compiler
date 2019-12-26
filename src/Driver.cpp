@@ -1,6 +1,6 @@
 #include "Driver.h"
 
-Driver::Driver(char *filename){
+Driver::Driver(char *filename) : treeFile("tree.dot", std::fstream::out) {
     this->scanner = new Lexic(filename);
     this->parser = new Syntax(this->scanner, this);
 
@@ -25,6 +25,9 @@ Driver::Driver(char *filename){
     DescripcioFuncio *readChar = new DescripcioFuncio();
     readChar->setTipusRetorn("char");
     this->ts.posar("readChar", readChar);
+
+    // inicialitzar fitxer de l'arbre
+    this->writeToTree("digraph arbreSintactic {");
 }
 
 Driver::~Driver(){
@@ -37,4 +40,13 @@ void Driver::parse(){
 
 void Driver::error(std::string msg){
     std::cerr << msg << std::endl;
+}
+
+void Driver::writeToTree(std::string data){
+    this->treeFile << data << std::endl;
+}
+
+void Driver::closeTreeFile(){
+    this->writeToTree("}");
+    this->treeFile.close();
 }

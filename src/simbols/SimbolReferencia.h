@@ -15,9 +15,10 @@ public:
     };
 
 
-private:
+protected:
     std::string id;
     std::string tipus;
+    TipusSubjacentBasic tsb;
 
     SimbolReferencia::ModeMVP mode;
 
@@ -27,6 +28,14 @@ public:
 
     void make(Driver *driver, std::string nom);
 
+    // Per marcar com una referència errònia
+    bool isNull();
+    void makeNull();
+
+    // obtenir tipus i nom
+    std::string getId();
+    std::string getTipus();
+    TipusSubjacentBasic getTSB();
 };
 
 #endif

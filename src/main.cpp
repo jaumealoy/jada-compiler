@@ -16,8 +16,8 @@ int main(int argc, char **argv){
 	//Lexic myLexic(argv[1]);
 	//yy::Syntax mySyntax(&myLexic);
 	Driver myDriver(argv[1]);
-
 	myDriver.parse();
+	myDriver.closeTreeFile();
 	//ofstream fileSave("tree.dot");
 	//root->toDotFile(fileSave, nullptr);
 

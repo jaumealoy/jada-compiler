@@ -31,6 +31,10 @@ public:
     DescripcioArgument::Tipus getTipusArgument(){
         return this->tipus;
     }
+
+    std::string getNomTipusArgument(){
+        return this->nomTipus;
+    }
 };
 
 #endif

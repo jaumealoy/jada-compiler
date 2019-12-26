@@ -18,9 +18,9 @@ public:
     bool getTeMain();
     void setTeMain(bool teMain);
 
-    void make(SimbolDeclList declList);
+    void make(Driver *driver, SimbolDeclList declList);
 
-    void toDotFile();
+    void toDotFile(Driver *driver);
 };
 
 #endif

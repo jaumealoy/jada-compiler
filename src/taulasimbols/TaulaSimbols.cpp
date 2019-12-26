@@ -138,7 +138,6 @@ Descripcio *TaulaSimbols::consulta(std::string id){
     int index = this->hash(id) % MAX_SIMBOLS;
     int tries = 0;
 
-    // aplicant rehasing quadràtic
     int finalIndex = this->getIndex(id);
 
     if(finalIndex == TaulaSimbols::NUL){
@@ -147,7 +146,7 @@ Descripcio *TaulaSimbols::consulta(std::string id){
     }
 
     // s'ha trobat un nom vàlid, retornar la seva descripció
-    return this->tDescripcio[this->td[finalIndex].index].declaracio;
+    return this->tDescripcio[finalIndex].declaracio;
 }
 
 
@@ -161,7 +160,7 @@ void TaulaSimbols::print(){
  * Funció per obtenir l'índex d'un identificador a la taula de dispersió
  * 
  * returns = NUL si no es troba l'element
- *           valor >= 0 en cas d'exisitir l'element
+ *           valor >= 0 en cas d'exisitir l'element, entrada a la taula de descripció
  */
 int TaulaSimbols::getIndex(std::string id){
     int index = TaulaSimbols::NUL;
@@ -174,18 +173,14 @@ int TaulaSimbols::getIndex(std::string id){
         finalIndex = (index + tries * tries) % MAX_SIMBOLS;
     }
 
-    if(this->td[finalIndex].index != TaulaSimbols::NUL){
-        index = finalIndex;
-    }
-
-    return index;
+    return this->td[finalIndex].index;
 }
 
 
 void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, DescripcioArgument *arg){
     // suposar que idSubprograma és un subprograma existent a la taula de símbols
     // ja que si no ho és haurà estat filtrar a la rutina semàntica
-    int indexSubPrograma = this->td[this->getIndex(idSubprograma)].index;
+    int indexSubPrograma = this->getIndex(idSubprograma);
 
     // els paràmetres s'insereixen al final de la llista enllaçada d'arguments
     int previ = TaulaSimbols::NUL, actual = TaulaSimbols::NUL;
@@ -231,7 +226,7 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
 void TaulaSimbols::posarDimensio(std::string nomTipus, DescripcioDimensio *dim){
     // suposarem que nomTipus ja està inserit a la taula de símbols
     // perquè posarDimensio només es cridarà una vegada s'hagi inserit l'array
-    int indexArray = this->td[this->getIndex(nomTipus)].index;
+    int indexArray = this->getIndex(nomTipus);
 
     // reservar un espai a la taula d'expansió
     int nouIndex = ++this->tAmbit[this->nivellProfunditat];
@@ -249,4 +244,70 @@ void TaulaSimbols::posarDimensio(std::string nomTipus, DescripcioDimensio *dim){
 
 void TaulaSimbols::actualitza(std::string id, Descripcio *descripcio){
 
+}
+
+TaulaSimbols::Iterator TaulaSimbols::getParametres(){
+    return Iterator(this, Descripcio::Tipus::ARGUMENT);
+}
+
+TaulaSimbols::Iterator TaulaSimbols::getDimensions(){
+    return Iterator(this, Descripcio::Tipus::DIMENSIO);
+}
+
+// Iterador
+TaulaSimbols::Iterator::Iterator(){
+    this->tipus = Descripcio::Tipus::NUL;
+    this->index = -1;
+    this->current = nullptr;
+    this->ts = nullptr;
+}
+
+TaulaSimbols::Iterator::Iterator(TaulaSimbols *ts, Descripcio::Tipus tipus){
+    this->tipus = tipus;
+    this->index = -1;
+    this->current = nullptr;
+    this->ts = ts;
+}
+
+TaulaSimbols::Iterator::~Iterator(){
+
+}
+
+void TaulaSimbols::Iterator::first(std::string id){
+    int indexDescripcio = this->ts->getIndex(id);
+
+    std::cout << "index es " << indexDescripcio << " per id " << id << std::endl;
+
+    if(indexDescripcio != TaulaSimbols::NUL){
+        // l'element existeix
+        this->index = this->ts->tDescripcio[indexDescripcio].next;
+
+        std::cout << "és una " << this->ts->tDescripcio[indexDescripcio].declaracio->getTipus() << std::endl;
+
+        if(this->index != TaulaSimbols::NUL){
+            this->current = this->ts->tExpansio[this->index].declaracio;
+
+            std::cout << "és " << this->current->getTipus() << " i s'esperava " << this->tipus << std::endl;
+
+            if(this->current != nullptr && this->current->getTipus() != this->tipus){
+                this->current = nullptr;
+            }
+        }
+    } 
+}
+
+void TaulaSimbols::Iterator::next(){
+    if(!this->valid()) return;
+
+    this->index = this->ts->tExpansio[this->index].next;
+    this->current = this->ts->tExpansio[this->index].declaracio;
+}
+
+Descripcio * TaulaSimbols::Iterator::get(){
+    return this->current;
+}
+
+
+bool TaulaSimbols::Iterator::valid(){
+    return this->current != nullptr;
 }

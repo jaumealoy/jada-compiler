@@ -60,6 +60,24 @@ public:
     class NomExistent : public std::exception {};
     class NomNoExistent : public std::exception {};
 
+    class Iterator {
+    private:
+        TaulaSimbols *ts;
+        Descripcio::Tipus tipus;
+        Descripcio *current;
+        int index;
+
+    public:
+        Iterator();
+        Iterator(TaulaSimbols *ts, Descripcio::Tipus tipus);        
+        ~Iterator();
+
+        void first(std::string id);
+        void next();
+        bool valid();
+        Descripcio *get();
+    };
+
     TaulaSimbols();
     ~TaulaSimbols();
 
@@ -69,6 +87,7 @@ public:
     void posar(char *id);
     void posar(std::string id);
     void posar(std::string id, Descripcio *declaracio);
+    Descripcio *consulta(std::string id);
     void actualitza(std::string id, Descripcio *descripcio);
     void print();
     
@@ -78,6 +97,8 @@ public:
     // Gestió de les dimensions d'un array
     void posarDimensio(std::string tipusArray, DescripcioDimensio *dim);
 
-    Descripcio * consulta(std::string id);
+    // Per recòrrer dimensions o paràmetres
+    Iterator getParametres();
+    Iterator getDimensions();
 };
 #endif

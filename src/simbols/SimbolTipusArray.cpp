@@ -2,18 +2,26 @@
 #include "../Driver.h"
 #include <iostream>
 
-SimbolTipusArray::SimbolTipusArray() : Simbol(), dimensions() {}
+SimbolTipusArray::SimbolTipusArray() : Simbol("ContArray"), dimensions() {}
 SimbolTipusArray::~SimbolTipusArray() {}
 
 /**
  * Insereix una dimensió a l'array actual
  */
-void SimbolTipusArray::make(Driver *driver, int dimensio){
+void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, int dimensio){
     if(dimensio < 0) {
         driver->error("la dimensió d'un array ha de ser positiva");
     }
 
+    this->tipusBasic = contArray.tipusBasic;
+    this->dimensions = contArray.dimensions;
     this->dimensions.push_back(dimensio);
+
+    // afegir fills
+    this->fills.push_back(std::to_string(contArray.getNodeId()));
+    driver->writeToTree("\"" + std::to_string(this->nodeId) +  "_dim\"[shape=plaintext, label=\"" + std::to_string(dimensio) + "\"]");
+    this->fills.push_back("\""+std::to_string(this->nodeId) +  "_dim\"");
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -34,6 +42,9 @@ void SimbolTipusArray::make(Driver *driver, std::string tipusBasic) {
     }
 
     this->tipusBasic = tipusBasic;
+
+    this->nomNode.swap(tipusBasic);
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -72,8 +83,6 @@ void SimbolTipusArray::make(Driver *driver) {
         dt->setOcupacio(ocupacio);
     }
 }
-
-void SimbolTipusArray::toDotFile(){}
 
 /**
  * Obté el nom que representa un array.

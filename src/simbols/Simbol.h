@@ -2,12 +2,11 @@
 #define _H_SIMBOL
 
 class Driver;
+#include <string>
+#include <vector>
 
 class Simbol {
 private:
-    // per representar l'arbre en .dot
-    int nodeId; // identificador del node de l'arbre
-    int parentId; // identificador del pare
 
 protected:
     Driver *driver;
@@ -15,10 +14,16 @@ protected:
     // indica si és una derivació a lambda
     bool _empty;
 
+    // per representar l'arbre en .dot
+    std::string nomNode;
+    std::vector<std::string> fills; // llista de fills
+    int nodeId; // identificador del node de l'arbre
+
 public:
     static int totalSimbols;
 
     Simbol();
+    Simbol(std::string);
     Simbol(Driver *&driver){ this->driver = driver; }
 
     ~Simbol();
@@ -27,7 +32,8 @@ public:
     void makeEmpty();
     bool isEmpty();
 
-    void toDotFile(){};
+    virtual void toDotFile(Driver *driver);
+    int getNodeId();
 };
 
 

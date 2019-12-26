@@ -93,13 +93,16 @@
 
 %type <SimbolPrograma> program
 %type <SimbolDeclList> declList
-%type <SimbolProcDecl> decl
+%type <SimbolDecl> decl
 %type <SimbolProcDecl> varDecl
 %type <SimbolFuncDecl> funcDecl
 %type <SimbolFuncCap> funcCap
 %type <SimbolFuncContCap> funcContCap
 %type <SimbolBloc> bloc
 %type <SimbolProcDecl> procDecl
+
+%type <Simbol> const;
+
 //%type <Node_Declaracio> args;
 //%type <Node_Declaracio> argList;
 //%type <Node_Declaracio> argListCont;
@@ -114,6 +117,8 @@
 
 %type <SimbolExpressio> exprSimple
 %type <SimbolReferencia> referencia
+%type <SimbolSubProgramCall> subProgramCall
+%type <SimbolSubProgramContCall> subProgramContCall
 %type <SimbolLiteral> literal
 
 %left OP_ADD OP_MINUS OR
@@ -124,20 +129,14 @@
 %%
 
 program : declList {
-    $$.make($1);
+    $$.make(this->driver, $1);
 };
 
 declList : declList decl {
-    if(!$1.getTeMain()){
-        // fins ara no hem trobat un main
-        $$.setTeMain($2.getEsMain());
-    }else{
-        // ja existeix un main
-        $$.setTeMain($1.getTeMain());
-    }
+    $$.make(this->driver, $2, $1);
 };
     | decl {
-        $$.setTeMain($1.getEsMain());
+        $$.make(this->driver, $1);
 };
 
 decl : varDecl {
@@ -147,33 +146,18 @@ decl : varDecl {
     // TODO
 };
     | procDecl {
-    if($1.getEsMain()){
-        $$.setEsMain(true);
-    }
+
 };
 
-varDecl : const Tipus varDeclList varInit {
-    // TODO
-};
-
-varDeclList : varDeclList COMA ID {
-    // TODO
-};
-    | ID {
-    // TODO
-};
+varDecl : const Tipus ID varInit {};
+    | varDecl, ID varInit {};
 
 varInit : EQ exprSimple
     |
     ;
-const : CONST
-    {
-        // TODO
-    };
-    |
-    {
-        // TODO
-    };
+
+const : CONST { };
+    | { $$.makeEmpty(); };
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
@@ -335,26 +319,20 @@ relExpr : exprSimple OP_NEQ exprSimple {}
 
 
 referencia : ID { $$.make(this->driver, $1); }
-    | funcCall {}
+    | subProgramCall {}
     | referenciaArray {};
 
 referenciaArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {};
-referenciaContArray : referenciaContArray COMA LEFTBRACKET exprSimple RIGHTBRACKET {}
+referenciaContArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {}
     | ID {};
 
+subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
+    | subProgramContCall RIGHTPARAN { $$.make(this->driver, $1); };
+
+subProgramContCall : ID LEFTPARAN exprSimple { $$.make(this->driver, $1, $3); }
+    | subProgramContCall COMA exprSimple { $$.make(this->driver, $1, $3); };
+
 mutable : ID {};
-funcCall : ID LEFTPARAN  RIGHTPARAN
-    {
-
-    };
-
-/*largs : exprSimple contlargs
-    | 
-contlargs : COMA exprSimple contlargs
-    {
-
-    }
-    | ;*/ 
 
 literal : STR_LITERAL { $$.make(this->driver, $1); }
     | INT_LITERAL { $$.make(this->driver, $1); }
@@ -370,8 +348,7 @@ Tipus : ID {
 
 // Aquesta serà la darrera dimensió
 array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
-    $$ = $1;
-    $$.make(this->driver, $3);
+    $$.make(this->driver, $1, $3);
     $$.make(this->driver);
 };
 
@@ -379,8 +356,7 @@ contArray : ID {
     $$.make(this->driver, $1);
 }
     | contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
-    $$ = $1;
-    $$.make(this->driver, $3);
+    $$.make(this->driver, $1, $3);
 };
 
 expression : mutable EQ exprSimple {}

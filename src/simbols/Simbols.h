@@ -18,5 +18,7 @@
 
 #include "SimbolExpressio.h"
 #include "SimbolReferencia.h"
+#include "SimbolSubProgramCall.h"
+#include "SimbolSubProgramContCall.h"
 #include "SimbolLiteral.h"
 #endif
