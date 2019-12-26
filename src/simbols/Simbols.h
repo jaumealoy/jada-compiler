@@ -6,10 +6,13 @@
 #include "SimbolFuncCap.h"
 #include "SimbolFuncDecl.h"
 #include "SimbolFuncContCap.h"
-#include "SimbolProcDecl.h"
 #include "SimbolDeclList.h"
 #include "SimbolDecl.h"
 #include "SimbolTipusArray.h"
+
+#include "SimbolProcCap.h"
+#include "SimbolProcDecl.h"
+#include "SimbolProcContCap.h"
 
 #include "SimbolStatementList.h"
 #include "SimbolStatement.h"
@@ -17,6 +20,8 @@
 #include "SimbolIfStatement.h"
 
 #include "SimbolExpressio.h"
+#include "SimbolRelExpr.h"
+
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"

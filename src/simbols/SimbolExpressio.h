@@ -14,7 +14,7 @@ public:
         RESULTAT
     };
 
-private:
+protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
     SimbolExpressio::Mode mode;
@@ -26,9 +26,13 @@ public:
 
     void make(Driver *driver, SimbolLiteral literal);
 
+    bool isNull();
+    void makeNull();
+
     std::string getTipus();
     TipusSubjacentBasic getTSB();
     SimbolExpressio::Mode getMode();
+
 };
 
 #endif
