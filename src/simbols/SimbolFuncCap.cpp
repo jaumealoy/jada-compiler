@@ -5,7 +5,6 @@ SimbolFuncCap::SimbolFuncCap() : Simbol() {}
 SimbolFuncCap::~SimbolFuncCap() {}
 
 // TODO: impedir que es puguin retornar arrays
-// TODO: entrarBloc i definir variables com a variables locals
 
 /**
  * Insereix una funció a la taula de símbols si no existeix
@@ -34,6 +33,9 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, std::string tipus){
     // inserir la funció
     driver->ts.posar(nom, d);
 
+    // i entrar bloc
+    driver->ts.entrarBloc();
+
     this->nom = nom;
 }
 
@@ -56,6 +58,20 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipu
     }
 
     this->nom = cap.getNomFuncio();
+
+    // entrar bloc i definir variables locals
+    driver->ts.entrarBloc();
+
+    TaulaSimbols::Iterator it = driver->ts.getParametres();
+    it.first(this->nom);
+
+    while(it.valid()){
+        DescripcioArgument *da = (DescripcioArgument *) it.get();
+        DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
+        std::cout << "Definint " << it.getId() << " com a variable local de " << this->nom << std::endl;
+        driver->ts.posar(it.getId(), dv);
+        it.next();
+    }
 }
 
 std::string SimbolFuncCap::getNomFuncio(){

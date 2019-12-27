@@ -1,13 +1,14 @@
-proc putaswix(int n) begin
-switch ("a") begin
-case "a" do 
-int a = 2 + 3;
-end
-case "B" do 
-char c = 'a';
-end
-default do
-string b = " ";
-end
-end;
+func putaswix(int n) : int begin
+	switch (n) begin
+		case 3 begin
+			int a = 2 + 3;
+		end
+		default begin
+			return 6;
+		end
+		default begin
+			return 2;
+		end
+	end;
+	return 3;
 end putaswix;

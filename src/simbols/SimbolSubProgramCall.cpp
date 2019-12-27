@@ -27,8 +27,7 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 
     // d != null
     // Comprovar que és una descripció d'una funció o procediment
-    // TODO: afegir decripcio de procediment
-    if(d->getTipus() != Descripcio::Tipus::FUNCIO && !false){
+    if(d->getTipus() != Descripcio::Tipus::FUNCIO && d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
         this->makeNull();
         driver->error("no és una funció o procediment");
         return;
@@ -43,8 +42,8 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     params.first(id);
 
     if(params.valid()){
-        // existeix com a mínim un paràmetre, error
-        driver->error("no s'esperen paràmetres");
+        // existeix com a mínim un paràmetre però no s'ha proporcionat
+        driver->error("s'esperen paràmetres");
         return;
     }
 

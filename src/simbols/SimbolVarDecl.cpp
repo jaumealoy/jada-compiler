@@ -10,7 +10,7 @@ SimbolVarDecl::SimbolVarDecl() : Simbol() {
 
 SimbolVarDecl::~SimbolVarDecl(){}
 
-void SimbolVarDecl::make(Driver *driver, Simbol constant, std::string tipus, std::string id, SimbolVarInit init){
+void SimbolVarDecl::make(Driver *driver, std::string tipus, std::string id, SimbolVarInit init, bool constant){
     try{
         Descripcio* d = driver->ts.consulta(tipus);
 
@@ -23,7 +23,7 @@ void SimbolVarDecl::make(Driver *driver, Simbol constant, std::string tipus, std
         driver->error("Tipus no reconegut! (" + tipus + ")" , true);
     }
     this->tipus = tipus;
-    if (!constant.isEmpty()){
+    if (constant){
         this->esConst = true;
         if (init.isEmpty()){
             driver->error("Constant "+ id + " sense valor", true);

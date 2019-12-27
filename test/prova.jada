@@ -3,13 +3,13 @@ proc main() begin
 end main;
 
 func suma(int a, int b) : int begin
-    return a;
+    return 7;
 end suma;
 
 func factorial(int n) : int begin
-    if n == 1 do
+    if 7 == 1 do
         return 1;
     else do
-        return factorial(n - 1);
+        return factorial(7);
     end;
 end factorial;

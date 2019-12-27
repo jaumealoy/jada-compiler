@@ -12,21 +12,18 @@ private:
     std::string nomTipus;
     Descripcio::Tipus tipus;
 
+    int intValue;
+    bool boolValue;
+
 public:
-    DescripcioConstant(std::string tipus) : Descripcio(Descripcio::Tipus::CONSTANT) {
-        this->nomTipus = tipus;
-        this->tipus = Descripcio::Tipus::CONSTANT;
-    }
+    DescripcioConstant(std::string tipus);
+    ~DescripcioConstant();
 
-    ~DescripcioConstant(){}
+    void setNomTipus(std::string tipus);
+    std::string getNomTipus();
 
-    void setNomTipus(std::string tipus){
-        this->nomTipus = tipus;
-    }
-
-    std::string getNomTipus(){
-        return this->nomTipus;
-    }
+    int getIntValue();
+    bool getBoolValue();
 };
 
 #endif

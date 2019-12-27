@@ -16,7 +16,7 @@ StringBuffer strBuilder;
 
 char foundCh;
 bool finalpossible;
-int charLen;
+int charLen = 0;
 
 %}
 
@@ -71,8 +71,8 @@ r_for for
 r_const const
 
 /* Altres */
-new_line ([\\n\\r]|(\\n\\r))*
-blank [ \\t]+
+new_line ([\n\r]|(\n\r))+
+blank [ \t\r]+
 
 /* Comentaris */
 comment "//"([^\n])*
@@ -83,7 +83,18 @@ begin_comment "/*"
 %x CHAR_LITERAL_MODE
 %x COMENTARI	
 
+
+%{
+  // Code run each time a pattern is matched.
+  # define YY_USER_ACTION  location->columns(yyleng);
+
+%}
+
 %%
+%{
+	location->step();
+%}
+
 {op_gte}		{ return token::OP_GTE; }
 {op_gt}			{ return token::OP_GT; }
 {op_lte}		{ return token::OP_LTE; }
@@ -116,7 +127,6 @@ begin_comment "/*"
 
 {comment} 		{ }
 {begin_comment} {
-	cout << "Començam a llegir un comentari. mode COMENTARI" << endl;
 	BEGIN(COMENTARI);
  }
 
@@ -137,8 +147,6 @@ begin_comment "/*"
 {r_const}		{ return token::CONST; }
 
 {integer}		{
-	// TODO: fer que torni el valor que toca amb
-	// ajuda de this->YYText()
 	lval->emplace<int>() = atoi(this->YYText());
 	return token::INT_LITERAL;
 }
@@ -149,13 +157,14 @@ begin_comment "/*"
 
 {new_line} { 
 	// TODO: sumar linia, reiniciar columnes
+	location->lines(yyleng); 
+	location->step();
 }
 {blank} { 
-	// TODO: sumar columnes 
+	location->step();
 }
 
 <<EOF>> {
-	cout << "End of file" << endl;
 	return token::ENDFILE;
 }
 
@@ -164,11 +173,8 @@ begin_comment "/*"
 <STRING_LITERAL>\\t { strBuilder.append('\t'); }
 <STRING_LITERAL>\\\" { strBuilder.append('"'); }
 <STRING_LITERAL>\" {
-	cout << "End string literal" << endl;
-	cout << "Trobat $" << strBuilder.getString() <<"$"<< endl;
 	BEGIN(INITIAL);
 
-	cout << lval << endl;
 	lval->emplace<std::string>(strBuilder.getString());
 	return token::STR_LITERAL;
 }
@@ -177,13 +183,12 @@ begin_comment "/*"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL_MODE>[^\\'\\n\\t] { 
+<CHAR_LITERAL_MODE>[^\\'\n\t] { 
 	charLen++ ; 
 	foundCh = this->YYText()[0]; 
-	cout << "Encontrado caracter (" <<  foundCh << ")" << endl; 
 }
-<CHAR_LITERAL_MODE>\\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
-<CHAR_LITERAL_MODE>\\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
+<CHAR_LITERAL_MODE>\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
+<CHAR_LITERAL_MODE>\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
 <CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
 <CHAR_LITERAL_MODE>' {
 	cout << "Encontrado final de caracter. Comilla final." << endl;
@@ -194,7 +199,8 @@ begin_comment "/*"
 		this->LexerError("Error! char amb més d'una lletra");
 	}
 
-	cout << lval << endl;
+	charLen = 0;
+
 	lval->emplace<char>(foundCh);
 	return token::CHAR_LITERAL;
 }
@@ -215,8 +221,9 @@ begin_comment "/*"
 
 %%
 
+
 // Codi que inclourà l'arxiu, en concret, el body de les funcions
-Lexic::Lexic(char * filename)
+Lexic::Lexic(char * filename, fstream &tokensFile)
 	: yyFlexLexer()
 {
 	// obrir l'arxiu
@@ -236,7 +243,8 @@ Lexic::~Lexic(){
 }
 
 int Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
+	l->step();
 	int tk = this->yylex(yylval, l);
-	cout << "Token " << tk << " (" << this->YYText() << ")" << endl;
+	this->tokensFile << "Token " << tk << " (" << this->YYText() << ")" << endl;
 	return tk;
 }

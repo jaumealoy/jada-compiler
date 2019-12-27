@@ -14,8 +14,9 @@ private:
     Lexic *scanner;
     Syntax *parser;
 
-    // fitxers per guarddar l'arbre sintàctic
+    // fitxers per guardar outputs del compilador
     std::fstream treeFile;
+    std::fstream tokensFile;
 
 public:
     Driver(char *filename);
@@ -30,6 +31,6 @@ public:
 
     // Per guardar l'arbre sintàctic
     void writeToTree(std::string data);
-    void closeTreeFile();
+    void closeFiles();
 };
 #endif

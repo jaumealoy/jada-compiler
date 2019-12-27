@@ -12,7 +12,7 @@ public:
     SimbolVarDecl();
     ~SimbolVarDecl();
 
-    void make(Driver *driver, Simbol constant, std::string tipus, std::string id, SimbolVarInit init);
+    void make(Driver *driver, std::string tipus, std::string id, SimbolVarInit init, bool constant);
     void make(Driver *driver, SimbolVarDecl varDecl, std::string id, SimbolVarInit init);
 };
 

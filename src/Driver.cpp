@@ -1,7 +1,9 @@
 #include "Driver.h"
 
-Driver::Driver(char *filename) : treeFile("tree.dot", std::fstream::out) {
-    this->scanner = new Lexic(filename);
+Driver::Driver(char *filename) : 
+        treeFile("tree.dot", std::fstream::out),
+        tokensFile("tokens.txt", std::fstream::out) {
+    this->scanner = new Lexic(filename, tokensFile);
     this->parser = new Syntax(this->scanner, this);
 
     // inicialitzar la taula de símbols
@@ -18,13 +20,25 @@ Driver::Driver(char *filename) : treeFile("tree.dot", std::fstream::out) {
     DescripcioTipusBasic *integer = new DescripcioTipusBasic(TipusSubjacentBasic::INT, (long) 0, ~((long)0), 8);
     this->ts.posar("int", integer);
 
-    DescripcioTipusBasic *string = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 8);
+    DescripcioTipusArray *string = new DescripcioTipusArray("char");
     this->ts.posar("string", string);
 
     // funcions pròpies
     DescripcioFuncio *readChar = new DescripcioFuncio();
     readChar->setTipusRetorn("char");
     this->ts.posar("readChar", readChar);
+
+    DescripcioProc *printChar = new DescripcioProc();
+    this->ts.posar("printChar", printChar);
+    this->ts.posarParam("printChar", "caracter", new DescripcioArgument("char", DescripcioArgument::IN));
+
+    DescripcioProc *print = new DescripcioProc();
+    this->ts.posar("print", print);
+    this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
+
+    DescripcioFuncio *readInt = new DescripcioFuncio();
+    readInt->setTipusRetorn("int");
+    this->ts.posar("readInt", readInt);
 
     // inicialitzar fitxer de l'arbre
     this->writeToTree("digraph arbreSintactic {");
@@ -53,7 +67,11 @@ void Driver::writeToTree(std::string data){
     this->treeFile << data << std::endl;
 }
 
-void Driver::closeTreeFile(){
+void Driver::closeFiles(){
+    // tancar l'arbre sintàctic
     this->writeToTree("}");
     this->treeFile.close();
+
+    // tancar la seqüència de tokens
+    this->tokensFile.close();
 }

@@ -1,0 +1,23 @@
+proc main() begin
+    int[10][15] a;
+
+    int b = 5;
+
+    if b == 5 do
+        int c = 3;
+    end;
+
+    int d = 3;
+
+    if d == 3 do
+        int d2 = 4;
+
+        if d > 4 do
+            char d = 'a' char c;
+        end;
+    end;
+
+    int c = 2;
+    n++;
+    n--;
+end main;

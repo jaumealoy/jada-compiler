@@ -99,6 +99,7 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio){
         this->tDescripcio[indexDescripcio].identificador = id;
         this->tDescripcio[indexDescripcio].declaracio = declaracio;
         this->tDescripcio[indexDescripcio].next = TaulaSimbols::NUL;
+        this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
     }
 
 }
@@ -130,14 +131,12 @@ void TaulaSimbols::surtirBloc(){
 
         this->tDescripcio[ this->tExpansio[i].original ] = this->tExpansio[i];
     }
+
+    this->nivellProfunditat--;
 }
 
 
 Descripcio *TaulaSimbols::consulta(std::string id){
-    // hem de fer una cerca sobre la taula de dispersió
-    int index = this->hash(id) % MAX_SIMBOLS;
-    int tries = 0;
-
     int finalIndex = this->getIndex(id);
 
     if(finalIndex == TaulaSimbols::NUL){
@@ -307,6 +306,9 @@ Descripcio * TaulaSimbols::Iterator::get(){
     return this->current;
 }
 
+std::string TaulaSimbols::Iterator::getId(){
+    return this->ts->tExpansio[this->index].identificador;
+}
 
 bool TaulaSimbols::Iterator::valid(){
     return this->current != nullptr;

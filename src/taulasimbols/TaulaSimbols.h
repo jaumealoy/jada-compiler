@@ -80,6 +80,7 @@ public:
         void next();
         bool valid();
         Descripcio *get();
+        std::string getId();
     };
 
     TaulaSimbols();

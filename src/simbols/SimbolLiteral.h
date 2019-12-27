@@ -10,6 +10,9 @@ protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
 
+    int intValue;
+    char charValue;
+
 public:
     SimbolLiteral();
     ~SimbolLiteral();
@@ -22,6 +25,10 @@ public:
     TipusSubjacentBasic getTSB();
     void setTSB(TipusSubjacentBasic newtsb);
     void setTipus(std::string newtipus);
+
+    // obtenció de valors
+    int getIntValue();
+    char getCharValue();
 };
 
 #endif

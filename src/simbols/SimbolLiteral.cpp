@@ -12,7 +12,8 @@ SimbolLiteral::~SimbolLiteral() {}
  */
 void SimbolLiteral::make(Driver *driver, int valor){
     this->tsb = TipusSubjacentBasic::INT;
-    this->tipus.clear();    
+    this->tipus.clear();
+    this->intValue = valor;
 }
 
 /**
@@ -45,4 +46,12 @@ TipusSubjacentBasic SimbolLiteral::getTSB(){
 
 void SimbolLiteral::setTSB(TipusSubjacentBasic newtsb) {
     this->tsb = newtsb;
+}
+
+int SimbolLiteral::getIntValue(){
+    return this->intValue;
+}
+
+char SimbolLiteral::getCharValue(){
+    return this->charValue;
 }

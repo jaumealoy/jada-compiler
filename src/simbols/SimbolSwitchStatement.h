@@ -4,7 +4,7 @@
 #include "Simbol.h"
 #include "SimbolStatement.h"
 #include "SimbolExpressio.h"
-#include "SimbolCaseBloc.h"
+#include "SimbolContSwitch.h"
 
 class SimbolSwitchStatement : public SimbolStatement {
 private:
@@ -12,7 +12,7 @@ public:
     SimbolSwitchStatement();
     ~SimbolSwitchStatement();
 
-    void make(Driver *driver, SimbolExpressio exp, SimbolCaseBloc bloc);
+    void make(Driver *driver, SimbolContSwitch cont);
 };
 
 #endif

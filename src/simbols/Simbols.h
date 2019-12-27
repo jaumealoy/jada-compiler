@@ -17,13 +17,18 @@
 #include "SimbolStatementList.h"
 #include "SimbolStatement.h"
 #include "SimbolWhileStatement.h"
+
 #include "SimbolIfStatement.h"
+#include "SimbolElseIfStatement.h"
+#include "SimbolElseStatement.h"
 
 #include "SimbolExpressio.h"
 #include "SimbolRelExpr.h"
+#include "SimbolArithmeticExpression.h"
+#include "SimbolAssignacio.h"
 
 #include "SimbolSwitchStatement.h"
-#include "SimbolCaseBloc.h"
+#include "SimbolContSwitch.h"
 
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"

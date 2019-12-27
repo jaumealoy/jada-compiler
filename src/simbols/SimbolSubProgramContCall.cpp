@@ -23,8 +23,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
     }
 
     // d != null
-    // TODO: també pot ser un procediment
-    if(d->getTipus() != Descripcio::Tipus::FUNCIO && !false){
+    if(d->getTipus() != Descripcio::Tipus::FUNCIO && d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
         this->makeNull();
         driver->error("no és un subprograma");
         return;

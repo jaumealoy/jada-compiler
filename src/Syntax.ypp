@@ -102,12 +102,6 @@
 %type <SimbolProcDecl> procDecl
 %type <SimbolProcCap> procCap
 %type <SimbolProcContCap> procContCap
-
-%type <Simbol> const;
-
-//%type <Node_Declaracio> args;
-//%type <Node_Declaracio> argList;
-//%type <Node_Declaracio> argListCont;
 %type <std::string> Tipus;
 %type <SimbolTipusArray> array;
 %type <SimbolTipusArray> contArray;
@@ -116,20 +110,26 @@
 %type <SimbolStatement> statement;
 %type <SimbolWhileStatement> whileIteration
 %type <SimbolSwitchStatement> switchStatement
-%type <SimbolCaseBloc> caseBloc
+%type <SimbolContSwitch> contSwitch
 
 %type <SimbolIfStatement> ifStatement
 
-%type <SimbolRelExpr> relExpr
+%type <SimbolElseIfStatement> elseIfStatement
+%type <SimbolElseStatement> elseStatement
+
 %type <SimbolExpressio> exprSimple
 %type <SimbolReferencia> referencia
+%type <SimbolRelExpr> relExpr
+%type <SimbolArithmeticExpression> aritExpr
+%type <SimbolAssignacio> expression
+
 %type <SimbolSubProgramCall> subProgramCall
 %type <SimbolSubProgramContCall> subProgramContCall
 %type <SimbolLiteral> literal
 %type <SimbolVarInit> varInit 
 
-%left OP_ADD OP_MINUS OR
 %left OP_TIMES OP_DIV AND NOT
+%left OP_ADD OP_MINUS OR
 %left OP_EQ OP_GT OP_GTE OP_LT OP_LTE OP_NEQ
 
 %start program
@@ -137,6 +137,7 @@
 
 program : declList {
     $$.make(this->driver, $1);
+    this->driver->ts.print();
 };
 
 declList : declList decl {
@@ -146,28 +147,22 @@ declList : declList decl {
         $$.make(this->driver, $1);
 };
 
-decl : varDecl {
-    // TODO
-};
-    | funcDecl {
-    // TODO
-};
+decl : varDecl SEMICOLON { };
+    | varDecl error decl { };
+    | funcDecl { };
     | procDecl {
 
 };
 
-varDecl : const Tipus ID varInit {
-    $$.make(this->driver, $1, $2, $3, $4);
-};
-    | varDecl COMA ID varInit {
-    $$.make(this->driver, $1, $3, $4);
-};
+varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
+    | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
+    | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
 varInit : EQ exprSimple{}
     |{};
 
-const : CONST { };
-    | { $$.makeEmpty(); };
+/*const : CONST { };
+    | { $$.makeEmpty(); };*/
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
@@ -195,61 +190,21 @@ procCap : procContCap RIGHTPARAN { $$.make(this->driver, $1); }
 procContCap : ID LEFTPARAN Tipus ID { $$.make(this->driver, $1, $3, $4); }
     | procContCap COMA Tipus ID { $$.make(this->driver, $1, $3, $4); };
 
-
-
-/*args : argList
-    {
-        std::cout << "Resolt arguments" << std::endl;
-    };
-    |
-    {
-        // TODO
-        // Producció buida (no hi ha arguments)
-    };
-
-argList : type ID argListCont
-    {
-        try{
-            Descripcio d = this->driver->ts.consulta($1);
-
-            if(d.getTipus() != Tipus::TIPUS){
-                std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
-            }
-            
-            std::cout << "Resolt argument " << $1 << " - " << $2 << std::endl;
-        }catch(TaulaSimbols::NomNoExistent ex){
-            std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
-        }
-    };
-argListCont : COMA argList 
-    {
-
-    };
-    |
-    {
-
-    };
-*/
-/*bloc : statement SEMICOLON bloc
-    {
-
-    };
-    |
-    {
-
-    };*/
-
 bloc : A statementList { 
     $$.make(this->driver, $2);
-    // TODO: surt bloc
+    this->driver->ts.surtirBloc();
 };
 
 A : { this->driver->ts.entrarBloc(); };
-statementList :  statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
+
+statementList : statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
+    | statement error statementList { $$.make(this->driver, $1, $3); }
     | { $$.makeEmpty(); };
 
 statement : 
     varDecl {}
+    | expression {}
+    | subProgramCall {}
     | forIteration {}
     | whileIteration { $$.make(this->driver, $1); }
     | ifStatement { $$.make(this->driver, $1); }
@@ -261,17 +216,11 @@ forIteration : FOR LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpre
 
 };
 
-forInit : expression 
-    {
+forInit : varDecl { }
+    | {};
 
-    };
-    |
-
-forPostExpression : expression
-    {
-
-    };
-    |
+forPostExpression : expression {}
+    | {};
 
 whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND {
     $$.make(this->driver, $3, $6);
@@ -279,60 +228,49 @@ whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND {
 
 
 ifStatement : IF exprSimple DO bloc elseIfStatement BEND {
-    $$.make(this->driver, $2, $4);
+    $$.make(this->driver, $2, $4, $5);
 };
 
-elseIfStatement : ELSE IF exprSimple DO bloc elseIfStatement {}
-    | elseStatement {} ;
+elseIfStatement :  ELSE IF exprSimple DO bloc elseIfStatement { $$.make(this->driver, $3, $5, $6); }
+    | elseStatement { $$.make(this->driver, $1); } ;
 
-elseStatement : ELSE DO bloc {}
-    | {};
+elseStatement : ELSE DO bloc { $$.make(this->driver, $3); }
+    | { $$.makeEmpty(); };
 
-switchStatement : SWITCH LEFTPARAN exprSimple RIGHTPARAN BBEGIN caseBloc BEND
-    {
-        $$.make(this->driver, $3, $6);
-    };
+switchStatement : SWITCH LEFTPARAN contSwitch BEND {};
 
-caseBloc : CASE literal DO bloc BEND caseBloc
-    {
-        $$.make(this->driver, $2, $4, $6);
-    };
-    | DEFAULT DO bloc BEND
-    {
-        $$.make(this->driver, $3);
-    };
+contSwitch : exprSimple RIGHTPARAN BBEGIN DEFAULT BBEGIN bloc BEND { $$.make(this->driver, $1, $6); }
+    | exprSimple RIGHTPARAN BBEGIN CASE exprSimple BBEGIN bloc BEND { $$.make(this->driver, $1, $5, $7); }
+    | contSwitch DEFAULT BBEGIN bloc BEND { $$.make(this->driver, $1, $4); }
+    | contSwitch CASE exprSimple BBEGIN bloc BEND { $$.make(this->driver, $1, $3, $5); };
 
 
-exprSimple : NOT exprSimple {}
-    | LEFTPARAN exprSimple RIGHTPARAN {}
-    | exprSimple AND exprSimple {}
-    | exprSimple OR exprSimple {}
-    | aritExpr {}
-    | referencia {}
+exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
+    | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
+    | exprSimple AND exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | referencia { $$.make(this->driver, $1); }
     | literal { $$.make(this->driver, $1); };
+    | relExpr { $$ = $1; }
+    | aritExpr { $$ = $1; };
 
-aritExpr : OP_MINUS exprSimple {}
-    | exprSimple OP_ADD exprSimple {}
-    | exprSimple OP_MINUS exprSimple {}
-    | exprSimple OP_TIMES exprSimple {}
-    | exprSimple OP_DIV exprSimple {}
-    | relExpr {};
+aritExpr : OP_MINUS exprSimple { $$.make(this->driver, $2); }
+    | exprSimple OP_ADD exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | exprSimple OP_MINUS exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | exprSimple OP_TIMES exprSimple { $$.make(this->driver, $1, $3, 2); }
+    | exprSimple OP_DIV exprSimple { $$.make(this->driver, $1, $3, 3); };
 
-relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3); }
-    | exprSimple OP_EQ exprSimple { $$.make(this->driver, $1, $3); }
-    | exprSimple OP_GT exprSimple { $$.make(this->driver, $1, $3); }
-    | exprSimple OP_GTE exprSimple { $$.make(this->driver, $1, $3); }
-    | exprSimple OP_LT exprSimple { $$.make(this->driver, $1, $3); }
-    | exprSimple OP_LTE exprSimple { $$.make(this->driver, $1, $3); };
+relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | exprSimple OP_EQ exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | exprSimple OP_GT exprSimple { $$.make(this->driver, $1, $3, 2); }
+    | exprSimple OP_GTE exprSimple { $$.make(this->driver, $1, $3, 3); }
+    | exprSimple OP_LT exprSimple { $$.make(this->driver, $1, $3, 4); }
+    | exprSimple OP_LTE exprSimple { $$.make(this->driver, $1, $3, 5); };
 
 
 referencia : ID { $$.make(this->driver, $1); }
-    | subProgramCall {}
-    | referenciaArray {};
-
-referenciaArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {};
-referenciaContArray : referenciaContArray LEFTBRACKET exprSimple RIGHTBRACKET {}
-    | ID {};
+    | subProgramCall { $$.make(this->driver, $1); }
+    | array { $$.make(this->driver, $1); };
 
 subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
     | subProgramContCall RIGHTPARAN { $$.make(this->driver, $1); };
@@ -340,35 +278,38 @@ subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
 subProgramContCall : ID LEFTPARAN exprSimple { $$.make(this->driver, $1, $3); }
     | subProgramContCall COMA exprSimple { $$.make(this->driver, $1, $3); };
 
-mutable : ID {};
-
 literal : STR_LITERAL { $$.make(this->driver, $1); }
     | INT_LITERAL { $$.make(this->driver, $1); }
     | CHAR_LITERAL { $$.make(this->driver, $1); };
 
-Tipus : ID {
-    $$ = $1;
-}
+Tipus : ID { $$ = $1; }
     | array {
+    if($1.isReferencia()){
+        this->driver->error("no és un tipus vàlid", true);
+        return -1;
+    }
     $$ = $1.toString();
     std::cout << "Nom array: " << $1.toString() << std::endl;
 };
 
 // Aquesta serà la darrera dimensió
-array : contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
-    $$.make(this->driver, $1, $3);
+array : contArray {
+    $$ = $1;
     $$.make(this->driver);
 };
 
-contArray : ID {
-    $$.make(this->driver, $1);
-}
-    | contArray LEFTBRACKET INT_LITERAL RIGHTBRACKET {
+contArray : ID LEFTBRACKET exprSimple RIGHTBRACKET { $$.make(this->driver, $1, $3);}
+    | contArray LEFTBRACKET exprSimple RIGHTBRACKET {
     $$.make(this->driver, $1, $3);
 };
 
-expression : mutable EQ exprSimple {}
-    | mutable OP_ADD EQ exprSimple {};
+expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | referencia OP_ADD EQ exprSimple { $$.make(this->driver, $1, $4, 1); }
+    | referencia OP_DIV EQ exprSimple { $$.make(this->driver, $1, $4, 2); }
+    | referencia OP_TIMES EQ exprSimple { $$.make(this->driver, $1, $4, 3); }
+    | referencia OP_MINUS EQ exprSimple { $$.make(this->driver, $1, $4, 4); }
+    | referencia OP_MINUS OP_MINUS { $$.make(this->driver, $1, 0); }
+    | referencia OP_ADD OP_ADD { $$.make(this->driver, $1, 1); };
 %%
 
 // Codi de les funcions pròpies del sintàctic
