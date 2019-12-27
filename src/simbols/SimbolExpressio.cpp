@@ -1,6 +1,12 @@
 #include "SimbolExpressio.h"
 #include "../Driver.h"
 
+/**
+ * L'operació de dues expressions constants dona lloc a una expressió constant
+ * Si alguna d'elles és una expressió variable o resultat, serà una 
+ * expressió variable o resultat.
+ */
+
 SimbolExpressio::SimbolExpressio() : Simbol() {
 
 }
@@ -36,6 +42,11 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
         return;
     }
 
+    // Copiar informació del mode i tipus
+    this->mode = exp.getMode();
+    this->tipus = exp.getTipus();
+    this->tsb = exp.getTSB();
+
     switch (tipus) {
         case 0: // exprSimple -> not exprSimple
             // comprovar que exprSimple és un boolean
@@ -44,11 +55,23 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
                 this->makeNull();
             }
 
+            if(exp.getMode() == SimbolExpressio::Mode::CONST){
+                // processar el valor
+                this->boolValue = !exp.boolValue;
+            }
+
             break;
         
         case 1: // exprSimple -> ( exprSimple )
             // el valor pot ser un enter o boolean
-            if(exp.getTSB() != TipusSubjacentBasic::INT && exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
+
+            // copiarem el seus valors independentment de si són constants o no
+            // només s'utilitzaran si són constants
+            if(exp.getTSB() == TipusSubjacentBasic::INT){
+                this->intValue = exp.intValue;
+            }else if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
+                this->boolValue = exp.boolValue;
+            }else{
                 driver->error("s'esperava int o boolean");
                 this->makeNull();
             }
@@ -71,14 +94,31 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
     }
 
     switch (tipus) {
-        case 0:
-        case 1:
+        case 0: // AND
+        case 1: // OR
             // els tipus subjacents bàsics d'a i b han de ser boolean
             if(a.getTSB() != TipusSubjacentBasic::BOOLEAN || b.getTSB() != TipusSubjacentBasic::BOOLEAN){
                 driver->error("s'esperava un boolean");
                 this->makeNull();
                 return;
             }
+
+            if(a.getMode() == b.getMode() && a.getMode() == SimbolExpressio::Mode::CONST){
+                this->mode = SimbolExpressio::Mode::CONST;
+
+                // a i b són constants, podem calcular el valor resultat
+                // i el resultat serà una constant
+                if(tipus == 0){
+                    this->boolValue = a.boolValue && b.boolValue;
+                }else if(tipus == 1){
+                    this->boolValue = a.boolValue || b.boolValue;
+                }
+            }else{
+                this->mode = SimbolExpressio::Mode::RESULTAT;
+            }
+
+            this->tipus.clear();
+            this->tsb = TipusSubjacentBasic::BOOLEAN;
 
             break;
         
@@ -102,9 +142,24 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
     this->tipus = ref.getTipus();
 
     switch (ref.getMode()) {
-        case SimbolReferencia::ModeMVP::CONST:
+        case SimbolReferencia::ModeMVP::CONST: {
             this->mode = SimbolExpressio::Mode::CONST;
+
+            // consultar el seu valor a la taula de símbols
+            DescripcioConstant *dc = (DescripcioConstant *) driver->ts.consulta(ref.getId());
+            
+            switch (ref.getTSB()){
+                case INT:
+                    this->intValue = dc->getIntValue();
+                    break;
+
+                case BOOLEAN:
+                    this->boolValue = dc->getBoolValue();
+                    break;
+            }
+
             break;
+        }
 
         case SimbolReferencia::ModeMVP::VAR:
             this->mode = SimbolExpressio::Mode::VAR;
@@ -145,4 +200,8 @@ void SimbolExpressio::makeNull() {
 
 int SimbolExpressio::getIntValue(){
     return this->intValue;
+}
+
+bool SimbolExpressio::getBoolValue(){
+    return this->boolValue;
 }

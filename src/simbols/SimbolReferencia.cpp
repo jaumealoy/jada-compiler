@@ -1,4 +1,6 @@
 #include "SimbolReferencia.h"
+#include "SimbolTipusArray.h"
+#include "SimbolSubProgramCall.h"
 #include "../Driver.h"
 
 SimbolReferencia::SimbolReferencia(){}
@@ -44,6 +46,38 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
 
     this->tipus = tipus;
     this->tsb = dt->getTSB();
+}
+
+/**
+ * referencia -> array
+ */
+void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
+    if(!array.isReferencia() || array.isNull()){
+        this->makeNull();
+        driver->error("no és un accés a array vàlid");
+        return;
+    }
+
+    // és una refereǹcia a un array vàlida
+    this->tsb = array.getTSB();
+    this->tipus = array.getTipus();
+    this->id = array.getId();
+    this->mode = array.getMode();
+}
+
+
+/**
+ * referencia -> subProgramCall
+ */
+void SimbolReferencia::make(Driver *driver, SimbolSubProgramCall call){
+    if(call.isNull()){
+        this->makeNull();
+        return;
+    }
+
+    this->tsb = call.getTSB();
+    this->tipus = call.getTipus();
+    this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
 }
 
 void SimbolReferencia::makeNull(){

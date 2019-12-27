@@ -137,10 +137,6 @@ void TaulaSimbols::surtirBloc(){
 
 
 Descripcio *TaulaSimbols::consulta(std::string id){
-    // hem de fer una cerca sobre la taula de dispersió
-    int index = this->hash(id) % MAX_SIMBOLS;
-    int tries = 0;
-
     int finalIndex = this->getIndex(id);
 
     if(finalIndex == TaulaSimbols::NUL){

@@ -21,6 +21,7 @@ protected:
     SimbolExpressio::Mode mode;
 
     int intValue;
+    bool boolValue;
 
 public:
     SimbolExpressio();
@@ -36,6 +37,7 @@ public:
     void makeNull();
 
     int getIntValue();
+    bool getBoolValue();
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();

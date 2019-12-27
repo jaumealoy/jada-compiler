@@ -71,8 +71,8 @@ r_for for
 r_const const
 
 /* Altres */
-new_line ([\n\r]|(\n\r))*
-blank [ \t]+
+new_line ([\n\r]|(\n\r))+
+blank [ \t\r]+
 
 /* Comentaris */
 comment "//"([^\n])*
@@ -83,7 +83,18 @@ begin_comment "/*"
 %x CHAR_LITERAL_MODE
 %x COMENTARI	
 
+
+%{
+  // Code run each time a pattern is matched.
+  # define YY_USER_ACTION  location->columns(yyleng);
+
+%}
+
 %%
+%{
+	location->step();
+%}
+
 {op_gte}		{ return token::OP_GTE; }
 {op_gt}			{ return token::OP_GT; }
 {op_lte}		{ return token::OP_LTE; }
@@ -146,9 +157,11 @@ begin_comment "/*"
 
 {new_line} { 
 	// TODO: sumar linia, reiniciar columnes
+	location->lines(yyleng); 
+	location->step();
 }
 {blank} { 
-	// TODO: sumar columnes 
+	location->step();
 }
 
 <<EOF>> {
@@ -228,6 +241,7 @@ Lexic::~Lexic(){
 }
 
 int Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
+	l->step();
 	int tk = this->yylex(yylval, l);
 	this->tokensFile << "Token " << tk << " (" << this->YYText() << ")" << endl;
 	return tk;

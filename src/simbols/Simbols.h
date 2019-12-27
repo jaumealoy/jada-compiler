@@ -17,7 +17,10 @@
 #include "SimbolStatementList.h"
 #include "SimbolStatement.h"
 #include "SimbolWhileStatement.h"
+
 #include "SimbolIfStatement.h"
+#include "SimbolElseIfStatement.h"
+#include "SimbolElseStatement.h"
 
 #include "SimbolExpressio.h"
 #include "SimbolRelExpr.h"

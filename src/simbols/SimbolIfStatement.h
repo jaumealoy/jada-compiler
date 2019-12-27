@@ -4,6 +4,7 @@
 #include "SimbolStatement.h"
 #include "SimbolBloc.h"
 #include "SimbolExpressio.h"
+#include "SimbolElseIfStatement.h"
 
 class SimbolIfStatement : public SimbolStatement {
 private:
@@ -11,7 +12,7 @@ public:
     SimbolIfStatement();
     ~SimbolIfStatement();
 
-    void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc);
+    void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolElseIfStatement elseIfStmt);
 };
 
 #endif

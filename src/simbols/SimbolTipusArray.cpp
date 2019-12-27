@@ -1,5 +1,6 @@
 #include "SimbolTipusArray.h"
 #include "../Driver.h"
+#include "SimbolExpressio.h"
 #include <iostream>
 
 SimbolTipusArray::SimbolTipusArray() : SimbolReferencia(), dimensions() {}

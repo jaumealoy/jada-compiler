@@ -13,11 +13,11 @@ proc main() begin
         int d2 = 4;
 
         if d > 4 do
-            char d = 'a';
+            char d = 'a' char c;
         end;
     end;
 
-    int n = 2;
+    int c = 2;
     n++;
     n--;
 end main;

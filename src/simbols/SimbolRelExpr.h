@@ -4,15 +4,12 @@
 #include "SimbolExpressio.h"
 
 class SimbolRelExpr : public SimbolExpressio {
-
 private:
-
 public:
-
     SimbolRelExpr();
     ~SimbolRelExpr();
 
-    void make(Driver *driver, SimbolExpressio a, SimbolExpressio b);
+    void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus);
 
 };
 
