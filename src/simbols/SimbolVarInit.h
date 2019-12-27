@@ -5,7 +5,6 @@
 #include "SimbolExpressio.h"
 
 class SimbolVarInit : public SimbolExpressio {
-private:
 public:
     SimbolVarInit();
     ~SimbolVarInit();

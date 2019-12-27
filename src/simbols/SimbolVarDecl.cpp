@@ -38,6 +38,13 @@ void SimbolVarDecl::make(Driver *driver, std::string tipus, std::string id, Simb
         driver->ts.posar(id, desc);
         std::cout << "Trobada variable " << id << " de tipus " << tipus << std::endl;
     }
+    if (!init.isEmpty()){ //Comprovació de tipus
+        DescripcioTipus* desc = (DescripcioTipus*) driver->ts.consulta(this->tipus);
+
+        if (init.getTSB() != desc->getTSB()){
+            driver->error("Variable "+id+" assignada a un tipus incorrecte.", true);
+        }
+    }
 
 }
 
@@ -56,5 +63,11 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
         DescripcioVariable* desc = new DescripcioVariable(tipus);
         driver->ts.posar(id, desc);
         std::cout << "Trobada variable " << id << " de tipus " << tipus << std::endl;
+    }
+    if (!init.isEmpty()){ //Comprovació de tipus
+        DescripcioTipus* desc = (DescripcioTipus*) driver->ts.consulta(this->tipus);
+        if (init.getTSB() != desc->getTSB()){
+            driver->error("Variable "+id+" assignada a un tipus incorrecte.", true);
+        }
     }
 }
