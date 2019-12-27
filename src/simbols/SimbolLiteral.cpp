@@ -43,3 +43,7 @@ TipusSubjacentBasic SimbolLiteral::getTSB(){
 int SimbolLiteral::getIntValue(){
     return this->intValue;
 }
+
+char SimbolLiteral::getCharValue(){
+    return this->charValue;
+}

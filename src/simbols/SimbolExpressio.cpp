@@ -25,6 +25,8 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     
     if(this->tsb == TipusSubjacentBasic::INT){
         this->intValue = literal.getIntValue();
+    }else if(this->tsb == TipusSubjacentBasic::CHAR){
+        this->charValue = literal.getCharValue();
     }
 
     // prové d'un literal, és una expressió constant
@@ -204,4 +206,8 @@ int SimbolExpressio::getIntValue(){
 
 bool SimbolExpressio::getBoolValue(){
     return this->boolValue;
+}
+
+char SimbolExpressio::getCharValue(){
+    return this->charValue;
 }

@@ -26,6 +26,7 @@ public:
 
     // obtenció de valors
     int getIntValue();
+    char getCharValue();
 };
 
 #endif

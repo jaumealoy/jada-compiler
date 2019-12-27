@@ -24,6 +24,8 @@
 
 #include "SimbolExpressio.h"
 #include "SimbolRelExpr.h"
+#include "SimbolArithmeticExpression.h"
+#include "SimbolAssignacio.h"
 
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"

@@ -22,6 +22,7 @@ protected:
 
     int intValue;
     bool boolValue;
+    char charValue;
 
 public:
     SimbolExpressio();
@@ -38,6 +39,7 @@ public:
 
     int getIntValue();
     bool getBoolValue();
+    char getCharValue();
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();

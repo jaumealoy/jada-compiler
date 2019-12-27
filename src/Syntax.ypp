@@ -114,9 +114,12 @@
 %type <SimbolElseIfStatement> elseIfStatement
 %type <SimbolElseStatement> elseStatement
 
-%type <SimbolRelExpr> relExpr
 %type <SimbolExpressio> exprSimple
 %type <SimbolReferencia> referencia
+%type <SimbolRelExpr> relExpr
+%type <SimbolArithmeticExpression> aritExpr
+%type <SimbolAssignacio> expression
+
 %type <SimbolSubProgramCall> subProgramCall
 %type <SimbolSubProgramContCall> subProgramContCall
 %type <SimbolLiteral> literal
@@ -183,42 +186,6 @@ procCap : procContCap RIGHTPARAN { $$.make(this->driver, $1); }
 
 procContCap : ID LEFTPARAN Tipus ID { $$.make(this->driver, $1, $3, $4); }
     | procContCap COMA Tipus ID { $$.make(this->driver, $1, $3, $4); };
-
-
-
-/*args : argList
-    {
-        std::cout << "Resolt arguments" << std::endl;
-    };
-    |
-    {
-        // TODO
-        // Producció buida (no hi ha arguments)
-    };
-
-argList : type ID argListCont
-    {
-        try{
-            Descripcio d = this->driver->ts.consulta($1);
-
-            if(d.getTipus() != Tipus::TIPUS){
-                std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
-            }
-            
-            std::cout << "Resolt argument " << $1 << " - " << $2 << std::endl;
-        }catch(TaulaSimbols::NomNoExistent ex){
-            std::cout << "Tipus no reconegut! ("<< $1 << ")" << std::endl;
-        }
-    };
-argListCont : COMA argList 
-    {
-
-    };
-    |
-    {
-
-    };
-*/
 
 bloc : A statementList { 
     $$.make(this->driver, $2);
@@ -288,16 +255,16 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
     | exprSimple AND exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
-    | aritExpr {}
     | referencia { $$.make(this->driver, $1); }
     | literal { $$.make(this->driver, $1); };
+    | relExpr { $$ = $1; }
+    | aritExpr { $$ = $1; };
 
-aritExpr : OP_MINUS exprSimple {}
-    | exprSimple OP_ADD exprSimple {}
-    | exprSimple OP_MINUS exprSimple {}
-    | exprSimple OP_TIMES exprSimple {}
-    | exprSimple OP_DIV exprSimple {}
-    | relExpr {};
+aritExpr : OP_MINUS exprSimple { $$.make(this->driver, $2); }
+    | exprSimple OP_ADD exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | exprSimple OP_MINUS exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | exprSimple OP_TIMES exprSimple { $$.make(this->driver, $1, $3, 2); }
+    | exprSimple OP_DIV exprSimple { $$.make(this->driver, $1, $3, 3); };
 
 relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OP_EQ exprSimple { $$.make(this->driver, $1, $3, 1); }
@@ -342,14 +309,13 @@ contArray : ID LEFTBRACKET exprSimple RIGHTBRACKET { $$.make(this->driver, $1, $
     $$.make(this->driver, $1, $3);
 };
 
-
-expression : referencia EQ exprSimple {}
-    | referencia OP_ADD EQ exprSimple {}
-    | referencia OP_DIV EQ exprSimple {}
-    | referencia OP_TIMES EQ exprSimple {}
-    | referencia OP_MINUS EQ exprSimple {}
-    | referencia OP_MINUS OP_MINUS {}
-    | referencia OP_ADD OP_ADD {};
+expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
+    | referencia OP_ADD EQ exprSimple { $$.make(this->driver, $1, $4, 1); }
+    | referencia OP_DIV EQ exprSimple { $$.make(this->driver, $1, $4, 2); }
+    | referencia OP_TIMES EQ exprSimple { $$.make(this->driver, $1, $4, 3); }
+    | referencia OP_MINUS EQ exprSimple { $$.make(this->driver, $1, $4, 4); }
+    | referencia OP_MINUS OP_MINUS { $$.make(this->driver, $1, 0); }
+    | referencia OP_ADD OP_ADD { $$.make(this->driver, $1, 1); };
 %%
 
 // Codi de les funcions pròpies del sintàctic
