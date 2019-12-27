@@ -4,7 +4,7 @@
 #include "Simbol.h"
 #include <string>
 
-class SimbolFuncContCap : Simbol {
+class SimbolFuncContCap : public Simbol {
 private:
     // Nom de la funció
     std::string nomFuncio;

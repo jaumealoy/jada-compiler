@@ -35,6 +35,14 @@ std::string SimbolLiteral::getTipus(){
     return this->tipus;
 }
 
+void SimbolLiteral::setTipus(std::string newtipus) {
+    this->tipus = newtipus;
+}
+
 TipusSubjacentBasic SimbolLiteral::getTSB(){
     return this->tsb;
+}
+
+void SimbolLiteral::setTSB(TipusSubjacentBasic newtsb) {
+    this->tsb = newtsb;
 }

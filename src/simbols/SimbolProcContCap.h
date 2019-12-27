@@ -4,7 +4,7 @@
 #include "Simbol.h"
 #include <string>
 
-class SimbolProcContCap : Simbol {
+class SimbolProcContCap : public Simbol {
 private:
     // Nom de la funció
     std::string nomProcedure;

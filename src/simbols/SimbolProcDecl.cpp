@@ -21,6 +21,4 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, st
     }else{   
         
     }
-
-    driver->error("HOLA!");
 }

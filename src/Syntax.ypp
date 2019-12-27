@@ -115,6 +115,9 @@
 %type <SimbolStatementList> statementList
 %type <SimbolStatement> statement;
 %type <SimbolWhileStatement> whileIteration
+%type <SimbolSwitchStatement> switchStatement
+%type <SimbolCaseBloc> caseBloc
+
 %type <SimbolIfStatement> ifStatement
 
 %type <SimbolRelExpr> relExpr
@@ -287,19 +290,17 @@ elseStatement : ELSE DO bloc {}
 
 switchStatement : SWITCH LEFTPARAN exprSimple RIGHTPARAN BBEGIN caseBloc BEND
     {
-
+        $$.make(this->driver, $3, $6);
     };
 
 caseBloc : CASE literal DO bloc BEND caseBloc
     {
-
+        $$.make(this->driver, $2, $4, $6);
     };
     | DEFAULT DO bloc BEND
     {
-
+        $$.make(this->driver, $3);
     };
-    |
-    ;
 
 
 exprSimple : NOT exprSimple {}

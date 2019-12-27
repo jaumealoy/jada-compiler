@@ -1,0 +1,13 @@
+proc putaswix(int n) begin
+switch ("a") begin
+case "a" do 
+int a = 2 + 3;
+end
+case "B" do 
+char c = 'a';
+end
+default do
+string b = " ";
+end
+end;
+end putaswix;

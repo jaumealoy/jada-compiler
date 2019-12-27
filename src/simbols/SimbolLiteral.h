@@ -6,7 +6,7 @@
 #include <string>
 
 class SimbolLiteral : public Simbol {
-private:
+protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
 
@@ -20,6 +20,8 @@ public:
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();
+    void setTSB(TipusSubjacentBasic newtsb);
+    void setTipus(std::string newtipus);
 };
 
 #endif

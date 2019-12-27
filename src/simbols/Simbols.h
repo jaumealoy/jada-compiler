@@ -22,6 +22,9 @@
 #include "SimbolExpressio.h"
 #include "SimbolRelExpr.h"
 
+#include "SimbolSwitchStatement.h"
+#include "SimbolCaseBloc.h"
+
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"
