@@ -46,6 +46,7 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
 
     this->tipus = tipus;
     this->tsb = dt->getTSB();
+    this->id = nom;
 }
 
 /**

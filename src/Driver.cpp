@@ -15,6 +15,15 @@ Driver::Driver(char *filename) :
     DescripcioTipusBasic *boolean = new DescripcioTipusBasic(TipusSubjacentBasic::BOOLEAN, 0, 1, 1);
     this->ts.posar("boolean", boolean);
 
+    // afegir true i false
+    DescripcioConstant *dc = new DescripcioConstant("boolean");
+    dc->setBoolValue(true);
+    this->ts.posar("true", dc);
+
+    dc = new DescripcioConstant("boolean");
+    dc->setBoolValue(false);
+    this->ts.posar("false", dc);
+
     DescripcioTipusBasic *character = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 1);
     this->ts.posar("char", character);
 

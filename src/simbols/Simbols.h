@@ -36,6 +36,11 @@
 #include "SimbolSubProgramContCall.h"
 #include "SimbolLiteral.h"
 
+#include "SimbolArrayInit.h"
+#include "SimbolArrayElementList.h"
+#include "SimbolArrayFinalList.h"
+#include "SimbolArrayInitList.h"
+
 #include "SimbolVarInit.h"
 #include "SimbolVarDecl.h"
 #endif

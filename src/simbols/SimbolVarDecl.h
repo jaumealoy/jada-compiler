@@ -7,7 +7,10 @@
 class SimbolVarDecl : public Simbol {
 private:
     bool esConst;
+
     std::string tipus;
+    TipusSubjacentBasic tsb;
+    
 public:
     SimbolVarDecl();
     ~SimbolVarDecl();

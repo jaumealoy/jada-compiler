@@ -13,6 +13,7 @@ private:
     Descripcio::Tipus tipus;
 
     int intValue;
+    char charValue;
     bool boolValue;
 
 public:
@@ -23,7 +24,13 @@ public:
     std::string getNomTipus();
 
     int getIntValue();
+    void setIntValue(int value);
+
+    char getCharValue();
+    void setCharValue(char value);
+
     bool getBoolValue();
+    void setBoolValue(bool value);
 };
 
 #endif

@@ -52,6 +52,8 @@ sym_semicolon ;
 sym_coma ,
 sym_lbracket \[
 sym_rbracket \]
+sym_lcbracket \{
+sym_rcbracket \}
 
 /* Paraules reservades */
 r_if if
@@ -124,6 +126,8 @@ begin_comment "/*"
 {sym_coma}		{ return token::COMA; }
 {sym_lbracket}	{ return token::LEFTBRACKET; }
 {sym_rbracket}	{ return token::RIGHTBRACKET; }
+{sym_rcbracket}	{ return token::RIGHTCBRACKET; }
+{sym_lcbracket}	{ return token::LEFTCBRACKET; }
 
 {comment} 		{ }
 {begin_comment} {

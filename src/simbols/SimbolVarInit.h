@@ -3,6 +3,7 @@
 
 #include "Simbol.h"
 #include "SimbolExpressio.h"
+#include "SimbolArrayInit.h"
 
 class SimbolVarInit : public SimbolExpressio {
 public:
@@ -10,7 +11,7 @@ public:
     ~SimbolVarInit();
 
     void make(Driver *driver, SimbolExpressio exp);
-    void make(Driver *driver);
+    void make(Driver *driver, SimbolArrayInit exp);
 };
 
 #endif

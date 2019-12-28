@@ -14,4 +14,6 @@ void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc blo
         driver->error("boolean expected");
         return;
     }
+
+    std::cout << "Hola if " << std::endl;
 }

@@ -19,6 +19,22 @@ int DescripcioConstant::getIntValue(){
     return this->intValue;
 }
 
+void DescripcioConstant::setIntValue(int value){
+    this->intValue = value;
+}
+
 bool DescripcioConstant::getBoolValue(){
     return this->boolValue;
+}
+
+void DescripcioConstant::setBoolValue(bool value){
+    this->boolValue = value;
+}
+
+char DescripcioConstant::getCharValue(){
+    return this->charValue;
+}
+
+void DescripcioConstant::setCharValue(char value){
+    this->charValue = value;
 }

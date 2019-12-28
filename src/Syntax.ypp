@@ -65,6 +65,8 @@
 %token RIGHTPARAN
 %token LEFTBRACKET
 %token RIGHTBRACKET
+%token RIGHTCBRACKET
+%token LEFTCBRACKET
 
 // paraules reservades
 %token PROC
@@ -95,6 +97,7 @@
 %type <SimbolDeclList> declList
 %type <SimbolDecl> decl
 %type <SimbolVarDecl> varDecl
+%type <SimbolVarInit> varInit 
 %type <SimbolFuncDecl> funcDecl
 %type <SimbolFuncCap> funcCap
 %type <SimbolFuncContCap> funcContCap
@@ -126,7 +129,11 @@
 %type <SimbolSubProgramCall> subProgramCall
 %type <SimbolSubProgramContCall> subProgramContCall
 %type <SimbolLiteral> literal
-%type <SimbolVarInit> varInit 
+
+%type <SimbolArrayInit> arrayInit
+%type <SimbolArrayElementList> arrayElementList
+%type <SimbolArrayInitList> arrayInitList
+%type <SimbolArrayFinalList> arrayFinalList
 
 %left OP_TIMES OP_DIV AND NOT
 %left OP_ADD OP_MINUS OR
@@ -153,17 +160,20 @@ varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
     | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
     | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
-<<<<<<< HEAD
-varInit : EQ exprSimple{}
-    | {};
-=======
-varInit : EQ exprSimple{
-    $$.make(this->driver, $2);}
-    |{ $$.makeEmpty(); };
+varInit : EQ exprSimple{ $$.make(this->driver, $2); }
+    | EQ arrayInit { $$.make(this->driver, $2); }
+    | { $$.makeEmpty(); };
 
-/*const : CONST { };
-    | { $$.makeEmpty(); };*/
->>>>>>> 44a938fbfcb8171866d993cb6144e3d45bc36988
+arrayInit : ID LEFTCBRACKET arrayElementList RIGHTCBRACKET { $$.make(this->driver, $1, $3); }
+arrayElementList : arrayFinalList { $$.make(this->driver, $1); }
+    | arrayInitList { $$.make(this->driver, $1); }
+    | { $$.make(this->driver); };
+
+arrayInitList : arrayInitList COMA LEFTCBRACKET arrayElementList RIGHTCBRACKET { $$.make(this->driver, $1, $4); }
+    | LEFTCBRACKET arrayElementList RIGHTCBRACKET { $$.make(this->driver, $2); };
+
+arrayFinalList : exprSimple { $$.make(this->driver, $1); }
+    | arrayFinalList COMA exprSimple { $$.make(this->driver, $1, $3); };
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     $$.make(this->driver, $2, $4, $6);
