@@ -2,7 +2,17 @@
 #include "../Driver.h"
 
 
+SimbolProcDecl::SimbolProcDecl() : Simbol("ProcDecl") {
 
+}
+
+SimbolProcDecl::~SimbolProcDecl(){
+
+}
+
+/**
+ * procDecl -> proc procCap begin bloc end id;
+ */
 void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, std::string nom){
     // Comprovar que els noms de la capçalera i l'end coincideixen
     if(cap.getNomProcedure() != nom){
@@ -18,7 +28,13 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, st
 
     if(bloc.conteReturn()){
         driver->error("Un procedure no ha de tenir return");
-    }else{   
-        
     }
+
+    // afegir fills
+    this->fills.push_back( driver->addTreeChild(this, "proc") );;
+    this->fills.push_back(std::to_string(cap.getNodeId()));
+    this->fills.push_back(std::to_string(bloc.getNodeId()));
+    this->fills.push_back( driver->addTreeChild(this, "end " + nom + ";") );
+    
+    Simbol::toDotFile(driver);
 }

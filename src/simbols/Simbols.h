@@ -3,6 +3,7 @@
 #include "Simbol.h"
 #include "SimbolPrograma.h"
 #include "SimbolBloc.h"
+#include "SimbolTipus.h"
 #include "SimbolFuncCap.h"
 #include "SimbolFuncDecl.h"
 #include "SimbolFuncContCap.h"

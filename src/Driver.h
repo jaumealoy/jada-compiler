@@ -7,6 +7,8 @@
 #include <fstream>
 #include <exception>
 
+class Simbol;
+
 using namespace yy;
 
 class Driver{
@@ -31,6 +33,9 @@ public:
 
     // Per guardar l'arbre sintàctic
     void writeToTree(std::string data);
+    void writeToTree(Simbol *s, std::string data);
+    std::string addTreeChild(Simbol *s, std::string data);
+
     void closeFiles();
 };
 #endif

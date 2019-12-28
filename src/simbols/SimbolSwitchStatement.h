@@ -3,7 +3,6 @@
 
 #include "Simbol.h"
 #include "SimbolStatement.h"
-#include "SimbolExpressio.h"
 #include "SimbolContSwitch.h"
 
 class SimbolSwitchStatement : public SimbolStatement {

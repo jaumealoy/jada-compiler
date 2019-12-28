@@ -102,7 +102,7 @@
 %type <SimbolProcDecl> procDecl
 %type <SimbolProcCap> procCap
 %type <SimbolProcContCap> procContCap
-%type <std::string> Tipus;
+%type <SimbolTipus> Tipus;
 %type <SimbolTipusArray> array;
 %type <SimbolTipusArray> contArray;
 
@@ -131,6 +131,7 @@
 %left OP_TIMES OP_DIV AND NOT
 %left OP_ADD OP_MINUS OR
 %left OP_EQ OP_GT OP_GTE OP_LT OP_LTE OP_NEQ
+%left IF ELSE
 
 %start program
 %%
@@ -140,33 +141,22 @@ program : declList {
     this->driver->ts.print();
 };
 
-declList : declList decl {
-    $$.make(this->driver, $2, $1);
-};
-    | decl {
-        $$.make(this->driver, $1);
-};
+declList : declList decl { $$.make(this->driver, $2, $1); };
+    | decl { $$.make(this->driver, $1); };
 
-decl : varDecl SEMICOLON { };
+decl : varDecl SEMICOLON { $$.make(this->driver, $1); };
     | varDecl error decl { };
-    | funcDecl { };
-    | procDecl {
-
-};
+    | funcDecl { $$.make(this->driver, $1); };
+    | procDecl { $$.make(this->driver, $1); };
 
 varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
     | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
     | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
 varInit : EQ exprSimple{}
-    |{};
-
-/*const : CONST { };
-    | { $$.makeEmpty(); };*/
+    | {};
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
-    // TODO: comprovar que bloc conté una instrucció (com a mínim return) i que és compatible
-    // amb el tipus indicat per type
     $$.make(this->driver, $2, $4, $6);
 };
 
@@ -199,7 +189,7 @@ A : { this->driver->ts.entrarBloc(); };
 
 statementList : statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
     | statement error statementList { $$.make(this->driver, $1, $3); }
-    | { $$.makeEmpty(); };
+    | { $$.make(this->driver); };
 
 statement : 
     varDecl {}
@@ -237,7 +227,7 @@ elseIfStatement :  ELSE IF exprSimple DO bloc elseIfStatement { $$.make(this->dr
 elseStatement : ELSE DO bloc { $$.make(this->driver, $3); }
     | { $$.makeEmpty(); };
 
-switchStatement : SWITCH LEFTPARAN contSwitch BEND {};
+switchStatement : SWITCH LEFTPARAN contSwitch BEND { $$.make(this->driver, $3); };
 
 contSwitch : exprSimple RIGHTPARAN BBEGIN DEFAULT BBEGIN bloc BEND { $$.make(this->driver, $1, $6); }
     | exprSimple RIGHTPARAN BBEGIN CASE exprSimple BBEGIN bloc BEND { $$.make(this->driver, $1, $5, $7); }
@@ -249,6 +239,7 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
     | exprSimple AND exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | exprSimple IF exprSimple ELSE exprSimple {}
     | referencia { $$.make(this->driver, $1); }
     | literal { $$.make(this->driver, $1); };
     | relExpr { $$ = $1; }
@@ -282,15 +273,8 @@ literal : STR_LITERAL { $$.make(this->driver, $1); }
     | INT_LITERAL { $$.make(this->driver, $1); }
     | CHAR_LITERAL { $$.make(this->driver, $1); };
 
-Tipus : ID { $$ = $1; }
-    | array {
-    if($1.isReferencia()){
-        this->driver->error("no és un tipus vàlid", true);
-        return -1;
-    }
-    $$ = $1.toString();
-    std::cout << "Nom array: " << $1.toString() << std::endl;
-};
+Tipus : ID { $$.make(this->driver, $1); }
+    | array { $$.make(this->driver, $1); };
 
 // Aquesta serà la darrera dimensió
 array : contArray {

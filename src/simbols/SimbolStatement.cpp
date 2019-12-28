@@ -1,9 +1,11 @@
 #include "SimbolStatement.h"
 #include "SimbolIfStatement.h"
 #include "SimbolWhileStatement.h"
+#include "../Driver.h"
 #include <iostream>
 
-SimbolStatement::SimbolStatement() : Simbol(), ControlInstruccions() {
+
+SimbolStatement::SimbolStatement() : Simbol("Statement"), ControlInstruccions() {
 
 }
 
@@ -16,6 +18,10 @@ SimbolStatement::~SimbolStatement() {
  */
 void SimbolStatement::make(Driver *driver, SimbolWhileStatement whileStmt){
     this->propaga(whileStmt);
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(whileStmt.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -23,6 +29,10 @@ void SimbolStatement::make(Driver *driver, SimbolWhileStatement whileStmt){
  */
 void SimbolStatement::make(Driver *driver, SimbolIfStatement ifStmt){
     this->propaga(ifStmt);
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(ifStmt.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -35,6 +45,11 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
     tmp.tsb = exp.getTSB();
 
     this->_returns.push_back(tmp);
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "return") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -44,4 +59,8 @@ void SimbolStatement::make(Driver *driver, SimbolStatement::Tipus tipus){
     if(tipus == SimbolStatement::Tipus::BREAK){
         this->_conteBreak = true;
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "break") );
+    Simbol::toDotFile(driver);
 }

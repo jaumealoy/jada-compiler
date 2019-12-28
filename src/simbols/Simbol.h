@@ -28,6 +28,8 @@ public:
 
     ~Simbol();
 
+    void make(Driver *driver);
+
     // controla les derivacions a lambda
     void makeEmpty();
     bool isEmpty();

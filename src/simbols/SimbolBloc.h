@@ -8,8 +8,8 @@
 class SimbolBloc : public Simbol, public ControlInstruccions {
 private:
 public:
-    SimbolBloc() : Simbol() {};
-    ~SimbolBloc() {};
+    SimbolBloc();
+    ~SimbolBloc();
 
     void make(Driver *driver, SimbolStatementList list);
 };

@@ -1,7 +1,7 @@
 #include "SimbolFuncCap.h"
 #include "../Driver.h"
 
-SimbolFuncCap::SimbolFuncCap() : Simbol() {}
+SimbolFuncCap::SimbolFuncCap() : Simbol("FuncCap") {}
 SimbolFuncCap::~SimbolFuncCap() {}
 
 // TODO: impedir que es puguin retornar arrays
@@ -10,7 +10,7 @@ SimbolFuncCap::~SimbolFuncCap() {}
  * Insereix una funció a la taula de símbols si no existeix
  * funcCap -> ID () : Tipus
  */
-void SimbolFuncCap::make(Driver *driver, std::string nom, std::string tipus){
+void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
     // Comprovar que nom no està associat a cap entrada de la taula de símbols
     bool trobat = false;
 
@@ -37,12 +37,17 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, std::string tipus){
     driver->ts.entrarBloc();
 
     this->nom = nom;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, nom + "() : ") );
+    this->fills.push_back( std::to_string(tipus.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
  * funcCap -> funcContCap ) : Tipus
  */
-void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipus){
+void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipus){
     // La funció ja està inserida a la taula de símbols, però s'ha d'actualitzar el seu tipus
     // de retorn
 
@@ -72,6 +77,12 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipu
         driver->ts.posar(it.getId(), dv);
         it.next();
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(cap.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, " ) : ") );
+    this->fills.push_back( std::to_string(tipus.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 std::string SimbolFuncCap::getNomFuncio(){

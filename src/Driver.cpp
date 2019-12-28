@@ -1,5 +1,6 @@
 #include "Driver.h"
 
+
 Driver::Driver(char *filename) : 
         treeFile("tree.dot", std::fstream::out),
         tokensFile("tokens.txt", std::fstream::out) {
@@ -65,6 +66,22 @@ void Driver::error(std::string msg, bool atura){
 
 void Driver::writeToTree(std::string data){
     this->treeFile << data << std::endl;
+}
+
+// comptador de missatges únics
+int msgId = 0;
+
+void Driver::writeToTree(Simbol *s, std::string data){
+    std::string newNodeId = "\"" + std::to_string(s->getNodeId()) + "_" + std::to_string(msgId++) +  "\"";
+    this->writeToTree(newNodeId + "[label=\""+ data +"\", shape=plaintext]");
+    this->writeToTree(std::to_string(s->getNodeId()) + " -> " + newNodeId);
+}
+
+std::string Driver::addTreeChild(Simbol *s, std::string data){
+    std::string newNodeId = "\"" + std::to_string(s->getNodeId()) + "_" + std::to_string(msgId++) +  "\"";
+    this->writeToTree(newNodeId + "[label=\""+ data +"\", shape=plaintext]");
+
+    return newNodeId;
 }
 
 void Driver::closeFiles(){

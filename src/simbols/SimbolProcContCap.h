@@ -2,6 +2,7 @@
 #define _H_SIMBOL_PROCCONTCAP
 
 #include "Simbol.h"
+#include "SimbolTipus.h"
 #include <string>
 
 class SimbolProcContCap : public Simbol {
@@ -22,8 +23,8 @@ public:
     std::string getNomArgument();
     std::string getTipusArgument();
 
-    void make(Driver *driver, std::string nomFuncio, std::string tipus, std::string nomParametre);
-    void make(Driver *driver, SimbolProcContCap cap, std::string tipus, std::string nomParametre);
+    void make(Driver *driver, std::string nomFuncio, SimbolTipus tipus, std::string nomParametre);
+    void make(Driver *driver, SimbolProcContCap cap, SimbolTipus tipus, std::string nomParametre);
 };
 
 #endif

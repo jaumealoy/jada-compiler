@@ -1,10 +1,9 @@
 #include "SimbolProcCap.h"
 #include "../Driver.h"
 
-SimbolProcCap::SimbolProcCap() : Simbol() {}
+SimbolProcCap::SimbolProcCap() : Simbol("ProcCap") {}
 SimbolProcCap::~SimbolProcCap() {}
 
-// TODO: impedir que es puguin retornar arrays
 // TODO: entrarBloc i definir variables com a variables locals
 
 /**
@@ -34,14 +33,22 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
     driver->ts.posar(nom, d);
 
     this->nom = nom;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, nom + "()") );
+    Simbol::toDotFile(driver);
 }
 
 /**
  * ProcCap -> ProcContCap )
  */
 void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
-
     this->nom = cap.getNomProcedure();
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(cap.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, " )") );
+    Simbol::toDotFile(driver);
 }
 
 std::string SimbolProcCap::getNomProcedure(){

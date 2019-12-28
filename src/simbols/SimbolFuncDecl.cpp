@@ -1,7 +1,7 @@
 #include "SimbolFuncDecl.h"
 #include "../Driver.h"
 
-SimbolFuncDecl::SimbolFuncDecl() : Simbol() {}
+SimbolFuncDecl::SimbolFuncDecl() : Simbol("FuncDecl") {}
 SimbolFuncDecl::~SimbolFuncDecl() {}
 
 void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, std::string nom){
@@ -52,4 +52,11 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
         // error (crític)
         driver->error("la funció ha de tenir un o més return");
     }
+
+    // representar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "func") );
+    this->fills.push_back(std::to_string(cap.getNodeId()));
+    this->fills.push_back(std::to_string(bloc.getNodeId()));
+    this->fills.push_back( driver->addTreeChild(this, "end " + nom + ";") );
+    Simbol::toDotFile(driver);
 }

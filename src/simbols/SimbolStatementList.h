@@ -12,6 +12,7 @@ public:
     ~SimbolStatementList();
 
     void make(Driver *driver, SimbolStatement stmt, SimbolStatementList list);
+    void make(Driver *driver);
 };
 
 #endif

@@ -1,14 +1,14 @@
 #include "SimbolFuncContCap.h"
 #include "../Driver.h"
 
-SimbolFuncContCap::SimbolFuncContCap() : Simbol() {}
+SimbolFuncContCap::SimbolFuncContCap() : Simbol("FuncContCap") {}
 SimbolFuncContCap::~SimbolFuncContCap() {}
 
 /**
  * Crea una funció (sense tipus de retorn) i afegeix un paràmetre
  * funcContCap -> ID ( Tipus ID
  */
-void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, std::string tipus, std::string nomParametre){
+void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus tipus, std::string nomParametre){
     // comprovar que el nom de la funció no està utilitzat
     bool trobat = false;
     try {
@@ -33,8 +33,7 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, std::string 
             driver->error("s'esperava un tipus");
         }
     } catch(TaulaSimbols::NomNoExistent ex) {
-        driver->error(tipus + " no reconegut");
-        // ERROR
+        driver->error( ((std::string)tipus) + " no reconegut");
     }
 
     // Inserir la funció a la taula de símbols
@@ -54,13 +53,19 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, std::string 
     }
 
     driver->ts.posarParam(nomFuncio, nomParametre, arg);    
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, nomFuncio + " ( ") );
+    this->fills.push_back( std::to_string(tipus.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, nomParametre) );
+    Simbol::toDotFile(driver);
 }
 
 /**
  * Afegeix un paràmetre a la funció indicada per funcContCap
  * funcContCap -> funcContCap , Tipus ID
  **/
-void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, std::string tipus, std::string nomParametre){
+void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipus, std::string nomParametre){
     // és una funció que està inserida a la taula de símbols (no importa comprovar
     // que realment existeix)
     // és possible que ja existeixi paràmetre amb aquest no (error quan s'insereixi)
@@ -75,7 +80,7 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, std::string 
         }
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no existeix!
-        driver->error(tipus + " no reconegut");
+        driver->error( ((std::string)tipus) + " no reconegut");
     }
 
     // si el tipus és un array, serà passat per referència (mode in-out)
@@ -93,6 +98,12 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, std::string 
 
     // s'ha de passar el nom a les altres produccions
     this->nomFuncio = cap.getNomFuncio();
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, ", ") );
+    this->fills.push_back( std::to_string(tipus.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, nomParametre) );
+    Simbol::toDotFile(driver);
 }
 
 std::string SimbolFuncContCap::getNomFuncio(){
