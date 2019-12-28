@@ -8,7 +8,6 @@ SimbolVarInit::SimbolVarInit() : SimbolExpressio() {
 
 SimbolVarInit::~SimbolVarInit(){}
 
-void make(Driver *driver, SimbolExpressio exp){
-
+void SimbolVarInit::make(Driver *driver, SimbolExpressio exp){
+    this->tsb = exp.getTSB();
 }
-    

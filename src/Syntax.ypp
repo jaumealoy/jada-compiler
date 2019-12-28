@@ -153,8 +153,17 @@ varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
     | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
     | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
+<<<<<<< HEAD
 varInit : EQ exprSimple{}
     | {};
+=======
+varInit : EQ exprSimple{
+    $$.make(this->driver, $2);}
+    |{ $$.makeEmpty(); };
+
+/*const : CONST { };
+    | { $$.makeEmpty(); };*/
+>>>>>>> 44a938fbfcb8171866d993cb6144e3d45bc36988
 
 funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
     $$.make(this->driver, $2, $4, $6);
