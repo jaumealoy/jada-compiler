@@ -112,6 +112,7 @@
 %type <SimbolStatementList> statementList
 %type <SimbolStatement> statement;
 %type <SimbolWhileStatement> whileIteration
+%type <SimbolForStatement> forIteration
 %type <SimbolSwitchStatement> switchStatement
 %type <SimbolContSwitch> contSwitch
 
@@ -214,7 +215,7 @@ statement :
     varDecl {}
     | expression {}
     | subProgramCall {}
-    | forIteration {}
+    | forIteration { $$.make(this->driver, $1); }
     | whileIteration { $$.make(this->driver, $1); }
     | ifStatement { $$.make(this->driver, $1); }
     | switchStatement {}
@@ -222,7 +223,7 @@ statement :
     | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); };
 
 forIteration : FOR LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND {
-
+    $$.make(this->driver, $5, $10);
 };
 
 forInit : varDecl { }

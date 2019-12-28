@@ -7,6 +7,7 @@
 
 class SimbolWhileStatement;
 class SimbolIfStatement;
+class SimbolForStatement;
 
 class SimbolStatement : public Simbol, public ControlInstruccions {
 public:
@@ -28,6 +29,7 @@ public:
 
     void make(Driver *driver, SimbolWhileStatement whileStmt);
     void make(Driver *driver, SimbolIfStatement ifStmt);
+    void make(Driver *driver, SimbolForStatement forStmt);
     void make(Driver *driver, SimbolExpressio exp);
     void make(Driver *driver, SimbolStatement::Tipus tipus);
 };
