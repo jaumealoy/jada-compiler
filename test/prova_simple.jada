@@ -1,5 +1,9 @@
 proc main(int a, int b) begin /* Multi
     polla */
     const int a = 3, b = 5; //Provapolla22
+    char lletra = 'a';
+    for (int c = 3; c < 7; c++) do
+        break;
+    end;
     /* Multi polla 2*/
 end main;

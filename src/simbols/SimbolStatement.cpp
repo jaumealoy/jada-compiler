@@ -21,6 +21,17 @@ void SimbolStatement::make(Driver *driver, SimbolWhileStatement whileStmt){
 }
 
 /**
+ * statement -> forStatement
+ */
+void SimbolStatement::make(Driver *driver, SimbolForStatement forStmt){
+    this->propaga(forStmt);
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(forStmt.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+/**
  * statement -> ifStatement
  */
 void SimbolStatement::make(Driver *driver, SimbolIfStatement ifStmt){
