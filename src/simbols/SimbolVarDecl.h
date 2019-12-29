@@ -2,6 +2,7 @@
 #define _H_SIMBOL_VARDECL
 
 #include "Simbol.h"
+#include "SimbolTipus.h"
 #include "SimbolVarInit.h"
 
 class SimbolVarDecl : public Simbol {
@@ -15,7 +16,7 @@ public:
     SimbolVarDecl();
     ~SimbolVarDecl();
 
-    void make(Driver *driver, std::string tipus, std::string id, SimbolVarInit init, bool constant);
+    void make(Driver *driver, SimbolTipus tipus, std::string id, SimbolVarInit init, bool constant);
     void make(Driver *driver, SimbolVarDecl varDecl, std::string id, SimbolVarInit init);
 };
 

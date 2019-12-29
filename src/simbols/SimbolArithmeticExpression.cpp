@@ -2,12 +2,10 @@
 #include "../Driver.h"
 
 SimbolArithmeticExpression::SimbolArithmeticExpression() : SimbolExpressio() {
-
+    this->nomNode = "ArithmeticExpression";
 }
 
-SimbolArithmeticExpression::~SimbolArithmeticExpression(){
-
-}
+SimbolArithmeticExpression::~SimbolArithmeticExpression(){}
 
 /**
  * aritExpr -> - exprSimple
@@ -20,7 +18,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
 
     if(exp.getTSB() != TipusSubjacentBasic::INT){
         this->makeNull();
-        driver->error("s'esperava enter");
+        driver->error( error_tipus_esperat("enter") );
         return;
     }
 
@@ -31,6 +29,11 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
     this->mode = exp.getMode();
     this->tsb = TipusSubjacentBasic::INT;
     this->tipus.empty();
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "-") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -48,7 +51,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     // només es poden fer operacions aritmètiques entre enters
     if(a.getTSB() != TipusSubjacentBasic::INT || b.getTSB() != TipusSubjacentBasic::INT){
         this->makeNull();
-        driver->error("operacion tipus incompatibles");
+        driver->error( error_tipus_esperat("enter") );
         return;
     }
 
@@ -69,12 +72,12 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
 
             case 3: // exprSimple / exprSimpe
                 if(b.getIntValue() == 0){
-                    driver->error("division by zero");
+                    driver->error( error_divisio_zero() );
                     this->makeNull();
                     return;
                 }
 
-                this->intValue = a.getIntValue() - b.getIntValue();
+                this->intValue = a.getIntValue() / b.getIntValue();
                 break;
         }
 
@@ -85,4 +88,15 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
 
     this->tsb = TipusSubjacentBasic::INT;
     this->tipus.empty();
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(a.getNodeId()) );
+    switch (tipus) {
+        case 0: this->fills.push_back( driver->addTreeChild(this, "+") ); break;
+        case 1: this->fills.push_back( driver->addTreeChild(this, "-") ); break;
+        case 2: this->fills.push_back( driver->addTreeChild(this, "*") ); break;
+        case 3: this->fills.push_back( driver->addTreeChild(this, "/") ); break;
+    }
+    this->fills.push_back( std::to_string(b.getNodeId()) );
+    Simbol::toDotFile(driver);
 }

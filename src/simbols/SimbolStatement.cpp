@@ -1,17 +1,13 @@
 #include "SimbolStatement.h"
 #include "SimbolIfStatement.h"
 #include "SimbolWhileStatement.h"
+#include "SimbolSwitchStatement.h"
 #include "../Driver.h"
 #include <iostream>
 
 
-SimbolStatement::SimbolStatement() : Simbol("Statement"), ControlInstruccions() {
-
-}
-
-SimbolStatement::~SimbolStatement() {
-
-}
+SimbolStatement::SimbolStatement() : Simbol("Statement"), ControlInstruccions() {}
+SimbolStatement::~SimbolStatement() {}
 
 /**
  * statement -> whileStatement
@@ -62,5 +58,41 @@ void SimbolStatement::make(Driver *driver, SimbolStatement::Tipus tipus){
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "break") );
+    Simbol::toDotFile(driver);
+}
+
+/**
+ * statement -> expression
+ */
+void SimbolStatement::make(Driver *driver, SimbolAssignacio exp){
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+/**
+ * statement -> subProgramCall
+ */
+void SimbolStatement::make(Driver *driver, SimbolSubProgramCall call){
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(call.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+/**
+ * statement -> switchStatement
+ */
+void SimbolStatement::make(Driver *driver, SimbolSwitchStatement switchStmt){
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(switchStmt.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+/**
+ * statement -> varDecl
+ */
+void SimbolStatement::make(Driver *driver, SimbolVarDecl decl){
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(decl.getNodeId()) );
     Simbol::toDotFile(driver);
 }

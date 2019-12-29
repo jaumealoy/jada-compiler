@@ -92,6 +92,7 @@ public:
     void posar(char *id);
     void posar(std::string id);
     void posar(std::string id, Descripcio *declaracio);
+    void posar(std::string id, Descripcio *declaracio, bool protegit);
     Descripcio *consulta(std::string id);
     void actualitza(std::string id, Descripcio *descripcio);
     void print();

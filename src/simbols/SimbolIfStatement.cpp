@@ -1,9 +1,15 @@
 #include "SimbolIfStatement.h"
 #include "../Driver.h"
 
-SimbolIfStatement::SimbolIfStatement() : SimbolStatement() {}
+SimbolIfStatement::SimbolIfStatement() : SimbolStatement() {
+    this->nomNode = "IfStatement";
+}
+
 SimbolIfStatement::~SimbolIfStatement() { }
 
+/**
+ * ifStatement -> if exprSimple do bloc elseIfStatement end
+ */
 void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolElseIfStatement elseIfStmt) {
     // Qualsevol part de l'if no atura la propagació dels returns o breaks
     this->propaga(bloc, elseIfStmt);
@@ -15,5 +21,12 @@ void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc blo
         return;
     }
 
-    std::cout << "Hola if " << std::endl;
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "if") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
+    this->fills.push_back( std::to_string(bloc.getNodeId()) );
+    this->fills.push_back( std::to_string(elseIfStmt.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "end") );
+    Simbol::toDotFile(driver);
 }

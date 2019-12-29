@@ -2,13 +2,16 @@
 #include "../Driver.h"
 
 SimbolWhileStatement::SimbolWhileStatement() : SimbolStatement() {
-
+    this->nomNode = "WhileStatement";
 }
 
 SimbolWhileStatement::~SimbolWhileStatement(){
 
 }
 
+/**
+ * whileStatement -> while exprSimple do bloc end
+ */
 void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc) {
     // És un bucle, pot contenir break al seu interior i no es propaga a l'exterior
     // però és possible que tengui un return, que sí s'hauria de propagar
@@ -19,6 +22,14 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
 
     // Comprovar que l'expressió del while és un boolean
     if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-        driver->error("s'esperava un boolean");
+        driver->error( error_tipus_esperat("boolean") );
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "while") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
+    this->fills.push_back( std::to_string(bloc.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "end") );
+    Simbol::toDotFile(driver);
 }

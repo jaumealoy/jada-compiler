@@ -15,13 +15,13 @@ void SimbolPrograma::make(Driver *driver, SimbolDeclList declList){
     try {
         d = driver->ts.consulta("main");
     } catch(TaulaSimbols::NomNoExistent ex) {
-        driver->error("no existeix un procediment principal");
+        driver->error(error_no_procediment_principal(), true);
         return;
     }
 
     // d != nulptr
     if(d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
-        driver->error("main ha de ser un procediment");
+        driver->error(error_no_procediment_principal(), true);
         return;
     }
 
@@ -30,7 +30,7 @@ void SimbolPrograma::make(Driver *driver, SimbolDeclList declList){
     it.first("main");
 
     if(it.valid()){
-        driver->error("main no ha de tenir paràmetres");
+        driver->error(error_no_procediment_principal(), true);
         return;
     }
 

@@ -48,8 +48,10 @@ void TaulaSimbols::posar(std::string id){
 }
 
 void TaulaSimbols::posar(std::string id, Descripcio *declaracio){
-    // TODO: què passa si la taula de símbols és plena? indexLliure = -1
+    this->posar(id, declaracio, false);
+}
 
+void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
     // comprovar si ja existeix aquesta entrada
     int index = this->hash(id) % MAX_SIMBOLS;
 
@@ -66,7 +68,8 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio){
 
         // ja existeix una entrada amb aquest nom
         // determinar si s'ha de moure a la taula d'expansió
-        if(this->nivellProfunditat == this->tDescripcio[this->td[finalIndex].index].nivellProfunditat){
+        if(this->nivellProfunditat == this->tDescripcio[this->td[finalIndex].index].nivellProfunditat
+                || this->tDescripcio[this->td[finalIndex].index].nivellProfunditat == TaulaSimbols::NUL){
             // error! aquest símbol ja està definit en aquest nivell
             // de profunditat
             throw NomExistent();
@@ -99,7 +102,12 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio){
         this->tDescripcio[indexDescripcio].identificador = id;
         this->tDescripcio[indexDescripcio].declaracio = declaracio;
         this->tDescripcio[indexDescripcio].next = TaulaSimbols::NUL;
-        this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
+
+        if(protegit){
+            this->tDescripcio[indexDescripcio].nivellProfunditat = TaulaSimbols::NUL;
+        }else{
+            this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
+        }
     }
 
 }
@@ -275,18 +283,12 @@ TaulaSimbols::Iterator::~Iterator(){
 void TaulaSimbols::Iterator::first(std::string id){
     int indexDescripcio = this->ts->getIndex(id);
 
-    std::cout << "index es " << indexDescripcio << " per id " << id << std::endl;
-
     if(indexDescripcio != TaulaSimbols::NUL){
         // l'element existeix
         this->index = this->ts->tDescripcio[indexDescripcio].next;
 
-        std::cout << "és una " << this->ts->tDescripcio[indexDescripcio].declaracio->getTipus() << std::endl;
-
         if(this->index != TaulaSimbols::NUL){
             this->current = this->ts->tExpansio[this->index].declaracio;
-
-            std::cout << "és " << this->current->getTipus() << " i s'esperava " << this->tipus << std::endl;
 
             if(this->current != nullptr && this->current->getTipus() != this->tipus){
                 this->current = nullptr;

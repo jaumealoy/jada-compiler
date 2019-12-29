@@ -2,7 +2,7 @@
 #include "../Driver.h"
 
 SimbolElseIfStatement::SimbolElseIfStatement() : SimbolStatement() {
-
+    this->nomNode = "ElseIfStatement";
 }
 
 SimbolElseIfStatement::~SimbolElseIfStatement(){}
@@ -18,6 +18,15 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc
 
     // propagar els possibles returns i breaks que benguin de bloc i elseIfStatement
     this->propaga(bloc, elseIf);
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "else if") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
+    this->fills.push_back( std::to_string(bloc.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "end") );
+    this->fills.push_back( std::to_string(elseIf.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -29,5 +38,9 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolElseStatement elseBloc){
         // s'hauran de propagar els possibles valors de retorn i break
         this->propaga(elseBloc);
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(elseBloc.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 

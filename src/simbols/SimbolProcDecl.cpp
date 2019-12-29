@@ -30,6 +30,9 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, st
         driver->error("Un procedure no ha de tenir return");
     }
 
+    // variables locals de la funció
+    driver->ts.surtirBloc();
+
     // afegir fills
     this->fills.push_back( driver->addTreeChild(this, "proc") );;
     this->fills.push_back(std::to_string(cap.getNodeId()));

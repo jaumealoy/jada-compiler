@@ -19,7 +19,7 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
     }
 
     if(trobat){
-        driver->error("nom ja definit");
+        driver->error( error_redefinicio(nomFuncio) );
         return;
     }
 
@@ -30,10 +30,10 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
         
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             // error! s'esperava un tipus
-            driver->error("s'esperava un tipus");
+            driver->error(error_no_tipus(tipus), true);
         }
     } catch(TaulaSimbols::NomNoExistent ex) {
-        driver->error( ((std::string)tipus) + " no reconegut");
+        driver->error(error_no_definit(tipus), true);
     }
 
     // Inserir la funció a la taula de símbols
@@ -42,16 +42,9 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
 
     this->nomFuncio = nomFuncio;
 
-    // TODO: revisar aquest pensament
     // és el primer paràmetre, segur que no n'hi ha cap altre
-    
-    // si el tipus és un array, serà passat per referència (mode in-out)
+    // tots els paràmetres es passen com a mode IN
     DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
-    DescripcioTipus *dt = (DescripcioTipus *) d;
-    if(dt->getTipus() == DescripcioTipus::Tipus::ARRAY){
-        arg->setTipusArgument(DescripcioArgument::Tipus::IN_OUT);
-    }
-
     driver->ts.posarParam(nomFuncio, nomParametre, arg);    
 
     // pintar a l'arbre
@@ -76,30 +69,26 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus 
         d = driver->ts.consulta(tipus);
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             // error! s'esperava un tipus
-            driver->error("s'esperava un tipus");
+            driver->error(error_no_tipus(tipus), true);
         }
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no existeix!
-        driver->error( ((std::string)tipus) + " no reconegut");
+        driver->error(error_no_definit(tipus), true);
     }
 
-    // si el tipus és un array, serà passat per referència (mode in-out)
+    // tots els paràmetres es passen com a mode IN
     DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
-    DescripcioTipus *dt = (DescripcioTipus *) d;
-    if(dt->getTipus() == DescripcioTipus::Tipus::ARRAY){
-        arg->setTipusArgument(DescripcioArgument::Tipus::IN_OUT);
-    }
-
     try {
         driver->ts.posarParam(cap.getNomFuncio(), nomParametre, arg);
     } catch (TaulaSimbols::NomExistent ex) {
-        driver->error("la funció ja té definit aquest paràmetre");
+        driver->error( error_parametre_ja_definit(cap.getNomFuncio(), nomParametre) );
     }
 
     // s'ha de passar el nom a les altres produccions
     this->nomFuncio = cap.getNomFuncio();
 
     // pintar a l'arbre
+    this->fills.push_back( std::to_string(cap.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, ", ") );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );

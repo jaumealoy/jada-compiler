@@ -3,7 +3,10 @@
 #include "SimbolExpressio.h"
 #include <iostream>
 
-SimbolTipusArray::SimbolTipusArray() : SimbolReferencia(), dimensions() {}
+SimbolTipusArray::SimbolTipusArray() : SimbolReferencia(), dimensions() {
+    this->nomNode = "TipusArray";
+}
+
 SimbolTipusArray::~SimbolTipusArray() {}
 
 /**
@@ -19,13 +22,11 @@ SimbolTipusArray::~SimbolTipusArray() {}
  * constant se considerarà que s'està fent una referència.
  */
 
-void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp){
-    if(exp.isNull()){
-        // expressió malformada
-        this->makeNull();
-        return;
-    }
 
+/**
+ * contArray -> id [ exprSimple ]
+ */
+void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp){
     // Comprovar si s'està fent una referència o definició d'array
     Descripcio *d = nullptr;
     try {
@@ -50,7 +51,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         // és necessari que l'expressió estigui formada únicament per valors constants
         // i que es puguin calcular en temps de compilació
-        if(exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
+        if(!exp.isNull() && exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
             // existeix un valor numèric, comprovar que és positiu
             int dimensio = exp.getIntValue();
 
@@ -67,6 +68,12 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
             return;
         }
     }else if(d->getTipus() == Descripcio::Tipus::VARIABLE || d->getTipus() == Descripcio::Tipus::CONSTANT){
+        if(exp.isNull()){
+            // expressió malformada
+            this->makeNull();
+            return;
+        }
+
         // és una referència
         this->esReferencia = true;
 
@@ -123,16 +130,19 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
     }
 }
 
+/**
+ * contArray -> contArray [ exprSimple ]
+ */
 void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolExpressio exp){
-    if(exp.isNull()){
-        // expressió mal formada
-        this->makeNull();
-        return;
-    }
-    
     this->esReferencia = contArray.esReferencia;
 
     if(contArray.esReferencia){
+        if(exp.isNull()){
+            // expressió mal formada
+            this->makeNull();
+            return;
+        }
+    
         if(exp.getTSB() != TipusSubjacentBasic::INT){
             this->makeNull();
             driver->error("no és un enter");
@@ -173,7 +183,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
         this->tipusBasic = contArray.tipusBasic;
 
         // comprovar que l'expressió és una constant entera positiva
-        if(exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
+        if(!exp.isNull() && exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
             // existeix un valor numèric, comprovar que és positiu
             int dimensio = exp.getIntValue();
 
@@ -192,6 +202,9 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
     }
 }
 
+/**
+ * array -> contArray
+ */
 void SimbolTipusArray::make(Driver *driver){
     if(this->esReferencia){
         // comprovar que no s'esperen més dimensions
@@ -248,7 +261,7 @@ void SimbolTipusArray::make(Driver *driver){
  * Per exemple, int[50][75] és _int_50_75
  **/
 std::string SimbolTipusArray::toString(){
-    if(this->esReferencia){
+    if(this->esReferencia || this->isNull()){
         // no es pot utilitzar quan s'utilitza com a 
         // definició de tipus
         return "";

@@ -7,12 +7,16 @@
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include <string>
 
+class SimbolArithmeticExpression;
+class SimbolRelExpr;
+
 class SimbolExpressio : public Simbol {
 public: 
     enum Mode{
         VAR,
         CONST,
-        RESULTAT
+        RESULTAT,
+        NUL
     };
 
 protected:
@@ -32,6 +36,9 @@ public:
     void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus);
     void make(Driver *driver, SimbolReferencia ref);
     void make(Driver *driver, SimbolLiteral literal);
+    void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c);
+    void make(Driver *driver, SimbolRelExpr exp);
+    void make(Driver *driver, SimbolArithmeticExpression exp);
 
     // Per marcar com una referència errònia
     bool isNull();

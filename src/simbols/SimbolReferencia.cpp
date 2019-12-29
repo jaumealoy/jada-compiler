@@ -3,7 +3,7 @@
 #include "SimbolSubProgramCall.h"
 #include "../Driver.h"
 
-SimbolReferencia::SimbolReferencia(){}
+SimbolReferencia::SimbolReferencia() : Simbol("Referencia"){}
 SimbolReferencia::~SimbolReferencia(){}
 
 /**
@@ -47,6 +47,10 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     this->tipus = tipus;
     this->tsb = dt->getTSB();
     this->id = nom;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, nom) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -64,6 +68,10 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
     this->tipus = array.getTipus();
     this->id = array.getId();
     this->mode = array.getMode();
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(array.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 
@@ -79,6 +87,10 @@ void SimbolReferencia::make(Driver *driver, SimbolSubProgramCall call){
     this->tsb = call.getTSB();
     this->tipus = call.getTipus();
     this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(call.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 void SimbolReferencia::makeNull(){

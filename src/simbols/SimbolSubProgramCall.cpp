@@ -21,7 +21,7 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     } catch(TaulaSimbols::NomNoExistent ex) {
         // error! marcar id_nul i ts_nul
         this->makeNull();
-        driver->error("no existeix");
+        driver->error( error_no_definit(id) );
         return;
     }
 
@@ -29,12 +29,9 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     // Comprovar que és una descripció d'una funció o procediment
     if(d->getTipus() != Descripcio::Tipus::FUNCIO && d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
         this->makeNull();
-        driver->error("no és una funció o procediment");
+        driver->error( error_no_subprograma(id) );
         return;
     }
-
-    std::cout<<"Hola"<<std::endl;
-
 
     // Comprovar que efectivament aquesta funció no té paràmetres
     TaulaSimbols::Iterator params = driver->ts.getParametres();
@@ -43,7 +40,7 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 
     if(params.valid()){
         // existeix com a mínim un paràmetre però no s'ha proporcionat
-        driver->error("s'esperen paràmetres");
+        driver->error( error_falten_parametres() );
         return;
     }
 
@@ -86,7 +83,7 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 
     if(tmp.valid()){
         // s'esperen més paràmetres però no s'han proporcionat
-        driver->error("paràmetres reals insuficients");
+        driver->error( error_falten_parametres() );
         this->makeNull();
         return;
     }

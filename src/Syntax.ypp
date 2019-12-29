@@ -182,12 +182,9 @@ funcDecl : FUNC funcCap BBEGIN bloc BEND ID SEMICOLON {
 funcCap : funcContCap RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $4); }
     | ID LEFTPARAN RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $5); }
 
-funcContCap : ID LEFTPARAN Tipus ID {
-    $$.make(this->driver, $1, $3, $4);
-};
-    | funcContCap COMA Tipus ID {
-    $$.make(this->driver, $1, $3, $4);
-};
+
+funcContCap : ID LEFTPARAN Tipus ID { $$.make(this->driver, $1, $3, $4); }
+    | funcContCap COMA Tipus ID { $$.make(this->driver, $1, $3, $4); };
 
 procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
     $$.make(this->driver, $2, $4, $6);
@@ -211,13 +208,13 @@ statementList : statement SEMICOLON statementList { $$.make(this->driver, $1, $3
     | { $$.make(this->driver); };
 
 statement : 
-    varDecl {}
-    | expression {}
-    | subProgramCall {}
-    | forIteration {}
+    varDecl { $$.make(this->driver, $1); }
+    | expression { $$.make(this->driver, $1); }
+    | subProgramCall { $$.make(this->driver, $1); }
+    | forIteration {  }
     | whileIteration { $$.make(this->driver, $1); }
     | ifStatement { $$.make(this->driver, $1); }
-    | switchStatement {}
+    | switchStatement { $$.make(this->driver, $1); }
     | RETURN exprSimple { $$.make(this->driver, $2); }
     | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); };
 
@@ -244,7 +241,7 @@ elseIfStatement :  ELSE IF exprSimple DO bloc elseIfStatement { $$.make(this->dr
     | elseStatement { $$.make(this->driver, $1); } ;
 
 elseStatement : ELSE DO bloc { $$.make(this->driver, $3); }
-    | { $$.makeEmpty(); };
+    | { $$.make(this->driver); };
 
 switchStatement : SWITCH LEFTPARAN contSwitch BEND { $$.make(this->driver, $3); };
 
@@ -258,11 +255,11 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
     | exprSimple AND exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
-    | exprSimple IF exprSimple ELSE exprSimple {}
+    | exprSimple IF exprSimple ELSE exprSimple { $$.make(this->driver, $1, $3, $5); }
     | referencia { $$.make(this->driver, $1); }
     | literal { $$.make(this->driver, $1); };
-    | relExpr { $$ = $1; }
-    | aritExpr { $$ = $1; };
+    | relExpr { $$.make(this->driver, $1); }
+    | aritExpr { $$.make(this->driver, $1); };
 
 aritExpr : OP_MINUS exprSimple { $$.make(this->driver, $2); }
     | exprSimple OP_ADD exprSimple { $$.make(this->driver, $1, $3, 0); }
@@ -279,8 +276,9 @@ relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3, 0); }
 
 
 referencia : ID { $$.make(this->driver, $1); }
+    | array { $$.make(this->driver, $1); }
     | subProgramCall { $$.make(this->driver, $1); }
-    | array { $$.make(this->driver, $1); };
+    ;
 
 subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
     | subProgramContCall RIGHTPARAN { $$.make(this->driver, $1); };
@@ -293,7 +291,7 @@ literal : STR_LITERAL { $$.make(this->driver, $1); }
     | CHAR_LITERAL { $$.make(this->driver, $1); };
 
 Tipus : ID { $$.make(this->driver, $1); }
-    | array { $$.make(this->driver, $1); };
+    | array { $$.make(this->driver, $1); }
 
 // Aquesta serà la darrera dimensió
 array : contArray {
@@ -316,7 +314,6 @@ expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
 %%
 
 // Codi de les funcions pròpies del sintàctic
-void yy::Syntax::error(const location_type& loc, const std::string& msg)
-{
+void yy::Syntax::error(const location_type& loc, const std::string& msg){
    std::cerr << "Error: " << msg << " at " << loc << "\n";
 }

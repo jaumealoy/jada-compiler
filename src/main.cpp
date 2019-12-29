@@ -13,34 +13,13 @@ int main(int argc, char **argv){
 		return EXIT_FAILURE;
 	}
 
-	//Lexic myLexic(argv[1]);
-	//yy::Syntax mySyntax(&myLexic);
 	Driver myDriver(argv[1]);
 	myDriver.parse();
 	myDriver.closeFiles();
-	//ofstream fileSave("tree.dot");
-	//root->toDotFile(fileSave, nullptr);
-
-	/*TaulaSimbols ts;
-	ts.posar(string("a"));
-	ts.posar(string("b"));
-	ts.posar(string("c"));
-        
-	ts.entrarBloc();
-
-	ts.posar(string("a"));
-	ts.posar(string("b"));
-	ts.print();
-
-	ts.entrarBloc();
-	ts.posar(string("c"));
-	// ts.posar(string("c")); // ja existeix aquest element!
-	ts.print();
-
-	ts.surtirBloc();
-	ts.print();*/
-
-	cout << "Fi" << endl;
+	
+	if(myDriver.exitosa()){
+		cout << "Compilació exitosa" << endl;
+	}
 	
 	return EXIT_SUCCESS;
 }

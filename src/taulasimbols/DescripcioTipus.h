@@ -43,7 +43,9 @@ class DescripcioTipusArray : public DescripcioTipus {
 private:
     std::string tipusElement;
 public:
-    DescripcioTipusArray(std::string tipus) : DescripcioTipus(TipusSubjacentBasic::ARRAY, DescripcioTipus::Tipus::ARRAY, 0) { }
+    DescripcioTipusArray(std::string tipus) : DescripcioTipus(TipusSubjacentBasic::ARRAY, DescripcioTipus::Tipus::ARRAY, 0) {
+        this->tipusElement = tipus;
+    }
 
     std::string getTipusElement() { return this->tipusElement; }
 };

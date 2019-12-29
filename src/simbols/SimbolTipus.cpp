@@ -19,7 +19,7 @@ void SimbolTipus::make(Driver *driver, std::string tipus){
  * tipus -> array
  */
 void SimbolTipus::make(Driver *driver, SimbolTipusArray array){
-    if(array.isReferencia()){
+    if(array.isReferencia() || array.isNull()){
         driver->error("array invàlid");
         return;
     }

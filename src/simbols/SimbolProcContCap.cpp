@@ -19,7 +19,7 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
     }
 
     if(trobat){
-        driver->error("nom ja definit");
+        driver->error( error_redefinicio(nomFuncio) );
         return;
     }
 
@@ -30,11 +30,10 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
         
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             // error! s'esperava un tipus
-            driver->error("s'esperava un tipus");
+            driver->error( error_no_tipus(tipus) );
         }
     } catch(TaulaSimbols::NomNoExistent ex) {
-        driver->error((std::string)tipus + " no reconegut");
-        // ERROR
+        driver->error( error_no_definit(tipus) );
     }
 
     // Inserir el procedure a la taula de símbols
@@ -43,15 +42,10 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
 
     this->nomProcedure = nomFuncio;
 
-    // TODO: revisar aquest pensament
     // és el primer paràmetre, segur que no n'hi ha cap altre
     
     // si el tipus és un array, serà passat per referència (mode in-out)
     DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
-    DescripcioTipus *dt = (DescripcioTipus *) d;
-    if(dt->getTipus() == DescripcioTipus::Tipus::ARRAY){
-        arg->setTipusArgument(DescripcioArgument::Tipus::IN_OUT);
-    }
 
     driver->ts.posarParam(nomFuncio, nomParametre, arg);
 
@@ -101,8 +95,8 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus 
     this->nomProcedure = cap.getNomProcedure();
 
     // pintar a l'arbre
-    this->fills.push_back( driver->addTreeChild(this, ",") );
     this->fills.push_back( std::to_string(cap.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, ",") );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);

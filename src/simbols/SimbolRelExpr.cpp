@@ -22,20 +22,20 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
     }
 
     if ((a.getTSB() != INT) && (a.getTSB() != CHAR) && (a.getTSB() != BOOLEAN)) {     
-        driver->error("Expressió no comparable.");
+        driver->error( error_tipus_no_comparable() );
     }
 
     if ((b.getTSB() != INT) && (b.getTSB() != CHAR) && (b.getTSB() != BOOLEAN)) {     
-        driver->error("Expressió no comparable.");
+        driver->error( error_tipus_no_comparable() );
     }    
 
     if (a.getTSB() != b.getTSB()) {
-        driver->error("Expressions de diferent tipus subjacent.");
+        driver->error( error_tipus_no_comparable(a.getTSB(), b.getTSB()) );
     }
 
     if (!(a.getTipus().empty() || b.getTipus().empty())) {
         if (a.getTipus() != b.getTipus()) {
-            driver-> error("Expressions de diferent tipus.");
+            driver-> error( error_tipus_no_comparable(a.getTipus(), b.getTipus()) );
         }
     }
 
@@ -122,4 +122,11 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
     
     this->tipus.clear();
     this->tsb = BOOLEAN;
+
+    // pintar a l'arbre
+    std::string operadors[] = { "!=", "==", ">", ">=", "<", "<=" };
+    this->fills.push_back( std::to_string(a.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
+    this->fills.push_back( std::to_string(b.getNodeId()) );
+    Simbol::toDotFile(driver);
 }

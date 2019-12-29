@@ -71,6 +71,9 @@ r_return return
 r_while while
 r_for for
 r_const const
+r_and and
+r_or or
+r_not not
 
 /* Altres */
 new_line ([\n\r]|(\n\r))+
@@ -87,9 +90,7 @@ begin_comment "/*"
 
 
 %{
-  // Code run each time a pattern is matched.
-  # define YY_USER_ACTION  location->columns(yyleng);
-
+# define YY_USER_ACTION  location->columns(yyleng);
 %}
 
 %%
@@ -106,13 +107,12 @@ begin_comment "/*"
 
 {op_add}		{ return token::OP_ADD; }
 {op_minus}		{ return token::OP_MINUS; }
-{op_div}		{ return token::OP_TIMES; }
-{op_mul}		{ return token::OP_DIV; }
+{op_mul}		{ return token::OP_TIMES; }
+{op_div}		{ return token::OP_DIV; }
 
 
 {sym_eq}		{ return token::EQ; }
 {sym_squote}	{
-	cout << "Detectada coma simple. Entramos modo CHAR_LITERAL "<< this->YYText() << "  " << endl;
 	BEGIN(CHAR_LITERAL_MODE);
 }
 {sym_dquote}	{
@@ -149,6 +149,9 @@ begin_comment "/*"
 {r_while}		{ return token::WHILE; }
 {r_for}			{ return token::FOR; }
 {r_const}		{ return token::CONST; }
+{r_and}			{ return token::AND; }
+{r_or}			{ return token::OR; }
+{r_not}			{ return token::NOT; }
 
 {integer}		{
 	lval->emplace<int>() = atoi(this->YYText());
@@ -160,7 +163,6 @@ begin_comment "/*"
 }
 
 {new_line} { 
-	// TODO: sumar linia, reiniciar columnes
 	location->lines(yyleng); 
 	location->step();
 }
@@ -191,12 +193,10 @@ begin_comment "/*"
 	charLen++ ; 
 	foundCh = this->YYText()[0]; 
 }
-<CHAR_LITERAL_MODE>\n { cout << "Encontrado salto línea" << endl; charLen++ ; foundCh = '\n'; }
-<CHAR_LITERAL_MODE>\t { cout << "Encontrado tabulador" << endl; charLen++ ; foundCh = '\t'; }
-<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ;cout << "Encontrada comilla escapada" << endl; }
+<CHAR_LITERAL_MODE>\n { charLen++ ; foundCh = '\n'; }
+<CHAR_LITERAL_MODE>\t { charLen++ ; foundCh = '\t'; }
+<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ; }
 <CHAR_LITERAL_MODE>' {
-	cout << "Encontrado final de caracter. Comilla final." << endl;
-	cout << "Found %" << foundCh << "%" << endl;
 	BEGIN(INITIAL);
 
 	if (charLen > 1) {
@@ -212,13 +212,12 @@ begin_comment "/*"
 . { cout << "ERROR: " << this->YYText() << endl; }
 
 	
-<COMENTARI>[^*\/]* { cout << "Caràcter trobat." << endl; finalpossible = false; }
+<COMENTARI>[^*\/]* { finalpossible = false; }
 <COMENTARI>\* {
 	finalpossible = true;
 }
 <COMENTARI>"/" {
 	if (finalpossible){
-		cout << "Final de comentari." << endl;
 		BEGIN(INITIAL);
 	}
 }
@@ -242,13 +241,16 @@ Lexic::Lexic(char * filename, fstream &tokensFile)
 	}
 }
 
-Lexic::~Lexic(){
-
-}
+Lexic::~Lexic(){}
 
 int Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
+	this->loc = l;
 	l->step();
 	int tk = this->yylex(yylval, l);
-	this->tokensFile << "Token " << tk << " (" << this->YYText() << ")" << endl;
+	tokensFile << "Token " << tk << " (" << this->YYText() << ")" << endl;
 	return tk;
+}
+
+yy::location *Lexic::getLocation(){
+	return this->loc;
 }

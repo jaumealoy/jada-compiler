@@ -9,7 +9,6 @@ SimbolDeclList::~SimbolDeclList() {
 }
 
 void SimbolDeclList::make(Driver *driver, SimbolDecl decl){
-    
     // afegir els fills
     this->fills.push_back(std::to_string(decl.getNodeId()));
     Simbol::toDotFile(driver);

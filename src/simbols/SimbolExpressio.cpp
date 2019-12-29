@@ -1,4 +1,6 @@
 #include "SimbolExpressio.h"
+#include "SimbolRelExpr.h"
+#include "SimbolArithmeticExpression.h"
 #include "../Driver.h"
 
 /**
@@ -7,13 +9,10 @@
  * expressió variable o resultat.
  */
 
-SimbolExpressio::SimbolExpressio() : Simbol() {
-
+SimbolExpressio::SimbolExpressio() : Simbol("Expressió") {
+    this->mode = SimbolExpressio::Mode::NUL;
 }
-
-SimbolExpressio::~SimbolExpressio(){
-
-}
+SimbolExpressio::~SimbolExpressio(){}
 
 /**
  * exprSimple -> literal
@@ -31,6 +30,10 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 
     // prové d'un literal, és una expressió constant
     this->mode = SimbolExpressio::Mode::CONST;
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(literal.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 
@@ -83,6 +86,17 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
         default:
             this->makeNull();
     }
+
+    // i pintar a l'arbre
+    if(tipus == 0){
+        this->fills.push_back( driver->addTreeChild(this, "not") );
+        this->fills.push_back( std::to_string(exp.getNodeId()) );
+    }else if(tipus == 1){
+        this->fills.push_back( driver->addTreeChild(this, "(") );
+        this->fills.push_back( std::to_string(exp.getNodeId()) );
+        this->fills.push_back( driver->addTreeChild(this, ")") );
+    }
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -127,6 +141,16 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
         default: 
             this->makeNull();
     }
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(a.getNodeId()) );
+    if(tipus == 0){
+        this->fills.push_back( driver->addTreeChild(this, "and") );
+    }else if(tipus == 1){
+        this->fills.push_back( driver->addTreeChild(this, "or") );
+    }
+    this->fills.push_back( std::to_string(b.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 
@@ -176,6 +200,84 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
             this->makeNull();
             return;
     }
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(ref.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+/**
+ * exprSimple -> exprSimple if exprSimple else exprSimple
+ */
+void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c){
+    if(a.isNull() || b.isNull() || c.isNull()){
+        this->makeNull();
+        return;
+    }
+
+    if(b.getTSB() != TipusSubjacentBasic::BOOLEAN){
+        this->makeNull();
+        driver->error("s'esperava un boolean");
+        return;
+    }
+
+    if(a.getTSB() != b.getTSB()){
+        this->makeNull();
+        driver->error("No són compatibles els dos possibles valors");
+        return;
+    }
+
+    // Calcular el valor si tot són constants
+    if(a.getMode() == SimbolExpressio::Mode::CONST && a.getMode() == b.getMode() && b.getMode() == c.getMode()){
+        if(b.getBoolValue()){
+            // assignar el valor d'a
+            this->intValue = a.getIntValue();
+            this->charValue = a.getCharValue();
+            this->boolValue = a.getBoolValue();
+        }else{
+            // assignar el valor de b
+            this->intValue = b.getIntValue();
+            this->charValue = b.getCharValue();
+            this->boolValue = b.getBoolValue();
+        }
+
+        this->mode = SimbolExpressio::Mode::CONST;
+    }else{
+        this->mode = SimbolExpressio::Mode::RESULTAT;
+    }
+
+    this->tsb = a.getTSB();
+    this->tipus = a.getTipus();
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(a.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "if") );
+    this->fills.push_back( std::to_string(b.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "else") );
+    this->fills.push_back( std::to_string(c.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
+    this->boolValue = exp.boolValue;
+    this->tsb = exp.tsb;
+    this->tipus = exp.tipus;
+    this->mode = exp.mode;
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
+    this->tsb = exp.tsb;
+    this->intValue = exp.intValue;
+    this->tipus = exp.tipus;
+    this->mode = exp.mode;
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 
@@ -196,7 +298,8 @@ bool SimbolExpressio::isNull() {
 }
 
 void SimbolExpressio::makeNull() {
-    this->tsb = NUL;
+    this->mode = Mode::NUL;
+    this->tsb = TipusSubjacentBasic::NUL;
     this->tipus.clear();
 }
 

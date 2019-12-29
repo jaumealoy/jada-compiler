@@ -12,6 +12,7 @@ public:
     ~SimbolElseStatement();
 
     void make(Driver *driver, SimbolBloc bloc);
+    void make(Driver *driver);
 };
 
 #endif

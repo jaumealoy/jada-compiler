@@ -4,8 +4,6 @@
 SimbolFuncCap::SimbolFuncCap() : Simbol("FuncCap") {}
 SimbolFuncCap::~SimbolFuncCap() {}
 
-// TODO: impedir que es puguin retornar arrays
-
 /**
  * Insereix una funció a la taula de símbols si no existeix
  * funcCap -> ID () : Tipus
@@ -22,7 +20,30 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
     }
 
     if(trobat){
-        driver->error("nom ja està definit");
+        driver->error( error_redefinicio(nom) );
+        return;
+    }
+
+    std::string nomTipus = tipus;
+
+    // Comprovar que no es retorna un array i que el tipus existeix
+    try {
+        Descripcio *dt = driver->ts.consulta(nomTipus);
+        
+        if(dt->getTipus() != Descripcio::Tipus::TIPUS){
+            driver->error(error_no_tipus(nomTipus), true);
+            return;
+        }
+
+        DescripcioTipus *dtt = (DescripcioTipus *) dt;
+        if(dtt->getTSB() == TipusSubjacentBasic::ARRAY){
+            // error, no es poden retornar arrays
+            driver->error( error_retorn_array() );
+            return;
+        } 
+    } catch (TaulaSimbols::NomNoExistent ex) {
+        // no existeix el tipus
+        driver->error(error_no_definit(tipus), true);
         return;
     }
 

@@ -16,8 +16,7 @@
 // Definir la classe de l'analitzador lèxic
 class Lexic : public yyFlexLexer {
 private:
-	int currentLine;
-	int currentColumn;
+	yy::location *loc;
 
 	std::fstream tokensFile;
 
@@ -26,6 +25,7 @@ public:
 	Lexic(char *, std::fstream &);
 	~Lexic();
 
+	yy::location *getLocation();
 	int getToken(yy::Syntax::semantic_type *yylval, yy::location *);	
 };
 #endif

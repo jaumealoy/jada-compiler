@@ -18,14 +18,14 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no existeix el subprograma
         this->makeNull();
-        driver->error("no existeix");
+        driver->error( error_no_definit(id) );
         return;
     }
 
     // d != null
     if(d->getTipus() != Descripcio::Tipus::FUNCIO && d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
         this->makeNull();
-        driver->error("no és un subprograma");
+        driver->error( error_no_subprograma(id) );
         return;
     }
 
@@ -35,7 +35,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
 
     if(!this->it.valid()){
         // no s'esperen paràmetres
-        driver->error("aquest subprograma no espera paràmetres");
+        driver->error(error_sobren_parametres());
         return;
     }
 
@@ -44,7 +44,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
     // Comprovar si el mode de l'expressió és compatible amb el del paràmetre
     if(arg->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT && exp.getMode() == SimbolExpressio::Mode::CONST){
         // no és possible modificar una constant
-        driver->error("expressió constant i no ho pot ser");
+        driver->error( error_es_constant("") );
         this->makeNull();
         return;
     }
@@ -54,7 +54,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
         DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(arg->getNomTipusArgument());
         if(exp.getTSB() != dt->getTSB()){
             // no són compatibles
-            driver->error("tipus no compatible");
+            driver->error( error_tipus_no_compatibles(arg->getNomTipusArgument()) );
             this->makeNull();
             return;
         }
@@ -62,7 +62,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
         // els paràmetres formals tenen un tipus
         if(arg->getNomTipusArgument() != exp.getTipus()){
             // no són del mateix tipus
-            driver->error("tipus no compatible");
+            driver->error( error_tipus_no_compatibles(arg->getNomTipusArgument(), exp.getTipus()) );
             this->makeNull();
             return;
         }
@@ -91,7 +91,7 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
     if(!this->it.valid()){
         // no s'esperen més paràmetres però s'ha introduit un paràmetre més
         this->makeNull();
-        driver->error("no s'esperen més paràmetres");
+        driver->error( error_sobren_parametres() );
         return;
     }
 
@@ -101,7 +101,7 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
     // Comprovar si el mode de l'expressió és compatible amb el del paràmetre
     if(arg->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT && exp.getMode() == SimbolExpressio::Mode::CONST){
         // no és possible modificar una constant
-        driver->error("expressió constant i no ho pot ser");
+        driver->error( error_es_constant("") );
         this->makeNull();
         return;
     }
@@ -111,7 +111,7 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
         DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(arg->getNomTipusArgument());
         if(exp.getTSB() != dt->getTSB()){
             // no són compatibles
-            driver->error("tipus no compatible");
+            driver->error( error_tipus_no_compatibles(arg->getNomTipusArgument()) );
             this->makeNull();
             return;
         }
@@ -119,7 +119,7 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
         // els paràmetres formals tenen un tipus
         if(arg->getNomTipusArgument() != exp.getTipus()){
             // no són del mateix tipus
-            driver->error("tipus no compatible");
+            driver->error( error_tipus_no_compatibles(arg->getNomTipusArgument(), exp.getTipus()) );
             this->makeNull();
             return;
         }

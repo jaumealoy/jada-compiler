@@ -4,8 +4,6 @@
 SimbolProcCap::SimbolProcCap() : Simbol("ProcCap") {}
 SimbolProcCap::~SimbolProcCap() {}
 
-// TODO: entrarBloc i definir variables com a variables locals
-
 /**
  * Insereix un procedure a la taula de símbols si no existeix
  * ProcCap -> ID ()
@@ -22,7 +20,7 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
     }
 
     if(trobat){
-        driver->error("nom del procedure ja definit");
+        driver->error( error_redefinicio(nom) );
         return;
     }
 
@@ -34,6 +32,9 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
 
     this->nom = nom;
 
+    // entrar bloc
+    driver->ts.entrarBloc();
+
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom + "()") );
     Simbol::toDotFile(driver);
@@ -44,6 +45,20 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
  */
 void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
     this->nom = cap.getNomProcedure();
+
+    // entrar bloc i definir paràmetres
+    driver->ts.entrarBloc();
+
+    TaulaSimbols::Iterator it = driver->ts.getParametres();
+    it.first(this->nom);
+
+    while(it.valid()){
+        DescripcioArgument *da = (DescripcioArgument *) it.get();
+        DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
+        std::cout << "Definint " << it.getId() << " com a variable local de " << this->nom << std::endl;
+        driver->ts.posar(it.getId(), dv);
+        it.next();
+    }
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );

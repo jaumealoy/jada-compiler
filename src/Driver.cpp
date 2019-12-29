@@ -1,5 +1,5 @@
 #include "Driver.h"
-
+#include <exception>
 
 Driver::Driver(char *filename) : 
         treeFile("tree.dot", std::fstream::out),
@@ -18,20 +18,20 @@ Driver::Driver(char *filename) :
     // afegir true i false
     DescripcioConstant *dc = new DescripcioConstant("boolean");
     dc->setBoolValue(true);
-    this->ts.posar("true", dc);
+    this->ts.posar("true", dc, true);
 
     dc = new DescripcioConstant("boolean");
     dc->setBoolValue(false);
-    this->ts.posar("false", dc);
+    this->ts.posar("false", dc, true);
 
     DescripcioTipusBasic *character = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 1);
-    this->ts.posar("char", character);
+    this->ts.posar("char", character, true);
 
     DescripcioTipusBasic *integer = new DescripcioTipusBasic(TipusSubjacentBasic::INT, (long) 0, ~((long)0), 8);
-    this->ts.posar("int", integer);
+    this->ts.posar("int", integer, true);
 
     DescripcioTipusArray *string = new DescripcioTipusArray("char");
-    this->ts.posar("string", string);
+    this->ts.posar("string", string, true);
 
     // funcions pròpies
     DescripcioFuncio *readChar = new DescripcioFuncio();
@@ -59,17 +59,30 @@ Driver::~Driver(){
 }
 
 void Driver::parse(){
-    parser->parse();
+    try {
+        parser->parse();
+    } catch (std::exception e) {
+        this->exit = false;
+    }
 }
 
 void Driver::error(std::string msg){
-    std::cerr << msg << std::endl;
+    this->error(msg, false);
 }
 
-void Driver::error(std::string msg, bool atura){
-    std::cerr << msg << std::endl;
-    if (atura){
-        throw TaulaSimbols::NomNoExistent();
+void Driver::error(std::string msg, bool error){
+    this->exit = false;
+
+    if(error){
+        std::cerr << "Error ";
+    }else{
+        std::cerr << "Warning ";
+    }
+
+    std::cerr << "(línia "<< this->scanner->getLocation()->begin.line <<"): " << msg << std::endl;
+
+    if(error){
+        //throw TaulaSimbols::NomNoExistent();
     }
 }
 
@@ -100,4 +113,8 @@ void Driver::closeFiles(){
 
     // tancar la seqüència de tokens
     this->tokensFile.close();
+}
+
+bool Driver::exitosa(){
+    return this->exit;
 }

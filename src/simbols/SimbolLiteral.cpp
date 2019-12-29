@@ -1,9 +1,7 @@
 #include "SimbolLiteral.h"
 #include "../Driver.h"
 
-SimbolLiteral::SimbolLiteral() : Simbol() {
-
-}
+SimbolLiteral::SimbolLiteral() : Simbol("Literal") {}
 
 SimbolLiteral::~SimbolLiteral() {}
 
@@ -14,6 +12,10 @@ void SimbolLiteral::make(Driver *driver, int valor){
     this->tsb = TipusSubjacentBasic::INT;
     this->tipus.clear();
     this->intValue = valor;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, std::to_string(valor)) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -22,6 +24,10 @@ void SimbolLiteral::make(Driver *driver, int valor){
 void SimbolLiteral::make(Driver *driver, char valor){
     this->tsb = TipusSubjacentBasic::CHAR;
     this->tipus.clear();
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "'"+std::to_string(valor)+"'") );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -30,6 +36,10 @@ void SimbolLiteral::make(Driver *driver, char valor){
 void SimbolLiteral::make(Driver *driver, std::string valor){
     this->tsb = TipusSubjacentBasic::CHAR;
     this->tipus = "string";
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "\\\""+valor+"\\\"") );
+    Simbol::toDotFile(driver);
 }
 
 std::string SimbolLiteral::getTipus(){

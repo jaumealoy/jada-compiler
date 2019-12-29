@@ -6,6 +6,7 @@
 #include "taulasimbols/TaulaSimbols.h"
 #include <fstream>
 #include <exception>
+#include "Errors.h"
 
 class Simbol;
 
@@ -19,6 +20,9 @@ private:
     // fitxers per guardar outputs del compilador
     std::fstream treeFile;
     std::fstream tokensFile;
+
+    // per comprovar si s'ha produït qualque error en la compilació
+    bool exit;
 
 public:
     Driver(char *filename);
@@ -37,5 +41,7 @@ public:
     std::string addTreeChild(Simbol *s, std::string data);
 
     void closeFiles();
+
+    bool exitosa();
 };
 #endif
