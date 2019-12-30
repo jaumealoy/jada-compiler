@@ -44,8 +44,8 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 }
 
 /**
- * expression -> referencia++
  * expression -> referencia--
+ * expression -> referencia++
  */
 void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, int tipus){
     if(ref.isNull()){
@@ -65,7 +65,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, int tipus){
     }
 
     // i pintar a l'arbre
-    std::string operadors[] = {"++", "--"};
+    std::string operadors[] = {"--", "++"};
     this->fills.push_back( std::to_string(ref.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
     Simbol::toDotFile(driver);

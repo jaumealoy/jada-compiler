@@ -71,11 +71,11 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus 
         d = driver->ts.consulta(tipus);
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             // error! s'esperava un tipus
-            driver->error("s'esperava un tipus");
+            driver->error( error_no_tipus(tipus) );
         }
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no existeix!
-        driver->error((std::string)tipus + " no reconegut");
+        driver->error( error_no_definit(tipus) );
     }
 
     // si el tipus és un array, serà passat per referència (mode in-out)
@@ -88,7 +88,7 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus 
     try {
         driver->ts.posarParam(cap.getNomProcedure(), nomParametre, arg);
     } catch (TaulaSimbols::NomExistent ex) {
-        driver->error("la funció ja té definit aquest paràmetre");
+        driver->error(error_parametre_ja_definit(cap.getNomProcedure(), nomParametre));
     }
 
     // s'ha de passar el nom a les altres produccions

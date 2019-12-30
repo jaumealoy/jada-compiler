@@ -72,6 +72,10 @@ std::string error_tipus_esperat(std::string a){
     return "s'esperava un " + a;
 }
 
+std::string error_tipus_esperat(TipusSubjacentBasic a){
+    return "s'esperava un " + getNomTSB(a);
+}
+
 /**
  * Quan s'intenta fer una divisitio entre zero amb valors constants
  */
@@ -86,11 +90,19 @@ std::string error_tipus_no_comparable(){
     return "tipus no comparable";
 }
 
+std::string error_tipus_no_comparable(std::string a){
+    return a + " no comparable";
+}
+
 /**
  * Intent de crear una funció que retorna un array
  */
 std::string error_retorn_array(){
     return "no es poden retornar arrays";
+}
+
+std::string error_creacio_array(TipusSubjacentBasic a){
+    return "no es poden crear array de " + a;
 }
 
 /**
@@ -163,6 +175,14 @@ std::string error_no_subprograma(std::string a){
     return a + " no és un subprograma";
 }
 
+std::string error_return_incompatible(TipusSubjacentBasic a){
+    return getNomTSB(a) + " no és compatible amb el tipus de retorn";
+}
+
+std::string error_return_incompatible(std::string a){
+    return a + " no és compatible amb el tipus de retorn";
+}
+
 std::string error_falta_retorn(){
     return "falta un (o més) return";
 }
@@ -171,16 +191,29 @@ std::string error_sobren_retorn(){
     return "no hi pot haver un return";
 }
 
+/**
+ * S'ha trobat un break que no és dins un for / while
+ */
 std::string error_break_invalid(){
     return "no hi pot haver un break";
 }
 
+/**
+ * Declaració d'una constant sense inicialitzar-la
+ */
 std::string error_constant_no_inicialitzada(std::string c){
     return c + " constant no inicialitzada";
 }
 
+/**
+ * Una expressió no és una constant
+ */
 std::string error_valor_no_constant(){
     return "no és un valor constant";
+}
+
+std::string error_valor_no_constant(TipusSubjacentBasic a){
+    return "no és un valor constant de tipus " + getNomTSB(a);
 }
 
 /**
@@ -188,4 +221,20 @@ std::string error_valor_no_constant(){
  */
 std::string error_no_variable(std::string c){
     return c + " no és una variable";
+}
+
+std::string error_default_definit(){
+    return "ja existeix un case default definit";
+}
+
+std::string error_case_definit(std::string a){
+    return "cas '" + a + "' duplicat";
+}
+
+std::string error_no_posicio_memoria(std::string c){
+    return c + " no és una variable ni una constant";
+}
+
+std::string error_noms_cap(std::string real, std::string esperat){
+    return "s'ha trobat " + real + " i s'esperava " + esperat;
 }

@@ -19,6 +19,8 @@
 #include "SimbolStatement.h"
 #include "SimbolWhileStatement.h"
 #include "SimbolForStatement.h"
+#include "SimbolForInit.h"
+#include "SimbolForPostExpression.h"
 
 #include "SimbolIfStatement.h"
 #include "SimbolElseIfStatement.h"

@@ -2,9 +2,8 @@
 #include <exception>
 
 Driver::Driver(char *filename) : 
-        treeFile("tree.dot", std::fstream::out),
-        tokensFile("tokens.txt", std::fstream::out) {
-    this->scanner = new Lexic(filename, tokensFile);
+        treeFile("tree.dot", std::fstream::out) {
+    this->scanner = new Lexic(filename, "tokens.txt");
     this->parser = new Syntax(this->scanner, this);
 
     // inicialitzar la taula de símbols
@@ -13,7 +12,7 @@ Driver::Driver(char *filename) :
 
     // inicialitzar la taula de símbols amb els tipus propis del llenguatge
     DescripcioTipusBasic *boolean = new DescripcioTipusBasic(TipusSubjacentBasic::BOOLEAN, 0, 1, 1);
-    this->ts.posar("boolean", boolean);
+    this->ts.posar("boolean", boolean, true);
 
     // afegir true i false
     DescripcioConstant *dc = new DescripcioConstant("boolean");
@@ -32,6 +31,7 @@ Driver::Driver(char *filename) :
 
     DescripcioTipusArray *string = new DescripcioTipusArray("char");
     this->ts.posar("string", string, true);
+    this->ts.posarDimensio("string", new DescripcioDimensio(256));
 
     // funcions pròpies
     DescripcioFuncio *readChar = new DescripcioFuncio();
@@ -44,26 +44,36 @@ Driver::Driver(char *filename) :
 
     DescripcioProc *print = new DescripcioProc();
     this->ts.posar("print", print);
-    this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
+    this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
+
+    DescripcioFuncio *read = new DescripcioFuncio();
+    read->setTipusRetorn("int");
+    this->ts.posar("read", read);
+    this->ts.posarParam("read", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
 
     DescripcioFuncio *readInt = new DescripcioFuncio();
     readInt->setTipusRetorn("int");
     this->ts.posar("readInt", readInt);
 
+    DescripcioProc *writeInt = new DescripcioProc();
+    this->ts.posar("printInt", writeInt);
+    this->ts.posarParam("printInt", "num", new DescripcioArgument("int", DescripcioArgument::IN));
+
+
     // inicialitzar fitxer de l'arbre
     this->writeToTree("digraph arbreSintactic {");
 }
 
-Driver::~Driver(){
-
-}
+Driver::~Driver(){}
 
 void Driver::parse(){
-    try {
+    this->exit = true;
+    //try {
         parser->parse();
-    } catch (std::exception e) {
-        this->exit = false;
-    }
+    //} catch (std::exception e) {
+    //    this->exit = false;
+    //    std::cerr << e.what() << std::endl;
+    //}
 }
 
 void Driver::error(std::string msg){

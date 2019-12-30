@@ -44,6 +44,8 @@ private:
     struct Bloc tDescripcio[MAX_SIMBOLS];
     struct Bloc tExpansio[MAX_SIMBOLS * MAX_PROFUNDITAT];
 
+    int darrerNivellProfunditat;
+
     // la posició i-èssima indica la darrera posició escrita a la taula
     // d'expansió, si el valor és NUL, no s'ha escrit
     int tAmbit[MAX_PROFUNDITAT];
@@ -89,13 +91,13 @@ public:
     void buida();
     void entrarBloc();
     void surtirBloc();
-    void posar(char *id);
     void posar(std::string id);
     void posar(std::string id, Descripcio *declaracio);
     void posar(std::string id, Descripcio *declaracio, bool protegit);
     Descripcio *consulta(std::string id);
-    void actualitza(std::string id, Descripcio *descripcio);
+    
     void print();
+    void dump(std::string filename);
     
     // Gestió dels paràmetres de subprogrames
     void posarParam(std::string func, std::string nom, DescripcioArgument *arg);

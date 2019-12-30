@@ -1,4 +1,5 @@
 #include "SimbolArrayInitList.h"
+#include "../Driver.h"
 #include <iostream>
 
 SimbolArrayInitList::SimbolArrayInitList() : SimbolArrayElementList() {}
@@ -15,6 +16,12 @@ void SimbolArrayInitList::make(Driver *driver, SimbolArrayElementList elementLis
 
     this->match = elementList.coincideixen();
     this->numElementsActuals = 1;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "{") );
+    this->fills.push_back( std::to_string(elementList.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "}") );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -45,4 +52,11 @@ void SimbolArrayInitList::make(Driver *driver, SimbolArrayInitList list, SimbolA
     for(int i = 0; i < elementList.getElements().size(); i++){
         this->elements.push_back(elementList.getElements()[i]);
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(list.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, ", {") );
+    this->fills.push_back( std::to_string(elementList.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "}") );
+    Simbol::toDotFile(driver);
 }

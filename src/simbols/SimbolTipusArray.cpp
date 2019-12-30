@@ -33,7 +33,9 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         d = driver->ts.consulta(id);
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no és res, el nom no existeix
-        driver->error("nom no reconegut", true);
+        this->makeNull();
+        this->esReferencia = true;
+        driver->error( error_no_definit(id) , true);
         return;
     }
 
@@ -45,7 +47,8 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         DescripcioTipus *dt = (DescripcioTipus *) d;
         if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
-            driver->error("no es poden crear arrays de " + id, true);
+            this->makeNull();
+            driver->error(error_creacio_array(TipusSubjacentBasic::ARRAY), true);
             return;
         }
 
@@ -56,7 +59,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
             int dimensio = exp.getIntValue();
 
             if(dimensio < 0){
-                driver->error("els array han de tenir dimensions positives");
+                driver->error(error_fora_de_rang(dimensio));
                 return;
             }else{
                 // és un valor vàlid, es pot afegir aquesta dimensió a la llista de 
@@ -64,7 +67,8 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
                 this->dimensions.push_back(dimensio);
             }
         }else{
-            driver->error("s'espera constant entera", true);
+            driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
+            this->makeNull();
             return;
         }
     }else if(d->getTipus() == Descripcio::Tipus::VARIABLE || d->getTipus() == Descripcio::Tipus::CONSTANT){
@@ -96,7 +100,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         if(dt->getTSB() != TipusSubjacentBasic::ARRAY){
             // no és un array! error
             this->makeNull();
-            driver->error("no és un array");
+            driver->error(error_tipus_esperat(TipusSubjacentBasic::ARRAY));
             return;
         }
 
@@ -105,7 +109,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         // comprovar que l'expressió correspon a un valor numèric
         if(exp.getTSB() != TipusSubjacentBasic::INT){
             this->makeNull();
-            driver->error("index no numèric");
+            driver->error(error_tipus_esperat(TipusSubjacentBasic::INT));
             return;
         }
 
@@ -117,8 +121,8 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         // i si és una constant comprovar que el seu valor és dins el rang permès per les dimensions
         if(exp.getMode() == SimbolExpressio::Mode::CONST){
-            if(exp.getIntValue() < 0 && exp.getIntValue() >= ddim->getDimensio()){
-                driver->error("index out of bounds");
+            if(exp.getIntValue() < 0 || exp.getIntValue() >= ddim->getDimensio()){
+                driver->error( error_fora_de_rang(exp.getIntValue()) );
                 this->makeNull();
                 return;
             }
@@ -128,6 +132,12 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         this->tipus = tipus;
         this->tsb = TipusSubjacentBasic::ARRAY;
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, id + "[") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "]") );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -145,7 +155,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
     
         if(exp.getTSB() != TipusSubjacentBasic::INT){
             this->makeNull();
-            driver->error("no és un enter");
+            driver->error( error_tipus_esperat(TipusSubjacentBasic::INT) );
             return;
         }
 
@@ -155,7 +165,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
         if(!this->it.valid()){
             // s'han introduit massa dimensions!
             this->makeNull();
-            driver->error("massa dimensions");
+            driver->error( error_sobren_dimensions() );
             return;
         }
 
@@ -165,7 +175,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
         if(exp.getMode() == SimbolExpressio::Mode::CONST){
             if(exp.getIntValue() < 0 || exp.getIntValue() >= ddim->getDimensio()){
                 this->makeNull();
-                driver->error("index out of bounds");
+                driver->error( error_fora_de_rang(exp.getIntValue()) );
                 return;
             }
         }
@@ -188,7 +198,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
             int dimensio = exp.getIntValue();
 
             if(dimensio < 0){
-                driver->error("els array han de tenir dimensions positives");
+                driver->error( error_fora_de_rang(dimensio) );
                 return;
             }else{
                 // és un valor vàlid, es pot afegir aquesta dimensió a la llista de 
@@ -196,24 +206,40 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
                 this->dimensions.push_back(dimensio);
             }
         }else{
-            driver->error("s'espera constant entera", true);
+            driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
             return;
         }
     }
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(contArray.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "[") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "]") );
+    Simbol::toDotFile(driver);
 }
 
 /**
  * array -> contArray
  */
-void SimbolTipusArray::make(Driver *driver){
-    if(this->esReferencia){
+void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
+    if(array.esReferencia){
+        if(array.isNull()){
+            this->makeNull();
+            return;
+        }
+
+        this->tipusBasic = array.tipusBasic;
+        this->it = array.it;
+        this->id = array.id;
+
         // comprovar que no s'esperen més dimensions
         this->it.next();
 
         if(this->it.valid()){
             // s'esperen més dimensions però no s'han proporcionat
             this->makeNull();
-            driver->error("s'esperen més dimensions");
+            driver->error( error_falten_dimensions() );
             return;
         }
 
@@ -222,9 +248,11 @@ void SimbolTipusArray::make(Driver *driver){
 
         this->tipus = this->tipusBasic;
         this->tsb = dt->getTSB();
+        this->esReferencia = true;
     }else{
         // afegir aquest tipus array a la taula de símbols si no existeix
-        std::string nomTipus = this->toString();
+        std::string nomTipus = array.toString();
+        this->esReferencia = false;
 
         // és possible que aquest array ja estigui definit
         // en aquest cas, no s'hauria d'inserir
@@ -235,25 +263,34 @@ void SimbolTipusArray::make(Driver *driver){
             // si existeix, segur que serà una descripció de tipus
         } catch(TaulaSimbols::NomNoExistent ex) {
             // el nom no existeix, s'ha d'inserir el tipus
-            DescripcioTipusArray *dt = new DescripcioTipusArray(this->tipusBasic);
+            DescripcioTipusArray *dt = new DescripcioTipusArray(array.tipusBasic);
             driver->ts.posar(nomTipus, dt);
 
             // obtenir la mida del tipus unitari
             // sabem que existeix perquè si no ja no s'hauria arribat fins aquest punt
-            DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(this->tipusBasic);
+            DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(array.tipusBasic);
 
             int ocupacio = dte->getOcupacio();
 
             // i crear les dimensions, inserint-les en ordre invers
-            for(int i = this->dimensions.size() - 1; i >= 0; i--){
-                ocupacio *= this->dimensions[i];
-                driver->ts.posarDimensio(nomTipus, new DescripcioDimensio(this->dimensions[i]));
+            for(int i = array.dimensions.size() - 1; i >= 0; i--){
+                ocupacio *= array.dimensions[i];
+                driver->ts.posarDimensio(nomTipus, new DescripcioDimensio(array.dimensions[i]));
             }
 
             // actualitzar l'entrada de la taula de símbols
             dt->setOcupacio(ocupacio);
         }
+
+        this->tipusBasic = array.tipusBasic;
+        this->dimensions = array.dimensions;
+        this->tipus = nomTipus;
     }
+
+    // pintar a l'arbre
+    this->nomNode = "Array";
+    this->fills.push_back( std::to_string(array.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**

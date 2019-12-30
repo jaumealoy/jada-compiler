@@ -8,13 +8,13 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
     // Comprovar que els noms de la capçalera i l'end coincideixen
     if(cap.getNomFuncio() != nom){
         // error (no crític)
-        driver->error("s'ha trobat " + nom + " i s'esperava " + cap.getNomFuncio());
+        driver->error( error_noms_cap(nom, cap.getNomFuncio()) );
     }
 
     // Comprovar que no hi ha cap instrucció prohibida al bloc (com pot ser un break)
     if(bloc.conteBreak()){
         // error (crític)
-        driver->error("un break només ha d'estar dins un while");
+        driver->error( error_break_invalid() );
     }
 
     if(bloc.conteReturn()){
@@ -37,7 +37,7 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
 
                 if(dt->getTSB() != ret.tsb){
                     // error tipus incompatibles
-                    driver->error("valor de retorn incompatible (tsb)");
+                    driver->error( error_return_incompatible(ret.tsb) );
                 }           
             }else{
                 // comprovació forta de tipus
@@ -49,11 +49,12 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
         }
     }else{
         // error (crític)
-        driver->error("la funció ha de tenir un o més return");
+        driver->error( error_falta_retorn(), true );
     }
 
     // variables locals de la funció
     driver->ts.surtirBloc();
+
 
     // representar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "func") );

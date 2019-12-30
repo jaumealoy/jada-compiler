@@ -170,6 +170,8 @@ begin_comment "/*"
 	location->step();
 }
 
+. { cout << "ERROR: " << this->YYText() << endl; }
+
 <<EOF>> {
 	return token::ENDFILE;
 }
@@ -189,15 +191,18 @@ begin_comment "/*"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL_MODE>[^\\'\n\t] { 
+<CHAR_LITERAL_MODE>[^\\'\n\t] {
+	location->step();
 	charLen++ ; 
 	foundCh = this->YYText()[0]; 
 }
-<CHAR_LITERAL_MODE>\n { charLen++ ; foundCh = '\n'; }
-<CHAR_LITERAL_MODE>\t { charLen++ ; foundCh = '\t'; }
-<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ; }
+<CHAR_LITERAL_MODE>\n { charLen++ ; foundCh = '\n'; location->step(); }
+<CHAR_LITERAL_MODE>\t { charLen++ ; foundCh = '\t'; location->step(); }
+<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ; location->step(); }
 <CHAR_LITERAL_MODE>' {
 	BEGIN(INITIAL);
+
+	location->step();
 
 	if (charLen > 1) {
 		this->LexerError("Error! char amb més d'una lletra");
@@ -208,15 +213,14 @@ begin_comment "/*"
 	lval->emplace<char>(foundCh);
 	return token::CHAR_LITERAL;
 }
-
-. { cout << "ERROR: " << this->YYText() << endl; }
-
-	
-<COMENTARI>[^*\/]* { finalpossible = false; }
+<COMENTARI>{new_line} { location->lines(yyleng); location->step(); }	
+<COMENTARI>[^\*\/\n]* { finalpossible = false; location->step(); }
 <COMENTARI>\* {
+	location->step();
 	finalpossible = true;
 }
-<COMENTARI>"/" {
+<COMENTARI>\/ {
+	location->step();
 	if (finalpossible){
 		BEGIN(INITIAL);
 	}
@@ -226,9 +230,7 @@ begin_comment "/*"
 
 
 // Codi que inclourà l'arxiu, en concret, el body de les funcions
-Lexic::Lexic(char * filename, fstream &tokensFile)
-	: yyFlexLexer()
-{
+Lexic::Lexic(char * filename, std::string tokensFile) : yyFlexLexer(), tokensFile(tokensFile, std::fstream::out) {
 	// obrir l'arxiu
 	try{
 		ifstream *in = new ifstream(filename);

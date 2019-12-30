@@ -8,6 +8,7 @@ SimbolContSwitch::SimbolContSwitch() : SimbolStatement() {
 SimbolContSwitch::~SimbolContSwitch(){}
 
 /**
+ * Part principal de l'switch començant amb un default
  * ContSwitch -> exprSimple ) begin default begin bloc end
  */
 void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc) {
@@ -30,7 +31,8 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc
 }
 
 /**
- *  ContSwitch -> exprSimple ( begin case exprSimple begin bloc end
+ * Part principal de l'switch començant amb un case
+ * ContSwitch -> exprSimple ) begin case exprSimple begin bloc end
  */
 void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp1, SimbolExpressio exp2, SimbolBloc bloc) {
     //Propagar returns i breaks
@@ -43,17 +45,17 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp1, SimbolExpressi
     }
 
     if (exp1.getTSB() == ARRAY) {
-        driver->error("Expressió de tipus array no vàlida.");
+        driver->error(error_tipus_no_comparable(exp1.getTipus()), true);
         return;
     }
 
     if (exp2.getTSB() != exp1.getTSB()) {
-        driver->error("No coincideixen els tipus de les expressions.");
+        driver->error(error_tipus_no_compatibles(exp1.getTSB(), exp2.getTSB()), true);
         return;
     }
 
-    if (exp2.getMode () != SimbolExpressio::CONST) {
-        driver->error("Literal del case no es constant.");
+    if (exp2.getMode() != SimbolExpressio::CONST) {
+        driver->error(error_valor_no_constant(), true);
         return;
     }
 
@@ -74,7 +76,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp1, SimbolExpressi
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(exp1.getNodeId()) );
-    this->fills.push_back( driver->addTreeChild(this, "( begin case ") );
+    this->fills.push_back( driver->addTreeChild(this, ") begin case ") );
     this->fills.push_back( std::to_string(exp2.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "begin ") );
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
@@ -90,7 +92,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolBloc bl
     this->propaga(bloc);
 
     if (cont.teDefault) {
-        driver->error("Massa defaults al switch.");
+        driver->error(error_default_definit(), true);
         return;
     }
     this->teDefault = true;
@@ -121,12 +123,12 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolExpress
     }
 
     if (exp.getTSB() != cont.tsb) {
-        driver->error("No coincideixen els tipus de les expressions.");
+        driver->error(error_tipus_no_compatibles(exp.getTSB(), cont.tsb), true);
         return;
     }
 
     if (exp.getMode () != SimbolExpressio::CONST) {
-        driver->error("Literal del case no es constant.");
+        driver->error(error_valor_no_constant());
         return;
     }    
 
@@ -145,7 +147,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolExpress
     this->valors = cont.valors;
     for (int i = 0; i < valors.size(); i++) {
         if (valor == valors[i]) {
-            driver->error("Coincidencia de valors dels cases del switch");
+            driver->error(error_case_definit(std::to_string(valors[i])));
             return;
         }
     }

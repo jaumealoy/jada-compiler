@@ -35,7 +35,6 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 
     // Comprovar que efectivament aquesta funció no té paràmetres
     TaulaSimbols::Iterator params = driver->ts.getParametres();
-    driver->ts.print();
     params.first(id);
 
     if(params.valid()){
@@ -62,6 +61,10 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     }
 
     this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, id + "()") );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -107,6 +110,8 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
         this->tsb = TipusSubjacentBasic::NUL;
     }
 
-    // afegir fills
-    this->fills.push_back(std::to_string(cont.getNodeId()));
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(cont.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, ")") );
+    Simbol::toDotFile(driver);
 }

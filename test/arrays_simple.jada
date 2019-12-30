@@ -1,23 +1,41 @@
-proc main() begin
-    int[10][15] a;
+const int A = 5;
 
-    int b = 5;
+func conteAArray(char[A] lletres, char caracter) : boolean begin
+    int b = 0;
+    int char = 0;
+    int a = c + 2;
 
-    if b == 5 do
-        int c = 3;
+    boolean trobat = false;
+    while ('a') do
+
     end;
 
-    int d = 3;
+    string line = "Hola";
 
-    if d == 3 do
-        int d2 = 4;
-
-        if d > 4 do
-            char d = 'a' char c;
+    int i = 0;
+    while (i < A and not trobat) do
+        if lletres[i] == caracter do
+            trobat = true;
         end;
     end;
 
-    int c = 2;
-    n++;
-    n--;
+    return trobat;
+end conteAArray;
+
+
+/*
+proc main() begin
+    const char[A] vocals = char{'a', 'e', 'i', 'o', 'u'};
+
+    string entrada;
+    int length = 0;
+    int i = 0; 
+
+    int numVocals = 0;
+
+    while (i < length) do
+        numVocals = numVocals + 1;
+        i++;
+    end;
 end main;
+*/

@@ -18,11 +18,11 @@ class Lexic : public yyFlexLexer {
 private:
 	yy::location *loc;
 
-	std::fstream tokensFile;
+	std::ofstream tokensFile;
 
 	int yylex(yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location); // funció pròpia del Flex
 public:
-	Lexic(char *, std::fstream &);
+	Lexic(char *, std::string filename);
 	~Lexic();
 
 	yy::location *getLocation();

@@ -33,4 +33,10 @@ void SimbolArrayFinalList::make(Driver *driver, SimbolArrayFinalList list, Simbo
     this->elements.push_back(exp);
     this->numElementsActuals = list.numElementsActuals + 1;
     this->match = list.match;
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(list.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, ",") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }

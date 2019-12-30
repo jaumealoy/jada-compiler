@@ -15,6 +15,8 @@ void SimbolArrayElementList::make(Driver *driver){
     this->dimensions.push_back(0);
     this->elements.clear();
     this->match = true;
+
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -30,6 +32,10 @@ void SimbolArrayElementList::make(Driver *driver, SimbolArrayFinalList list){
 
     // La dimensió actual és una llista d'elements finals
     this->dimensions.push_back(list.numElementsActuals);
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(list.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -45,6 +51,10 @@ void SimbolArrayElementList::make(Driver *driver, SimbolArrayInitList list){
     // La dimensió actual és una llista de dimensions. La dimensió a
     // afegir és quantes dimensions té la llista
     this->dimensions.push_back(list.getElementsActuals());
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(list.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 

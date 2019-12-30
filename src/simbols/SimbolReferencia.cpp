@@ -35,7 +35,7 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
         this->mode = SimbolReferencia::ModeMVP::CONST;
     }else{
         // no és una constant ni una variable
-        driver->error("error, no és una variable ni una constants");
+        driver->error( error_no_posicio_memoria(nom) );
         this->makeNull();
         return;
     }
@@ -59,7 +59,6 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
 void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
     if(!array.isReferencia() || array.isNull()){
         this->makeNull();
-        driver->error("no és un accés a array vàlid");
         return;
     }
 

@@ -9,7 +9,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 # The executable file that will be created at the end                 
 EXEC = jada                                                      
 # The flags to use for compilation                                    
-FLAGS = -Wall -g                                                    
+FLAGS = -Wall -g -Wextra                                                    
 # The code compiler to use for compilation                            
 CC = g++                                                    
 

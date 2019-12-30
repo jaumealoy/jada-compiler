@@ -19,7 +19,7 @@ void SimbolPrograma::make(Driver *driver, SimbolDeclList declList){
         return;
     }
 
-    // d != nulptr
+    // d != nullptr
     if(d->getTipus() != Descripcio::Tipus::PROCEDIMENT){
         driver->error(error_no_procediment_principal(), true);
         return;

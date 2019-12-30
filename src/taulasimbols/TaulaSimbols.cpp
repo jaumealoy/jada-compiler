@@ -1,20 +1,20 @@
 #include "TaulaSimbols.h"
 
 #include <iostream>
+#include <fstream>
 
 TaulaSimbols::TaulaSimbols(){
     // inicialitzar la taula
     this->buida();
 }
 
-TaulaSimbols::~TaulaSimbols(){
-
-}
+TaulaSimbols::~TaulaSimbols(){}
 
 void TaulaSimbols::buida(){
     // reiniciar la taula, no s'ha entrat dins cap bloc
     this->nivellProfunditat = 0;
     this->indexLliure = 0;
+    this->darrerNivellProfunditat = 0;
 
     for(int i = 0; i < MAX_SIMBOLS; i++){
         // taula de dispersió
@@ -39,10 +39,6 @@ void TaulaSimbols::buida(){
     }
 }
 
-void TaulaSimbols::posar(char *id){
-
-}
-
 void TaulaSimbols::posar(std::string id){
     this->posar(id, nullptr);
 }
@@ -62,13 +58,25 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
         tries++;
         finalIndex = (index + tries * tries) % MAX_SIMBOLS;
     }
+
+    if(this->td[finalIndex].index != TaulaSimbols::NUL){
+        // ja existeix però és possible que sigui una entrada no vàlida
+        int tmp = this->td[finalIndex].index; 
+
+        if(this->tDescripcio[tmp].nivellProfunditat >= this->darrerNivellProfunditat){
+            // és una entrada no vàlida
+            this->tDescripcio[tmp].next = this->indexLliure;
+            this->indexLliure = tmp;
+            this->td[finalIndex].index = TaulaSimbols::NUL;
+        }
+    }
     
     if(this->td[finalIndex].index != TaulaSimbols::NUL){
         int tmp = this->td[finalIndex].index;
 
         // ja existeix una entrada amb aquest nom
         // determinar si s'ha de moure a la taula d'expansió
-        if(this->nivellProfunditat == this->tDescripcio[this->td[finalIndex].index].nivellProfunditat
+        if(this->nivellProfunditat == this->tDescripcio[this->td[finalIndex].index].nivellProfunditat 
                 || this->tDescripcio[this->td[finalIndex].index].nivellProfunditat == TaulaSimbols::NUL){
             // error! aquest símbol ja està definit en aquest nivell
             // de profunditat
@@ -102,6 +110,7 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
         this->tDescripcio[indexDescripcio].identificador = id;
         this->tDescripcio[indexDescripcio].declaracio = declaracio;
         this->tDescripcio[indexDescripcio].next = TaulaSimbols::NUL;
+        this->tDescripcio[indexDescripcio].original = finalIndex;
 
         if(protegit){
             this->tDescripcio[indexDescripcio].nivellProfunditat = TaulaSimbols::NUL;
@@ -109,12 +118,15 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
             this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
         }
     }
-
 }
 
 void TaulaSimbols::entrarBloc(){
     // indicar que s'ha entrat a un bloc
     this->nivellProfunditat++;
+
+    if(this->darrerNivellProfunditat < this->nivellProfunditat){
+        this->darrerNivellProfunditat = this->nivellProfunditat;
+    }
 
     // i actualitzar l'entrada del nivell actual a la taula d'àmbit
     this->tAmbit[this->nivellProfunditat] = this->tAmbit[this->nivellProfunditat - 1];
@@ -123,7 +135,7 @@ void TaulaSimbols::entrarBloc(){
 void TaulaSimbols::surtirBloc(){
     if(this->nivellProfunditat == 0){
         // no s'ha entrat a cap bloc, és un error
-        // throw
+        return;
     }
 
     // copiar tots els valors de la taula d'expansió a la taula de descripció
@@ -137,8 +149,14 @@ void TaulaSimbols::surtirBloc(){
             continue;
         }
 
+        int indexHash = this->tDescripcio[ this->tExpansio[i].original ].original;
         this->tDescripcio[ this->tExpansio[i].original ] = this->tExpansio[i];
+        this->tDescripcio[ this->tExpansio[i].original ].original = indexHash;
     }
+
+    // també s'han d'eliminar totes aquelles entrades del nivell de profunditat
+    // actual perquè deixen de ser vàlides
+    this->darrerNivellProfunditat = this->nivellProfunditat;
 
     this->nivellProfunditat--;
 }
@@ -158,9 +176,20 @@ Descripcio *TaulaSimbols::consulta(std::string id){
 
 
 void TaulaSimbols::print(){
+    std::cout << "= TD ==================" << std::endl;
+    std::cout << "Nivell actual: " << this->nivellProfunditat << std::endl;
+    std::cout << "Nivell darrer: " << this->darrerNivellProfunditat << std::endl;
     for(int i = 0; i < this->indexLliure; i++){
         std::cout << "Index " << i << " - ID: " << this->tDescripcio[i].identificador << " - NP: " << this->tDescripcio[i].nivellProfunditat << std::endl;
     }
+    std::cout << "= TE =================" << std::endl;
+    for(int i = 0; i < 10; i++){
+        if(this->tExpansio[i].nivellProfunditat == NUL) continue;
+
+        std::cout << "Index " << i << " - ID: " << this->tExpansio[i].identificador << " - NP: " << this->tExpansio[i].nivellProfunditat << std::endl;
+    }
+
+    std::cout << "===================" << std::endl;
 }
 
 /**
@@ -177,7 +206,7 @@ int TaulaSimbols::getIndex(std::string id){
 
     while(this->td[finalIndex].index != TaulaSimbols::NUL && this->td[finalIndex].id.compare(id)){
         tries++;
-        finalIndex = (index + tries * tries) % MAX_SIMBOLS;
+        finalIndex = (finalIndex + tries * tries) % MAX_SIMBOLS;
     }
 
     return this->td[finalIndex].index;
@@ -201,7 +230,6 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
     if(actual != TaulaSimbols::NUL){
         // aquest paràmetre ja existeix a la funció
         // error: no hi pot haver dos paràmetres formals amb el mateix nom
-        // TODO: mostrar l'error
         throw NomExistent();
     }else{
         // reservar un slot a la taula d'expansió
@@ -249,9 +277,64 @@ void TaulaSimbols::posarDimensio(std::string nomTipus, DescripcioDimensio *dim){
     this->tDescripcio[indexArray].next = nouIndex;
 }
 
-void TaulaSimbols::actualitza(std::string id, Descripcio *descripcio){
+/**
+ * Volca la taula de símbols a un fitxer de text amb un format
+ * més o menys llegible
+ */
+void TaulaSimbols::dump(std::string filename){
+    std::string tipusDescripcions[] = { 
+        "Nul", "Constant", "Variable", "Tipus",
+        "Funcio", "Procediment", "Argument", "Dimensió"
+    };
 
+    std::ofstream arxiu(filename, std::fstream::out);
+
+    arxiu << "=========================" << std::endl;
+    arxiu << " Nivell de profunditat actual: " << this->nivellProfunditat << std::endl;
+    arxiu << "=========================" << std::endl << std::endl;
+
+    // Recòrrer la taula de descripció fins al darrer element ocupat
+    for(int i = 0; i < this->indexLliure; i++){
+        Descripcio *d = this->tDescripcio[i].declaracio;
+
+        arxiu << "Índex " << i << " --> ID: " << this->tDescripcio[i].identificador;
+        arxiu << " - Tipus de descripció: " << tipusDescripcions[d->getTipus()];
+        arxiu << " - NP: " << this->tDescripcio[i].nivellProfunditat << std::endl;
+
+        if(d->getTipus() == Descripcio::Tipus::FUNCIO || d->getTipus() == Descripcio::Tipus::PROCEDIMENT){
+            arxiu << "-----> Paràmetres: ";
+            int j = this->tDescripcio[i].next;
+
+            while(j != TaulaSimbols::NUL){
+                arxiu << "(" << this->tExpansio[j].identificador << ", ";
+                DescripcioArgument *da = (DescripcioArgument *) this->tExpansio[j].declaracio;
+                arxiu << da->getNomTipusArgument() << ") ";
+                j = this->tExpansio[j].next;
+            }
+            arxiu << std::endl;
+        }else if(d->getTipus() == Descripcio::Tipus::TIPUS){
+            DescripcioTipus *dt = (DescripcioTipus *) d;
+            arxiu << "-----> TSB: " << dt->getTSB() << std::endl;
+
+            if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
+                DescripcioTipusArray *da = (DescripcioTipusArray *) dt;
+                arxiu << "-----> Tipus unitari " << da->getTipusElement() << std::endl;
+                arxiu << "-----> Dimensions: ";
+
+                int j = this->tDescripcio[i].next;
+                while(j != TaulaSimbols::NUL){
+                    DescripcioDimensio *dd = (DescripcioDimensio *) this->tExpansio[j].declaracio;
+                    arxiu << dd->getDimensio() << " ";
+                    j = this->tExpansio[j].next;
+                }
+                arxiu << std::endl;
+            }
+        }
+
+        arxiu << std::endl;
+    }
 }
+
 
 TaulaSimbols::Iterator TaulaSimbols::getParametres(){
     return Iterator(this, Descripcio::Tipus::ARGUMENT);

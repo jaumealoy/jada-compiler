@@ -20,6 +20,8 @@ int main(int argc, char **argv){
 	if(myDriver.exitosa()){
 		cout << "Compilació exitosa" << endl;
 	}
+
+	myDriver.ts.dump("ts.txt");
 	
 	return EXIT_SUCCESS;
 }

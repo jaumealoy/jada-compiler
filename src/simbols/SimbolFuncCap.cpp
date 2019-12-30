@@ -94,7 +94,6 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipu
     while(it.valid()){
         DescripcioArgument *da = (DescripcioArgument *) it.get();
         DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
-        std::cout << "Definint " << it.getId() << " com a variable local de " << this->nom << std::endl;
         driver->ts.posar(it.getId(), dv);
         it.next();
     }

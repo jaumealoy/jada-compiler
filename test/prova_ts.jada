@@ -1,0 +1,11 @@
+func prova2(int n, char a) : int begin
+    for(int i = 0; i < 5; i++) do
+
+    end;
+
+    return prova2(5, 'a' if true else 'b');
+end prova2;
+
+func prova(int n) : int begin
+    return 0;
+end prova;

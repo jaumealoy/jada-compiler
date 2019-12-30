@@ -12,6 +12,7 @@ public:
 
     void make(Driver *driver, SimbolExpressio exp);
     void make(Driver *driver, SimbolArrayInit exp);
+    void make(Driver *driver);
 };
 
 #endif

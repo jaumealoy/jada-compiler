@@ -2,7 +2,7 @@
 #include "../Driver.h"
 
 SimbolSubProgramContCall::SimbolSubProgramContCall() : SimbolReferencia() {
-
+    this->nomNode = "SubProgramContCall";
 }
 
 SimbolSubProgramContCall::~SimbolSubProgramContCall() {}
@@ -35,6 +35,7 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
 
     if(!this->it.valid()){
         // no s'esperen paràmetres
+        this->makeNull();
         driver->error(error_sobren_parametres());
         return;
     }
@@ -71,6 +72,11 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
     // El primer paràmetre és del tipus que toca
     this->id = id;
     this->mode = SimbolReferencia::ModeMVP::CRIDA_INCOMPLETA;
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, id + "(") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
@@ -128,6 +134,12 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
     // el paràmetre és compatible
     this->id = cont.id;
     this->mode = SimbolReferencia::ModeMVP::CRIDA_INCOMPLETA;
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(cont.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, ",") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 

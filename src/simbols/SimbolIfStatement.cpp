@@ -17,7 +17,7 @@ void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc blo
     // Comprovar que l'expressió correspon un boolean
     if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN) {
         // error
-        driver->error("boolean expected");
+        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
         return;
     }
 

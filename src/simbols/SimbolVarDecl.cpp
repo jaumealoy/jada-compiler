@@ -21,9 +21,11 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             driver->error(error_no_tipus(tipus));
+            return;
         }
     }catch(TaulaSimbols::NomNoExistent ex){
         driver->error(error_no_tipus(tipus));
+        return;
     }
 
     DescripcioTipus *dt = (DescripcioTipus *) d;
@@ -118,7 +120,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
             if(init.getTSB() != this->tsb || init.getTSB() == TipusSubjacentBasic::ARRAY){
                 // si són arrays han de tenir exactament les mateixes dimensions
                 // i el mateix tipus unitari, que està dins el nom del tipus
-                driver->error("tipus no compatibles", true);
+                driver->error( error_tipus_no_compatibles(this->tsb, init.getTSB()) , true);
                 return;
             }
         }

@@ -56,7 +56,7 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
         case 0: // exprSimple -> not exprSimple
             // comprovar que exprSimple és un boolean
             if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-                driver->error("s'esperava un boolean");
+                driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
                 this->makeNull();
             }
 
@@ -77,7 +77,7 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
             }else if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
                 this->boolValue = exp.boolValue;
             }else{
-                driver->error("s'esperava int o boolean");
+                driver->error( error_tipus_no_compatibles_operador(exp.getTSB()) );
                 this->makeNull();
             }
 
@@ -114,7 +114,7 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
         case 1: // OR
             // els tipus subjacents bàsics d'a i b han de ser boolean
             if(a.getTSB() != TipusSubjacentBasic::BOOLEAN || b.getTSB() != TipusSubjacentBasic::BOOLEAN){
-                driver->error("s'esperava un boolean");
+                driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
                 this->makeNull();
                 return;
             }
@@ -217,13 +217,13 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
 
     if(b.getTSB() != TipusSubjacentBasic::BOOLEAN){
         this->makeNull();
-        driver->error("s'esperava un boolean");
+        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
         return;
     }
 
-    if(a.getTSB() != b.getTSB()){
+    if(a.getTSB() != c.getTSB()){
         this->makeNull();
-        driver->error("No són compatibles els dos possibles valors");
+        driver->error( error_tipus_no_compatibles(a.getTSB(), c.getTSB()) );
         return;
     }
 
@@ -258,6 +258,9 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
     Simbol::toDotFile(driver);
 }
 
+/**
+ * exprSimple -> relExpr
+ */
 void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
     this->boolValue = exp.boolValue;
     this->tsb = exp.tsb;
@@ -269,6 +272,9 @@ void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
     Simbol::toDotFile(driver);
 }
 
+/**
+ * exprSimple -> aritExpr
+ */
 void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
     this->tsb = exp.tsb;
     this->intValue = exp.intValue;

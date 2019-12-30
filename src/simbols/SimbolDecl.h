@@ -8,26 +8,14 @@
 
 class SimbolDecl : public Simbol {
 private:
-    // per controlar que la declaracio té un procediment main
-    bool teMain;
-
 public:
-    SimbolDecl() : Simbol("Declaració"){
-        this->teMain = false;
-    }
-
-    void setTeMain(bool main){
-        this->teMain = main;
-    }
+    SimbolDecl() : Simbol("Declaració"){}
 
     void make(Driver *driver, Simbol simbol);
     //void make(Driver *driver, SimbolFuncDecl s);
     //void make(Driver *driver, SimbolVarDecl s);
     //void make(Driver *driver, SimbolProcDecl s);
 
-    bool getTeMain(){
-        return this->teMain;
-    }
 };
 
 #endif

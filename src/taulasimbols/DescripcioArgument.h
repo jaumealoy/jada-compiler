@@ -25,7 +25,7 @@ public:
     ~DescripcioArgument(){}
 
     void setTipusArgument(DescripcioArgument::Tipus argType){
-        this->tipus = tipus;
+        this->tipus = argType;
     }
 
     DescripcioArgument::Tipus getTipusArgument(){

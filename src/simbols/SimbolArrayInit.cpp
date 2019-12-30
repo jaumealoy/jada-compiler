@@ -20,11 +20,11 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     try {
         d = driver->ts.consulta(tipusBasic);
     } catch (TaulaSimbols::NomNoExistent ex) {
-        driver->error("Tipus invàlid");
+        driver->error( error_no_definit(tipusBasic), true);
     }
 
     if(d->getTipus() != Descripcio::Tipus::TIPUS){
-        driver->error("no és un tipus", true);
+        driver->error( error_no_tipus(tipusBasic) , true);
         return;
     }
 
@@ -33,7 +33,7 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     // Comprovar que no és un array perquè no es permet la creació
     // d'arrays
     if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
-        driver->error("no es permet crear un array de " + tipusBasic, true);
+        driver->error(error_creacio_array(dt->getTSB()), true);
         return;
     }
 
@@ -46,7 +46,7 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     for(int i = elements.size() - 1; i >= 0 && valid; i--){
         if(elements[i].getTipus() != tipusBasic && elements[i].getTSB() != dt->getTSB()){
             valid = false;
-            driver->error("element no compatible amb " + tipusBasic, false);
+            driver->error( error_tipus_no_compatibles(tipusBasic), false);
         }
 
         if(modeResultat == SimbolExpressio::Mode::CONST && modeResultat != elements[i].getMode()){
@@ -66,6 +66,18 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     this->tipus = nomTipus;
     this->mode = modeResultat;
     this->match = list.coincideixen();
+
+    if(!this->match){
+        // no està ben format, afegir un caràcter per provocar un error
+        // de tipus a la inicialització
+        this->tipus += "_";
+    }
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, tipusBasic + "{") );
+    this->fills.push_back( std::to_string(list.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "}") );
+    Simbol::toDotFile(driver);
 }
 
 bool SimbolArrayInit::coincideixen(){

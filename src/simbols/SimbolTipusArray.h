@@ -25,7 +25,7 @@ public:
 
     ~SimbolTipusArray();
 
-    void make(Driver *driver);
+    void make(Driver *driver, SimbolTipusArray array);
     void make(Driver *driver, std::string id, SimbolExpressio exp);
     void make(Driver *driver, SimbolTipusArray contArray, SimbolExpressio exp);
 

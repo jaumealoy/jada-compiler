@@ -39,3 +39,12 @@ void SimbolVarInit::make(Driver *driver, SimbolArrayInit exp){
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
 }
+
+
+/**
+ * varInit -> lambda
+ */
+void SimbolVarInit::make(Driver *driver){
+    this->makeEmpty();
+    Simbol::toDotFile(driver);
+}

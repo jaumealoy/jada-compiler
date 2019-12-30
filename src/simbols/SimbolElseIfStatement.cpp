@@ -13,7 +13,7 @@ SimbolElseIfStatement::~SimbolElseIfStatement(){}
 void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolElseIfStatement elseIf){
     // comprovar que l'expressió és un boolean
     if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-        driver->error("s'espera un boolean");
+        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
     }
 
     // propagar els possibles returns i breaks que benguin de bloc i elseIfStatement
