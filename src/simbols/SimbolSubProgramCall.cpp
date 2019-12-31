@@ -4,7 +4,7 @@
 #include "../Driver.h"
 
 SimbolSubProgramCall::SimbolSubProgramCall() : SimbolReferencia() {
-
+    this->nomNode = "SubProgramCall";
 }
 
 SimbolSubProgramCall::~SimbolSubProgramCall(){}

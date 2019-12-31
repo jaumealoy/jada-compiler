@@ -216,9 +216,8 @@ statement :
     | ifStatement { $$.make(this->driver, $1); }
     | switchStatement { $$.make(this->driver, $1); }
     | RETURN exprSimple { $$.make(this->driver, $2); }
-    | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); }
-    | BREAK BREAK { this->driver->ts.print(); };
-
+    | BREAK { $$.make(this->driver, SimbolStatement::Tipus::BREAK); };
+    
 forIteration : FOR A LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND {
     $$.make(this->driver, $4, $6, $8, $11);
 };

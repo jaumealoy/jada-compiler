@@ -23,6 +23,10 @@ void SimbolArrayFinalList::make(Driver *driver, SimbolExpressio exp){
     this->elements.push_back(exp);
 
     this->match = true;
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**

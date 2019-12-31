@@ -25,7 +25,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
     }
 
     // Comprovar que els tipus de referència i exprSimple són compatibles
-    if(ref.getTipus() != exp.getTipus() && !ref.getTipus().empty()){
+    if(ref.getTipus() != exp.getTipus() && !ref.getTipus().empty() && !exp.getTipus().empty()){
         driver->error( error_tipus_no_compatibles(ref.getTipus(), exp.getTipus()) );
         return;
     }else{

@@ -22,7 +22,7 @@ clean:
 	rm -f $(OBJECTS) *.o
 
 flex:
-	flex -+ -o Lexic.cpp < Lexic.l
+	flex -+ -o Lexic.cpp < Lexic.l --trace -v
 
 bison:
 	bison -dv Syntax.ypp
