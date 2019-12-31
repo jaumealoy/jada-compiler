@@ -94,6 +94,7 @@ void SimbolStatement::make(Driver *driver, SimbolSubProgramCall call){
  * statement -> switchStatement
  */
 void SimbolStatement::make(Driver *driver, SimbolSwitchStatement switchStmt){
+    this->propaga(switchStmt);
     // pintar a l'arbre
     this->fills.push_back( std::to_string(switchStmt.getNodeId()) );
     Simbol::toDotFile(driver);

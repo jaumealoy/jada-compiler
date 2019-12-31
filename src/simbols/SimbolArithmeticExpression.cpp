@@ -71,7 +71,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
                 break;
 
             case 3: // exprSimple / exprSimpe
-                if(b.getIntValue() == 0){
+                if(b.getMode() == CONST && b.getIntValue() == 0){
                     driver->error( error_divisio_zero() );
                     this->makeNull();
                     return;
