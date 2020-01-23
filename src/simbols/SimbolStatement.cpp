@@ -50,6 +50,7 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
     struct ControlInstruccions::ReturnData tmp;
     tmp.tipus = exp.getTipus();
     tmp.tsb = exp.getTSB();
+    tmp.loc = driver->getLocation();
 
     this->_returns.push_back(tmp);
 

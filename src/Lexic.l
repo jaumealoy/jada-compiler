@@ -40,6 +40,7 @@ op_add \+
 op_minus -
 op_div \/
 op_mul \*
+op_mod %
 
 /* Símbols */
 sym_eq =
@@ -109,6 +110,7 @@ begin_comment "/*"
 {op_minus}		{ return token::OP_MINUS; }
 {op_mul}		{ return token::OP_TIMES; }
 {op_div}		{ return token::OP_DIV; }
+{op_mod}		{ return token::OP_MOD; }
 
 
 {sym_eq}		{ return token::EQ; }

@@ -34,6 +34,10 @@ public:
 
     void error(std::string msg);
     void error(std::string msg, bool atura);
+    void error(std::string msg, yy::location pos, bool atura);
+
+    // obtenir la posició actual
+    yy::location getLocation();
 
     // Per guardar l'arbre sintàctic
     void writeToTree(std::string data);

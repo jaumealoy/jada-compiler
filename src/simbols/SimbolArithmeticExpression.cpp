@@ -41,6 +41,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
  * aritExpr -> exprSimple - exprSimple
  * aritExpr -> exprSimple * exprSimple
  * aritExpr -> exprSimple / exprSimple
+ * aritExpr -> exprSimple % exprSimple
  */
 void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus){
     if(a.isNull() || b.isNull()){
@@ -79,6 +80,16 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
 
                 this->intValue = a.getIntValue() / b.getIntValue();
                 break;
+            
+            case 4: // exprSimple % exprSimple:
+                if(b.getIntValue() == 0){
+                    driver->error( error_divisio_zero() );
+                    this->makeNull();
+                    return;
+                }
+
+                this->intValue = a.getIntValue() % b.getIntValue();
+                break;
         }
 
         this->mode = SimbolExpressio::Mode::CONST;
@@ -96,6 +107,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
         case 1: this->fills.push_back( driver->addTreeChild(this, "-") ); break;
         case 2: this->fills.push_back( driver->addTreeChild(this, "*") ); break;
         case 3: this->fills.push_back( driver->addTreeChild(this, "/") ); break;
+        case 4: this->fills.push_back( driver->addTreeChild(this, "%") ); break;
     }
     this->fills.push_back( std::to_string(b.getNodeId()) );
     Simbol::toDotFile(driver);

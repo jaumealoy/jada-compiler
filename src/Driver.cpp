@@ -76,11 +76,25 @@ void Driver::parse(){
     //}
 }
 
+/**
+ * Mostra un missatge d'error no crític
+ */
 void Driver::error(std::string msg){
     this->error(msg, false);
 }
 
+/**
+ * Mostra un missatge d'error, crític o no, en funció d'error
+ * a la posició actual
+ */
 void Driver::error(std::string msg, bool error){
+    this->error(msg, this->getLocation(), error);
+}
+
+/**
+ * Mostra un missatge d'error a la posició del paràmetre
+ */
+void Driver::error(std::string msg, yy::location loc, bool error){
     this->exit = false;
 
     if(error){
@@ -89,11 +103,15 @@ void Driver::error(std::string msg, bool error){
         std::cerr << "Warning ";
     }
 
-    std::cerr << "(línia "<< this->scanner->getLocation()->begin.line <<"): " << msg << std::endl;
+    std::cerr << "(línia "<< loc.begin <<" - "<< loc.end << "): " << msg << std::endl;
 
     if(error){
         //throw TaulaSimbols::NomNoExistent();
     }
+}
+
+yy::location Driver::getLocation(){
+    return *this->scanner->getLocation(); 
 }
 
 void Driver::writeToTree(std::string data){
