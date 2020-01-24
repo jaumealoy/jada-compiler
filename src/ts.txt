@@ -38,10 +38,15 @@
 Índex 11 --> ID: printInt - Tipus de descripció: Procediment - NP: 0
 -----> Paràmetres: (num, int) 
 
-Índex 12 --> ID: main - Tipus de descripció: Procediment - NP: 0
------> Paràmetres: 
+Índex 12 --> ID: factorial - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (n, int) 
 
-Índex 13 --> ID: b - Tipus de descripció: Variable - NP: 2
+Índex 13 --> ID: n - Tipus de descripció: Variable - NP: 1
 
-Índex 14 --> ID: a - Tipus de descripció: Variable - NP: 3
+Índex 14 --> ID: factorialIteratiu - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (n, int) 
+
+Índex 15 --> ID: tmp - Tipus de descripció: Variable - NP: 2
+
+Índex 16 --> ID: i - Tipus de descripció: Variable - NP: 2
 
