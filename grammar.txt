@@ -3,8 +3,8 @@ declList -> declList Decl | Decl
 Decl ->  VarDecl | FuncDecl | ProcDecl
 VarDecl -> Const Tipo VarDeclList VarInit ;
 VarDeclList ->  id | VarDeclList , id
-VarInit -> lambda | = expr
-FuncDecl -> func iid ( args ) : tipo begin Bloc end
+VarInit -> lambda | = exprSimple
+FuncDecl -> func iid ( args ) : Tipo begin Bloc end
 Args -> ArgList | lambda
 ArgList -> Tipo id ArgList2
 ArgList2 -> , ArgList | lambda
@@ -15,7 +15,7 @@ ProcDecl -> proc id (Args) begin Bloc end
 
 Bloc-> statement ; Bloc | lambda
 statement -> varDecl | iterationStatement | CondStatement | returnStatement | break
-Iteration -> forIteration | whileIteration
+	Iteration -> forIteration | whileIteration
 	init -> Tipo id ExprSimple
 	cond -> ExprSimple
 WhileStatement -> while ( cond ) do Bloc end
@@ -30,6 +30,13 @@ returnStatement -> return exprSimple;
 switchStatement -> switch ( exprSimple ) do/begin caseBlock end
 caseBlock -> case Valor do Bloc end | default do Bloc end | lambda
 
+exprSimple -> exprSimple and exprSimple | exprsSimple or exprSimple | not exprSimple | aritExprs
+aritExpr -> aritExpr + aritExpr | aritExpr / aritExpr | aritExpr * aritExpr | op | op++ |
+
+
 ExprSimple -> id | Value | (ExprSimple operador ExprSimple) | lambda
+
+
+
 
 
