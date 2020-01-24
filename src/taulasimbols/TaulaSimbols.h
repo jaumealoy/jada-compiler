@@ -25,6 +25,10 @@ private:
         // nivell de profunditat de la símbol
         int nivellProfunditat;
 
+        // llista del nivell de profunditat
+        int nextNP;
+        int primerNP;
+
         // índex de la taula d'expansió o següent
         int next;
 
@@ -61,6 +65,9 @@ private:
 
     int getIndex(std::string id);
 
+
+    // llista dels nivells de profunditat
+    int nivellsProfunditat[MAX_PROFUNDITAT];
 
 public:
     class NomExistent : public std::exception {};

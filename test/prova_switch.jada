@@ -1,13 +1,11 @@
 func putaswix(int n) : int begin
 	switch (n) begin
+		case 's' begin
+
+		end
+		
 		case 3 begin
 			int a = 2 + 3;
-		end
-		default begin
-			return 6;
-		end
-		default begin
-			return 2;
 		end
 	end;
 	return 3;

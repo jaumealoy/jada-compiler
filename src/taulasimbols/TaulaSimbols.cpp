@@ -36,6 +36,9 @@ void TaulaSimbols::buida(){
 
     for(int i = 0; i < MAX_PROFUNDITAT; i++){
         this->tAmbit[i] = TaulaSimbols::NUL;
+
+        // no hi ha cap registre incicialment
+        this->nivellsProfunditat[i] = TaulaSimbols::NUL;
     }
 }
 
@@ -59,17 +62,7 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
         finalIndex = (index + tries * tries) % MAX_SIMBOLS;
     }
 
-    if(this->td[finalIndex].index != TaulaSimbols::NUL){
-        // ja existeix però és possible que sigui una entrada no vàlida
-        int tmp = this->td[finalIndex].index; 
-
-        if(this->tDescripcio[tmp].nivellProfunditat >= this->darrerNivellProfunditat){
-            // és una entrada no vàlida
-            this->tDescripcio[tmp].next = this->indexLliure;
-            this->indexLliure = tmp;
-            this->td[finalIndex].index = TaulaSimbols::NUL;
-        }
-    }
+    int descripcioIndex;
     
     if(this->td[finalIndex].index != TaulaSimbols::NUL){
         int tmp = this->td[finalIndex].index;
@@ -93,10 +86,28 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
             this->tExpansio[indexExpansio].next = -1;
             this->tExpansio[indexExpansio].identificador = this->tDescripcio[tmp].identificador;
             this->tExpansio[indexExpansio].declaracio = this->tDescripcio[tmp].declaracio;
+            this->tExpansio[indexExpansio].nextNP = TaulaSimbols::NUL; // l'element s'inserirà al final
+            this->tExpansio[indexExpansio].primerNP = this->tDescripcio[tmp].primerNP;
+
+            if(this->nivellsProfunditat[this->tDescripcio[tmp].nivellProfunditat] == tmp){
+                // és la capçalera
+                this->nivellsProfunditat[this->tDescripcio[tmp].nivellProfunditat] = this->tDescripcio[tmp].nextNP;
+            }else{
+                // no és la capçalera de la llista
+                // la llista té 2 elements o més
+                int z = this->nivellsProfunditat[this->tDescripcio[tmp].nivellProfunditat];
+                while(this->tDescripcio[z].nextNP != tmp){
+                    z = this->tDescripcio[z].nextNP;
+                }
+
+                this->tDescripcio[z].nextNP = this->tDescripcio[tmp].nextNP;
+            }
 
             // actualitzar l'entrada de la taula de descripció
             this->tDescripcio[tmp].nivellProfunditat = this->nivellProfunditat;
             this->tDescripcio[tmp].declaracio = declaracio;
+
+            descripcioIndex = tmp;
         }
     }else{
         // crear una nova entrada a la taula de descripció
@@ -111,20 +122,29 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
         this->tDescripcio[indexDescripcio].declaracio = declaracio;
         this->tDescripcio[indexDescripcio].next = TaulaSimbols::NUL;
         this->tDescripcio[indexDescripcio].original = finalIndex;
+        this->tDescripcio[indexDescripcio].primerNP = this->nivellProfunditat;
 
         if(protegit){
             this->tDescripcio[indexDescripcio].nivellProfunditat = TaulaSimbols::NUL;
         }else{
             this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
         }
+
+        descripcioIndex = indexDescripcio;
     }
 
-    this->darrerNivellProfunditat = this->nivellProfunditat + 1;
+    // inserir l'element a la llista del seu nivell de profunditat (al principi)
+    this->tDescripcio[descripcioIndex].nextNP = this->nivellsProfunditat[this->nivellProfunditat];
+    this->nivellsProfunditat[this->nivellProfunditat] = descripcioIndex;
 }
 
 void TaulaSimbols::entrarBloc(){
     // indicar que s'ha entrat a un bloc
     this->nivellProfunditat++;
+
+    // s'acaba d'entrar a un nivell de profunditat, és impossible que hi hagi
+    // registres d'aquest nivell
+    this->nivellsProfunditat[this->nivellProfunditat] = TaulaSimbols::NUL;
 
     // i actualitzar l'entrada del nivell actual a la taula d'àmbit
     this->tAmbit[this->nivellProfunditat] = this->tAmbit[this->nivellProfunditat - 1];
@@ -134,6 +154,21 @@ void TaulaSimbols::surtirBloc(){
     if(this->nivellProfunditat == 0){
         // no s'ha entrat a cap bloc, és un error
         return;
+    }
+
+    // eliminar aquelles entrades que s'han creat en el nivell
+    // de profunditat que s'està abandonant
+    int i = this->nivellsProfunditat[this->nivellProfunditat];
+    while(i != TaulaSimbols::NUL){
+        int tmpi = i;
+
+        if(this->tDescripcio[i].primerNP == this->nivellProfunditat){
+            this->tDescripcio[i].next = this->indexLliure;
+            this->indexLliure = i;
+            this->td[this->tDescripcio[i].original].index = TaulaSimbols::NUL;
+        }
+
+        i = this->tDescripcio[i].nextNP;
     }
 
     // copiar tots els valors de la taula d'expansió a la taula de descripció
@@ -150,11 +185,28 @@ void TaulaSimbols::surtirBloc(){
         int indexHash = this->tDescripcio[ this->tExpansio[i].original ].original;
         this->tDescripcio[ this->tExpansio[i].original ] = this->tExpansio[i];
         this->tDescripcio[ this->tExpansio[i].original ].original = indexHash;
+
+        // aquest element formava part d'una llista de profunditat, l'hem de tornar a inserir
+        // al final de la llista actual del seu nivell de profunditat
+        int k = this->nivellsProfunditat[ this->tExpansio[i].nivellProfunditat ];
+
+        int prev = TaulaSimbols::NUL;
+        while(k != TaulaSimbols::NUL){
+            prev = k;
+            k = this->tDescripcio[k].nextNP;
+        }
+
+        if(prev == TaulaSimbols::NUL){
+            // inserció al principi de la llista actual
+            this->nivellsProfunditat[ this->tExpansio[i].nivellProfunditat ] = this->tExpansio[i].original;
+        }else{
+            // inserció al final de la llista
+            this->tDescripcio[prev].nextNP = this->tExpansio[i].original;
+        }
     }
 
-    // també s'han d'eliminar totes aquelles entrades del nivell de profunditat
-    // actual perquè deixen de ser vàlides
-    this->darrerNivellProfunditat = this->nivellProfunditat;
+    // aquest nivell de profunditat deixa de ser vàlid
+    this->nivellsProfunditat[this->nivellProfunditat] = TaulaSimbols::NUL;
 
     this->nivellProfunditat--;
 }

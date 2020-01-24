@@ -120,7 +120,6 @@
 %type <SimbolContSwitch> contSwitch
 
 %type <SimbolIfStatement> ifStatement
-
 %type <SimbolElseIfStatement> elseIfStatement
 %type <SimbolElseStatement> elseStatement
 
