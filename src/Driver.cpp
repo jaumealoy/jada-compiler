@@ -3,7 +3,7 @@
 
 Driver::Driver(char *filename) : 
         treeFile("tree.dot", std::fstream::out) {
-    this->scanner = new Lexic(filename, "tokens.txt");
+    this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
 
     // inicialitzar la taula de símbols

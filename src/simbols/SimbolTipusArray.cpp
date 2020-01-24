@@ -250,6 +250,11 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
         this->tsb = dt->getTSB();
         this->esReferencia = true;
     }else{
+        if(array.isNull()){
+            this->makeNull();
+            return;
+        }
+
         // afegir aquest tipus array a la taula de símbols si no existeix
         std::string nomTipus = array.toString();
         this->esReferencia = false;

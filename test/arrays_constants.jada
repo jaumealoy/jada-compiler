@@ -1,0 +1,41 @@
+func suma(int a, int b) : int begin
+    int[5 > 7] a;
+end suma;
+
+const int A = 5;
+
+func mitjana(int a) : int begin
+    int a;
+
+    int d = "hola";
+
+    return "hola";
+    
+    if true do
+        while ( true ) do
+            int a;
+            break;
+        end;
+        int a;
+    end;
+
+    int[A] ab = int{7, 5, 3, 2, 1};
+
+    for (; 0 > 7; ) do
+        return '0';
+    end;
+
+end mitjana;
+
+proc main() begin
+    int a;
+    char a;
+
+    if true do
+        int a;
+        char a;
+        boolean a;
+    end;
+
+    boolean a;
+end main;

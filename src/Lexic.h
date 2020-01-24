@@ -12,17 +12,18 @@
 
 #include <fstream>
 
+#include "Driver.h"
 
 // Definir la classe de l'analitzador lèxic
 class Lexic : public yyFlexLexer {
 private:
 	yy::location *loc;
-
 	std::ofstream tokensFile;
+	Driver *driver;
 
 	int yylex(yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location); // funció pròpia del Flex
 public:
-	Lexic(char *, std::string filename);
+	Lexic(char *, std::string filename, Driver *driver);
 	~Lexic();
 
 	yy::location *getLocation();
