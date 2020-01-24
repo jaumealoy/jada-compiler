@@ -1,0 +1,162 @@
+%%
+1	("\<")
+2	("\>")
+3	("\<")("=")("\>")
+4	("=")((0|1)*)
+5	([ \011\015\012]+)
+6	<<EOF>>
+6	.
+7	Marcador de fi
+
+
+********** s'està començant el bolcat de l'afn amb l'estat inicial 36
+estat #    1	257:     0,    0
+estat #    2	257:     0,    0
+estat #    3	257:     4,    0
+estat #    4	 60:     5,    0
+estat #    5	257:     0,    0  [1]
+estat #    6	257:     1,    3
+estat #    7	257:     8,    0
+estat #    8	 62:     9,    0
+estat #    9	257:     0,    0  [2]
+estat #   10	257:     6,    7
+estat #   11	257:    12,    0
+estat #   12	 60:    13,    0
+estat #   13	257:    14,    0
+estat #   14	 61:    15,    0
+estat #   15	257:    16,    0
+estat #   16	 62:    17,    0
+estat #   17	257:     0,    0  [3]
+estat #   18	257:    10,   11
+estat #   19	257:    20,    0
+estat #   20	 61:    26,    0
+estat #   21	 48:    24,    0
+estat #   22	 49:    24,    0
+estat #   23	257:    21,   22
+estat #   24	257:    23,   25
+estat #   25	257:     0,    0  [4]
+estat #   26	257:    23,   25
+estat #   27	257:    18,   19
+estat #   28	 -1:    29,    0
+estat #   29	257:    28,    0  [5]
+estat #   30	257:    27,   28
+estat #   31	 -2:    32,    0
+estat #   32	257:     0,    0  [6]
+estat #   33	257:    30,   31
+estat #   34	 -4:    35,    0
+estat #   35	257:     0,    0  [7]
+estat #   36	257:    33,   34
+********** final del bolcat
+
+
+Bolcat AFD:
+
+estat # 1:
+	1	4
+	2	5
+	3	6
+	4	4
+	5	4
+	6	7
+	7	8
+	8	9
+estat # 4:
+estat # 5:
+	2	10
+	3	10
+estat # 6:
+	2	10
+	3	10
+estat # 7:
+	7	11
+estat # 8:
+	4	12
+	5	12
+estat # 9:
+estat # 10:
+	2	10
+	3	10
+estat # 11:
+	8	13
+estat # 12:
+	4	12
+	5	12
+estat # 13:
+l'estat # 4 accepta: [6]
+l'estat # 5 accepta: [5]
+l'estat # 6 accepta: [5]
+l'estat # 7 accepta: [1]
+l'estat # 8 accepta: [4]
+l'estat # 9 accepta: [2]
+l'estat # 10 accepta: [5]
+l'estat # 12 accepta: [4]
+l'estat # 13 accepta: [3]
+
+
+Classes d'equivalència:
+
+\000 = -1  ' ' = 2     @ = 1     ` = 1  \200 = 1  \240 = 1  \300 = 1  \340 = 1  
+\001 = 1     ! = 1     A = 1     a = 1  \201 = 1  \241 = 1  \301 = 1  \341 = 1  
+\002 = 1     " = 1     B = 1     b = 1  \202 = 1  \242 = 1  \302 = 1  \342 = 1  
+\003 = 1     # = 1     C = 1     c = 1  \203 = 1  \243 = 1  \303 = 1  \343 = 1  
+\004 = 1     $ = 1     D = 1     d = 1  \204 = 1  \244 = 1  \304 = 1  \344 = 1  
+\005 = 1     % = 1     E = 1     e = 1  \205 = 1  \245 = 1  \305 = 1  \345 = 1  
+\006 = 1     & = 1     F = 1     f = 1  \206 = 1  \246 = 1  \306 = 1  \346 = 1  
+  \a = 1     ' = 1     G = 1     g = 1  \207 = 1  \247 = 1  \307 = 1  \347 = 1  
+  \b = 1     ( = 1     H = 1     h = 1  \210 = 1  \250 = 1  \310 = 1  \350 = 1  
+  \t = 2     ) = 1     I = 1     i = 1  \211 = 1  \251 = 1  \311 = 1  \351 = 1  
+  \n = 3     * = 1     J = 1     j = 1  \212 = 1  \252 = 1  \312 = 1  \352 = 1  
+  \v = 1     + = 1     K = 1     k = 1  \213 = 1  \253 = 1  \313 = 1  \353 = 1  
+  \f = 1     , = 1     L = 1     l = 1  \214 = 1  \254 = 1  \314 = 1  \354 = 1  
+  \r = 2     - = 1     M = 1     m = 1  \215 = 1  \255 = 1  \315 = 1  \355 = 1  
+\016 = 1     . = 1     N = 1     n = 1  \216 = 1  \256 = 1  \316 = 1  \356 = 1  
+\017 = 1     / = 1     O = 1     o = 1  \217 = 1  \257 = 1  \317 = 1  \357 = 1  
+\020 = 1     0 = 4     P = 1     p = 1  \220 = 1  \260 = 1  \320 = 1  \360 = 1  
+\021 = 1     1 = 5     Q = 1     q = 1  \221 = 1  \261 = 1  \321 = 1  \361 = 1  
+\022 = 1     2 = 1     R = 1     r = 1  \222 = 1  \262 = 1  \322 = 1  \362 = 1  
+\023 = 1     3 = 1     S = 1     s = 1  \223 = 1  \263 = 1  \323 = 1  \363 = 1  
+\024 = 1     4 = 1     T = 1     t = 1  \224 = 1  \264 = 1  \324 = 1  \364 = 1  
+\025 = 1     5 = 1     U = 1     u = 1  \225 = 1  \265 = 1  \325 = 1  \365 = 1  
+\026 = 1     6 = 1     V = 1     v = 1  \226 = 1  \266 = 1  \326 = 1  \366 = 1  
+\027 = 1     7 = 1     W = 1     w = 1  \227 = 1  \267 = 1  \327 = 1  \367 = 1  
+\030 = 1     8 = 1     X = 1     x = 1  \230 = 1  \270 = 1  \330 = 1  \370 = 1  
+\031 = 1     9 = 1     Y = 1     y = 1  \231 = 1  \271 = 1  \331 = 1  \371 = 1  
+\032 = 1     : = 1     Z = 1     z = 1  \232 = 1  \272 = 1  \332 = 1  \372 = 1  
+\033 = 1     ; = 1     [ = 1     { = 1  \233 = 1  \273 = 1  \333 = 1  \373 = 1  
+\034 = 1     < = 6     \ = 1     | = 1  \234 = 1  \274 = 1  \334 = 1  \374 = 1  
+\035 = 1     = = 7     ] = 1     } = 1  \235 = 1  \275 = 1  \335 = 1  \375 = 1  
+\036 = 1     > = 8     ^ = 1     ~ = 1  \236 = 1  \276 = 1  \336 = 1  \376 = 1  
+\037 = 1     ? = 1     _ = 1  \177 = 1  \237 = 1  \277 = 1  \337 = 1  \377 = 1  
+
+
+Classes de metaequivalència:
+1 = 1
+2 = 2
+3 = 2
+4 = 1
+5 = 1
+6 = 1
+7 = 1
+8 = 1
+estadístiques d'ús de flex versió 2.6.4:
+  opcions de l'analitzador: -+vIT8 -Cem -olmark.cpp
+  37/2000 estats AFN
+  13/1000 estats AFD (48 paraules)
+  7 regles
+  Sempre es realitza còpia de seguretat de les taules comprimides
+  1/40 condicions d'activació
+  26 estats èpsilon, 11 estats doble èpsilon
+  les classes de caràcters 4/100 necessitaren 5/500 paraules de magatzement, 0 reutilitzades
+  28 parells estat/estat-següent creats
+  21/7 transicions úniques/duplicades
+  15/1000 entrades base-def creades
+  23/2000 (pic 18) entrades nxt-chk creades
+  4/2500 (pic 16) entrades de plantilla nxt-chk creades
+  0 entrades de la tabla buides
+  3 prototips creats
+  2 plantilles creades, 3 usos
+  8/256 classes d'equivalència creades
+  2/256 classes de meta-equivalència creades
+  0 (4 desades) col·lisions d'ubicació («hash»), 11 AFD iguals
+  es necessiten 0 conjunts de relocalització
+  es necessiten 340 entrades totals de la taula

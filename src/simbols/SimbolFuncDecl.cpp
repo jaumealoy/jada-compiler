@@ -1,6 +1,8 @@
 #include "SimbolFuncDecl.h"
 #include "../Driver.h"
 
+#include <string>
+
 SimbolFuncDecl::SimbolFuncDecl() : Simbol("FuncDecl") {}
 SimbolFuncDecl::~SimbolFuncDecl() {}
 
@@ -37,13 +39,13 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
 
                 if(dt->getTSB() != ret.tsb){
                     // error tipus incompatibles
-                    driver->error( error_return_incompatible(ret.tsb) );
+                    driver->error( error_return_incompatible(ret.tsb), ret.loc, false);
                 }           
             }else{
                 // comprovació forta de tipus
                 if(ret.tipus != df->getTipusRetorn()){
                     // error tipus incompatibles
-                    driver->error( error_tipus_no_compatibles(ret.tipus, df->getTipusRetorn() ) );
+                    driver->error( error_tipus_no_compatibles(ret.tipus, df->getTipusRetorn() ), ret.loc, false );
                 }
             }
         }

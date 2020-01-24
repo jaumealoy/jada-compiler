@@ -7,6 +7,9 @@ src/Syntax.output
 src/location.hh
 *.dot
 .vscode
-docs/*
-!docs/Gramàtica.pdf
-!docs/Gramàtica.tex
+*.aux
+*.log
+*.synctex.gz
+*.svg
+*.html
+*.xml

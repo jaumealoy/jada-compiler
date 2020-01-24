@@ -4,6 +4,7 @@
 %defines 
 %define api.parser.class {Syntax}
 %define parse.error verbose
+%define lr.default-reduction accepting
 
 %locations
 
@@ -138,7 +139,7 @@
 %type <SimbolArrayInitList> arrayInitList
 %type <SimbolArrayFinalList> arrayFinalList
 
-%left OP_TIMES OP_DIV AND NOT
+%left OP_TIMES OP_DIV OP_MOD AND NOT
 %left OP_ADD OP_MINUS OR
 %left OP_EQ OP_GT OP_GTE OP_LT OP_LTE OP_NEQ
 %left IF ELSE
@@ -266,6 +267,7 @@ aritExpr : OP_MINUS exprSimple { $$.make(this->driver, $2); }
     | exprSimple OP_MINUS exprSimple { $$.make(this->driver, $1, $3, 1); }
     | exprSimple OP_TIMES exprSimple { $$.make(this->driver, $1, $3, 2); }
     | exprSimple OP_DIV exprSimple { $$.make(this->driver, $1, $3, 3); };
+    | exprSimple OP_MOD exprSimple { $$.make(this->driver, $1, $3, 4); };
 
 relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OP_EQ exprSimple { $$.make(this->driver, $1, $3, 1); }

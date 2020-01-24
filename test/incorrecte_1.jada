@@ -3,6 +3,46 @@
  * amb que té instruccions de retorn amb un tipus incompatible
  * de l'esperat
  */
+
+const int A = 2;
+const int B = 3;
+
+func v(int[A][1 + B] array) : int begin
+    return 0;
+end v;
+
+func a(int f, int d) : int begin
+
+end a;
+
+func b(int f, int d) : int begin
+
+end b;
+
 func suma(int a, int b) : int begin
-    
+    int resultat = 0;
+    int tmp = 1 + 2; 
+
+    if a > b do
+        resultat = a + b;
+    else if a < b do
+        resultat = a - b;
+    else do
+        resultat = -1;
+    end;
+
+    const int[A][B + 1] arr = int{ {1, 2, A + B, 5}, {4, 7, 6, 8} };
+    v(arr);
+
+    return resultat;
 end suma;
+
+proc main() begin
+    print("Introdueix A: ");
+    int a = readInt();
+
+    print("Introdueix B: ");
+    int b = readInt();
+
+
+end main;

@@ -1,0 +1,105 @@
+$accept -> program ENDFILE .
+program -> declList .
+declList -> declList decl .
+declList -> decl .
+decl -> varDecl SEMICOLON .
+decl -> varDecl error decl .
+decl -> funcDecl .
+decl -> procDecl .
+varDecl -> CONST Tipus ID varInit .
+varDecl -> Tipus ID varInit .
+varDecl -> varDecl COMA ID varInit .
+varInit -> EQ exprSimple .
+varInit -> EQ arrayInit .
+varInit -> .
+arrayInit -> ID LEFTCBRACKET arrayElementList RIGHTCBRACKET .
+arrayElementList -> arrayFinalList .
+arrayElementList -> arrayInitList .
+arrayElementList -> .
+arrayInitList -> arrayInitList COMA LEFTCBRACKET arrayElementList RIGHTCBRACKET .
+arrayInitList -> LEFTCBRACKET arrayElementList RIGHTCBRACKET .
+arrayFinalList -> exprSimple .
+arrayFinalList -> arrayFinalList COMA exprSimple .
+funcDecl -> FUNC funcCap BBEGIN bloc BEND ID SEMICOLON .
+funcCap -> funcContCap RIGHTPARAN COLON Tipus .
+funcCap -> ID LEFTPARAN RIGHTPARAN COLON Tipus .
+funcContCap -> ID LEFTPARAN Tipus ID .
+funcContCap -> funcContCap COMA Tipus ID .
+procDecl -> PROC procCap BBEGIN bloc BEND ID SEMICOLON .
+procCap -> procContCap RIGHTPARAN .
+procCap -> ID LEFTPARAN RIGHTPARAN .
+procContCap -> ID LEFTPARAN Tipus ID .
+procContCap -> procContCap COMA Tipus ID .
+bloc -> A statementList .
+A -> .
+statementList -> statement SEMICOLON statementList .
+statementList -> statement error statementList .
+statementList -> .
+statement -> varDecl .
+statement -> expression .
+statement -> subProgramCall .
+statement -> forIteration .
+statement -> whileIteration .
+statement -> ifStatement .
+statement -> switchStatement .
+statement -> RETURN exprSimple .
+statement -> BREAK .
+forIteration -> FOR A LEFTPARAN forInit SEMICOLON exprSimple SEMICOLON forPostExpression RIGHTPARAN DO bloc BEND .
+forInit -> varDecl .
+forInit -> expression .
+forInit -> .
+forPostExpression -> expression .
+forPostExpression -> .
+whileIteration -> WHILE LEFTPARAN exprSimple RIGHTPARAN DO bloc BEND .
+ifStatement -> IF exprSimple DO bloc elseIfStatement BEND .
+elseIfStatement -> ELSE IF exprSimple DO bloc elseIfStatement .
+elseIfStatement -> elseStatement .
+elseStatement -> ELSE DO bloc .
+elseStatement -> .
+switchStatement -> SWITCH LEFTPARAN contSwitch BEND .
+contSwitch -> exprSimple RIGHTPARAN BBEGIN DEFAULT BBEGIN bloc BEND .
+contSwitch -> exprSimple RIGHTPARAN BBEGIN CASE exprSimple BBEGIN bloc BEND .
+contSwitch -> contSwitch DEFAULT BBEGIN bloc BEND .
+contSwitch -> contSwitch CASE exprSimple BBEGIN bloc BEND .
+exprSimple -> NOT exprSimple .
+exprSimple -> LEFTPARAN exprSimple RIGHTPARAN .
+exprSimple -> exprSimple AND exprSimple .
+exprSimple -> exprSimple OR exprSimple .
+exprSimple -> exprSimple IF exprSimple ELSE exprSimple .
+exprSimple -> referencia .
+exprSimple -> literal .
+exprSimple -> relExpr .
+exprSimple -> aritExpr .
+aritExpr -> OP_MINUS exprSimple .
+aritExpr -> exprSimple OP_ADD exprSimple .
+aritExpr -> exprSimple OP_MINUS exprSimple .
+aritExpr -> exprSimple OP_TIMES exprSimple .
+aritExpr -> exprSimple OP_DIV exprSimple .
+relExpr -> exprSimple OP_NEQ exprSimple .
+relExpr -> exprSimple OP_EQ exprSimple .
+relExpr -> exprSimple OP_GT exprSimple .
+relExpr -> exprSimple OP_GTE exprSimple .
+relExpr -> exprSimple OP_LT exprSimple .
+relExpr -> exprSimple OP_LTE exprSimple .
+referencia -> ID .
+referencia -> array .
+referencia -> subProgramCall .
+subProgramCall -> ID LEFTPARAN RIGHTPARAN .
+subProgramCall -> subProgramContCall RIGHTPARAN .
+subProgramContCall -> ID LEFTPARAN exprSimple .
+subProgramContCall -> subProgramContCall COMA exprSimple .
+literal -> STR_LITERAL .
+literal -> INT_LITERAL .
+literal -> CHAR_LITERAL .
+Tipus -> ID .
+Tipus -> array .
+array -> contArray .
+contArray -> ID LEFTBRACKET exprSimple RIGHTBRACKET .
+contArray -> contArray LEFTBRACKET exprSimple RIGHTBRACKET .
+expression -> referencia EQ exprSimple .
+expression -> referencia OP_ADD EQ exprSimple .
+expression -> referencia OP_DIV EQ exprSimple .
+expression -> referencia OP_TIMES EQ exprSimple .
+expression -> referencia OP_MINUS EQ exprSimple .
+expression -> referencia OP_MINUS OP_MINUS .
+expression -> referencia OP_ADD OP_ADD .

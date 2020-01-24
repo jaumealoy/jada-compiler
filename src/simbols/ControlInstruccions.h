@@ -2,6 +2,7 @@
 #define _H_CONTROL_INSTRUCCIONS
 
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../location.hh"
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@ public:
         TipusSubjacentBasic tsb;
 
         // incloure altre informació sobre el return
+        yy::location loc;
         // línia
         // columna
     };

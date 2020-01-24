@@ -1,0 +1,7 @@
+func suma(int a, int b) : int begin
+    if (a > b) do
+        return 'b';
+    else do
+        return 'd';
+    end;
+end suma;
