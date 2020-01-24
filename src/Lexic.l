@@ -172,7 +172,13 @@ begin_comment "/*"
 	location->step();
 }
 
-. { cout << "ERROR: " << this->YYText() << endl; }
+. { 
+	std::string tmp = "token no reconegut \"";
+	tmp.append(this->YYText());
+	tmp.append("\"");
+	this->driver->error(tmp); 
+	tmp.clear();
+}
 
 <<EOF>> {
 	return token::ENDFILE;
@@ -207,7 +213,7 @@ begin_comment "/*"
 	location->step();
 
 	if (charLen > 1) {
-		this->LexerError("Error! char amb més d'una lletra");
+		this->driver->error("caràcter amb més d'una lletra");
 	}
 
 	charLen = 0;
@@ -230,9 +236,13 @@ begin_comment "/*"
 
 %%
 
+#include "Driver.h"
 
-// Codi que inclourà l'arxiu, en concret, el body de les funcions
-Lexic::Lexic(char * filename, std::string tokensFile) : yyFlexLexer(), tokensFile(tokensFile, std::fstream::out) {
+// Codi que inclourà l'arxiu, en concret, el body de les funcions de la classe Lexic
+
+Lexic::Lexic(char * filename, std::string tokensFile, Driver *driver) : yyFlexLexer(), tokensFile(tokensFile, std::fstream::out) {
+	this->driver = driver;
+
 	// obrir l'arxiu
 	try{
 		ifstream *in = new ifstream(filename);
@@ -245,16 +255,28 @@ Lexic::Lexic(char * filename, std::string tokensFile) : yyFlexLexer(), tokensFil
 	}
 }
 
-Lexic::~Lexic(){}
+Lexic::~Lexic(){
+	// Tancar el fitxer de tokens
+	this->tokensFile.close();
+}
 
+/**
+  * Llegeix un token del fitxer d'entrada
+  */
 int Lexic::getToken(yy::Syntax::semantic_type *yylval, yy::location * l){
 	this->loc = l;
 	l->step();
 	int tk = this->yylex(yylval, l);
+
+	// Guardar el token al fitxer de tokens
 	tokensFile << "Token " << tk << " (" << this->YYText() << ")" << endl;
+
 	return tk;
 }
 
+/**
+  * Retorna la posició actual dins els fitxer
+  */
 yy::location *Lexic::getLocation(){
 	return this->loc;
 }

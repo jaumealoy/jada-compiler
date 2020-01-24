@@ -118,15 +118,13 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
             this->tDescripcio[indexDescripcio].nivellProfunditat = this->nivellProfunditat;
         }
     }
+
+    this->darrerNivellProfunditat = this->nivellProfunditat + 1;
 }
 
 void TaulaSimbols::entrarBloc(){
     // indicar que s'ha entrat a un bloc
     this->nivellProfunditat++;
-
-    if(this->darrerNivellProfunditat < this->nivellProfunditat){
-        this->darrerNivellProfunditat = this->nivellProfunditat;
-    }
 
     // i actualitzar l'entrada del nivell actual a la taula d'àmbit
     this->tAmbit[this->nivellProfunditat] = this->tAmbit[this->nivellProfunditat - 1];

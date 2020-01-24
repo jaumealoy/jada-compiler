@@ -9,3 +9,7 @@ end prova2;
 func prova(int n) : int begin
     return 0;
 end prova;
+
+proc main() begin
+
+end main;
