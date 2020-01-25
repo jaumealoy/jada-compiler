@@ -1,0 +1,18 @@
+/*
+1. Notau l'expresió relacional i aritmètica del while. (Control valor boolean i expresions).
+2. Corregir valor del condicional del if. (Control del tipus).
+3. Notau propagació del break dins el bloc condicional fins el procedure. (Propagació breaks).
+4. Corregir return dins bloc else. (Propagació return dins blocs del condicional).
+*/
+
+proc main() begin
+
+    while (false == not 2<(5+6)) do
+        if "Hola" do
+            break;
+        else if 1 do
+        return 0;
+        end;
+    end;
+
+end main;

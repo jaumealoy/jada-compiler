@@ -1,0 +1,9 @@
+/*
+* Programa correcte, comprovació de aspectes com: 
+*/
+proc main() begin
+    //Correctesa lèxic.
+    const char tab = '\t';
+    char comilla = '\'';
+    char segon = tab;
+end main;

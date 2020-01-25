@@ -1,4 +1,5 @@
-func putaswix(int n) : int begin
+proc main() begin
+	int n = 3;
 	switch (n) begin
 		case 's' begin
 
@@ -8,5 +9,4 @@ func putaswix(int n) : int begin
 			int a = 2 + 3;
 		end
 	end;
-	return 3;
-end putaswix;
+end main;

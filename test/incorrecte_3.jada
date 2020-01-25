@@ -1,4 +1,5 @@
 //S'intenta modificar una constant (NO PROVAT)
+
 const int A = 6;
 
 func set0(const int[A] arr) : boolean begin
