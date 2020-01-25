@@ -12,11 +12,11 @@ func v(int[A][1 + B] array) : int begin
 end v;
 
 func a(int f, int d) : int begin
-
+    return 0;
 end a;
 
-func b(int f, int d) : int begin
-
+func b(int x, int s) : int begin
+    return 0;
 end b;
 
 func suma(int a, int b) : int begin

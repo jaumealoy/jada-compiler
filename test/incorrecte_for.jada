@@ -1,0 +1,42 @@
+/*
+1. Notau la manca d'instrucció inicial i repetitiva al primer for.
+2. Notau la crida a una funció de tipus booleana com condició del bucle. (Control funcions i tipus de retorn).
+3. Notau postincrement.
+4. For anidats amb breaks i retorns.
+*/
+
+func tornaBool() : boolean begin
+    return false;
+end tornaBool;
+
+
+proc main() begin
+boolean a = false;
+
+    for (; not 3>2!=a;) do
+    end;
+
+    for (;tornaBool();a++) do
+    end;
+
+
+    int b = 5;
+    for (;true;) do
+        for (;true;) do
+            for (;true;) do
+                if (a== false) do
+                    break;
+                    return 'A';
+                else if ( true ) do
+                    break;
+                end;
+            end;
+
+            break;
+        end;
+
+        break;
+    end;
+
+end main;
+

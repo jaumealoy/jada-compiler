@@ -3,7 +3,6 @@
 */
 proc main() begin
     int b = 3;
-    b = 3/0;
     switch (b) begin
 		case 2 begin
 			int a = 2 + 3;

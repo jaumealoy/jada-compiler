@@ -1,0 +1,29 @@
+/*
+1. Corregir case 's'. (Control de tipus dels cases).
+2. Quitar el case 3 repetido. (Control de los valores del switch).
+3. Quitar segundo default. (Control numero defaults).
+4. Habrá otro error por el return del primer default. (Propagación returns hasta función).
+*/
+
+proc main() begin
+    int a = 3;
+    switch (a) begin
+        case 's' begin
+            int b = a + 2;
+        end
+        case 3 begin
+            a++;
+        end
+        case 3 begin
+            a--;
+        end
+        default begin
+			if false do
+                return 0;
+            end;
+		end
+		default begin
+			break;
+		end  
+    end;
+end main;

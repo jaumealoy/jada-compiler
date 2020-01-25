@@ -1,14 +1,10 @@
-func putaswix(int n) : int begin
+proc main() begin
+	int n = 3;
 	switch (n) begin
-		case 3 begin
+		case 'c' begin
 			int a = 2 + 3;
 		end
 		default begin
-			return 6;
-		end
-		default begin
-			return 2;
 		end
 	end;
-	return 3;
-end putaswix;
+end main;
