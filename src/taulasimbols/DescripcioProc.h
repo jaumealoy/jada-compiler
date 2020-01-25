@@ -10,10 +10,10 @@ private:
     int np;
 
 public:
-    DescripcioProc() : Descripcio(Descripcio::Tipus::PROCEDIMENT) {}
+    static int numProcedure;
 
-    virtual ~DescripcioProc(){}
-
+    DescripcioProc();
+    ~DescripcioProc();
 };
 
 #endif

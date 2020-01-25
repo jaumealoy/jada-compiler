@@ -13,17 +13,13 @@ private:
     std::string tipusRetorn;
 
 public:
-    DescripcioFuncio() : Descripcio(Descripcio::Tipus::FUNCIO) {}
+    static int numFuncio;
+    
+    DescripcioFuncio();
+    ~DescripcioFuncio();
 
-    virtual ~DescripcioFuncio(){}
-
-    void setTipusRetorn(std::string tipus) {
-        this->tipusRetorn = tipus;
-    }
-
-    std::string getTipusRetorn(){
-        return this->tipusRetorn;
-    }
+    void setTipusRetorn(std::string tipus);
+    std::string getTipusRetorn();
 };
 
 #endif
