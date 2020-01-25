@@ -1,10 +1,12 @@
 proc main() begin
 	int n = 3;
 	switch (n) begin
-		case 'c' begin
-			int a = 2 + 3;
+		case 's' begin
+
 		end
-		default begin
+		
+		case 3 begin
+			int a = 2 + 3;
 		end
 	end;
 end main;

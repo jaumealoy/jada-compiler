@@ -46,6 +46,10 @@ void SimbolStatement::make(Driver *driver, SimbolIfStatement ifStmt){
  * statement -> return exprSimple
  */
 void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
+    if(exp.isNull()){
+        return;
+    }
+    
     // s'ha d'inserir el return dins la llista de returns
     struct ControlInstruccions::ReturnData tmp;
     tmp.tipus = exp.getTipus();

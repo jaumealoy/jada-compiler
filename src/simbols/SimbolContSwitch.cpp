@@ -50,6 +50,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp1, SimbolExpressi
     }
 
     if (exp2.getTSB() != exp1.getTSB()) {
+        this->tsb = exp1.getTSB();
         driver->error(error_tipus_no_compatibles(exp1.getTSB(), exp2.getTSB()), true);
         return;
     }
@@ -92,6 +93,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolBloc bl
     this->propaga(bloc);
 
     if (cont.teDefault) {
+        this->tsb = cont.tsb;
         driver->error(error_default_definit(), true);
         return;
     }
@@ -123,11 +125,13 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolExpress
     }
 
     if (exp.getTSB() != cont.tsb) {
+        this->tsb = cont.tsb;
         driver->error(error_tipus_no_compatibles(exp.getTSB(), cont.tsb), true);
         return;
     }
 
     if (exp.getMode () != SimbolExpressio::CONST) {
+        this->tsb = cont.tsb;
         driver->error(error_valor_no_constant());
         return;
     }    

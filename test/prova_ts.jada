@@ -1,15 +1,63 @@
-func prova2(int n, char a) : int begin
-    for(int i = 0; i < 5; i++) do
+func prova2(int a, char b) : int begin
+    /*for(int i = 0; i < 5; i++) do
 
-    end;
+    end;*/
 
     return prova2(5, 'a' if true else 'b');
 end prova2;
 
-func prova(int n) : int begin
-    return 0;
+func prova3(int a, char b) : int begin
+
+end prova3;
+
+func prova4(int a, char b) : int begin
+
+end prova4;
+
+func prova5(int a, char b) : int begin
+
+end prova5;
+
+func prova6(int a, char b, int c, int d, int e, boolean f, char g) : int begin
+    int d;
+    char d;
+    boolean d;
+
+    if true do
+        const int d = 7;
+        if true do
+            int d;
+            if true do
+                char d;
+                d = 'c';
+
+                int d;
+            end;
+            d = 5;
+        end;
+
+        d = 8;
+    end;
+end prova6;
+
+func prova(int a, char b) : int begin
+    int c;
+    
+    if true do
+        int c;
+
+        if true do
+            int d;
+
+            char d;
+        end;
+    end;
+
+    int c;
+
+    return 1;
 end prova;
 
 proc main() begin
-
+    prova(5, 'c');
 end main;

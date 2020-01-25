@@ -3,6 +3,7 @@
 
 #include "Simbol.h"
 #include "SimbolTipus.h"
+#include "SimbolArgType.h"
 #include <string>
 
 class SimbolFuncContCap : public Simbol {
@@ -23,8 +24,8 @@ public:
     std::string getNomArgument();
     std::string getTipusArgument();
 
-    void make(Driver *driver, std::string nomFuncio, SimbolTipus tipus, std::string nomParametre);
-    void make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipus, std::string nomParametre);
+    void make(Driver *driver, std::string nomFuncio, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre);
+    void make(Driver *driver, SimbolFuncContCap cap, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre);
 };
 
 #endif

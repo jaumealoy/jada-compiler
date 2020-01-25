@@ -28,7 +28,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
 
     this->mode = exp.getMode();
     this->tsb = TipusSubjacentBasic::INT;
-    this->tipus.empty();
+    this->tipus.clear();
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "-") );
@@ -98,7 +98,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     }
 
     this->tsb = TipusSubjacentBasic::INT;
-    this->tipus.empty();
+    this->tipus.clear();
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(a.getNodeId()) );

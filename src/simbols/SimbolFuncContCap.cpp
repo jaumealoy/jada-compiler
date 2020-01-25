@@ -8,7 +8,7 @@ SimbolFuncContCap::~SimbolFuncContCap() {}
  * Crea una funció (sense tipus de retorn) i afegeix un paràmetre
  * funcContCap -> ID ( Tipus ID
  */
-void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus tipus, std::string nomParametre){
+void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre){
     // comprovar que el nom de la funció no està utilitzat
     bool trobat = false;
     try {
@@ -43,12 +43,18 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
     this->nomFuncio = nomFuncio;
 
     // és el primer paràmetre, segur que no n'hi ha cap altre
-    // tots els paràmetres es passen com a mode IN
-    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
+    // tots els paràmetres es passen com a mode IN_OUT, excepte que estiguin
+    // marcats com constants
+    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
+    if(!constant.isEmpty()){
+        arg->setTipusArgument(DescripcioArgument::IN);
+    }
+
     driver->ts.posarParam(nomFuncio, nomParametre, arg);    
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nomFuncio + " ( ") );
+    this->fills.push_back( std::to_string(constant.getNodeId()) );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);
@@ -58,7 +64,7 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
  * Afegeix un paràmetre a la funció indicada per funcContCap
  * funcContCap -> funcContCap , Tipus ID
  **/
-void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipus, std::string nomParametre){
+void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre){
     // és una funció que està inserida a la taula de símbols (no importa comprovar
     // que realment existeix)
     // és possible que ja existeixi paràmetre amb aquest no (error quan s'insereixi)
@@ -76,8 +82,13 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus 
         driver->error(error_no_definit(tipus), true);
     }
 
-    // tots els paràmetres es passen com a mode IN
-    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
+    // tots els paràmetres es passen com a mode IN_OUT, excepte que estiguin marcats
+    // com a constants
+    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
+    if(!constant.isEmpty()){
+        arg->setTipusArgument(DescripcioArgument::IN);
+    }
+
     try {
         driver->ts.posarParam(cap.getNomFuncio(), nomParametre, arg);
     } catch (TaulaSimbols::NomExistent ex) {
@@ -90,6 +101,7 @@ void SimbolFuncContCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, ", ") );
+    this->fills.push_back( std::to_string(constant.getNodeId()) );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);

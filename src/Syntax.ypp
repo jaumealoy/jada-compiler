@@ -106,6 +106,7 @@
 %type <SimbolProcDecl> procDecl
 %type <SimbolProcCap> procCap
 %type <SimbolProcContCap> procContCap
+%type <SimbolArgType> argType
 %type <SimbolTipus> Tipus;
 %type <SimbolTipusArray> array;
 %type <SimbolTipusArray> contArray;
@@ -120,7 +121,6 @@
 %type <SimbolContSwitch> contSwitch
 
 %type <SimbolIfStatement> ifStatement
-
 %type <SimbolElseIfStatement> elseIfStatement
 %type <SimbolElseStatement> elseStatement
 
@@ -184,8 +184,8 @@ funcCap : funcContCap RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $4); }
     | ID LEFTPARAN RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $5); }
 
 
-funcContCap : ID LEFTPARAN Tipus ID { $$.make(this->driver, $1, $3, $4); }
-    | funcContCap COMA Tipus ID { $$.make(this->driver, $1, $3, $4); };
+funcContCap : ID LEFTPARAN argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); }
+    | funcContCap COMA argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); };
 
 procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
     $$.make(this->driver, $2, $4, $6);
@@ -194,8 +194,11 @@ procDecl : PROC procCap BBEGIN bloc BEND ID SEMICOLON {
 procCap : procContCap RIGHTPARAN { $$.make(this->driver, $1); }
     | ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1);  };
 
-procContCap : ID LEFTPARAN Tipus ID { $$.make(this->driver, $1, $3, $4); }
-    | procContCap COMA Tipus ID { $$.make(this->driver, $1, $3, $4); };
+procContCap : ID LEFTPARAN argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); }
+    | procContCap COMA argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); };
+
+argType : CONST { $$.make(this->driver, true); }
+    | { $$.make(this->driver, false); };
 
 bloc : A statementList { 
     $$.make(this->driver, $2);

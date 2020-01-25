@@ -1,0 +1,26 @@
+const int MIDA = 5;
+
+func suma(const int[MIDA] vector) : int begin
+    int tmp = 0;
+
+    for (int i = 0; i < MIDA; i++) do
+        tmp += vector[i];
+    end;
+
+    return tmp;
+end suma;
+
+func esParell(const int num) : boolean begin
+    return (num % 2) == 0;
+end esParell;
+
+proc main() begin
+    int[MIDA] prova = int{7, 8, 10, 16, 7};
+    int resultat = suma(prova);
+
+    print("La suma és: ");
+    printInt(resultat);
+
+
+    
+end main;
