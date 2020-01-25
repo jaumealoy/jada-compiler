@@ -8,7 +8,7 @@ SimbolProcContCap::~SimbolProcContCap() {}
  * Crea un procedure i afegeix un paràmetre
  * ProcContCap -> ID ( Tipus ID
  */
-void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus tipus, std::string nomParametre){
+void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre){
     // comprovar que el nom de la funció no està utilitzat
     bool trobat = false;
     try {
@@ -44,13 +44,16 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
 
     // és el primer paràmetre, segur que no n'hi ha cap altre
     
-    // si el tipus és un array, serà passat per referència (mode in-out)
-    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
+    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
+    if(!constant.isEmpty()){
+        arg->setTipusArgument(DescripcioArgument::IN);
+    }
 
     driver->ts.posarParam(nomFuncio, nomParametre, arg);
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nomProcedure + " (") );
+    this->fills.push_back( std::to_string(constant.getNodeId()) );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);
@@ -60,7 +63,7 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolTipus 
  * Afegeix un paràmetre al procedure indicada per ProcContCap
  * ProcContCap -> ProcContCap , Tipus ID
  **/
-void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus tipus, std::string nomParametre){
+void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolArgType constant, SimbolTipus tipus, std::string nomParametre){
     // és un procedure que està inserit a la taula de símbols (no importa comprovar
     // que realment existeix)
     // és possible que ja existeixi paràmetre amb aquest no (error quan s'insereixi)
@@ -79,10 +82,10 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus 
     }
 
     // si el tipus és un array, serà passat per referència (mode in-out)
-    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN);
+    DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
     DescripcioTipus *dt = (DescripcioTipus *) d;
-    if(dt->getTipus() == DescripcioTipus::Tipus::ARRAY){
-        arg->setTipusArgument(DescripcioArgument::Tipus::IN_OUT);
+    if(!constant.isEmpty()){
+        arg->setTipusArgument(DescripcioArgument::IN);
     }
 
     try {
@@ -97,6 +100,7 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolTipus 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, ",") );
+    this->fills.push_back( std::to_string(constant.getNodeId()) );
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);

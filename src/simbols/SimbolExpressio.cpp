@@ -262,6 +262,11 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
  * exprSimple -> relExpr
  */
 void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
+    if(exp.isNull()){
+        this->makeNull();
+        return;
+    }
+    
     this->boolValue = exp.boolValue;
     this->tsb = exp.tsb;
     this->tipus = exp.tipus;
@@ -276,6 +281,11 @@ void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
  * exprSimple -> aritExpr
  */
 void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
+    if(exp.isNull()){
+        this->makeNull();
+        return;
+    }
+
     this->tsb = exp.tsb;
     this->intValue = exp.intValue;
     this->tipus = exp.tipus;

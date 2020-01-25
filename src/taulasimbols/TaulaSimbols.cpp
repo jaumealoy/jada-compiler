@@ -166,6 +166,7 @@ void TaulaSimbols::surtirBloc(){
             this->tDescripcio[i].next = this->indexLliure;
             this->indexLliure = i;
             this->td[this->tDescripcio[i].original].index = TaulaSimbols::NUL;
+            this->tDescripcio[i].original = TaulaSimbols::NUL;
         }
 
         i = this->tDescripcio[i].nextNP;
@@ -344,8 +345,16 @@ void TaulaSimbols::dump(std::string filename){
     arxiu << "=========================" << std::endl << std::endl;
 
     // Recòrrer la taula de descripció fins al darrer element ocupat
-    for(int i = 0; i < this->indexLliure; i++){
+    for(int i = 0; i < MAX_SIMBOLS; i++){
+        if(this->tDescripcio[i].original == TaulaSimbols::NUL){
+            continue;
+        }
+
         Descripcio *d = this->tDescripcio[i].declaracio;
+
+        if(d == nullptr){
+            continue;
+        }
 
         arxiu << "Índex " << i << " --> ID: " << this->tDescripcio[i].identificador;
         arxiu << " - Tipus de descripció: " << tipusDescripcions[d->getTipus()];

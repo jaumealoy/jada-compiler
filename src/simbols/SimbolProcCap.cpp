@@ -54,8 +54,17 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 
     while(it.valid()){
         DescripcioArgument *da = (DescripcioArgument *) it.get();
-        DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
-        driver->ts.posar(it.getId(), dv);
+        Descripcio *d = nullptr;
+
+        if(da->getTipusArgument() == DescripcioArgument::Tipus::IN){
+            DescripcioConstant *dv = new DescripcioConstant(da->getNomTipusArgument());
+            d = (Descripcio *) dv;
+        }else if(da->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT){
+            DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
+            d = (Descripcio *) dv;
+        }
+        
+        driver->ts.posar(it.getId(), d);
         it.next();
     }
 

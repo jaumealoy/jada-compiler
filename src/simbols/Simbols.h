@@ -15,6 +15,8 @@
 #include "SimbolProcDecl.h"
 #include "SimbolProcContCap.h"
 
+#include "SimbolArgType.h"
+
 #include "SimbolStatementList.h"
 #include "SimbolStatement.h"
 #include "SimbolWhileStatement.h"
