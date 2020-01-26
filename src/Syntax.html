@@ -203,12 +203,13 @@
 <a name="rule_100" id="rule_100"></a>  100           | <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
 
 <a name="rule_101" id="rule_101"></a>  101 <span class="i">expression</span> → <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-<a name="rule_102" id="rule_102"></a>  102            | <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-<a name="rule_103" id="rule_103"></a>  103            | <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-<a name="rule_104" id="rule_104"></a>  104            | <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-<a name="rule_105" id="rule_105"></a>  105            | <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-<a name="rule_106" id="rule_106"></a>  106            | <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-<a name="rule_107" id="rule_107"></a>  107            | <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+<a name="rule_102" id="rule_102"></a>  102            | <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+<a name="rule_103" id="rule_103"></a>  103            | <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+<a name="rule_104" id="rule_104"></a>  104            | <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+<a name="rule_105" id="rule_105"></a>  105            | <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+<a name="rule_106" id="rule_106"></a>  106            | <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+<a name="rule_107" id="rule_107"></a>  107            | <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+<a name="rule_108" id="rule_108"></a>  108            | <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 </p>
 
 <h3><a name="terminals" id="terminals"></a> Terminals, with rules where they appear</h3>
@@ -219,10 +220,10 @@
 <b>STR_LITERAL</b> (259) <a href="#rule_93">93</a>
 <b>INT_LITERAL</b> (260) <a href="#rule_94">94</a>
 <b>CHAR_LITERAL</b> (261) <a href="#rule_95">95</a>
-<b>OP_ADD</b> (262) <a href="#rule_75">75</a> <a href="#rule_102">102</a> <a href="#rule_107">107</a>
-<b>OP_MINUS</b> (263) <a href="#rule_74">74</a> <a href="#rule_76">76</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a>
-<b>OP_TIMES</b> (264) <a href="#rule_77">77</a> <a href="#rule_104">104</a>
-<b>OP_DIV</b> (265) <a href="#rule_78">78</a> <a href="#rule_103">103</a>
+<b>OP_ADD</b> (262) <a href="#rule_75">75</a> <a href="#rule_103">103</a> <a href="#rule_108">108</a>
+<b>OP_MINUS</b> (263) <a href="#rule_74">74</a> <a href="#rule_76">76</a> <a href="#rule_106">106</a> <a href="#rule_107">107</a>
+<b>OP_TIMES</b> (264) <a href="#rule_77">77</a> <a href="#rule_105">105</a>
+<b>OP_DIV</b> (265) <a href="#rule_78">78</a> <a href="#rule_104">104</a>
 <b>OP_MOD</b> (266) <a href="#rule_79">79</a>
 <b>OP_GT</b> (267) <a href="#rule_82">82</a>
 <b>OP_LT</b> (268) <a href="#rule_84">84</a>
@@ -232,7 +233,7 @@
 <b>OP_LTE</b> (272) <a href="#rule_85">85</a>
 <b>SQUOTE</b> (273)
 <b>DQUOTE</b> (274)
-<b>EQ</b> (275) <a href="#rule_11">11</a> <a href="#rule_12">12</a> <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a>
+<b>EQ</b> (275) <a href="#rule_11">11</a> <a href="#rule_12">12</a> <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a>
 <b>SEMICOLON</b> (276) <a href="#rule_4">4</a> <a href="#rule_22">22</a> <a href="#rule_27">27</a> <a href="#rule_36">36</a> <a href="#rule_48">48</a>
 <b>COLON</b> (277) <a href="#rule_23">23</a> <a href="#rule_24">24</a>
 <b>COMA</b> (278) <a href="#rule_10">10</a> <a href="#rule_18">18</a> <a href="#rule_21">21</a> <a href="#rule_26">26</a> <a href="#rule_31">31</a> <a href="#rule_92">92</a>
@@ -283,7 +284,7 @@
     on right: <a href="#rule_8">8</a> <a href="#rule_9">9</a> <a href="#rule_10">10</a>
 <b>arrayInit</b> (54)
     on left: <a href="#rule_14">14</a>
-    on right: <a href="#rule_12">12</a>
+    on right: <a href="#rule_12">12</a> <a href="#rule_102">102</a>
 <b>arrayElementList</b> (55)
     on left: <a href="#rule_15">15</a> <a href="#rule_16">16</a> <a href="#rule_17">17</a>
     on right: <a href="#rule_14">14</a> <a href="#rule_18">18</a> <a href="#rule_19">19</a>
@@ -355,7 +356,7 @@
     on right: <a href="#rule_60">60</a> <a href="#rule_63">63</a> <a href="#rule_64">64</a>
 <b>exprSimple</b> (78)
     on left: <a href="#rule_65">65</a> <a href="#rule_66">66</a> <a href="#rule_67">67</a> <a href="#rule_68">68</a> <a href="#rule_69">69</a> <a href="#rule_70">70</a> <a href="#rule_71">71</a> <a href="#rule_72">72</a> <a href="#rule_73">73</a>
-    on right: <a href="#rule_11">11</a> <a href="#rule_20">20</a> <a href="#rule_21">21</a> <a href="#rule_46">46</a> <a href="#rule_48">48</a> <a href="#rule_54">54</a> <a href="#rule_55">55</a> <a href="#rule_56">56</a> <a href="#rule_61">61</a> <a href="#rule_62">62</a> <a href="#rule_64">64</a> <a href="#rule_65">65</a> <a href="#rule_66">66</a> <a href="#rule_67">67</a> <a href="#rule_68">68</a> <a href="#rule_69">69</a> <a href="#rule_74">74</a> <a href="#rule_75">75</a> <a href="#rule_76">76</a> <a href="#rule_77">77</a> <a href="#rule_78">78</a> <a href="#rule_79">79</a> <a href="#rule_80">80</a> <a href="#rule_81">81</a> <a href="#rule_82">82</a> <a href="#rule_83">83</a> <a href="#rule_84">84</a> <a href="#rule_85">85</a> <a href="#rule_91">91</a> <a href="#rule_92">92</a> <a href="#rule_99">99</a> <a href="#rule_100">100</a> <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a>
+    on right: <a href="#rule_11">11</a> <a href="#rule_20">20</a> <a href="#rule_21">21</a> <a href="#rule_46">46</a> <a href="#rule_48">48</a> <a href="#rule_54">54</a> <a href="#rule_55">55</a> <a href="#rule_56">56</a> <a href="#rule_61">61</a> <a href="#rule_62">62</a> <a href="#rule_64">64</a> <a href="#rule_65">65</a> <a href="#rule_66">66</a> <a href="#rule_67">67</a> <a href="#rule_68">68</a> <a href="#rule_69">69</a> <a href="#rule_74">74</a> <a href="#rule_75">75</a> <a href="#rule_76">76</a> <a href="#rule_77">77</a> <a href="#rule_78">78</a> <a href="#rule_79">79</a> <a href="#rule_80">80</a> <a href="#rule_81">81</a> <a href="#rule_82">82</a> <a href="#rule_83">83</a> <a href="#rule_84">84</a> <a href="#rule_85">85</a> <a href="#rule_91">91</a> <a href="#rule_92">92</a> <a href="#rule_99">99</a> <a href="#rule_100">100</a> <a href="#rule_101">101</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a>
 <b>aritExpr</b> (79)
     on left: <a href="#rule_74">74</a> <a href="#rule_75">75</a> <a href="#rule_76">76</a> <a href="#rule_77">77</a> <a href="#rule_78">78</a> <a href="#rule_79">79</a>
     on right: <a href="#rule_73">73</a>
@@ -364,7 +365,7 @@
     on right: <a href="#rule_72">72</a>
 <b>referencia</b> (81)
     on left: <a href="#rule_86">86</a> <a href="#rule_87">87</a> <a href="#rule_88">88</a>
-    on right: <a href="#rule_70">70</a> <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a> <a href="#rule_107">107</a>
+    on right: <a href="#rule_70">70</a> <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a> <a href="#rule_107">107</a> <a href="#rule_108">108</a>
 <b>subProgramCall</b> (82)
     on left: <a href="#rule_89">89</a> <a href="#rule_90">90</a>
     on right: <a href="#rule_41">41</a> <a href="#rule_88">88</a>
@@ -384,7 +385,7 @@
     on left: <a href="#rule_99">99</a> <a href="#rule_100">100</a>
     on right: <a href="#rule_98">98</a> <a href="#rule_100">100</a>
 <b>expression</b> (88)
-    on left: <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a> <a href="#rule_107">107</a>
+    on left: <a href="#rule_101">101</a> <a href="#rule_102">102</a> <a href="#rule_103">103</a> <a href="#rule_104">104</a> <a href="#rule_105">105</a> <a href="#rule_106">106</a> <a href="#rule_107">107</a> <a href="#rule_108">108</a>
     on right: <a href="#rule_40">40</a> <a href="#rule_50">50</a> <a href="#rule_52">52</a>
 </p><h2><a name="automaton" id="automaton"></a> Automaton</h2>
 
@@ -2840,12 +2841,13 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     ID      <a href="#state_116">shift, and go to state 116</a>
     FOR     <a href="#state_117">shift, and go to state 117</a>
@@ -2974,7 +2976,7 @@
 <h3><a name="state_92" id="state_92"></a>state 92</h3>
 
 <p class="pre">  <a href="#rule_14"> 14</a> <span class="i">arrayInit</span> → <b>ID</b> <span class="point">.</span> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b>
-  <a href="#rule_86"> 86</a> <span class="i">referencia</span> → <b>ID</b> <span class="point">.</span>  [error, OP_ADD, OP_MINUS, OP_TIMES, OP_DIV, OP_MOD, OP_GT, OP_LT, OP_EQ, OP_NEQ, OP_GTE, OP_LTE, SEMICOLON, COMA, AND, OR, IF]
+  <a href="#rule_86"> 86</a> <span class="i">referencia</span> → <b>ID</b> <span class="point">.</span>  [error, OP_ADD, OP_MINUS, OP_TIMES, OP_DIV, OP_MOD, OP_GT, OP_LT, OP_EQ, OP_NEQ, OP_GTE, OP_LTE, SEMICOLON, COMA, RIGHTPARAN, AND, OR, IF]
   <a href="#rule_89"> 89</a> <span class="i">subProgramCall</span> → <b>ID</b> <span class="point">.</span> <b>LEFTPARAN</b> <b>RIGHTPARAN</b>
   <a href="#rule_91"> 91</a> <span class="i">subProgramContCall</span> → <b>ID</b> <span class="point">.</span> <b>LEFTPARAN</b> <span class="i">exprSimple</span>
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <b>ID</b> <span class="point">.</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
@@ -2983,23 +2985,24 @@
     LEFTBRACKET   <a href="#state_14">shift, and go to state 14</a>
     LEFTCBRACKET  <a href="#state_140">shift, and go to state 140</a>
 
-    error      <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_ADD     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_MINUS   <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_TIMES   <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_DIV     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_MOD     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_GT      <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_LT      <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_EQ      <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_NEQ     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_GTE     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OP_LTE     <a href="#rule_86">reduce using rule 86</a> (referencia)
-    SEMICOLON  <a href="#rule_86">reduce using rule 86</a> (referencia)
-    COMA       <a href="#rule_86">reduce using rule 86</a> (referencia)
-    AND        <a href="#rule_86">reduce using rule 86</a> (referencia)
-    OR         <a href="#rule_86">reduce using rule 86</a> (referencia)
-    IF         <a href="#rule_86">reduce using rule 86</a> (referencia)
+    error       <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_ADD      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_MINUS    <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_TIMES    <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_DIV      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_MOD      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_GT       <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_LT       <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_EQ       <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_NEQ      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_GTE      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OP_LTE      <a href="#rule_86">reduce using rule 86</a> (referencia)
+    SEMICOLON   <a href="#rule_86">reduce using rule 86</a> (referencia)
+    COMA        <a href="#rule_86">reduce using rule 86</a> (referencia)
+    RIGHTPARAN  <a href="#rule_86">reduce using rule 86</a> (referencia)
+    AND         <a href="#rule_86">reduce using rule 86</a> (referencia)
+    OR          <a href="#rule_86">reduce using rule 86</a> (referencia)
+    IF          <a href="#rule_86">reduce using rule 86</a> (referencia)
 </p>
 
 <h3><a name="state_93" id="state_93"></a>state 93</h3>
@@ -4258,12 +4261,13 @@
 <h3><a name="state_130" id="state_130"></a>state 130</h3>
 
 <p class="pre">  <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="i">referencia</span> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="i">referencia</span> <span class="point">.</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     OP_ADD    <a href="#state_151">shift, and go to state 151</a>
     OP_MINUS  <a href="#state_152">shift, and go to state 152</a>
@@ -4733,12 +4737,13 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     ID      <a href="#state_116">shift, and go to state 116</a>
     FOR     <a href="#state_117">shift, and go to state 117</a>
@@ -4803,12 +4808,13 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     ID      <a href="#state_116">shift, and go to state 116</a>
     FOR     <a href="#state_117">shift, and go to state 117</a>
@@ -4840,8 +4846,8 @@
 
 <h3><a name="state_151" id="state_151"></a>state 151</h3>
 
-<p class="pre">  <a href="#rule_102">102</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_107">107</a>            | <span class="i">referencia</span> <b>OP_ADD</b> <span class="point">.</span> <b>OP_ADD</b>
+<p class="pre">  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_108">108</a>            | <span class="i">referencia</span> <b>OP_ADD</b> <span class="point">.</span> <b>OP_ADD</b>
 
     OP_ADD  <a href="#state_175">shift, and go to state 175</a>
     EQ      <a href="#state_176">shift, and go to state 176</a>
@@ -4849,8 +4855,8 @@
 
 <h3><a name="state_152" id="state_152"></a>state 152</h3>
 
-<p class="pre">  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="i">referencia</span> <b>OP_MINUS</b> <span class="point">.</span> <b>OP_MINUS</b>
+<p class="pre">  <a href="#rule_106">106</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="i">referencia</span> <b>OP_MINUS</b> <span class="point">.</span> <b>OP_MINUS</b>
 
     OP_MINUS  <a href="#state_177">shift, and go to state 177</a>
     EQ        <a href="#state_178">shift, and go to state 178</a>
@@ -4858,21 +4864,22 @@
 
 <h3><a name="state_153" id="state_153"></a>state 153</h3>
 
-<p class="pre">  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
+<p class="pre">  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
 
     EQ  <a href="#state_179">shift, and go to state 179</a>
 </p>
 
 <h3><a name="state_154" id="state_154"></a>state 154</h3>
 
-<p class="pre">  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
+<p class="pre">  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <span class="point">.</span> <b>EQ</b> <span class="i">exprSimple</span>
 
     EQ  <a href="#state_180">shift, and go to state 180</a>
 </p>
 
 <h3><a name="state_155" id="state_155"></a>state 155</h3>
 
-<p class="pre">  <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
+<p class="pre">  <a href="#rule_14"> 14</a> <span class="i">arrayInit</span> → <span class="point">.</span> <b>ID</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b>
+  <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
   <a href="#rule_66"> 66</a>            | <span class="point">.</span> <b>LEFTPARAN</b> <span class="i">exprSimple</span> <b>RIGHTPARAN</b>
   <a href="#rule_67"> 67</a>            | <span class="point">.</span> <span class="i">exprSimple</span> <b>AND</b> <span class="i">exprSimple</span>
   <a href="#rule_68"> 68</a>            | <span class="point">.</span> <span class="i">exprSimple</span> <b>OR</b> <span class="i">exprSimple</span>
@@ -4907,8 +4914,9 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
+  <a href="#rule_102">102</a>            | <span class="i">referencia</span> <b>EQ</b> <span class="point">.</span> <span class="i">arrayInit</span>
 
-    ID            <a href="#state_29">shift, and go to state 29</a>
+    ID            <a href="#state_92">shift, and go to state 92</a>
     STR_LITERAL   <a href="#state_30">shift, and go to state 30</a>
     INT_LITERAL   <a href="#state_31">shift, and go to state 31</a>
     CHAR_LITERAL  <a href="#state_32">shift, and go to state 32</a>
@@ -4916,7 +4924,8 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_181">go to state 181</a>
+    arrayInit           <a href="#state_181">go to state 181</a>
+    exprSimple          <a href="#state_182">go to state 182</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -4954,7 +4963,7 @@
 
 <p class="pre">  <a href="#rule_22"> 22</a> <span class="i">funcDecl</span> → <b>FUNC</b> <span class="i">funcCap</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <b>ID</b> <span class="point">.</span> <b>SEMICOLON</b>
 
-    SEMICOLON  <a href="#state_182">shift, and go to state 182</a>
+    SEMICOLON  <a href="#state_183">shift, and go to state 183</a>
 </p>
 
 <h3><a name="state_160" id="state_160"></a>state 160</h3>
@@ -5021,7 +5030,7 @@
 
     RIGHTCBRACKET  <a href="#rule_17">reduce using rule 17</a> (arrayElementList)
 
-    arrayElementList    <a href="#state_183">go to state 183</a>
+    arrayElementList    <a href="#state_184">go to state 184</a>
     arrayInitList       <a href="#state_163">go to state 163</a>
     arrayFinalList      <a href="#state_164">go to state 164</a>
     exprSimple          <a href="#state_165">go to state 165</a>
@@ -5039,7 +5048,7 @@
 
 <p class="pre">  <a href="#rule_14"> 14</a> <span class="i">arrayInit</span> → <b>ID</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <span class="point">.</span> <b>RIGHTCBRACKET</b>
 
-    RIGHTCBRACKET  <a href="#state_184">shift, and go to state 184</a>
+    RIGHTCBRACKET  <a href="#state_185">shift, and go to state 185</a>
 </p>
 
 <h3><a name="state_163" id="state_163"></a>state 163</h3>
@@ -5047,7 +5056,7 @@
 <p class="pre">  <a href="#rule_16"> 16</a> <span class="i">arrayElementList</span> → <span class="i">arrayInitList</span> <span class="point">.</span>  [RIGHTCBRACKET]
   <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <span class="point">.</span> <b>COMA</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b>
 
-    COMA  <a href="#state_185">shift, and go to state 185</a>
+    COMA  <a href="#state_186">shift, and go to state 186</a>
 
     RIGHTCBRACKET  <a href="#rule_16">reduce using rule 16</a> (arrayElementList)
 </p>
@@ -5057,7 +5066,7 @@
 <p class="pre">  <a href="#rule_15"> 15</a> <span class="i">arrayElementList</span> → <span class="i">arrayFinalList</span> <span class="point">.</span>  [RIGHTCBRACKET]
   <a href="#rule_21"> 21</a> <span class="i">arrayFinalList</span> → <span class="i">arrayFinalList</span> <span class="point">.</span> <b>COMA</b> <span class="i">exprSimple</span>
 
-    COMA  <a href="#state_186">shift, and go to state 186</a>
+    COMA  <a href="#state_187">shift, and go to state 187</a>
 
     RIGHTCBRACKET  <a href="#rule_15">reduce using rule 15</a> (arrayElementList)
 </p>
@@ -5190,27 +5199,28 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     ID     <a href="#state_116">shift, and go to state 116</a>
     CONST  <a href="#state_4">shift, and go to state 4</a>
 
     SEMICOLON  <a href="#rule_51">reduce using rule 51</a> (forInit)
 
-    varDecl             <a href="#state_187">go to state 187</a>
-    forInit             <a href="#state_188">go to state 188</a>
+    varDecl             <a href="#state_188">go to state 188</a>
+    forInit             <a href="#state_189">go to state 189</a>
     referencia          <a href="#state_130">go to state 130</a>
     subProgramCall      <a href="#state_40">go to state 40</a>
     subProgramContCall  <a href="#state_41">go to state 41</a>
     Tipus               <a href="#state_11">go to state 11</a>
     array               <a href="#state_132">go to state 132</a>
     contArray           <a href="#state_13">go to state 13</a>
-    expression          <a href="#state_189">go to state 189</a>
+    expression          <a href="#state_190">go to state 190</a>
 </p>
 
 <h3><a name="state_169" id="state_169"></a>state 169</h3>
@@ -5242,7 +5252,7 @@
     OP_NEQ      <a href="#state_70">shift, and go to state 70</a>
     OP_GTE      <a href="#state_71">shift, and go to state 71</a>
     OP_LTE      <a href="#state_72">shift, and go to state 72</a>
-    RIGHTPARAN  <a href="#state_190">shift, and go to state 190</a>
+    RIGHTPARAN  <a href="#state_191">shift, and go to state 191</a>
     AND         <a href="#state_74">shift, and go to state 74</a>
     OR          <a href="#state_75">shift, and go to state 75</a>
     IF          <a href="#state_76">shift, and go to state 76</a>
@@ -5265,7 +5275,7 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_191">go to state 191</a>
+    bloc  <a href="#state_192">go to state 192</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
@@ -5275,9 +5285,9 @@
   <a href="#rule_63"> 63</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <span class="point">.</span> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_64"> 64</a>            | <span class="i">contSwitch</span> <span class="point">.</span> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
 
-    BEND     <a href="#state_192">shift, and go to state 192</a>
-    CASE     <a href="#state_193">shift, and go to state 193</a>
-    DEFAULT  <a href="#state_194">shift, and go to state 194</a>
+    BEND     <a href="#state_193">shift, and go to state 193</a>
+    CASE     <a href="#state_194">shift, and go to state 194</a>
+    DEFAULT  <a href="#state_195">shift, and go to state 195</a>
 </p>
 
 <h3><a name="state_172" id="state_172"></a>state 172</h3>
@@ -5310,7 +5320,7 @@
     OP_NEQ      <a href="#state_70">shift, and go to state 70</a>
     OP_GTE      <a href="#state_71">shift, and go to state 71</a>
     OP_LTE      <a href="#state_72">shift, and go to state 72</a>
-    RIGHTPARAN  <a href="#state_195">shift, and go to state 195</a>
+    RIGHTPARAN  <a href="#state_196">shift, and go to state 196</a>
     AND         <a href="#state_74">shift, and go to state 74</a>
     OR          <a href="#state_75">shift, and go to state 75</a>
     IF          <a href="#state_76">shift, and go to state 76</a>
@@ -5334,11 +5344,11 @@
 
 <h3><a name="state_175" id="state_175"></a>state 175</h3>
 
-<p class="pre">  <a href="#rule_107">107</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+<p class="pre">  <a href="#rule_108">108</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
 
-    error       <a href="#rule_107">reduce using rule 107</a> (expression)
-    SEMICOLON   <a href="#rule_107">reduce using rule 107</a> (expression)
-    RIGHTPARAN  <a href="#rule_107">reduce using rule 107</a> (expression)
+    error       <a href="#rule_108">reduce using rule 108</a> (expression)
+    SEMICOLON   <a href="#rule_108">reduce using rule 108</a> (expression)
+    RIGHTPARAN  <a href="#rule_108">reduce using rule 108</a> (expression)
 </p>
 
 <h3><a name="state_176" id="state_176"></a>state 176</h3>
@@ -5377,7 +5387,7 @@
   <a href="#rule_98"> 98</a> <span class="i">array</span> → <span class="point">.</span> <span class="i">contArray</span>
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
-  <a href="#rule_102">102</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
+  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
 
     ID            <a href="#state_29">shift, and go to state 29</a>
     STR_LITERAL   <a href="#state_30">shift, and go to state 30</a>
@@ -5387,7 +5397,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_196">go to state 196</a>
+    exprSimple          <a href="#state_197">go to state 197</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5400,11 +5410,11 @@
 
 <h3><a name="state_177" id="state_177"></a>state 177</h3>
 
-<p class="pre">  <a href="#rule_106">106</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+<p class="pre">  <a href="#rule_107">107</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
 
-    error       <a href="#rule_106">reduce using rule 106</a> (expression)
-    SEMICOLON   <a href="#rule_106">reduce using rule 106</a> (expression)
-    RIGHTPARAN  <a href="#rule_106">reduce using rule 106</a> (expression)
+    error       <a href="#rule_107">reduce using rule 107</a> (expression)
+    SEMICOLON   <a href="#rule_107">reduce using rule 107</a> (expression)
+    RIGHTPARAN  <a href="#rule_107">reduce using rule 107</a> (expression)
 </p>
 
 <h3><a name="state_178" id="state_178"></a>state 178</h3>
@@ -5443,7 +5453,7 @@
   <a href="#rule_98"> 98</a> <span class="i">array</span> → <span class="point">.</span> <span class="i">contArray</span>
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
-  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
 
     ID            <a href="#state_29">shift, and go to state 29</a>
     STR_LITERAL   <a href="#state_30">shift, and go to state 30</a>
@@ -5453,7 +5463,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_197">go to state 197</a>
+    exprSimple          <a href="#state_198">go to state 198</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5500,7 +5510,7 @@
   <a href="#rule_98"> 98</a> <span class="i">array</span> → <span class="point">.</span> <span class="i">contArray</span>
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
-  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
 
     ID            <a href="#state_29">shift, and go to state 29</a>
     STR_LITERAL   <a href="#state_30">shift, and go to state 30</a>
@@ -5510,7 +5520,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_198">go to state 198</a>
+    exprSimple          <a href="#state_199">go to state 199</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5557,7 +5567,7 @@
   <a href="#rule_98"> 98</a> <span class="i">array</span> → <span class="point">.</span> <span class="i">contArray</span>
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
-  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="point">.</span> <span class="i">exprSimple</span>
 
     ID            <a href="#state_29">shift, and go to state 29</a>
     STR_LITERAL   <a href="#state_30">shift, and go to state 30</a>
@@ -5567,7 +5577,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_199">go to state 199</a>
+    exprSimple          <a href="#state_200">go to state 200</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5579,6 +5589,15 @@
 </p>
 
 <h3><a name="state_181" id="state_181"></a>state 181</h3>
+
+<p class="pre">  <a href="#rule_102">102</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+
+    error       <a href="#rule_102">reduce using rule 102</a> (expression)
+    SEMICOLON   <a href="#rule_102">reduce using rule 102</a> (expression)
+    RIGHTPARAN  <a href="#rule_102">reduce using rule 102</a> (expression)
+</p>
+
+<h3><a name="state_182" id="state_182"></a>state 182</h3>
 
 <p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
   <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
@@ -5616,7 +5635,7 @@
     RIGHTPARAN  <a href="#rule_101">reduce using rule 101</a> (expression)
 </p>
 
-<h3><a name="state_182" id="state_182"></a>state 182</h3>
+<h3><a name="state_183" id="state_183"></a>state 183</h3>
 
 <p class="pre">  <a href="#rule_22"> 22</a> <span class="i">funcDecl</span> → <b>FUNC</b> <span class="i">funcCap</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <b>ID</b> <b>SEMICOLON</b> <span class="point">.</span>  [ENDFILE, ID, PROC, FUNC, CONST]
 
@@ -5627,30 +5646,31 @@
     CONST    <a href="#rule_22">reduce using rule 22</a> (funcDecl)
 </p>
 
-<h3><a name="state_183" id="state_183"></a>state 183</h3>
+<h3><a name="state_184" id="state_184"></a>state 184</h3>
 
 <p class="pre">  <a href="#rule_19"> 19</a> <span class="i">arrayInitList</span> → <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <span class="point">.</span> <b>RIGHTCBRACKET</b>
 
-    RIGHTCBRACKET  <a href="#state_200">shift, and go to state 200</a>
-</p>
-
-<h3><a name="state_184" id="state_184"></a>state 184</h3>
-
-<p class="pre">  <a href="#rule_14"> 14</a> <span class="i">arrayInit</span> → <b>ID</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b> <span class="point">.</span>  [error, SEMICOLON, COMA]
-
-    error      <a href="#rule_14">reduce using rule 14</a> (arrayInit)
-    SEMICOLON  <a href="#rule_14">reduce using rule 14</a> (arrayInit)
-    COMA       <a href="#rule_14">reduce using rule 14</a> (arrayInit)
+    RIGHTCBRACKET  <a href="#state_201">shift, and go to state 201</a>
 </p>
 
 <h3><a name="state_185" id="state_185"></a>state 185</h3>
 
-<p class="pre">  <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <b>COMA</b> <span class="point">.</span> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b>
+<p class="pre">  <a href="#rule_14"> 14</a> <span class="i">arrayInit</span> → <b>ID</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b> <span class="point">.</span>  [error, SEMICOLON, COMA, RIGHTPARAN]
 
-    LEFTCBRACKET  <a href="#state_201">shift, and go to state 201</a>
+    error       <a href="#rule_14">reduce using rule 14</a> (arrayInit)
+    SEMICOLON   <a href="#rule_14">reduce using rule 14</a> (arrayInit)
+    COMA        <a href="#rule_14">reduce using rule 14</a> (arrayInit)
+    RIGHTPARAN  <a href="#rule_14">reduce using rule 14</a> (arrayInit)
 </p>
 
 <h3><a name="state_186" id="state_186"></a>state 186</h3>
+
+<p class="pre">  <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <b>COMA</b> <span class="point">.</span> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b>
+
+    LEFTCBRACKET  <a href="#state_202">shift, and go to state 202</a>
+</p>
+
+<h3><a name="state_187" id="state_187"></a>state 187</h3>
 
 <p class="pre">  <a href="#rule_21"> 21</a> <span class="i">arrayFinalList</span> → <span class="i">arrayFinalList</span> <b>COMA</b> <span class="point">.</span> <span class="i">exprSimple</span>
   <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
@@ -5696,7 +5716,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_202">go to state 202</a>
+    exprSimple          <a href="#state_203">go to state 203</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5707,7 +5727,7 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_187" id="state_187"></a>state 187</h3>
+<h3><a name="state_188" id="state_188"></a>state 188</h3>
 
 <p class="pre">  <a href="#rule_10"> 10</a> <span class="i">varDecl</span> → <span class="i">varDecl</span> <span class="point">.</span> <b>COMA</b> <b>ID</b> <span class="i">varInit</span>
   <a href="#rule_49"> 49</a> <span class="i">forInit</span> → <span class="i">varDecl</span> <span class="point">.</span>  [SEMICOLON]
@@ -5717,28 +5737,28 @@
     SEMICOLON  <a href="#rule_49">reduce using rule 49</a> (forInit)
 </p>
 
-<h3><a name="state_188" id="state_188"></a>state 188</h3>
+<h3><a name="state_189" id="state_189"></a>state 189</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <span class="point">.</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
 
-    SEMICOLON  <a href="#state_203">shift, and go to state 203</a>
+    SEMICOLON  <a href="#state_204">shift, and go to state 204</a>
 </p>
 
-<h3><a name="state_189" id="state_189"></a>state 189</h3>
+<h3><a name="state_190" id="state_190"></a>state 190</h3>
 
 <p class="pre">  <a href="#rule_50"> 50</a> <span class="i">forInit</span> → <span class="i">expression</span> <span class="point">.</span>  [SEMICOLON]
 
     SEMICOLON  <a href="#rule_50">reduce using rule 50</a> (forInit)
 </p>
 
-<h3><a name="state_190" id="state_190"></a>state 190</h3>
+<h3><a name="state_191" id="state_191"></a>state 191</h3>
 
 <p class="pre">  <a href="#rule_54"> 54</a> <span class="i">whileIteration</span> → <b>WHILE</b> <b>LEFTPARAN</b> <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
 
-    DO  <a href="#state_204">shift, and go to state 204</a>
+    DO  <a href="#state_205">shift, and go to state 205</a>
 </p>
 
-<h3><a name="state_191" id="state_191"></a>state 191</h3>
+<h3><a name="state_192" id="state_192"></a>state 192</h3>
 
 <p class="pre">  <a href="#rule_55"> 55</a> <span class="i">ifStatement</span> → <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="point">.</span> <span class="i">elseIfStatement</span> <b>BEND</b>
   <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <span class="point">.</span> <b>ELSE</b> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
@@ -5746,15 +5766,15 @@
   <a href="#rule_58"> 58</a> <span class="i">elseStatement</span> → <span class="point">.</span> <b>ELSE</b> <b>DO</b> <span class="i">bloc</span>
   <a href="#rule_59"> 59</a>               | <span class="point">.</span> %empty  [BEND]
 
-    ELSE  <a href="#state_205">shift, and go to state 205</a>
+    ELSE  <a href="#state_206">shift, and go to state 206</a>
 
     BEND  <a href="#rule_59">reduce using rule 59</a> (elseStatement)
 
-    elseIfStatement  <a href="#state_206">go to state 206</a>
-    elseStatement    <a href="#state_207">go to state 207</a>
+    elseIfStatement  <a href="#state_207">go to state 207</a>
+    elseStatement    <a href="#state_208">go to state 208</a>
 </p>
 
-<h3><a name="state_192" id="state_192"></a>state 192</h3>
+<h3><a name="state_193" id="state_193"></a>state 193</h3>
 
 <p class="pre">  <a href="#rule_60"> 60</a> <span class="i">switchStatement</span> → <b>SWITCH</b> <b>LEFTPARAN</b> <span class="i">contSwitch</span> <b>BEND</b> <span class="point">.</span>  [error, SEMICOLON]
 
@@ -5762,7 +5782,7 @@
     SEMICOLON  <a href="#rule_60">reduce using rule 60</a> (switchStatement)
 </p>
 
-<h3><a name="state_193" id="state_193"></a>state 193</h3>
+<h3><a name="state_194" id="state_194"></a>state 194</h3>
 
 <p class="pre">  <a href="#rule_64"> 64</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>CASE</b> <span class="point">.</span> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
@@ -5808,7 +5828,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_208">go to state 208</a>
+    exprSimple          <a href="#state_209">go to state 209</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -5819,57 +5839,19 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_194" id="state_194"></a>state 194</h3>
-
-<p class="pre">  <a href="#rule_63"> 63</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>DEFAULT</b> <span class="point">.</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
-
-    BBEGIN  <a href="#state_209">shift, and go to state 209</a>
-</p>
-
 <h3><a name="state_195" id="state_195"></a>state 195</h3>
 
-<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>BBEGIN</b> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
-  <a href="#rule_62"> 62</a>            | <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
+<p class="pre">  <a href="#rule_63"> 63</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>DEFAULT</b> <span class="point">.</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
 
     BBEGIN  <a href="#state_210">shift, and go to state 210</a>
 </p>
 
 <h3><a name="state_196" id="state_196"></a>state 196</h3>
 
-<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
-  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
-  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
-  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
-  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
-  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
-  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
-  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
-  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
-  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
-  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>BBEGIN</b> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
+  <a href="#rule_62"> 62</a>            | <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
 
-    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
-    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
-    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
-    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
-    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
-    OP_GT     <a href="#state_67">shift, and go to state 67</a>
-    OP_LT     <a href="#state_68">shift, and go to state 68</a>
-    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
-    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
-    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
-    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    AND       <a href="#state_74">shift, and go to state 74</a>
-    OR        <a href="#state_75">shift, and go to state 75</a>
-    IF        <a href="#state_76">shift, and go to state 76</a>
-
-    error       <a href="#rule_102">reduce using rule 102</a> (expression)
-    SEMICOLON   <a href="#rule_102">reduce using rule 102</a> (expression)
-    RIGHTPARAN  <a href="#rule_102">reduce using rule 102</a> (expression)
+    BBEGIN  <a href="#state_211">shift, and go to state 211</a>
 </p>
 
 <h3><a name="state_197" id="state_197"></a>state 197</h3>
@@ -5888,83 +5870,7 @@
   <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
   <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
   <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
-
-    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
-    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
-    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
-    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
-    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
-    OP_GT     <a href="#state_67">shift, and go to state 67</a>
-    OP_LT     <a href="#state_68">shift, and go to state 68</a>
-    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
-    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
-    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
-    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    AND       <a href="#state_74">shift, and go to state 74</a>
-    OR        <a href="#state_75">shift, and go to state 75</a>
-    IF        <a href="#state_76">shift, and go to state 76</a>
-
-    error       <a href="#rule_105">reduce using rule 105</a> (expression)
-    SEMICOLON   <a href="#rule_105">reduce using rule 105</a> (expression)
-    RIGHTPARAN  <a href="#rule_105">reduce using rule 105</a> (expression)
-</p>
-
-<h3><a name="state_198" id="state_198"></a>state 198</h3>
-
-<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
-  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
-  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
-  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
-  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
-  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
-  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
-  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
-  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
-  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
-  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
-
-    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
-    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
-    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
-    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
-    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
-    OP_GT     <a href="#state_67">shift, and go to state 67</a>
-    OP_LT     <a href="#state_68">shift, and go to state 68</a>
-    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
-    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
-    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
-    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    AND       <a href="#state_74">shift, and go to state 74</a>
-    OR        <a href="#state_75">shift, and go to state 75</a>
-    IF        <a href="#state_76">shift, and go to state 76</a>
-
-    error       <a href="#rule_104">reduce using rule 104</a> (expression)
-    SEMICOLON   <a href="#rule_104">reduce using rule 104</a> (expression)
-    RIGHTPARAN  <a href="#rule_104">reduce using rule 104</a> (expression)
-</p>
-
-<h3><a name="state_199" id="state_199"></a>state 199</h3>
-
-<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
-  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
-  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
-  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
-  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
-  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
-  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
-  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
-  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
-  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
-  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+  <a href="#rule_103">103</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
 
     OP_ADD    <a href="#state_62">shift, and go to state 62</a>
     OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
@@ -5986,7 +5892,121 @@
     RIGHTPARAN  <a href="#rule_103">reduce using rule 103</a> (expression)
 </p>
 
+<h3><a name="state_198" id="state_198"></a>state 198</h3>
+
+<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
+  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
+  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
+  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
+  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
+  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
+  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
+  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
+  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
+  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
+  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+
+    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
+    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
+    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
+    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
+    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
+    OP_GT     <a href="#state_67">shift, and go to state 67</a>
+    OP_LT     <a href="#state_68">shift, and go to state 68</a>
+    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
+    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
+    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
+    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
+    AND       <a href="#state_74">shift, and go to state 74</a>
+    OR        <a href="#state_75">shift, and go to state 75</a>
+    IF        <a href="#state_76">shift, and go to state 76</a>
+
+    error       <a href="#rule_106">reduce using rule 106</a> (expression)
+    SEMICOLON   <a href="#rule_106">reduce using rule 106</a> (expression)
+    RIGHTPARAN  <a href="#rule_106">reduce using rule 106</a> (expression)
+</p>
+
+<h3><a name="state_199" id="state_199"></a>state 199</h3>
+
+<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
+  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
+  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
+  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
+  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
+  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
+  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
+  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
+  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
+  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
+  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+
+    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
+    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
+    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
+    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
+    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
+    OP_GT     <a href="#state_67">shift, and go to state 67</a>
+    OP_LT     <a href="#state_68">shift, and go to state 68</a>
+    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
+    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
+    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
+    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
+    AND       <a href="#state_74">shift, and go to state 74</a>
+    OR        <a href="#state_75">shift, and go to state 75</a>
+    IF        <a href="#state_76">shift, and go to state 76</a>
+
+    error       <a href="#rule_105">reduce using rule 105</a> (expression)
+    SEMICOLON   <a href="#rule_105">reduce using rule 105</a> (expression)
+    RIGHTPARAN  <a href="#rule_105">reduce using rule 105</a> (expression)
+</p>
+
 <h3><a name="state_200" id="state_200"></a>state 200</h3>
+
+<p class="pre">  <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
+  <a href="#rule_68"> 68</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>OR</b> <span class="i">exprSimple</span>
+  <a href="#rule_69"> 69</a>            | <span class="i">exprSimple</span> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>ELSE</b> <span class="i">exprSimple</span>
+  <a href="#rule_75"> 75</a> <span class="i">aritExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_ADD</b> <span class="i">exprSimple</span>
+  <a href="#rule_76"> 76</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MINUS</b> <span class="i">exprSimple</span>
+  <a href="#rule_77"> 77</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_TIMES</b> <span class="i">exprSimple</span>
+  <a href="#rule_78"> 78</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_DIV</b> <span class="i">exprSimple</span>
+  <a href="#rule_79"> 79</a>          | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_MOD</b> <span class="i">exprSimple</span>
+  <a href="#rule_80"> 80</a> <span class="i">relExpr</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_NEQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_81"> 81</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_82"> 82</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GT</b> <span class="i">exprSimple</span>
+  <a href="#rule_83"> 83</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_GTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_84"> 84</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LT</b> <span class="i">exprSimple</span>
+  <a href="#rule_85"> 85</a>         | <span class="i">exprSimple</span> <span class="point">.</span> <b>OP_LTE</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a> <span class="i">expression</span> → <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span> <span class="point">.</span>  [error, SEMICOLON, RIGHTPARAN]
+
+    OP_ADD    <a href="#state_62">shift, and go to state 62</a>
+    OP_MINUS  <a href="#state_63">shift, and go to state 63</a>
+    OP_TIMES  <a href="#state_64">shift, and go to state 64</a>
+    OP_DIV    <a href="#state_65">shift, and go to state 65</a>
+    OP_MOD    <a href="#state_66">shift, and go to state 66</a>
+    OP_GT     <a href="#state_67">shift, and go to state 67</a>
+    OP_LT     <a href="#state_68">shift, and go to state 68</a>
+    OP_EQ     <a href="#state_69">shift, and go to state 69</a>
+    OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
+    OP_GTE    <a href="#state_71">shift, and go to state 71</a>
+    OP_LTE    <a href="#state_72">shift, and go to state 72</a>
+    AND       <a href="#state_74">shift, and go to state 74</a>
+    OR        <a href="#state_75">shift, and go to state 75</a>
+    IF        <a href="#state_76">shift, and go to state 76</a>
+
+    error       <a href="#rule_104">reduce using rule 104</a> (expression)
+    SEMICOLON   <a href="#rule_104">reduce using rule 104</a> (expression)
+    RIGHTPARAN  <a href="#rule_104">reduce using rule 104</a> (expression)
+</p>
+
+<h3><a name="state_201" id="state_201"></a>state 201</h3>
 
 <p class="pre">  <a href="#rule_19"> 19</a> <span class="i">arrayInitList</span> → <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b> <span class="point">.</span>  [COMA, RIGHTCBRACKET]
 
@@ -5994,7 +6014,7 @@
     RIGHTCBRACKET  <a href="#rule_19">reduce using rule 19</a> (arrayInitList)
 </p>
 
-<h3><a name="state_201" id="state_201"></a>state 201</h3>
+<h3><a name="state_202" id="state_202"></a>state 202</h3>
 
 <p class="pre">  <a href="#rule_15"> 15</a> <span class="i">arrayElementList</span> → <span class="point">.</span> <span class="i">arrayFinalList</span>
   <a href="#rule_16"> 16</a>                  | <span class="point">.</span> <span class="i">arrayInitList</span>
@@ -6050,7 +6070,7 @@
 
     RIGHTCBRACKET  <a href="#rule_17">reduce using rule 17</a> (arrayElementList)
 
-    arrayElementList    <a href="#state_211">go to state 211</a>
+    arrayElementList    <a href="#state_212">go to state 212</a>
     arrayInitList       <a href="#state_163">go to state 163</a>
     arrayFinalList      <a href="#state_164">go to state 164</a>
     exprSimple          <a href="#state_165">go to state 165</a>
@@ -6064,7 +6084,7 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_202" id="state_202"></a>state 202</h3>
+<h3><a name="state_203" id="state_203"></a>state 203</h3>
 
 <p class="pre">  <a href="#rule_21"> 21</a> <span class="i">arrayFinalList</span> → <span class="i">arrayFinalList</span> <b>COMA</b> <span class="i">exprSimple</span> <span class="point">.</span>  [COMA, RIGHTCBRACKET]
   <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
@@ -6101,7 +6121,7 @@
     RIGHTCBRACKET  <a href="#rule_21">reduce using rule 21</a> (arrayFinalList)
 </p>
 
-<h3><a name="state_203" id="state_203"></a>state 203</h3>
+<h3><a name="state_204" id="state_204"></a>state 204</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="point">.</span> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
@@ -6147,7 +6167,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_212">go to state 212</a>
+    exprSimple          <a href="#state_213">go to state 213</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -6158,7 +6178,7 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_204" id="state_204"></a>state 204</h3>
+<h3><a name="state_205" id="state_205"></a>state 205</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6174,34 +6194,34 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_213">go to state 213</a>
+    bloc  <a href="#state_214">go to state 214</a>
     A     <a href="#state_83">go to state 83</a>
-</p>
-
-<h3><a name="state_205" id="state_205"></a>state 205</h3>
-
-<p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <b>ELSE</b> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
-  <a href="#rule_58"> 58</a> <span class="i">elseStatement</span> → <b>ELSE</b> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span>
-
-    DO  <a href="#state_214">shift, and go to state 214</a>
-    IF  <a href="#state_215">shift, and go to state 215</a>
 </p>
 
 <h3><a name="state_206" id="state_206"></a>state 206</h3>
 
-<p class="pre">  <a href="#rule_55"> 55</a> <span class="i">ifStatement</span> → <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span> <span class="point">.</span> <b>BEND</b>
+<p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <b>ELSE</b> <span class="point">.</span> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
+  <a href="#rule_58"> 58</a> <span class="i">elseStatement</span> → <b>ELSE</b> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span>
 
-    BEND  <a href="#state_216">shift, and go to state 216</a>
+    DO  <a href="#state_215">shift, and go to state 215</a>
+    IF  <a href="#state_216">shift, and go to state 216</a>
 </p>
 
 <h3><a name="state_207" id="state_207"></a>state 207</h3>
+
+<p class="pre">  <a href="#rule_55"> 55</a> <span class="i">ifStatement</span> → <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span> <span class="point">.</span> <b>BEND</b>
+
+    BEND  <a href="#state_217">shift, and go to state 217</a>
+</p>
+
+<h3><a name="state_208" id="state_208"></a>state 208</h3>
 
 <p class="pre">  <a href="#rule_57"> 57</a> <span class="i">elseIfStatement</span> → <span class="i">elseStatement</span> <span class="point">.</span>  [BEND]
 
     BEND  <a href="#rule_57">reduce using rule 57</a> (elseIfStatement)
 </p>
 
-<h3><a name="state_208" id="state_208"></a>state 208</h3>
+<h3><a name="state_209" id="state_209"></a>state 209</h3>
 
 <p class="pre">  <a href="#rule_64"> 64</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>CASE</b> <span class="i">exprSimple</span> <span class="point">.</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
@@ -6230,13 +6250,13 @@
     OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
     OP_GTE    <a href="#state_71">shift, and go to state 71</a>
     OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    BBEGIN    <a href="#state_217">shift, and go to state 217</a>
+    BBEGIN    <a href="#state_218">shift, and go to state 218</a>
     AND       <a href="#state_74">shift, and go to state 74</a>
     OR        <a href="#state_75">shift, and go to state 75</a>
     IF        <a href="#state_76">shift, and go to state 76</a>
 </p>
 
-<h3><a name="state_209" id="state_209"></a>state 209</h3>
+<h3><a name="state_210" id="state_210"></a>state 210</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6252,27 +6272,27 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_218">go to state 218</a>
+    bloc  <a href="#state_219">go to state 219</a>
     A     <a href="#state_83">go to state 83</a>
-</p>
-
-<h3><a name="state_210" id="state_210"></a>state 210</h3>
-
-<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <span class="point">.</span> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
-  <a href="#rule_62"> 62</a>            | <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <span class="point">.</span> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
-
-    CASE     <a href="#state_219">shift, and go to state 219</a>
-    DEFAULT  <a href="#state_220">shift, and go to state 220</a>
 </p>
 
 <h3><a name="state_211" id="state_211"></a>state 211</h3>
 
-<p class="pre">  <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <b>COMA</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <span class="point">.</span> <b>RIGHTCBRACKET</b>
+<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <span class="point">.</span> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
+  <a href="#rule_62"> 62</a>            | <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <span class="point">.</span> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
 
-    RIGHTCBRACKET  <a href="#state_221">shift, and go to state 221</a>
+    CASE     <a href="#state_220">shift, and go to state 220</a>
+    DEFAULT  <a href="#state_221">shift, and go to state 221</a>
 </p>
 
 <h3><a name="state_212" id="state_212"></a>state 212</h3>
+
+<p class="pre">  <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <b>COMA</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <span class="point">.</span> <b>RIGHTCBRACKET</b>
+
+    RIGHTCBRACKET  <a href="#state_222">shift, and go to state 222</a>
+</p>
+
+<h3><a name="state_213" id="state_213"></a>state 213</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <span class="point">.</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
@@ -6301,20 +6321,20 @@
     OP_NEQ     <a href="#state_70">shift, and go to state 70</a>
     OP_GTE     <a href="#state_71">shift, and go to state 71</a>
     OP_LTE     <a href="#state_72">shift, and go to state 72</a>
-    SEMICOLON  <a href="#state_222">shift, and go to state 222</a>
+    SEMICOLON  <a href="#state_223">shift, and go to state 223</a>
     AND        <a href="#state_74">shift, and go to state 74</a>
     OR         <a href="#state_75">shift, and go to state 75</a>
     IF         <a href="#state_76">shift, and go to state 76</a>
 </p>
 
-<h3><a name="state_213" id="state_213"></a>state 213</h3>
+<h3><a name="state_214" id="state_214"></a>state 214</h3>
 
 <p class="pre">  <a href="#rule_54"> 54</a> <span class="i">whileIteration</span> → <b>WHILE</b> <b>LEFTPARAN</b> <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
 
-    BEND  <a href="#state_223">shift, and go to state 223</a>
+    BEND  <a href="#state_224">shift, and go to state 224</a>
 </p>
 
-<h3><a name="state_214" id="state_214"></a>state 214</h3>
+<h3><a name="state_215" id="state_215"></a>state 215</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6330,11 +6350,11 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_224">go to state 224</a>
+    bloc  <a href="#state_225">go to state 225</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
-<h3><a name="state_215" id="state_215"></a>state 215</h3>
+<h3><a name="state_216" id="state_216"></a>state 216</h3>
 
 <p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <b>ELSE</b> <b>IF</b> <span class="point">.</span> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
   <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
@@ -6380,7 +6400,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_225">go to state 225</a>
+    exprSimple          <a href="#state_226">go to state 226</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -6391,7 +6411,7 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_216" id="state_216"></a>state 216</h3>
+<h3><a name="state_217" id="state_217"></a>state 217</h3>
 
 <p class="pre">  <a href="#rule_55"> 55</a> <span class="i">ifStatement</span> → <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span> <b>BEND</b> <span class="point">.</span>  [error, SEMICOLON]
 
@@ -6399,7 +6419,7 @@
     SEMICOLON  <a href="#rule_55">reduce using rule 55</a> (ifStatement)
 </p>
 
-<h3><a name="state_217" id="state_217"></a>state 217</h3>
+<h3><a name="state_218" id="state_218"></a>state 218</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6415,18 +6435,18 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_226">go to state 226</a>
+    bloc  <a href="#state_227">go to state 227</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
-<h3><a name="state_218" id="state_218"></a>state 218</h3>
+<h3><a name="state_219" id="state_219"></a>state 219</h3>
 
 <p class="pre">  <a href="#rule_63"> 63</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
 
-    BEND  <a href="#state_227">shift, and go to state 227</a>
+    BEND  <a href="#state_228">shift, and go to state 228</a>
 </p>
 
-<h3><a name="state_219" id="state_219"></a>state 219</h3>
+<h3><a name="state_220" id="state_220"></a>state 220</h3>
 
 <p class="pre">  <a href="#rule_62"> 62</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>CASE</b> <span class="point">.</span> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_65"> 65</a> <span class="i">exprSimple</span> → <span class="point">.</span> <b>NOT</b> <span class="i">exprSimple</span>
@@ -6472,7 +6492,7 @@
     LEFTPARAN     <a href="#state_34">shift, and go to state 34</a>
     NOT           <a href="#state_35">shift, and go to state 35</a>
 
-    exprSimple          <a href="#state_228">go to state 228</a>
+    exprSimple          <a href="#state_229">go to state 229</a>
     aritExpr            <a href="#state_37">go to state 37</a>
     relExpr             <a href="#state_38">go to state 38</a>
     referencia          <a href="#state_39">go to state 39</a>
@@ -6483,14 +6503,14 @@
     contArray           <a href="#state_13">go to state 13</a>
 </p>
 
-<h3><a name="state_220" id="state_220"></a>state 220</h3>
+<h3><a name="state_221" id="state_221"></a>state 221</h3>
 
 <p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>DEFAULT</b> <span class="point">.</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
 
-    BBEGIN  <a href="#state_229">shift, and go to state 229</a>
+    BBEGIN  <a href="#state_230">shift, and go to state 230</a>
 </p>
 
-<h3><a name="state_221" id="state_221"></a>state 221</h3>
+<h3><a name="state_222" id="state_222"></a>state 222</h3>
 
 <p class="pre">  <a href="#rule_18"> 18</a> <span class="i">arrayInitList</span> → <span class="i">arrayInitList</span> <b>COMA</b> <b>LEFTCBRACKET</b> <span class="i">arrayElementList</span> <b>RIGHTCBRACKET</b> <span class="point">.</span>  [COMA, RIGHTCBRACKET]
 
@@ -6498,7 +6518,7 @@
     RIGHTCBRACKET  <a href="#rule_18">reduce using rule 18</a> (arrayInitList)
 </p>
 
-<h3><a name="state_222" id="state_222"></a>state 222</h3>
+<h3><a name="state_223" id="state_223"></a>state 223</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="point">.</span> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_52"> 52</a> <span class="i">forPostExpression</span> → <span class="point">.</span> <span class="i">expression</span>
@@ -6514,27 +6534,28 @@
   <a href="#rule_99"> 99</a> <span class="i">contArray</span> → <span class="point">.</span> <b>ID</b> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_100">100</a>           | <span class="point">.</span> <span class="i">contArray</span> <b>LEFTBRACKET</b> <span class="i">exprSimple</span> <b>RIGHTBRACKET</b>
   <a href="#rule_101">101</a> <span class="i">expression</span> → <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
-  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
-  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
+  <a href="#rule_102">102</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>EQ</b> <span class="i">arrayInit</span>
+  <a href="#rule_103">103</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_104">104</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_DIV</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_105">105</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_TIMES</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_106">106</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>EQ</b> <span class="i">exprSimple</span>
+  <a href="#rule_107">107</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_MINUS</b> <b>OP_MINUS</b>
+  <a href="#rule_108">108</a>            | <span class="point">.</span> <span class="i">referencia</span> <b>OP_ADD</b> <b>OP_ADD</b>
 
     ID  <a href="#state_29">shift, and go to state 29</a>
 
     RIGHTPARAN  <a href="#rule_53">reduce using rule 53</a> (forPostExpression)
 
-    forPostExpression   <a href="#state_230">go to state 230</a>
+    forPostExpression   <a href="#state_231">go to state 231</a>
     referencia          <a href="#state_130">go to state 130</a>
     subProgramCall      <a href="#state_40">go to state 40</a>
     subProgramContCall  <a href="#state_41">go to state 41</a>
     array               <a href="#state_43">go to state 43</a>
     contArray           <a href="#state_13">go to state 13</a>
-    expression          <a href="#state_231">go to state 231</a>
+    expression          <a href="#state_232">go to state 232</a>
 </p>
 
-<h3><a name="state_223" id="state_223"></a>state 223</h3>
+<h3><a name="state_224" id="state_224"></a>state 224</h3>
 
 <p class="pre">  <a href="#rule_54"> 54</a> <span class="i">whileIteration</span> → <b>WHILE</b> <b>LEFTPARAN</b> <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [error, SEMICOLON]
 
@@ -6542,14 +6563,14 @@
     SEMICOLON  <a href="#rule_54">reduce using rule 54</a> (whileIteration)
 </p>
 
-<h3><a name="state_224" id="state_224"></a>state 224</h3>
+<h3><a name="state_225" id="state_225"></a>state 225</h3>
 
 <p class="pre">  <a href="#rule_58"> 58</a> <span class="i">elseStatement</span> → <b>ELSE</b> <b>DO</b> <span class="i">bloc</span> <span class="point">.</span>  [BEND]
 
     BEND  <a href="#rule_58">reduce using rule 58</a> (elseStatement)
 </p>
 
-<h3><a name="state_225" id="state_225"></a>state 225</h3>
+<h3><a name="state_226" id="state_226"></a>state 226</h3>
 
 <p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <b>ELSE</b> <b>IF</b> <span class="i">exprSimple</span> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
   <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
@@ -6578,20 +6599,20 @@
     OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
     OP_GTE    <a href="#state_71">shift, and go to state 71</a>
     OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    DO        <a href="#state_232">shift, and go to state 232</a>
+    DO        <a href="#state_233">shift, and go to state 233</a>
     AND       <a href="#state_74">shift, and go to state 74</a>
     OR        <a href="#state_75">shift, and go to state 75</a>
     IF        <a href="#state_76">shift, and go to state 76</a>
 </p>
 
-<h3><a name="state_226" id="state_226"></a>state 226</h3>
+<h3><a name="state_227" id="state_227"></a>state 227</h3>
 
 <p class="pre">  <a href="#rule_64"> 64</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
 
-    BEND  <a href="#state_233">shift, and go to state 233</a>
+    BEND  <a href="#state_234">shift, and go to state 234</a>
 </p>
 
-<h3><a name="state_227" id="state_227"></a>state 227</h3>
+<h3><a name="state_228" id="state_228"></a>state 228</h3>
 
 <p class="pre">  <a href="#rule_63"> 63</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [BEND, CASE, DEFAULT]
 
@@ -6600,7 +6621,7 @@
     DEFAULT  <a href="#rule_63">reduce using rule 63</a> (contSwitch)
 </p>
 
-<h3><a name="state_228" id="state_228"></a>state 228</h3>
+<h3><a name="state_229" id="state_229"></a>state 229</h3>
 
 <p class="pre">  <a href="#rule_62"> 62</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <span class="point">.</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b>
   <a href="#rule_67"> 67</a> <span class="i">exprSimple</span> → <span class="i">exprSimple</span> <span class="point">.</span> <b>AND</b> <span class="i">exprSimple</span>
@@ -6629,13 +6650,13 @@
     OP_NEQ    <a href="#state_70">shift, and go to state 70</a>
     OP_GTE    <a href="#state_71">shift, and go to state 71</a>
     OP_LTE    <a href="#state_72">shift, and go to state 72</a>
-    BBEGIN    <a href="#state_234">shift, and go to state 234</a>
+    BBEGIN    <a href="#state_235">shift, and go to state 235</a>
     AND       <a href="#state_74">shift, and go to state 74</a>
     OR        <a href="#state_75">shift, and go to state 75</a>
     IF        <a href="#state_76">shift, and go to state 76</a>
 </p>
 
-<h3><a name="state_229" id="state_229"></a>state 229</h3>
+<h3><a name="state_230" id="state_230"></a>state 230</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6651,25 +6672,25 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_235">go to state 235</a>
+    bloc  <a href="#state_236">go to state 236</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
-<h3><a name="state_230" id="state_230"></a>state 230</h3>
+<h3><a name="state_231" id="state_231"></a>state 231</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <span class="point">.</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
 
-    RIGHTPARAN  <a href="#state_236">shift, and go to state 236</a>
+    RIGHTPARAN  <a href="#state_237">shift, and go to state 237</a>
 </p>
 
-<h3><a name="state_231" id="state_231"></a>state 231</h3>
+<h3><a name="state_232" id="state_232"></a>state 232</h3>
 
 <p class="pre">  <a href="#rule_52"> 52</a> <span class="i">forPostExpression</span> → <span class="i">expression</span> <span class="point">.</span>  [RIGHTPARAN]
 
     RIGHTPARAN  <a href="#rule_52">reduce using rule 52</a> (forPostExpression)
 </p>
 
-<h3><a name="state_232" id="state_232"></a>state 232</h3>
+<h3><a name="state_233" id="state_233"></a>state 233</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, ELSE, CONST, BREAK, RETURN, SWITCH]
@@ -6686,11 +6707,11 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_237">go to state 237</a>
+    bloc  <a href="#state_238">go to state 238</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
-<h3><a name="state_233" id="state_233"></a>state 233</h3>
+<h3><a name="state_234" id="state_234"></a>state 234</h3>
 
 <p class="pre">  <a href="#rule_64"> 64</a> <span class="i">contSwitch</span> → <span class="i">contSwitch</span> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [BEND, CASE, DEFAULT]
 
@@ -6699,7 +6720,7 @@
     DEFAULT  <a href="#rule_64">reduce using rule 64</a> (contSwitch)
 </p>
 
-<h3><a name="state_234" id="state_234"></a>state 234</h3>
+<h3><a name="state_235" id="state_235"></a>state 235</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6715,25 +6736,25 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_238">go to state 238</a>
+    bloc  <a href="#state_239">go to state 239</a>
     A     <a href="#state_83">go to state 83</a>
-</p>
-
-<h3><a name="state_235" id="state_235"></a>state 235</h3>
-
-<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
-
-    BEND  <a href="#state_239">shift, and go to state 239</a>
 </p>
 
 <h3><a name="state_236" id="state_236"></a>state 236</h3>
 
-<p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
+<p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
 
-    DO  <a href="#state_240">shift, and go to state 240</a>
+    BEND  <a href="#state_240">shift, and go to state 240</a>
 </p>
 
 <h3><a name="state_237" id="state_237"></a>state 237</h3>
+
+<p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <span class="point">.</span> <b>DO</b> <span class="i">bloc</span> <b>BEND</b>
+
+    DO  <a href="#state_241">shift, and go to state 241</a>
+</p>
+
+<h3><a name="state_238" id="state_238"></a>state 238</h3>
 
 <p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <span class="point">.</span> <b>ELSE</b> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span>
   <a href="#rule_56"> 56</a>                 | <b>ELSE</b> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="point">.</span> <span class="i">elseIfStatement</span>
@@ -6741,22 +6762,22 @@
   <a href="#rule_58"> 58</a> <span class="i">elseStatement</span> → <span class="point">.</span> <b>ELSE</b> <b>DO</b> <span class="i">bloc</span>
   <a href="#rule_59"> 59</a>               | <span class="point">.</span> %empty  [BEND]
 
-    ELSE  <a href="#state_205">shift, and go to state 205</a>
+    ELSE  <a href="#state_206">shift, and go to state 206</a>
 
     BEND  <a href="#rule_59">reduce using rule 59</a> (elseStatement)
 
-    elseIfStatement  <a href="#state_241">go to state 241</a>
-    elseStatement    <a href="#state_207">go to state 207</a>
-</p>
-
-<h3><a name="state_238" id="state_238"></a>state 238</h3>
-
-<p class="pre">  <a href="#rule_62"> 62</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
-
-    BEND  <a href="#state_242">shift, and go to state 242</a>
+    elseIfStatement  <a href="#state_242">go to state 242</a>
+    elseStatement    <a href="#state_208">go to state 208</a>
 </p>
 
 <h3><a name="state_239" id="state_239"></a>state 239</h3>
+
+<p class="pre">  <a href="#rule_62"> 62</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
+
+    BEND  <a href="#state_243">shift, and go to state 243</a>
+</p>
+
+<h3><a name="state_240" id="state_240"></a>state 240</h3>
 
 <p class="pre">  <a href="#rule_61"> 61</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>DEFAULT</b> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [BEND, CASE, DEFAULT]
 
@@ -6765,7 +6786,7 @@
     DEFAULT  <a href="#rule_61">reduce using rule 61</a> (contSwitch)
 </p>
 
-<h3><a name="state_240" id="state_240"></a>state 240</h3>
+<h3><a name="state_241" id="state_241"></a>state 241</h3>
 
 <p class="pre">  <a href="#rule_34"> 34</a> <span class="i">bloc</span> → <span class="point">.</span> <span class="i">A</span> <span class="i">statementList</span>
   <a href="#rule_35"> 35</a> <span class="i">A</span> → <span class="point">.</span> %empty  [ID, BEND, FOR, WHILE, IF, CONST, BREAK, RETURN, SWITCH]
@@ -6781,18 +6802,18 @@
     RETURN  <a href="#rule_35">reduce using rule 35</a> (A)
     SWITCH  <a href="#rule_35">reduce using rule 35</a> (A)
 
-    bloc  <a href="#state_243">go to state 243</a>
+    bloc  <a href="#state_244">go to state 244</a>
     A     <a href="#state_83">go to state 83</a>
 </p>
 
-<h3><a name="state_241" id="state_241"></a>state 241</h3>
+<h3><a name="state_242" id="state_242"></a>state 242</h3>
 
 <p class="pre">  <a href="#rule_56"> 56</a> <span class="i">elseIfStatement</span> → <b>ELSE</b> <b>IF</b> <span class="i">exprSimple</span> <b>DO</b> <span class="i">bloc</span> <span class="i">elseIfStatement</span> <span class="point">.</span>  [BEND]
 
     BEND  <a href="#rule_56">reduce using rule 56</a> (elseIfStatement)
 </p>
 
-<h3><a name="state_242" id="state_242"></a>state 242</h3>
+<h3><a name="state_243" id="state_243"></a>state 243</h3>
 
 <p class="pre">  <a href="#rule_62"> 62</a> <span class="i">contSwitch</span> → <span class="i">exprSimple</span> <b>RIGHTPARAN</b> <b>BBEGIN</b> <b>CASE</b> <span class="i">exprSimple</span> <b>BBEGIN</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [BEND, CASE, DEFAULT]
 
@@ -6801,14 +6822,14 @@
     DEFAULT  <a href="#rule_62">reduce using rule 62</a> (contSwitch)
 </p>
 
-<h3><a name="state_243" id="state_243"></a>state 243</h3>
+<h3><a name="state_244" id="state_244"></a>state 244</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <span class="point">.</span> <b>BEND</b>
 
-    BEND  <a href="#state_244">shift, and go to state 244</a>
+    BEND  <a href="#state_245">shift, and go to state 245</a>
 </p>
 
-<h3><a name="state_244" id="state_244"></a>state 244</h3>
+<h3><a name="state_245" id="state_245"></a>state 245</h3>
 
 <p class="pre">  <a href="#rule_48"> 48</a> <span class="i">forIteration</span> → <b>FOR</b> <span class="i">A</span> <b>LEFTPARAN</b> <span class="i">forInit</span> <b>SEMICOLON</b> <span class="i">exprSimple</span> <b>SEMICOLON</b> <span class="i">forPostExpression</span> <b>RIGHTPARAN</b> <b>DO</b> <span class="i">bloc</span> <b>BEND</b> <span class="point">.</span>  [error, SEMICOLON]
 

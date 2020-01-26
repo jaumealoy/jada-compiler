@@ -1,8 +1,33 @@
+func suma() : int begin
+    return 0;
+end suma;
+
+func resta(int a, int b) : int begin
+    return a - b;
+end resta;
+
 proc main() begin
+   /* int[2][2] array;
+    array = int{
+        {2, 3, 5}, 
+        {1, 3}
+    };
+
+    int[((3*2)/6)%5][1] array2 = int{ {1}, {1} };*/
+
+    int[((3*2)/6)%5] array3 = int{1};
+    array3[0] = 3;
+
+
     for(int i = 0; i < 100; i++) do
         // no fer res
         /*
             Tampoc fer res
         */
     end;
+
+    for (int i = 0; i < 100; i += 1) do
+
+    end;
+
 end main;

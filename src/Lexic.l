@@ -204,9 +204,9 @@ begin_comment "/*"
 	charLen++ ; 
 	foundCh = this->YYText()[0]; 
 }
-<CHAR_LITERAL_MODE>\n { charLen++ ; foundCh = '\n'; location->step(); }
-<CHAR_LITERAL_MODE>\t { charLen++ ; foundCh = '\t'; location->step(); }
-<CHAR_LITERAL_MODE>\\' { foundCh = '\''; charLen++ ; location->step(); }
+<CHAR_LITERAL_MODE>\\n { charLen++; foundCh = '\n'; location->step(); }
+<CHAR_LITERAL_MODE>\\t { charLen++; foundCh = '\t'; location->step(); }
+<CHAR_LITERAL_MODE>\\\' { foundCh = '\''; charLen++ ; location->step(); }
 <CHAR_LITERAL_MODE>' {
 	BEGIN(INITIAL);
 

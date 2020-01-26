@@ -795,16 +795,15 @@
         <lhs>expression</lhs>
         <rhs>
           <symbol>referencia</symbol>
-          <symbol>OP_ADD</symbol>
           <symbol>EQ</symbol>
-          <symbol>exprSimple</symbol>
+          <symbol>arrayInit</symbol>
         </rhs>
       </rule>
       <rule number="103" usefulness="useful">
         <lhs>expression</lhs>
         <rhs>
           <symbol>referencia</symbol>
-          <symbol>OP_DIV</symbol>
+          <symbol>OP_ADD</symbol>
           <symbol>EQ</symbol>
           <symbol>exprSimple</symbol>
         </rhs>
@@ -813,7 +812,7 @@
         <lhs>expression</lhs>
         <rhs>
           <symbol>referencia</symbol>
-          <symbol>OP_TIMES</symbol>
+          <symbol>OP_DIV</symbol>
           <symbol>EQ</symbol>
           <symbol>exprSimple</symbol>
         </rhs>
@@ -822,7 +821,7 @@
         <lhs>expression</lhs>
         <rhs>
           <symbol>referencia</symbol>
-          <symbol>OP_MINUS</symbol>
+          <symbol>OP_TIMES</symbol>
           <symbol>EQ</symbol>
           <symbol>exprSimple</symbol>
         </rhs>
@@ -832,10 +831,19 @@
         <rhs>
           <symbol>referencia</symbol>
           <symbol>OP_MINUS</symbol>
-          <symbol>OP_MINUS</symbol>
+          <symbol>EQ</symbol>
+          <symbol>exprSimple</symbol>
         </rhs>
       </rule>
       <rule number="107" usefulness="useful">
+        <lhs>expression</lhs>
+        <rhs>
+          <symbol>referencia</symbol>
+          <symbol>OP_MINUS</symbol>
+          <symbol>OP_MINUS</symbol>
+        </rhs>
+      </rule>
+      <rule number="108" usefulness="useful">
         <lhs>expression</lhs>
         <rhs>
           <symbol>referencia</symbol>
@@ -4468,6 +4476,7 @@
         <item rule-number="105" point="0"/>
         <item rule-number="106" point="0"/>
         <item rule-number="107" point="0"/>
+        <item rule-number="108" point="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -4682,6 +4691,7 @@
             <symbol>OP_LTE</symbol>
             <symbol>SEMICOLON</symbol>
             <symbol>COMA</symbol>
+            <symbol>RIGHTPARAN</symbol>
             <symbol>AND</symbol>
             <symbol>OR</symbol>
             <symbol>IF</symbol>
@@ -4713,6 +4723,7 @@
           <reduction symbol="OP_LTE" rule="86" enabled="true"/>
           <reduction symbol="SEMICOLON" rule="86" enabled="true"/>
           <reduction symbol="COMA" rule="86" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="86" enabled="true"/>
           <reduction symbol="AND" rule="86" enabled="true"/>
           <reduction symbol="OR" rule="86" enabled="true"/>
           <reduction symbol="IF" rule="86" enabled="true"/>
@@ -6666,6 +6677,7 @@
         <item rule-number="105" point="1"/>
         <item rule-number="106" point="1"/>
         <item rule-number="107" point="1"/>
+        <item rule-number="108" point="1"/>
       </itemset>
       <actions>
         <transitions>
@@ -7322,6 +7334,7 @@
         <item rule-number="105" point="0"/>
         <item rule-number="106" point="0"/>
         <item rule-number="107" point="0"/>
+        <item rule-number="108" point="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -7403,6 +7416,7 @@
         <item rule-number="105" point="0"/>
         <item rule-number="106" point="0"/>
         <item rule-number="107" point="0"/>
+        <item rule-number="108" point="0"/>
       </itemset>
       <actions>
         <transitions>
@@ -7440,8 +7454,8 @@
 
     <state number="151">
       <itemset>
-        <item rule-number="102" point="2"/>
-        <item rule-number="107" point="2"/>
+        <item rule-number="103" point="2"/>
+        <item rule-number="108" point="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -7456,8 +7470,8 @@
 
     <state number="152">
       <itemset>
-        <item rule-number="105" point="2"/>
         <item rule-number="106" point="2"/>
+        <item rule-number="107" point="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -7472,7 +7486,7 @@
 
     <state number="153">
       <itemset>
-        <item rule-number="104" point="2"/>
+        <item rule-number="105" point="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -7486,7 +7500,7 @@
 
     <state number="154">
       <itemset>
-        <item rule-number="103" point="2"/>
+        <item rule-number="104" point="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -7500,6 +7514,7 @@
 
     <state number="155">
       <itemset>
+        <item rule-number="14" point="0"/>
         <item rule-number="65" point="0"/>
         <item rule-number="66" point="0"/>
         <item rule-number="67" point="0"/>
@@ -7535,17 +7550,19 @@
         <item rule-number="99" point="0"/>
         <item rule-number="100" point="0"/>
         <item rule-number="101" point="2"/>
+        <item rule-number="102" point="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="ID" state="29"/>
+          <transition type="shift" symbol="ID" state="92"/>
           <transition type="shift" symbol="STR_LITERAL" state="30"/>
           <transition type="shift" symbol="INT_LITERAL" state="31"/>
           <transition type="shift" symbol="CHAR_LITERAL" state="32"/>
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="181"/>
+          <transition type="goto" symbol="arrayInit" state="181"/>
+          <transition type="goto" symbol="exprSimple" state="182"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -7625,7 +7642,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="SEMICOLON" state="182"/>
+          <transition type="shift" symbol="SEMICOLON" state="183"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -7712,7 +7729,7 @@
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="LEFTCBRACKET" state="161"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="arrayElementList" state="183"/>
+          <transition type="goto" symbol="arrayElementList" state="184"/>
           <transition type="goto" symbol="arrayInitList" state="163"/>
           <transition type="goto" symbol="arrayFinalList" state="164"/>
           <transition type="goto" symbol="exprSimple" state="165"/>
@@ -7739,7 +7756,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RIGHTCBRACKET" state="184"/>
+          <transition type="shift" symbol="RIGHTCBRACKET" state="185"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -7758,7 +7775,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="COMA" state="185"/>
+          <transition type="shift" symbol="COMA" state="186"/>
         </transitions>
         <errors/>
         <reductions>
@@ -7779,7 +7796,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="COMA" state="186"/>
+          <transition type="shift" symbol="COMA" state="187"/>
         </transitions>
         <errors/>
         <reductions>
@@ -7987,20 +8004,21 @@
         <item rule-number="105" point="0"/>
         <item rule-number="106" point="0"/>
         <item rule-number="107" point="0"/>
+        <item rule-number="108" point="0"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="ID" state="116"/>
           <transition type="shift" symbol="CONST" state="4"/>
-          <transition type="goto" symbol="varDecl" state="187"/>
-          <transition type="goto" symbol="forInit" state="188"/>
+          <transition type="goto" symbol="varDecl" state="188"/>
+          <transition type="goto" symbol="forInit" state="189"/>
           <transition type="goto" symbol="referencia" state="130"/>
           <transition type="goto" symbol="subProgramCall" state="40"/>
           <transition type="goto" symbol="subProgramContCall" state="41"/>
           <transition type="goto" symbol="Tipus" state="11"/>
           <transition type="goto" symbol="array" state="132"/>
           <transition type="goto" symbol="contArray" state="13"/>
-          <transition type="goto" symbol="expression" state="189"/>
+          <transition type="goto" symbol="expression" state="190"/>
         </transitions>
         <errors/>
         <reductions>
@@ -8041,7 +8059,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="RIGHTPARAN" state="190"/>
+          <transition type="shift" symbol="RIGHTPARAN" state="191"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -8073,7 +8091,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="191"/>
+          <transition type="goto" symbol="bloc" state="192"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -8101,9 +8119,9 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="192"/>
-          <transition type="shift" symbol="CASE" state="193"/>
-          <transition type="shift" symbol="DEFAULT" state="194"/>
+          <transition type="shift" symbol="BEND" state="193"/>
+          <transition type="shift" symbol="CASE" state="194"/>
+          <transition type="shift" symbol="DEFAULT" state="195"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -8143,7 +8161,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="RIGHTPARAN" state="195"/>
+          <transition type="shift" symbol="RIGHTPARAN" state="196"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -8196,7 +8214,7 @@
 
     <state number="175">
       <itemset>
-        <item rule-number="107" point="3">
+        <item rule-number="108" point="3">
           <lookaheads>
             <symbol>error</symbol>
             <symbol>SEMICOLON</symbol>
@@ -8208,9 +8226,9 @@
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="error" rule="107" enabled="true"/>
-          <reduction symbol="SEMICOLON" rule="107" enabled="true"/>
-          <reduction symbol="RIGHTPARAN" rule="107" enabled="true"/>
+          <reduction symbol="error" rule="108" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="108" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="108" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -8252,7 +8270,7 @@
         <item rule-number="98" point="0"/>
         <item rule-number="99" point="0"/>
         <item rule-number="100" point="0"/>
-        <item rule-number="102" point="3"/>
+        <item rule-number="103" point="3"/>
       </itemset>
       <actions>
         <transitions>
@@ -8263,7 +8281,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="196"/>
+          <transition type="goto" symbol="exprSimple" state="197"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8281,7 +8299,7 @@
 
     <state number="177">
       <itemset>
-        <item rule-number="106" point="3">
+        <item rule-number="107" point="3">
           <lookaheads>
             <symbol>error</symbol>
             <symbol>SEMICOLON</symbol>
@@ -8293,9 +8311,9 @@
         <transitions/>
         <errors/>
         <reductions>
-          <reduction symbol="error" rule="106" enabled="true"/>
-          <reduction symbol="SEMICOLON" rule="106" enabled="true"/>
-          <reduction symbol="RIGHTPARAN" rule="106" enabled="true"/>
+          <reduction symbol="error" rule="107" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="107" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="107" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
@@ -8337,7 +8355,7 @@
         <item rule-number="98" point="0"/>
         <item rule-number="99" point="0"/>
         <item rule-number="100" point="0"/>
-        <item rule-number="105" point="3"/>
+        <item rule-number="106" point="3"/>
       </itemset>
       <actions>
         <transitions>
@@ -8348,7 +8366,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="197"/>
+          <transition type="goto" symbol="exprSimple" state="198"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8400,7 +8418,7 @@
         <item rule-number="98" point="0"/>
         <item rule-number="99" point="0"/>
         <item rule-number="100" point="0"/>
-        <item rule-number="104" point="3"/>
+        <item rule-number="105" point="3"/>
       </itemset>
       <actions>
         <transitions>
@@ -8411,7 +8429,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="198"/>
+          <transition type="goto" symbol="exprSimple" state="199"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8463,7 +8481,7 @@
         <item rule-number="98" point="0"/>
         <item rule-number="99" point="0"/>
         <item rule-number="100" point="0"/>
-        <item rule-number="103" point="3"/>
+        <item rule-number="104" point="3"/>
       </itemset>
       <actions>
         <transitions>
@@ -8474,7 +8492,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="199"/>
+          <transition type="goto" symbol="exprSimple" state="200"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8491,6 +8509,28 @@
     </state>
 
     <state number="181">
+      <itemset>
+        <item rule-number="102" point="3">
+          <lookaheads>
+            <symbol>error</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RIGHTPARAN</symbol>
+          </lookaheads>
+        </item>
+      </itemset>
+      <actions>
+        <transitions/>
+        <errors/>
+        <reductions>
+          <reduction symbol="error" rule="102" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="102" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="102" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="182">
       <itemset>
         <item rule-number="67" point="1"/>
         <item rule-number="68" point="1"/>
@@ -8541,7 +8581,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="182">
+    <state number="183">
       <itemset>
         <item rule-number="22" point="7">
           <lookaheads>
@@ -8567,13 +8607,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="183">
+    <state number="184">
       <itemset>
         <item rule-number="19" point="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RIGHTCBRACKET" state="200"/>
+          <transition type="shift" symbol="RIGHTCBRACKET" state="201"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -8581,13 +8621,14 @@
       <solved-conflicts/>
     </state>
 
-    <state number="184">
+    <state number="185">
       <itemset>
         <item rule-number="14" point="4">
           <lookaheads>
             <symbol>error</symbol>
             <symbol>SEMICOLON</symbol>
             <symbol>COMA</symbol>
+            <symbol>RIGHTPARAN</symbol>
           </lookaheads>
         </item>
       </itemset>
@@ -8598,18 +8639,19 @@
           <reduction symbol="error" rule="14" enabled="true"/>
           <reduction symbol="SEMICOLON" rule="14" enabled="true"/>
           <reduction symbol="COMA" rule="14" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="14" enabled="true"/>
         </reductions>
       </actions>
       <solved-conflicts/>
     </state>
 
-    <state number="185">
+    <state number="186">
       <itemset>
         <item rule-number="18" point="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="LEFTCBRACKET" state="201"/>
+          <transition type="shift" symbol="LEFTCBRACKET" state="202"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -8617,7 +8659,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="186">
+    <state number="187">
       <itemset>
         <item rule-number="21" point="2"/>
         <item rule-number="65" point="0"/>
@@ -8664,7 +8706,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="202"/>
+          <transition type="goto" symbol="exprSimple" state="203"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8680,7 +8722,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="187">
+    <state number="188">
       <itemset>
         <item rule-number="10" point="1"/>
         <item rule-number="49" point="1">
@@ -8701,13 +8743,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="188">
+    <state number="189">
       <itemset>
         <item rule-number="48" point="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="SEMICOLON" state="203"/>
+          <transition type="shift" symbol="SEMICOLON" state="204"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -8715,7 +8757,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="189">
+    <state number="190">
       <itemset>
         <item rule-number="50" point="1">
           <lookaheads>
@@ -8733,13 +8775,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="190">
+    <state number="191">
       <itemset>
         <item rule-number="54" point="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="DO" state="204"/>
+          <transition type="shift" symbol="DO" state="205"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -8747,7 +8789,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="191">
+    <state number="192">
       <itemset>
         <item rule-number="55" point="4"/>
         <item rule-number="56" point="0"/>
@@ -8761,9 +8803,9 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="ELSE" state="205"/>
-          <transition type="goto" symbol="elseIfStatement" state="206"/>
-          <transition type="goto" symbol="elseStatement" state="207"/>
+          <transition type="shift" symbol="ELSE" state="206"/>
+          <transition type="goto" symbol="elseIfStatement" state="207"/>
+          <transition type="goto" symbol="elseStatement" state="208"/>
         </transitions>
         <errors/>
         <reductions>
@@ -8773,7 +8815,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="192">
+    <state number="193">
       <itemset>
         <item rule-number="60" point="4">
           <lookaheads>
@@ -8793,7 +8835,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="193">
+    <state number="194">
       <itemset>
         <item rule-number="64" point="2"/>
         <item rule-number="65" point="0"/>
@@ -8840,7 +8882,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="208"/>
+          <transition type="goto" symbol="exprSimple" state="209"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -8856,24 +8898,9 @@
       <solved-conflicts/>
     </state>
 
-    <state number="194">
-      <itemset>
-        <item rule-number="63" point="2"/>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="BBEGIN" state="209"/>
-        </transitions>
-        <errors/>
-        <reductions/>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
     <state number="195">
       <itemset>
-        <item rule-number="61" point="2"/>
-        <item rule-number="62" point="2"/>
+        <item rule-number="63" point="2"/>
       </itemset>
       <actions>
         <transitions>
@@ -8887,158 +8914,20 @@
 
     <state number="196">
       <itemset>
-        <item rule-number="67" point="1"/>
-        <item rule-number="68" point="1"/>
-        <item rule-number="69" point="1"/>
-        <item rule-number="75" point="1"/>
-        <item rule-number="76" point="1"/>
-        <item rule-number="77" point="1"/>
-        <item rule-number="78" point="1"/>
-        <item rule-number="79" point="1"/>
-        <item rule-number="80" point="1"/>
-        <item rule-number="81" point="1"/>
-        <item rule-number="82" point="1"/>
-        <item rule-number="83" point="1"/>
-        <item rule-number="84" point="1"/>
-        <item rule-number="85" point="1"/>
-        <item rule-number="102" point="4">
-          <lookaheads>
-            <symbol>error</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RIGHTPARAN</symbol>
-          </lookaheads>
-        </item>
+        <item rule-number="61" point="2"/>
+        <item rule-number="62" point="2"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="OP_ADD" state="62"/>
-          <transition type="shift" symbol="OP_MINUS" state="63"/>
-          <transition type="shift" symbol="OP_TIMES" state="64"/>
-          <transition type="shift" symbol="OP_DIV" state="65"/>
-          <transition type="shift" symbol="OP_MOD" state="66"/>
-          <transition type="shift" symbol="OP_GT" state="67"/>
-          <transition type="shift" symbol="OP_LT" state="68"/>
-          <transition type="shift" symbol="OP_EQ" state="69"/>
-          <transition type="shift" symbol="OP_NEQ" state="70"/>
-          <transition type="shift" symbol="OP_GTE" state="71"/>
-          <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="AND" state="74"/>
-          <transition type="shift" symbol="OR" state="75"/>
-          <transition type="shift" symbol="IF" state="76"/>
+          <transition type="shift" symbol="BBEGIN" state="211"/>
         </transitions>
         <errors/>
-        <reductions>
-          <reduction symbol="error" rule="102" enabled="true"/>
-          <reduction symbol="SEMICOLON" rule="102" enabled="true"/>
-          <reduction symbol="RIGHTPARAN" rule="102" enabled="true"/>
-        </reductions>
+        <reductions/>
       </actions>
       <solved-conflicts/>
     </state>
 
     <state number="197">
-      <itemset>
-        <item rule-number="67" point="1"/>
-        <item rule-number="68" point="1"/>
-        <item rule-number="69" point="1"/>
-        <item rule-number="75" point="1"/>
-        <item rule-number="76" point="1"/>
-        <item rule-number="77" point="1"/>
-        <item rule-number="78" point="1"/>
-        <item rule-number="79" point="1"/>
-        <item rule-number="80" point="1"/>
-        <item rule-number="81" point="1"/>
-        <item rule-number="82" point="1"/>
-        <item rule-number="83" point="1"/>
-        <item rule-number="84" point="1"/>
-        <item rule-number="85" point="1"/>
-        <item rule-number="105" point="4">
-          <lookaheads>
-            <symbol>error</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RIGHTPARAN</symbol>
-          </lookaheads>
-        </item>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="OP_ADD" state="62"/>
-          <transition type="shift" symbol="OP_MINUS" state="63"/>
-          <transition type="shift" symbol="OP_TIMES" state="64"/>
-          <transition type="shift" symbol="OP_DIV" state="65"/>
-          <transition type="shift" symbol="OP_MOD" state="66"/>
-          <transition type="shift" symbol="OP_GT" state="67"/>
-          <transition type="shift" symbol="OP_LT" state="68"/>
-          <transition type="shift" symbol="OP_EQ" state="69"/>
-          <transition type="shift" symbol="OP_NEQ" state="70"/>
-          <transition type="shift" symbol="OP_GTE" state="71"/>
-          <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="AND" state="74"/>
-          <transition type="shift" symbol="OR" state="75"/>
-          <transition type="shift" symbol="IF" state="76"/>
-        </transitions>
-        <errors/>
-        <reductions>
-          <reduction symbol="error" rule="105" enabled="true"/>
-          <reduction symbol="SEMICOLON" rule="105" enabled="true"/>
-          <reduction symbol="RIGHTPARAN" rule="105" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="198">
-      <itemset>
-        <item rule-number="67" point="1"/>
-        <item rule-number="68" point="1"/>
-        <item rule-number="69" point="1"/>
-        <item rule-number="75" point="1"/>
-        <item rule-number="76" point="1"/>
-        <item rule-number="77" point="1"/>
-        <item rule-number="78" point="1"/>
-        <item rule-number="79" point="1"/>
-        <item rule-number="80" point="1"/>
-        <item rule-number="81" point="1"/>
-        <item rule-number="82" point="1"/>
-        <item rule-number="83" point="1"/>
-        <item rule-number="84" point="1"/>
-        <item rule-number="85" point="1"/>
-        <item rule-number="104" point="4">
-          <lookaheads>
-            <symbol>error</symbol>
-            <symbol>SEMICOLON</symbol>
-            <symbol>RIGHTPARAN</symbol>
-          </lookaheads>
-        </item>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="OP_ADD" state="62"/>
-          <transition type="shift" symbol="OP_MINUS" state="63"/>
-          <transition type="shift" symbol="OP_TIMES" state="64"/>
-          <transition type="shift" symbol="OP_DIV" state="65"/>
-          <transition type="shift" symbol="OP_MOD" state="66"/>
-          <transition type="shift" symbol="OP_GT" state="67"/>
-          <transition type="shift" symbol="OP_LT" state="68"/>
-          <transition type="shift" symbol="OP_EQ" state="69"/>
-          <transition type="shift" symbol="OP_NEQ" state="70"/>
-          <transition type="shift" symbol="OP_GTE" state="71"/>
-          <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="AND" state="74"/>
-          <transition type="shift" symbol="OR" state="75"/>
-          <transition type="shift" symbol="IF" state="76"/>
-        </transitions>
-        <errors/>
-        <reductions>
-          <reduction symbol="error" rule="104" enabled="true"/>
-          <reduction symbol="SEMICOLON" rule="104" enabled="true"/>
-          <reduction symbol="RIGHTPARAN" rule="104" enabled="true"/>
-        </reductions>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="199">
       <itemset>
         <item rule-number="67" point="1"/>
         <item rule-number="68" point="1"/>
@@ -9089,7 +8978,160 @@
       <solved-conflicts/>
     </state>
 
+    <state number="198">
+      <itemset>
+        <item rule-number="67" point="1"/>
+        <item rule-number="68" point="1"/>
+        <item rule-number="69" point="1"/>
+        <item rule-number="75" point="1"/>
+        <item rule-number="76" point="1"/>
+        <item rule-number="77" point="1"/>
+        <item rule-number="78" point="1"/>
+        <item rule-number="79" point="1"/>
+        <item rule-number="80" point="1"/>
+        <item rule-number="81" point="1"/>
+        <item rule-number="82" point="1"/>
+        <item rule-number="83" point="1"/>
+        <item rule-number="84" point="1"/>
+        <item rule-number="85" point="1"/>
+        <item rule-number="106" point="4">
+          <lookaheads>
+            <symbol>error</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RIGHTPARAN</symbol>
+          </lookaheads>
+        </item>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="OP_ADD" state="62"/>
+          <transition type="shift" symbol="OP_MINUS" state="63"/>
+          <transition type="shift" symbol="OP_TIMES" state="64"/>
+          <transition type="shift" symbol="OP_DIV" state="65"/>
+          <transition type="shift" symbol="OP_MOD" state="66"/>
+          <transition type="shift" symbol="OP_GT" state="67"/>
+          <transition type="shift" symbol="OP_LT" state="68"/>
+          <transition type="shift" symbol="OP_EQ" state="69"/>
+          <transition type="shift" symbol="OP_NEQ" state="70"/>
+          <transition type="shift" symbol="OP_GTE" state="71"/>
+          <transition type="shift" symbol="OP_LTE" state="72"/>
+          <transition type="shift" symbol="AND" state="74"/>
+          <transition type="shift" symbol="OR" state="75"/>
+          <transition type="shift" symbol="IF" state="76"/>
+        </transitions>
+        <errors/>
+        <reductions>
+          <reduction symbol="error" rule="106" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="106" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="106" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="199">
+      <itemset>
+        <item rule-number="67" point="1"/>
+        <item rule-number="68" point="1"/>
+        <item rule-number="69" point="1"/>
+        <item rule-number="75" point="1"/>
+        <item rule-number="76" point="1"/>
+        <item rule-number="77" point="1"/>
+        <item rule-number="78" point="1"/>
+        <item rule-number="79" point="1"/>
+        <item rule-number="80" point="1"/>
+        <item rule-number="81" point="1"/>
+        <item rule-number="82" point="1"/>
+        <item rule-number="83" point="1"/>
+        <item rule-number="84" point="1"/>
+        <item rule-number="85" point="1"/>
+        <item rule-number="105" point="4">
+          <lookaheads>
+            <symbol>error</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RIGHTPARAN</symbol>
+          </lookaheads>
+        </item>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="OP_ADD" state="62"/>
+          <transition type="shift" symbol="OP_MINUS" state="63"/>
+          <transition type="shift" symbol="OP_TIMES" state="64"/>
+          <transition type="shift" symbol="OP_DIV" state="65"/>
+          <transition type="shift" symbol="OP_MOD" state="66"/>
+          <transition type="shift" symbol="OP_GT" state="67"/>
+          <transition type="shift" symbol="OP_LT" state="68"/>
+          <transition type="shift" symbol="OP_EQ" state="69"/>
+          <transition type="shift" symbol="OP_NEQ" state="70"/>
+          <transition type="shift" symbol="OP_GTE" state="71"/>
+          <transition type="shift" symbol="OP_LTE" state="72"/>
+          <transition type="shift" symbol="AND" state="74"/>
+          <transition type="shift" symbol="OR" state="75"/>
+          <transition type="shift" symbol="IF" state="76"/>
+        </transitions>
+        <errors/>
+        <reductions>
+          <reduction symbol="error" rule="105" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="105" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="105" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
     <state number="200">
+      <itemset>
+        <item rule-number="67" point="1"/>
+        <item rule-number="68" point="1"/>
+        <item rule-number="69" point="1"/>
+        <item rule-number="75" point="1"/>
+        <item rule-number="76" point="1"/>
+        <item rule-number="77" point="1"/>
+        <item rule-number="78" point="1"/>
+        <item rule-number="79" point="1"/>
+        <item rule-number="80" point="1"/>
+        <item rule-number="81" point="1"/>
+        <item rule-number="82" point="1"/>
+        <item rule-number="83" point="1"/>
+        <item rule-number="84" point="1"/>
+        <item rule-number="85" point="1"/>
+        <item rule-number="104" point="4">
+          <lookaheads>
+            <symbol>error</symbol>
+            <symbol>SEMICOLON</symbol>
+            <symbol>RIGHTPARAN</symbol>
+          </lookaheads>
+        </item>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="OP_ADD" state="62"/>
+          <transition type="shift" symbol="OP_MINUS" state="63"/>
+          <transition type="shift" symbol="OP_TIMES" state="64"/>
+          <transition type="shift" symbol="OP_DIV" state="65"/>
+          <transition type="shift" symbol="OP_MOD" state="66"/>
+          <transition type="shift" symbol="OP_GT" state="67"/>
+          <transition type="shift" symbol="OP_LT" state="68"/>
+          <transition type="shift" symbol="OP_EQ" state="69"/>
+          <transition type="shift" symbol="OP_NEQ" state="70"/>
+          <transition type="shift" symbol="OP_GTE" state="71"/>
+          <transition type="shift" symbol="OP_LTE" state="72"/>
+          <transition type="shift" symbol="AND" state="74"/>
+          <transition type="shift" symbol="OR" state="75"/>
+          <transition type="shift" symbol="IF" state="76"/>
+        </transitions>
+        <errors/>
+        <reductions>
+          <reduction symbol="error" rule="104" enabled="true"/>
+          <reduction symbol="SEMICOLON" rule="104" enabled="true"/>
+          <reduction symbol="RIGHTPARAN" rule="104" enabled="true"/>
+        </reductions>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="201">
       <itemset>
         <item rule-number="19" point="3">
           <lookaheads>
@@ -9109,7 +9151,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="201">
+    <state number="202">
       <itemset>
         <item rule-number="15" point="0"/>
         <item rule-number="16" point="0"/>
@@ -9168,7 +9210,7 @@
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="LEFTCBRACKET" state="161"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="arrayElementList" state="211"/>
+          <transition type="goto" symbol="arrayElementList" state="212"/>
           <transition type="goto" symbol="arrayInitList" state="163"/>
           <transition type="goto" symbol="arrayFinalList" state="164"/>
           <transition type="goto" symbol="exprSimple" state="165"/>
@@ -9189,7 +9231,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="202">
+    <state number="203">
       <itemset>
         <item rule-number="21" point="3">
           <lookaheads>
@@ -9238,7 +9280,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="203">
+    <state number="204">
       <itemset>
         <item rule-number="48" point="5"/>
         <item rule-number="65" point="0"/>
@@ -9285,7 +9327,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="212"/>
+          <transition type="goto" symbol="exprSimple" state="213"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -9301,7 +9343,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="204">
+    <state number="205">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -9321,7 +9363,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="213"/>
+          <transition type="goto" symbol="bloc" state="214"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -9340,29 +9382,15 @@
       <solved-conflicts/>
     </state>
 
-    <state number="205">
+    <state number="206">
       <itemset>
         <item rule-number="56" point="1"/>
         <item rule-number="58" point="1"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="DO" state="214"/>
-          <transition type="shift" symbol="IF" state="215"/>
-        </transitions>
-        <errors/>
-        <reductions/>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="206">
-      <itemset>
-        <item rule-number="55" point="5"/>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="BEND" state="216"/>
+          <transition type="shift" symbol="DO" state="215"/>
+          <transition type="shift" symbol="IF" state="216"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9371,6 +9399,20 @@
     </state>
 
     <state number="207">
+      <itemset>
+        <item rule-number="55" point="5"/>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="BEND" state="217"/>
+        </transitions>
+        <errors/>
+        <reductions/>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="208">
       <itemset>
         <item rule-number="57" point="1">
           <lookaheads>
@@ -9388,7 +9430,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="208">
+    <state number="209">
       <itemset>
         <item rule-number="64" point="3"/>
         <item rule-number="67" point="1"/>
@@ -9419,7 +9461,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="BBEGIN" state="217"/>
+          <transition type="shift" symbol="BBEGIN" state="218"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -9430,7 +9472,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="209">
+    <state number="210">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -9450,7 +9492,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="218"/>
+          <transition type="goto" symbol="bloc" state="219"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -9469,29 +9511,15 @@
       <solved-conflicts/>
     </state>
 
-    <state number="210">
+    <state number="211">
       <itemset>
         <item rule-number="61" point="3"/>
         <item rule-number="62" point="3"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="CASE" state="219"/>
-          <transition type="shift" symbol="DEFAULT" state="220"/>
-        </transitions>
-        <errors/>
-        <reductions/>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="211">
-      <itemset>
-        <item rule-number="18" point="4"/>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="RIGHTCBRACKET" state="221"/>
+          <transition type="shift" symbol="CASE" state="220"/>
+          <transition type="shift" symbol="DEFAULT" state="221"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9500,6 +9528,20 @@
     </state>
 
     <state number="212">
+      <itemset>
+        <item rule-number="18" point="4"/>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="RIGHTCBRACKET" state="222"/>
+        </transitions>
+        <errors/>
+        <reductions/>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="213">
       <itemset>
         <item rule-number="48" point="6"/>
         <item rule-number="67" point="1"/>
@@ -9530,7 +9572,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="SEMICOLON" state="222"/>
+          <transition type="shift" symbol="SEMICOLON" state="223"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -9541,13 +9583,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="213">
+    <state number="214">
       <itemset>
         <item rule-number="54" point="6"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="223"/>
+          <transition type="shift" symbol="BEND" state="224"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9555,7 +9597,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="214">
+    <state number="215">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -9575,7 +9617,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="224"/>
+          <transition type="goto" symbol="bloc" state="225"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -9594,7 +9636,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="215">
+    <state number="216">
       <itemset>
         <item rule-number="56" point="2"/>
         <item rule-number="65" point="0"/>
@@ -9641,7 +9683,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="225"/>
+          <transition type="goto" symbol="exprSimple" state="226"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -9657,7 +9699,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="216">
+    <state number="217">
       <itemset>
         <item rule-number="55" point="6">
           <lookaheads>
@@ -9677,7 +9719,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="217">
+    <state number="218">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -9697,7 +9739,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="226"/>
+          <transition type="goto" symbol="bloc" state="227"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -9716,13 +9758,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="218">
+    <state number="219">
       <itemset>
         <item rule-number="63" point="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="227"/>
+          <transition type="shift" symbol="BEND" state="228"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9730,7 +9772,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="219">
+    <state number="220">
       <itemset>
         <item rule-number="62" point="4"/>
         <item rule-number="65" point="0"/>
@@ -9777,7 +9819,7 @@
           <transition type="shift" symbol="OP_MINUS" state="33"/>
           <transition type="shift" symbol="LEFTPARAN" state="34"/>
           <transition type="shift" symbol="NOT" state="35"/>
-          <transition type="goto" symbol="exprSimple" state="228"/>
+          <transition type="goto" symbol="exprSimple" state="229"/>
           <transition type="goto" symbol="aritExpr" state="37"/>
           <transition type="goto" symbol="relExpr" state="38"/>
           <transition type="goto" symbol="referencia" state="39"/>
@@ -9793,13 +9835,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="220">
+    <state number="221">
       <itemset>
         <item rule-number="61" point="4"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BBEGIN" state="229"/>
+          <transition type="shift" symbol="BBEGIN" state="230"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9807,7 +9849,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="221">
+    <state number="222">
       <itemset>
         <item rule-number="18" point="5">
           <lookaheads>
@@ -9827,7 +9869,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="222">
+    <state number="223">
       <itemset>
         <item rule-number="48" point="7"/>
         <item rule-number="52" point="0"/>
@@ -9853,17 +9895,18 @@
         <item rule-number="105" point="0"/>
         <item rule-number="106" point="0"/>
         <item rule-number="107" point="0"/>
+        <item rule-number="108" point="0"/>
       </itemset>
       <actions>
         <transitions>
           <transition type="shift" symbol="ID" state="29"/>
-          <transition type="goto" symbol="forPostExpression" state="230"/>
+          <transition type="goto" symbol="forPostExpression" state="231"/>
           <transition type="goto" symbol="referencia" state="130"/>
           <transition type="goto" symbol="subProgramCall" state="40"/>
           <transition type="goto" symbol="subProgramContCall" state="41"/>
           <transition type="goto" symbol="array" state="43"/>
           <transition type="goto" symbol="contArray" state="13"/>
-          <transition type="goto" symbol="expression" state="231"/>
+          <transition type="goto" symbol="expression" state="232"/>
         </transitions>
         <errors/>
         <reductions>
@@ -9873,7 +9916,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="223">
+    <state number="224">
       <itemset>
         <item rule-number="54" point="7">
           <lookaheads>
@@ -9893,7 +9936,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="224">
+    <state number="225">
       <itemset>
         <item rule-number="58" point="3">
           <lookaheads>
@@ -9911,7 +9954,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="225">
+    <state number="226">
       <itemset>
         <item rule-number="56" point="3"/>
         <item rule-number="67" point="1"/>
@@ -9942,7 +9985,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="DO" state="232"/>
+          <transition type="shift" symbol="DO" state="233"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -9953,13 +9996,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="226">
+    <state number="227">
       <itemset>
         <item rule-number="64" point="5"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="233"/>
+          <transition type="shift" symbol="BEND" state="234"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -9967,7 +10010,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="227">
+    <state number="228">
       <itemset>
         <item rule-number="63" point="5">
           <lookaheads>
@@ -9989,7 +10032,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="228">
+    <state number="229">
       <itemset>
         <item rule-number="62" point="5"/>
         <item rule-number="67" point="1"/>
@@ -10020,7 +10063,7 @@
           <transition type="shift" symbol="OP_NEQ" state="70"/>
           <transition type="shift" symbol="OP_GTE" state="71"/>
           <transition type="shift" symbol="OP_LTE" state="72"/>
-          <transition type="shift" symbol="BBEGIN" state="234"/>
+          <transition type="shift" symbol="BBEGIN" state="235"/>
           <transition type="shift" symbol="AND" state="74"/>
           <transition type="shift" symbol="OR" state="75"/>
           <transition type="shift" symbol="IF" state="76"/>
@@ -10031,7 +10074,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="229">
+    <state number="230">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -10051,7 +10094,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="235"/>
+          <transition type="goto" symbol="bloc" state="236"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -10070,13 +10113,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="230">
+    <state number="231">
       <itemset>
         <item rule-number="48" point="8"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="RIGHTPARAN" state="236"/>
+          <transition type="shift" symbol="RIGHTPARAN" state="237"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -10084,7 +10127,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="231">
+    <state number="232">
       <itemset>
         <item rule-number="52" point="1">
           <lookaheads>
@@ -10102,7 +10145,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="232">
+    <state number="233">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -10123,7 +10166,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="237"/>
+          <transition type="goto" symbol="bloc" state="238"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -10143,7 +10186,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="233">
+    <state number="234">
       <itemset>
         <item rule-number="64" point="6">
           <lookaheads>
@@ -10165,7 +10208,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="234">
+    <state number="235">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -10185,7 +10228,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="238"/>
+          <transition type="goto" symbol="bloc" state="239"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -10204,27 +10247,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="235">
+    <state number="236">
       <itemset>
         <item rule-number="61" point="6"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="239"/>
-        </transitions>
-        <errors/>
-        <reductions/>
-      </actions>
-      <solved-conflicts/>
-    </state>
-
-    <state number="236">
-      <itemset>
-        <item rule-number="48" point="9"/>
-      </itemset>
-      <actions>
-        <transitions>
-          <transition type="shift" symbol="DO" state="240"/>
+          <transition type="shift" symbol="BEND" state="240"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -10233,6 +10262,20 @@
     </state>
 
     <state number="237">
+      <itemset>
+        <item rule-number="48" point="9"/>
+      </itemset>
+      <actions>
+        <transitions>
+          <transition type="shift" symbol="DO" state="241"/>
+        </transitions>
+        <errors/>
+        <reductions/>
+      </actions>
+      <solved-conflicts/>
+    </state>
+
+    <state number="238">
       <itemset>
         <item rule-number="56" point="0"/>
         <item rule-number="56" point="5"/>
@@ -10246,9 +10289,9 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="ELSE" state="205"/>
-          <transition type="goto" symbol="elseIfStatement" state="241"/>
-          <transition type="goto" symbol="elseStatement" state="207"/>
+          <transition type="shift" symbol="ELSE" state="206"/>
+          <transition type="goto" symbol="elseIfStatement" state="242"/>
+          <transition type="goto" symbol="elseStatement" state="208"/>
         </transitions>
         <errors/>
         <reductions>
@@ -10258,13 +10301,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="238">
+    <state number="239">
       <itemset>
         <item rule-number="62" point="7"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="242"/>
+          <transition type="shift" symbol="BEND" state="243"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -10272,7 +10315,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="239">
+    <state number="240">
       <itemset>
         <item rule-number="61" point="7">
           <lookaheads>
@@ -10294,7 +10337,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="240">
+    <state number="241">
       <itemset>
         <item rule-number="34" point="0"/>
         <item rule-number="35" point="0">
@@ -10314,7 +10357,7 @@
       </itemset>
       <actions>
         <transitions>
-          <transition type="goto" symbol="bloc" state="243"/>
+          <transition type="goto" symbol="bloc" state="244"/>
           <transition type="goto" symbol="A" state="83"/>
         </transitions>
         <errors/>
@@ -10333,7 +10376,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="241">
+    <state number="242">
       <itemset>
         <item rule-number="56" point="6">
           <lookaheads>
@@ -10351,7 +10394,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="242">
+    <state number="243">
       <itemset>
         <item rule-number="62" point="8">
           <lookaheads>
@@ -10373,13 +10416,13 @@
       <solved-conflicts/>
     </state>
 
-    <state number="243">
+    <state number="244">
       <itemset>
         <item rule-number="48" point="11"/>
       </itemset>
       <actions>
         <transitions>
-          <transition type="shift" symbol="BEND" state="244"/>
+          <transition type="shift" symbol="BEND" state="245"/>
         </transitions>
         <errors/>
         <reductions/>
@@ -10387,7 +10430,7 @@
       <solved-conflicts/>
     </state>
 
-    <state number="244">
+    <state number="245">
       <itemset>
         <item rule-number="48" point="12">
           <lookaheads>
