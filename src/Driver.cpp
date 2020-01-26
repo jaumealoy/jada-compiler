@@ -70,12 +70,11 @@ void Driver::parse(){
     this->exit = true;
     
     // Per observar tots els errors, el següent codi està comentat
-    //try {
+    try {
         parser->parse();
-    //} catch (std::exception e) {
-    //    this->exit = false;
-    //    std::cerr << e.what() << std::endl;
-    //}
+    } catch (std::exception e) {
+        this->exit = false;
+    }
 }
 
 /**

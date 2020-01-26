@@ -25,6 +25,7 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
 
     // comprovar que tipus és efectivament un tipus vàlid
     Descripcio *d = nullptr;
+    TipusSubjacentBasic tsb = TipusSubjacentBasic::NUL;
     try {
         d = driver->ts.consulta(tipus);
         
@@ -32,8 +33,23 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
             // error! s'esperava un tipus
             driver->error( error_no_tipus(tipus) );
         }
+
+        // Obtenir TSB del tipus
+        DescripcioTipus *dt = (DescripcioTipus*) d;
+        tsb = dt->getTSB();
     } catch(TaulaSimbols::NomNoExistent ex) {
         driver->error( error_no_definit(tipus) );
+    }
+
+    // Comprovar que el nom del parametre no és una funció
+    try {
+        Descripcio *dp = driver->ts.consulta(nomParametre);
+
+        if(dp->getTipus() == Descripcio::Tipus::FUNCIO || dp->getTipus() == Descripcio::Tipus::PROCEDIMENT){
+            driver->error( error_nom_parametre_nom_funcio(), true );
+        }
+    } catch(TaulaSimbols::NomNoExistent ex) {
+
     }
 
     // Inserir el procedure a la taula de símbols
@@ -45,7 +61,9 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
     // és el primer paràmetre, segur que no n'hi ha cap altre
     
     DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
-    if(!constant.isEmpty()){
+    if(constant.isEmpty() && tsb != TipusSubjacentBasic::ARRAY){
+        arg->setTipusArgument(DescripcioArgument::VALOR);
+    }else if(!constant.isEmpty()){
         arg->setTipusArgument(DescripcioArgument::IN);
     }
 
@@ -68,14 +86,30 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolArgTyp
     // que realment existeix)
     // és possible que ja existeixi paràmetre amb aquest no (error quan s'insereixi)
     
+    // Comprovar que el nom del parametre no és una funció
+    try {
+        Descripcio *dp = driver->ts.consulta(nomParametre);
+
+        if(dp->getTipus() == Descripcio::Tipus::FUNCIO || dp->getTipus() == Descripcio::Tipus::PROCEDIMENT){
+            driver->error( error_nom_parametre_nom_funcio(), true );
+        }
+    } catch(TaulaSimbols::NomNoExistent ex) {
+
+    }
+
     // comprovar que tipus és un tipus
     Descripcio *d = nullptr;
+    TipusSubjacentBasic tsb = TipusSubjacentBasic::NUL;
     try {
         d = driver->ts.consulta(tipus);
         if(d->getTipus() != Descripcio::Tipus::TIPUS){
             // error! s'esperava un tipus
             driver->error( error_no_tipus(tipus) );
         }
+
+        // Obtenir TSB del tipus
+        DescripcioTipus *dt = (DescripcioTipus*) d;
+        tsb = dt->getTSB();
     } catch (TaulaSimbols::NomNoExistent ex) {
         // no existeix!
         driver->error( error_no_definit(tipus) );
@@ -84,7 +118,9 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolArgTyp
     // si el tipus és un array, serà passat per referència (mode in-out)
     DescripcioArgument *arg = new DescripcioArgument(tipus, DescripcioArgument::Tipus::IN_OUT);
     DescripcioTipus *dt = (DescripcioTipus *) d;
-    if(!constant.isEmpty()){
+    if(constant.isEmpty() && tsb != TipusSubjacentBasic::ARRAY){
+        arg->setTipusArgument(DescripcioArgument::VALOR);
+    }else if(!constant.isEmpty()){
         arg->setTipusArgument(DescripcioArgument::IN);
     }
 

@@ -43,6 +43,8 @@ std::string error_falta_retorn();
 std::string error_sobren_retorn();
 std::string error_break_invalid();
 
+std::string error_nom_parametre_nom_funcio();
+
 std::string error_constant_no_inicialitzada(std::string c);
 std::string error_valor_no_constant();
 std::string error_valor_no_constant(TipusSubjacentBasic a);

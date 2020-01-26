@@ -59,7 +59,7 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
         if(da->getTipusArgument() == DescripcioArgument::Tipus::IN){
             DescripcioConstant *dv = new DescripcioConstant(da->getNomTipusArgument());
             d = (Descripcio *) dv;
-        }else if(da->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT){
+        }else if(da->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT || da->getTipusArgument() == DescripcioArgument::Tipus::VALOR){
             DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
             d = (Descripcio *) dv;
         }

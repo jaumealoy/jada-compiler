@@ -1,0 +1,46 @@
+/**
+ * Errors detecats:
+ * - la variable d no està declarada
+ * - chars no és un tipus
+ * - no es pot dividir entre zero
+ * - els arrays, si no s'especifica const al parametre, es passen com a referència i no poden ser constants
+ * - no hi pot haver un break perquè no està dins un bucle
+ * - no es pot redeclarar una variable
+ * - s'intenta declarar un array constant amb elements no constants
+ * - s'intenta declarar un array però s'inicialitza incorrectament
+ * - s'accedeix a una posició fora de rang de l'array
+ */
+const int N = 10;
+
+func suma(int[N] vector) : int begin
+    int tmp = 0;
+
+    for (int i = 0; i < N; i++) do
+        tmp += vector[i];    
+    end;
+
+    return tmp;
+end suma;
+
+proc main() begin
+    const int[N] array = int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    int a = 0;
+    char a;
+    int b = d + 1;
+    
+    chars caracter = 'c';
+
+    const int divisioZero = 7 / 0;
+
+    break;
+
+    print("El resultat és");
+    printInt( suma(array) );
+
+    const int[2] arrayNoConsant = int{ b, 2 };
+    const int[2][2] arrayDimensionsErronies = int{ {1, 3, 4}, {1, 2}, {0}};
+    
+    const int[2] tmpArray = int{2, 3};
+    int k = tmpArray[7];
+end main;

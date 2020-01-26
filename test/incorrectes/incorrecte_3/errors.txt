@@ -1,0 +1,3 @@
+Warning (línia 18.9 - 18.12): s'esperava un boolean
+Warning (línia 18.12 - 18.13): s'esperava un boolean
+Error (línia 20.10 - 20.10): no hi pot haver un return

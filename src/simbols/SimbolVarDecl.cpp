@@ -28,6 +28,17 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
         return;
     }
 
+    // Comprovar que el nom de la variable/constant no és una funció
+    try {
+        Descripcio *dp = driver->ts.consulta(id);
+
+        if(dp->getTipus() == Descripcio::Tipus::FUNCIO || dp->getTipus() == Descripcio::Tipus::PROCEDIMENT){
+            driver->error( error_nom_parametre_nom_funcio(), true );
+        }
+    } catch(TaulaSimbols::NomNoExistent ex) {
+
+    }
+
     DescripcioTipus *dt = (DescripcioTipus *) d;
 
     // Comprovar, si hi ha inicialització, que els tipus són compatibles
@@ -113,6 +124,17 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
  * varDecl -> varDecl , ID varInit
  */
 void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, SimbolVarInit init){
+    // Comprovar que el nom de la variable/constant no és una funció
+    try {
+        Descripcio *dp = driver->ts.consulta(id);
+
+        if(dp->getTipus() == Descripcio::Tipus::FUNCIO || dp->getTipus() == Descripcio::Tipus::PROCEDIMENT){
+            driver->error( error_nom_parametre_nom_funcio(), true );
+        }
+    } catch(TaulaSimbols::NomNoExistent ex) {
+
+    }
+
     // Comprovar, si hi ha inicialització, que els tipus són compatibles
     if(!init.isEmpty()){
         // tipus != id_nul

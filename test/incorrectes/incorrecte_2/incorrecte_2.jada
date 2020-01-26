@@ -1,4 +1,4 @@
-//S'intenta modificar una constant 
+// S'intenta modificar una constant 
 
 const int A = 6;
 
@@ -8,7 +8,6 @@ func set0(const int[A] arr) : boolean begin
     end;
     return true;
 end set0;
-
 
 proc main() begin
     const int[A] array = int{11, 0, 3, 9, 21, 0};

@@ -1,0 +1,2 @@
+Warning (línia 21.26 - 21.27): tipus boolean no és compatible amb l'operador
+Error (línia 46.1 - 46.1): no hi pot haver un return

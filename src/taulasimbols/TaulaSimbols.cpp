@@ -83,7 +83,7 @@ void TaulaSimbols::posar(std::string id, Descripcio *declaracio, bool protegit){
 
             this->tExpansio[indexExpansio].original = tmp;
             this->tExpansio[indexExpansio].nivellProfunditat = this->tDescripcio[tmp].nivellProfunditat;
-            this->tExpansio[indexExpansio].next = -1;
+            this->tExpansio[indexExpansio].next = this->tDescripcio[tmp].next;
             this->tExpansio[indexExpansio].identificador = this->tDescripcio[tmp].identificador;
             this->tExpansio[indexExpansio].declaracio = this->tDescripcio[tmp].declaracio;
             this->tExpansio[indexExpansio].nextNP = TaulaSimbols::NUL; // l'element s'inserirà al final

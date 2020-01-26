@@ -9,7 +9,8 @@ class DescripcioArgument : public Descripcio {
 public:
     enum Tipus {
         IN,
-        IN_OUT
+        IN_OUT,
+        VALOR
     };
 
 private:

@@ -1,0 +1,8 @@
+Warning (línia 13.17 - 13.18): enter no és compatible amb el tipus de retorn
+Warning (línia 23.23 - 23.24): 'a' ja està definit a suma
+Warning (línia 24.16 - 24.17): b no reconegut
+Error (línia 27.1 - 27.5): falta un (o més) return
+Warning (línia 28.18 - 28.19): s'esperava un enter
+Error (línia 31.1 - 31.5): falta un (o més) return
+Warning (línia 34.19 - 34.20): falten paràmetres
+Warning (línia 35.12 - 35.13): s'esperava un boolean

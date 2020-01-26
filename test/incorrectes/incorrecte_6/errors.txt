@@ -1,0 +1,4 @@
+Error (línia 14.9 - 14.13): tipus enter no és compatible amb caràcter
+Warning (línia 20.9 - 20.16): cas '3' duplicat
+Error (línia 28.5 - 28.8): ja existeix un case default definit
+Error (línia 29.10 - 29.10): no hi pot haver un break

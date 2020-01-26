@@ -238,3 +238,7 @@ std::string error_no_posicio_memoria(std::string c){
 std::string error_noms_cap(std::string real, std::string esperat){
     return "s'ha trobat " + real + " i s'esperava " + esperat;
 }
+
+std::string error_nom_parametre_nom_funcio(){
+    return "no pots declarar una variable com el nom d'una funció";
+}

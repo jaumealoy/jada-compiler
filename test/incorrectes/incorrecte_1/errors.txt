@@ -1,0 +1,2 @@
+Error (línia 16.2 - 16.5): ja existeix un case default definit
+Error (línia 17.10 - 17.10): no hi pot haver un return

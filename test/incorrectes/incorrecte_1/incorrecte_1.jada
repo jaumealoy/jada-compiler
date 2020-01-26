@@ -1,0 +1,17 @@
+/**
+* Programa incorrecte. Si llevam el segon default segueix esent incorrecte pel return.
+*/
+proc main() begin
+    int b = 3;
+    switch (b) begin
+		case 2 begin
+			int a = 2 + 3;
+		end
+		default begin
+			return 6;
+		end
+		default begin
+			return 2;
+		end
+	end;
+end main;

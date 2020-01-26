@@ -1,0 +1,6 @@
+proc suma(const int a, int b, int c, int d) begin
+end suma;
+
+proc main() begin
+    suma(5, 3, 2, 1);
+end main;

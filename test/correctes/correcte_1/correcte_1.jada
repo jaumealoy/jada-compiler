@@ -28,9 +28,6 @@ func factorialIteratiu(int n) : int begin
 end factorialIteratiu;
 
 proc main() begin
-	string l = "Hola sóc en Jaume";
-	char f = l[5];
-
 	// demanar un valor positiu
 	print("Introdueix un valor numèric: ");
 	int k = readInt();
