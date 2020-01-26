@@ -46,7 +46,7 @@ def esIgual(a, b):
 
     return iguals
 
-def _convertir(dfa_file, ec_file, output):
+def _convertir(dfa_file, ec_file, output, initState = None):
     # Carrega l'arxiu d'entrada així com ho mostra el flex
     dfa = open(dfa_file)
 
@@ -134,11 +134,33 @@ def _convertir(dfa_file, ec_file, output):
 
     print(classes)
 
+    oberts = []
+    tancats = []
+
+    if initState != None:
+        oberts.append(initState)
+        while len(oberts):            
+            tmp = oberts.pop()
+
+            if not tmp in states:
+                continue
+
+            for x in states[tmp]['transition']:
+                next = states[tmp]['transition'][x]
+                if not ((next in oberts) or (next in tancats)):
+                    oberts.append(next)
+
+            tancats.append(tmp)
+
     # Representant amb .dot
     f = open(output, "w")
     f.write("digraph afd{")
     g = 0
     for x in states:
+
+        if initState != None:
+            if not x in tancats:
+                continue
 
         skip = False
         """    t = 0
@@ -179,7 +201,11 @@ def _convertir(dfa_file, ec_file, output):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("python3 conversor <dfa file> <char array> <.dot output file>")
+        print("python3 conversor <dfa file> <char array> <.dot output file> [estatInicial]")
         exit()
 
-    _convertir(sys.argv[1], sys.argv[2], sys.argv[3])
+    inicial = None
+    if len(sys.argv) == 5:
+        inicial = int(sys.argv[4])
+
+    _convertir(sys.argv[1], sys.argv[2], sys.argv[3], inicial)
