@@ -70,3 +70,31 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, int tipus){
     this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
     Simbol::toDotFile(driver);
 }
+
+/**
+ * expression -> referencia = arrayInit
+ */
+void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolArrayInit arrayInit){
+    if(ref.isNull() || arrayInit.isNull()){
+        return;
+    }
+
+    // Comprovar que la referència és una variable
+    if(ref.getMode() != SimbolReferencia::ModeMVP::VAR){
+        driver->error( error_no_variable(ref.getId()) );
+        return;
+    }
+
+    // El tipus d'arrayInit tendrà un tipus associat, per tant
+    // la comprovació haurà ser forta
+    if(ref.getTipus().empty() || ref.getTipus() != arrayInit.getTipus()){
+        driver->error( error_tipus_no_compatibles(arrayInit.getTipus()) );
+        return;
+    }
+
+    // i pintar a l'arbre
+    this->fills.push_back( std::to_string(ref.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "=") );
+    this->fills.push_back( std::to_string(arrayInit.getNodeId()) );
+    Simbol::toDotFile(driver);
+}

@@ -4,6 +4,7 @@
 #include "Simbol.h"
 #include "SimbolExpressio.h"
 #include "SimbolReferencia.h"
+#include "SimbolArrayInit.h"
 
 class SimbolAssignacio : public Simbol {
 private:
@@ -12,6 +13,7 @@ public:
     ~SimbolAssignacio();
 
     void make(Driver *driver, SimbolReferencia ref, SimbolExpressio exp, int tipus);
+    void make(Driver *driver, SimbolReferencia ref, SimbolArrayInit arrayInit);
     void make(Driver *driver, SimbolReferencia ref, int tipus);
 };
 
