@@ -1,4 +1,4 @@
-/* Hauria de funcionar (NO PROVAT)
+/* Hauria de funcionar, no deixa modificar array :(
     Càlcul de nombres primers. Omple l'array 'primers' dels 'num' nombres primers.
 */
 
@@ -7,19 +7,19 @@ func modul(int num, int div) : int begin
         num = num - div;
     end;
     return num;
-end llegirEnter;
+end modul;
 
 
 proc main() begin
-	int num = 10;
+	const int num = 10;
 	int[num] primers;
 	int n = 1;
 	primers[0] = 1;
 	
 	for (int i = 2; i < num; i++) do
         boolean primer = true;
-	    for (int j = 2; j < n-1; j++) do
-	        if modul(j, primers[j]) == 0 do
+	    for (int j = 2; j < (n-1); j++) do
+	        if (modul(j, primers[j]) == 0) do
 	            primer = false;
 	        end;
 	    end;
