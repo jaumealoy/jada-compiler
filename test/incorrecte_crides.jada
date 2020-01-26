@@ -1,6 +1,6 @@
 /*
 1. Corregir error sintàctic "else" a "else do". Mirau missatge d'error. (Missatges d'error segons lo esperat).
-2. Corregir error de tipus de retorn. (Control tipus retorn).
+2. Corregir error de tipus de retorn de línia 15. (Control tipus retorn).
 3. Corregir parámetres funció suma. (Control paràmetres funció).
 3. Posar parámetres a la crida "suma". (Control parámetres d'entrada).
 4. COrregir return funció resta. (Control tipus retorn dins subfunció).
@@ -13,7 +13,7 @@ func tornaBool() : boolean begin
     contadorGlobal++;
     if (contadorGlobal == 3) do
         return 3;
-    else do
+    else
         return false;
     end;
 end tornaBool;

@@ -46,10 +46,14 @@
 -----> Tipus unitari int
 -----> Dimensions: 1 
 
-Índex 14 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 2
+Índex 14 --> ID: array - Tipus de descripció: Variable - NP: 2
+
+Índex 15 --> ID: a - Tipus de descripció: Variable - NP: 2
+
+Índex 16 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 2
 -----> TSB: 3
 -----> Tipus unitari int
 -----> Dimensions: 2 
 
-Índex 15 --> ID: array2 - Tipus de descripció: Variable - NP: 2
+Índex 17 --> ID: array2 - Tipus de descripció: Variable - NP: 2
 
