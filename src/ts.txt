@@ -38,21 +38,18 @@
 Índex 11 --> ID: printInt - Tipus de descripció: Procediment - NP: 0
 -----> Paràmetres: (num, int) 
 
-Índex 12 --> ID: contadorGlobal - Tipus de descripció: Variable - NP: 0
-
-Índex 13 --> ID: tornaBool - Tipus de descripció: Funcio - NP: 0
+Índex 12 --> ID: main - Tipus de descripció: Procediment - NP: 0
 -----> Paràmetres: 
 
-Índex 14 --> ID: tornaInt - Tipus de descripció: Funcio - NP: 0
------> Paràmetres: 
+Índex 13 --> ID: _int_1 - Tipus de descripció: Tipus - NP: 2
+-----> TSB: 3
+-----> Tipus unitari int
+-----> Dimensions: 1 
 
-Índex 15 --> ID: suma - Tipus de descripció: Funcio - NP: 0
------> Paràmetres: (a, int) (b, int) 
+Índex 14 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 2
+-----> TSB: 3
+-----> Tipus unitari int
+-----> Dimensions: 2 
 
-Índex 16 --> ID: a - Tipus de descripció: Variable - NP: 1
-
-Índex 17 --> ID: b - Tipus de descripció: Variable - NP: 1
-
-Índex 18 --> ID: main - Tipus de descripció: Procediment - NP: 0
------> Paràmetres: 
+Índex 15 --> ID: array2 - Tipus de descripció: Variable - NP: 2
 

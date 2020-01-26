@@ -3,6 +3,7 @@
 2. Notau la crida a una funció de tipus booleana com condició del bucle. (Control funcions i tipus de retorn).
 3. Notau postincrement.
 4. For anidats amb breaks i retorns.
+5. Notau operacions mòdul y assignació amb multiplicació
 */
 
 func tornaBool() : boolean begin
@@ -16,7 +17,10 @@ boolean a = false;
     for (; not 3>2!=a;) do
     end;
 
+    int c = 6 % 3;
+
     for (;tornaBool();a++) do
+        c *= c;
     end;
 
 
