@@ -1,0 +1,19 @@
+/*
+1. Notau definició de dimensió d'array mitjançant expressió simple.
+2. Corregir tipus "boolean". (Control tipus llista).
+3. Corregir dimensió d'array. Missatje d'error indica dimensió 1 si expressió = 0. (Control dimensió).
+4. Corregir "array[2]". (Comprovació de rang).
+5. Corregir caracters en array de int. (Cotrol tipus elements llista).
+*/
+
+proc main() begin
+    int[((3*2)/6)%5] array = int{1};
+
+    array[0] = 3;
+
+    int a = array[0];
+
+    int[2] array2;
+    array2 = int{1, 2};
+
+end main;

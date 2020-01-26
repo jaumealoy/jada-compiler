@@ -38,7 +38,6 @@
 Índex 11 --> ID: printInt - Tipus de descripció: Procediment - NP: 0
 -----> Paràmetres: (num, int) 
 
-<<<<<<< HEAD:src/ts.txt
 Índex 12 --> ID: main - Tipus de descripció: Procediment - NP: 0
 -----> Paràmetres: 
 
@@ -47,24 +46,14 @@
 -----> Tipus unitari int
 -----> Dimensions: 1 
 
-Índex 14 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 2
+Índex 14 --> ID: array - Tipus de descripció: Variable - NP: 2
+
+Índex 15 --> ID: a - Tipus de descripció: Variable - NP: 2
+
+Índex 16 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 2
 -----> TSB: 3
 -----> Tipus unitari int
 -----> Dimensions: 2 
 
-Índex 15 --> ID: array2 - Tipus de descripció: Variable - NP: 2
-=======
-Índex 12 --> ID: A - Tipus de descripció: Constant - NP: 0
-
-Índex 13 --> ID: _int_6 - Tipus de descripció: Tipus - NP: 0
------> TSB: 3
------> Tipus unitari int
------> Dimensions: 6 
-
-Índex 14 --> ID: set0 - Tipus de descripció: Funcio - NP: 0
------> Paràmetres: (arr, _int_6) 
-
-Índex 15 --> ID: main - Tipus de descripció: Procediment - NP: 0
------> Paràmetres: 
->>>>>>> 988f6eb58a846b404c88ff0ed6438c9b67442ab9:test/ts.txt
+Índex 17 --> ID: array2 - Tipus de descripció: Variable - NP: 2
 
