@@ -6,27 +6,20 @@
 
 
 class DescripcioVariable : public Descripcio {
-public:
-
 private:
     std::string nomTipus;
     Descripcio::Tipus tipus;
 
+    int nv;
+
 public:
-    DescripcioVariable(std::string tipus) : Descripcio(Descripcio::Tipus::VARIABLE) {
-        this->nomTipus = tipus;
-        this->tipus = Descripcio::Tipus::VARIABLE;
-    }
+    static int numVariables;
 
-    ~DescripcioVariable(){}
+    DescripcioVariable(std::string tipus);
+    ~DescripcioVariable();
 
-    void setNomTipus(std::string tipus){
-        this->nomTipus = tipus;
-    }
-
-    std::string getNomTipus(){
-        return this->nomTipus;
-    }
+    void setNomTipus(std::string tipus);
+    std::string getNomTipus();
 };
 
 #endif

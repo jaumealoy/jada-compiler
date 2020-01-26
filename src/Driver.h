@@ -20,11 +20,14 @@ private:
     // fitxers per guardar outputs del compilador
     std::fstream treeFile;
     std::fstream tokensFile;
+    std::fstream errorsFile;
 
     // per comprovar si s'ha produït qualque error en la compilació
     bool exit;
 
 public:
+    class Error : public std::exception {};
+
     Driver(char *filename);
     ~Driver();
 

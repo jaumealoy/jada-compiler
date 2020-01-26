@@ -2,7 +2,7 @@
 #include <exception>
 
 Driver::Driver(char *filename) : 
-        treeFile("tree.dot", std::fstream::out) {
+        treeFile("tree.dot", std::fstream::out), errorsFile("erros.txt", std::fstream::out) {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
 
@@ -68,6 +68,8 @@ Driver::~Driver(){}
 
 void Driver::parse(){
     this->exit = true;
+    
+    // Per observar tots els errors, el següent codi està comentat
     //try {
         parser->parse();
     //} catch (std::exception e) {
@@ -99,14 +101,18 @@ void Driver::error(std::string msg, yy::location loc, bool error){
 
     if(error){
         std::cerr << "Error ";
+        this->errorsFile << "Error ";
     }else{
         std::cerr << "Warning ";
+        this->errorsFile << "Warning ";
     }
 
     std::cerr << "(línia "<< loc.begin <<" - "<< loc.end << "): " << msg << std::endl;
+    this->errorsFile << "(línia "<< loc.begin <<" - "<< loc.end << "): " << msg << std::endl;
 
     if(error){
-        //throw TaulaSimbols::NomNoExistent();
+        // Només per visualitzar els errors s'ha comentat la següent línia
+        //throw Driver::Error();
     }
 }
 
@@ -141,6 +147,9 @@ void Driver::closeFiles(){
 
     // tancar la seqüència de tokens
     this->tokensFile.close();
+
+    // tancar el fitxer d'errors
+    this->errorsFile.close();
 }
 
 bool Driver::exitosa(){

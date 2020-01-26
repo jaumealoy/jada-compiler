@@ -248,6 +248,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 
         this->tipus = this->tipusBasic;
         this->tsb = dt->getTSB();
+        this->mode = array.mode;
         this->esReferencia = true;
     }else{
         if(array.isNull()){

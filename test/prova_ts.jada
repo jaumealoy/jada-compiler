@@ -14,8 +14,16 @@ func prova4(int a, char b) : int begin
 
 end prova4;
 
-func prova5(int a, char b) : int begin
+func prova6() : boolean begin
+    return false;
+end prova6;
 
+func prova5(int a, char b) : int begin
+    switch ( prova6() ) begin
+        case 1 begin
+
+        end
+    end;
 end prova5;
 
 func prova6(int a, char b, int c, int d, int e, boolean f, char g) : int begin

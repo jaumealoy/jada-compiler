@@ -20,6 +20,7 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
 
     if(trobat){
         driver->error( error_redefinicio(nomFuncio) );
+        this->nomFuncio = nomFuncio;
         return;
     }
 
