@@ -59,6 +59,7 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
 void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
     if(!array.isReferencia() || array.isNull()){
         this->makeNull();
+        driver->error("No referència", true);
         return;
     }
 

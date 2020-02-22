@@ -1,6 +1,7 @@
 proc suma(const int a, int b, int c, int d) begin
 end suma;
 
+
 proc main() begin
-    suma(5, 3, 2, 1);
+    int[2][1] a = int{ {5}, {6} };
 end main;
