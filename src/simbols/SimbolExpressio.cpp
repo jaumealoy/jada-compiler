@@ -21,12 +21,23 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     // copiar el tipus i tipus subjacent bàsic del literal
     this->tipus = literal.getTipus();
     this->tsb = literal.getTSB();
-    
-    if(this->tsb == TipusSubjacentBasic::INT){
-        this->intValue = literal.getIntValue();
+ 
+	// guardar el valor, el literal ja s'haurà encarregat de guardar-ho
+	// així com toca en funció del seu TSB
+	this->value = literal.getValue();
+
+	// TODO: eliminar
+    /*if(this->tsb == TipusSubjacentBasic::INT){
+		int tmpValue = *(int *) literal.getValue()->get();
+		this->value = literal.getValue();
     }else if(this->tsb == TipusSubjacentBasic::CHAR){
-        this->charValue = literal.getCharValue();
-    }
+		char tmpValue = *(char *) literal.getValue()->get();
+		this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(char));
+    }else if(this->tsb == TipusSubjacentBasic::ARRAY){
+		// conservar el valor de l'array
+		// és possible que sigui una string
+		this->value = literal.getValue();
+	}*/
 
     // prové d'un literal, és una expressió constant
     this->mode = SimbolExpressio::Mode::CONST;
@@ -62,7 +73,9 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
 
             if(exp.getMode() == SimbolExpressio::Mode::CONST){
                 // processar el valor
-                this->boolValue = !exp.boolValue;
+				// és un nou valor, guardar un nou espai de memòria
+				bool tmpValue = ! *(bool *) exp.value->get();
+				this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(bool));
             }
 
             break;
@@ -71,11 +84,9 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
             // el valor pot ser un enter o boolean
 
             // copiarem el seus valors independentment de si són constants o no
-            // només s'utilitzaran si són constants
-            if(exp.getTSB() == TipusSubjacentBasic::INT){
-                this->intValue = exp.intValue;
-            }else if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
-                this->boolValue = exp.boolValue;
+            // no importa reservar un espai nou perquè és el mateix valor
+            if(exp.getTSB() == TipusSubjacentBasic::INT || exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
+                this->value = exp.value;
             }else{
                 driver->error( error_tipus_no_compatibles_operador(exp.getTSB()) );
                 this->makeNull();
@@ -124,11 +135,15 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
 
                 // a i b són constants, podem calcular el valor resultat
                 // i el resultat serà una constant
+				bool tmpValue;
                 if(tipus == 0){
-                    this->boolValue = a.boolValue && b.boolValue;
+					tmpValue = *(bool *) a.value->get() && *(bool *) b.value->get();
                 }else if(tipus == 1){
-                    this->boolValue = a.boolValue || b.boolValue;
+					tmpValue = *(bool *) a.value->get() || *(bool *) b.value->get();
                 }
+
+				// guardar el nou valor
+				this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(bool));
             }else{
                 this->mode = SimbolExpressio::Mode::RESULTAT;
             }
@@ -173,17 +188,14 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 
             // consultar el seu valor a la taula de símbols
             DescripcioConstant *dc = (DescripcioConstant *) driver->ts.consulta(ref.getId());
-            
-            switch (ref.getTSB()){
-                case INT:
-                    this->intValue = dc->getIntValue();
-                    break;
 
-                case BOOLEAN:
-                    this->boolValue = dc->getBoolValue();
-                    break;
-            }
+			// i obtenir la mida del tipus
+			DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(ref.getTipus());
 
+			// crear un nou contenedor pel valor
+			// si és un array (o un string) s'està accedint a un valor
+			this->value = std::make_shared<ValueContainer>(dc->getValue()->get() + ref.getOffset(), dt->getOcupacio());
+			std::cout << "Obtengut valor " << *(int *) this->value->get() << std::endl;
             break;
         }
 
@@ -229,16 +241,13 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
 
     // Calcular el valor si tot són constants
     if(a.getMode() == SimbolExpressio::Mode::CONST && a.getMode() == b.getMode() && b.getMode() == c.getMode()){
-        if(b.getBoolValue()){
+		bool bValue = *(bool *) b.getValue()->get();
+        if(bValue){
             // assignar el valor d'a
-            this->intValue = a.getIntValue();
-            this->charValue = a.getCharValue();
-            this->boolValue = a.getBoolValue();
+            this->value = a.getValue();
         }else{
             // assignar el valor de b
-            this->intValue = b.getIntValue();
-            this->charValue = b.getCharValue();
-            this->boolValue = b.getBoolValue();
+            this->value = b.getValue();
         }
 
         this->mode = SimbolExpressio::Mode::CONST;
@@ -267,7 +276,7 @@ void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
         return;
     }
     
-    this->boolValue = exp.boolValue;
+    this->value = exp.value;
     this->tsb = exp.tsb;
     this->tipus = exp.tipus;
     this->mode = exp.mode;
@@ -287,7 +296,7 @@ void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
     }
 
     this->tsb = exp.tsb;
-    this->intValue = exp.intValue;
+	this->value = exp.value;
     this->tipus = exp.tipus;
     this->mode = exp.mode;
 
@@ -329,4 +338,8 @@ bool SimbolExpressio::getBoolValue(){
 
 char SimbolExpressio::getCharValue(){
     return this->charValue;
+}
+
+std::shared_ptr<ValueContainer> SimbolExpressio::getValue(){
+	return this->value;
 }

@@ -3,15 +3,20 @@
 
 #include "Simbol.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../utils/ValueContainer.h"
 #include <string>
+#include <memory>
 
 class SimbolLiteral : public Simbol {
 protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
+	
+	// TODO: eliminar
+    /*int intValue;
+    char charValue;*/
 
-    int intValue;
-    char charValue;
+	std::shared_ptr<ValueContainer> value;
 
 public:
     SimbolLiteral();
@@ -27,8 +32,10 @@ public:
     void setTipus(std::string newtipus);
 
     // obtenció de valors
-    int getIntValue();
-    char getCharValue();
+    /*int getIntValue();
+    char getCharValue();*/
+
+	std::shared_ptr<ValueContainer> getValue();
 };
 
 #endif

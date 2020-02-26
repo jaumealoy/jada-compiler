@@ -1,0 +1,14 @@
+proc main() begin
+	const int a = 2, b = 0;
+	const int[6] array = int{5, 4, 3, 2, 1, 777};
+
+	const int[4][2] punts = int{
+		{ 7, 1 },
+		{ 6, 8 },
+		{1, 2},
+		{0, 0}
+	};
+
+	const int d = 3 / punts[0][1];
+	const int c = 1 + array[5];
+end main;

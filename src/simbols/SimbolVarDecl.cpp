@@ -76,7 +76,10 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
         DescripcioConstant* dc = new DescripcioConstant(tipus);
 
-        switch(dt->getTSB()){
+		// tots els valors es tracten igual
+		dc->setValue(init.getValue());
+
+        /*switch(dt->getTSB()){
             case TipusSubjacentBasic::INT:
                 dc->setIntValue(init.getIntValue());
                 break;
@@ -92,7 +95,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
                 // pot ser un array de qualsevol tipus bàsic
                 // o un string
                 break;
-        }
+        }*/
 
         desc = dc;
     }else{
@@ -169,7 +172,10 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
 
         DescripcioConstant* dc = new DescripcioConstant(tipus);
 
-        switch(this->tsb){
+		// tots els valors constants es tracten igual
+		dc->setValue(init.getValue());
+
+        /*switch(this->tsb){
             case TipusSubjacentBasic::INT:
                 dc->setIntValue(init.getIntValue());
                 break;
@@ -185,7 +191,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
                 // pot ser un array de qualsevol tipus bàsic
                 // o un string
                 break;
-        }
+        }*/
 
         desc = dc;
     }else{

@@ -2,6 +2,7 @@
 #include "../Driver.h"
 
 #include <iostream>
+#include <cstring>
 
 SimbolArrayInit::SimbolArrayInit() : SimbolExpressio() {}
 SimbolArrayInit::~SimbolArrayInit() {}
@@ -78,6 +79,20 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     this->fills.push_back( std::to_string(list.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "}") );
     Simbol::toDotFile(driver);
+
+	// guardar els elements (copiar només els valors)
+	int mida = dt->getOcupacio();
+	char *buffer = new char[mida * list.getElements().size()];
+
+	unsigned int offset = 0;
+	for(int i = 0; i < list.getElements().size(); i++){
+		ValueContainer *valor = list.getElements()[i].getValue().get();
+		memcpy(buffer + offset, valor->get(), valor->getSize());
+		offset += valor->getSize();
+	}
+
+	this->value = std::make_shared<ValueContainer>(buffer, mida * list.getElements().size());
+	delete []buffer;
 }
 
 bool SimbolArrayInit::coincideixen(){

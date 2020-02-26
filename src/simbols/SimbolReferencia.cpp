@@ -51,6 +51,9 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom) );
     Simbol::toDotFile(driver);
+
+	// s'accedeix a una variable, desplaçament és 0
+	this->d = 0;
 }
 
 /**
@@ -72,6 +75,11 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(array.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// TODO: el desplaçament representa el número d'element que es vol consultar
+	if(array.isAccessConstant()){
+		this->d = array.d;
+	}
 }
 
 
@@ -116,4 +124,12 @@ SimbolReferencia::ModeMVP SimbolReferencia::getMode(){
 
 std::string SimbolReferencia::getTipus(){
     return this->tipus;
+}
+
+int SimbolReferencia::getOffset(){
+	return this->d;
+}
+
+int SimbolReferencia::getReferencia(){
+	return this->r;
 }

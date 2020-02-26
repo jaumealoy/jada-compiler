@@ -26,7 +26,7 @@ Driver::Driver(char *filename) :
     DescripcioTipusBasic *character = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 1);
     this->ts.posar("char", character, true);
 
-    DescripcioTipusBasic *integer = new DescripcioTipusBasic(TipusSubjacentBasic::INT, (long) 0, ~((long)0), 8);
+    DescripcioTipusBasic *integer = new DescripcioTipusBasic(TipusSubjacentBasic::INT, (long) 0, ~((long)0), sizeof(int));
     this->ts.posar("int", integer, true);
 
     DescripcioTipusArray *string = new DescripcioTipusArray("char");

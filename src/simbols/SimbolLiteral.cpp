@@ -11,7 +11,8 @@ SimbolLiteral::~SimbolLiteral() {}
 void SimbolLiteral::make(Driver *driver, int valor){
     this->tsb = TipusSubjacentBasic::INT;
     this->tipus.clear();
-    this->intValue = valor;
+
+	this->value = std::make_shared<ValueContainer>((const char *) &valor, sizeof(int));
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, std::to_string(valor)) );
@@ -25,6 +26,8 @@ void SimbolLiteral::make(Driver *driver, char valor){
     this->tsb = TipusSubjacentBasic::CHAR;
     this->tipus.clear();
 
+	this->value = std::make_shared<ValueContainer>((const char *) &valor, sizeof(char));
+
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "'"+std::to_string(valor)+"'") );
     Simbol::toDotFile(driver);
@@ -34,8 +37,10 @@ void SimbolLiteral::make(Driver *driver, char valor){
  * literal -> STR_LITERAL
  */
 void SimbolLiteral::make(Driver *driver, std::string valor){
-    this->tsb = TipusSubjacentBasic::CHAR;
+    this->tsb = TipusSubjacentBasic::ARRAY;
     this->tipus = "string";
+
+	this->value = std::make_shared<ValueContainer>(valor.c_str(), valor.length());
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "\\\""+valor+"\\\"") );
@@ -58,10 +63,14 @@ void SimbolLiteral::setTSB(TipusSubjacentBasic newtsb) {
     this->tsb = newtsb;
 }
 
-int SimbolLiteral::getIntValue(){
+/*int SimbolLiteral::getIntValue(){
     return this->intValue;
 }
 
 char SimbolLiteral::getCharValue(){
     return this->charValue;
+}*/
+
+std::shared_ptr<ValueContainer> SimbolLiteral::getValue(){
+	return this->value;
 }

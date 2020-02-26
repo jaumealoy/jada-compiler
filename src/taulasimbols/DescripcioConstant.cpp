@@ -38,3 +38,11 @@ char DescripcioConstant::getCharValue(){
 void DescripcioConstant::setCharValue(char value){
     this->charValue = value;
 }
+
+std::shared_ptr<ValueContainer> DescripcioConstant::getValue(){
+	return this->value;
+}
+
+void DescripcioConstant::setValue(std::shared_ptr<ValueContainer> valor){
+	this->value = valor;
+}

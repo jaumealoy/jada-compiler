@@ -20,6 +20,9 @@ void SimbolVarInit::make(Driver *driver, SimbolExpressio exp){
     this->charValue = exp.getCharValue();
     this->boolValue = exp.getBoolValue();
 
+	// el valor de l'expressió es propaga
+	this->value = exp.getValue();
+
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "=") );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
@@ -33,6 +36,9 @@ void SimbolVarInit::make(Driver *driver, SimbolArrayInit exp){
     this->tipus = exp.getTipus();
     this->tsb = exp.getTSB();
     this->mode = exp.getMode();
+
+	// el valor és un punter a una seqüència d'elements del mateix tipus
+	this->value = exp.getValue();
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "=") );

@@ -43,14 +43,16 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 
     // calcular el valor resultant si les dues expressions són constants
     if(a.getMode() == b.getMode() && a.getMode() == SimbolExpressio::Mode::CONST){
+		bool tmpValue;
+
         switch (tipus) {
             case 0:  // NEQ
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() != b.getBoolValue();
+                        tmpValue = *(bool *) a.getValue()->get() != *(bool *) b.getValue()->get();
                         break;
                     case INT:
-                        this->boolValue = a.getIntValue() != b.getIntValue();
+                        tmpValue = *(int *) a.getValue()->get() != *(int *) b.getValue()->get();
                         break;
                 }
 
@@ -59,10 +61,10 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
             case 1: // EQ
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() == b.getBoolValue();
+                        tmpValue = *(bool *) a.getValue()->get() == *(bool *) b.getValue()->get();
                         break;
                     case INT:
-                        this->boolValue = a.getIntValue() == b.getIntValue();
+                        tmpValue = *(int *) a.getValue()->get() == *(int *) b.getValue()->get();
                         break;
                 }
 
@@ -71,11 +73,11 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
             case 2: // GT
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() > b.getBoolValue();
-                        break;
+                        tmpValue = *(bool *) a.getValue()->get() > *(bool *) b.getValue()->get();
+						break;
                     case INT:
-                        this->boolValue = a.getIntValue() > b.getIntValue();
-                        break;
+                        tmpValue = *(int *) a.getValue()->get() > *(int *) b.getValue()->get();
+						break;
                 }
 
                 break;
@@ -83,10 +85,10 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
             case 3: // GTE
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() >= b.getBoolValue();
+                        tmpValue = *(bool *) a.getValue()->get() >= *(bool *) b.getValue()->get();
                         break;
                     case INT:
-                        this->boolValue = a.getIntValue() >= b.getIntValue();
+                        tmpValue = *(int *) a.getValue()->get() >= *(int *) b.getValue()->get();
                         break;
                 }
 
@@ -95,10 +97,10 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
             case 4: // LT
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() < b.getBoolValue();
-                        break;
+                        tmpValue = *(bool *) a.getValue()->get() < *(bool *) b.getValue()->get();
+						break;
                     case INT:
-                        this->boolValue = a.getIntValue() < b.getIntValue();
+                        tmpValue = *(int *) a.getValue()->get() < *(int *) b.getValue()->get();
                         break;
                 }
 
@@ -107,15 +109,17 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
             case 5: // LTE
                 switch (tmp) {
                     case BOOLEAN:
-                        this->boolValue = a.getBoolValue() <= b.getBoolValue();
+                        tmpValue = *(bool *) a.getValue()->get() <= *(bool *) b.getValue()->get();
                         break;
                     case INT:
-                        this->boolValue = a.getIntValue() <= b.getIntValue();
+                        tmpValue = *(int *) a.getValue()->get() <= *(int *) b.getValue()->get();
                         break;
                 }
 
                 break;
         }
+
+		this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(bool));
     }else{
         this->mode = SimbolExpressio::Mode::RESULTAT;
     }

@@ -14,6 +14,16 @@ private:
     // Per referències
     TaulaSimbols::Iterator it;
 
+	// Aquesta estructura ajudarà a determinar quin és el número d'element
+	// que es vol consultar
+	struct ArrayIndex {
+		SimbolExpressio index;
+		DescripcioDimensio *dimensio;
+	};
+
+	std::vector<struct ArrayIndex> refIndex;
+	bool accessConstant;
+
     // Per definicions
     std::vector<int> dimensions;
     std::string tipusBasic;
@@ -32,6 +42,7 @@ public:
     bool isReferencia();
 
     // Per referències
+	bool isAccessConstant();
 
     // Per definicions
     std::string toString();

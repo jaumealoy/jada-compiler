@@ -1,8 +1,9 @@
 SOURCES_DIR = taulasimbols
 SIMBOLS_DIR = simbols
+UTILS_DIR = utils
 
-SOURCES = $(wildcard $(SOURCES_DIR)/*.cpp) $(wildcard $(SIMBOLS_DIR)/*.cpp) Errors.cpp main.cpp  Lexic.cpp Syntax.tab.cpp Driver.cpp
-HEADERS =  Driver.h Syntax.tab.hpp Lexic.h $(wildcard $(SOURCES_DIR)/*.h) strings/StringBuffer.cpp Errors.h location.hh Token.h  $(wildcard $(SIMBOLS_DIR)/*.h)
+SOURCES = $(wildcard $(SOURCES_DIR)/*.cpp) $(wildcard $(SIMBOLS_DIR)/*.cpp) $(wildcard $(UTILS_DIR)/*.cpp) Errors.cpp main.cpp  Lexic.cpp Syntax.tab.cpp Driver.cpp
+HEADERS =  Driver.h Syntax.tab.hpp Lexic.h $(wildcard $(SOURCES_DIR)/*.h) $(wildcard $(UTILS_DIR)/*.h) strings/StringBuffer.cpp Errors.h location.hh Token.h  $(wildcard $(SIMBOLS_DIR)/*.h)
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 

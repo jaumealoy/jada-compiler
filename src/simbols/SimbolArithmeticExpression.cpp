@@ -23,7 +23,10 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
     }
 
     if(exp.getMode() == SimbolExpressio::Mode::CONST){
-        this->intValue = -exp.getIntValue();
+		int valor = - *(int *) exp.getValue()->get();
+
+		// no es pot reutilitzar el contenedor
+		this->value = std::make_shared<ValueContainer>((const char *) &valor, sizeof(int));
     }
 
     this->mode = exp.getMode();
@@ -58,39 +61,46 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
 
     // calcular el resultat si és constant
     if(a.getMode() == b.getMode() && a.getMode() == SimbolExpressio::Mode::CONST){
+		int valorA = *(int *) a.getValue()->get();
+		int valorB = *(int *) b.getValue()->get();
+		int resultat;
+
         switch (tipus) {
             case 0: // exprSimple + exprSimple
-                this->intValue = a.getIntValue() + b.getIntValue();
+                resultat = valorA + valorB;
                 break;
             
             case 1: // exprSimple - exprSimpe
-                this->intValue = a.getIntValue() - b.getIntValue();
+                resultat = valorA - valorB;
                 break;
 
             case 2: // exprSimple * exprSimpe
-                this->intValue = a.getIntValue() * b.getIntValue();
+                resultat = valorA * valorB;
                 break;
 
             case 3: // exprSimple / exprSimpe
-                if(b.getMode() == CONST && b.getIntValue() == 0){
+                if(b.getMode() == CONST && valorB == 0){
                     driver->error( error_divisio_zero() );
                     this->makeNull();
                     return;
                 }
 
-                this->intValue = a.getIntValue() / b.getIntValue();
+                resultat = valorA / valorB;
                 break;
             
             case 4: // exprSimple % exprSimple:
-                if(b.getIntValue() == 0){
+                if(valorB == 0){
                     driver->error( error_divisio_zero() );
                     this->makeNull();
                     return;
                 }
 
-                this->intValue = a.getIntValue() % b.getIntValue();
+                resultat = valorA % valorB;
                 break;
         }
+
+		// és un nou valor, no es pot reutilitzar el contenedor antic
+		this->value = std::make_shared<ValueContainer>((const char *) &resultat, sizeof(int));
 
         this->mode = SimbolExpressio::Mode::CONST;
     }else{

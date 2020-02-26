@@ -13,7 +13,7 @@ SimbolTipusArray::~SimbolTipusArray() {}
  * Per la naturalesa de JADA (i de la seva gramàtica) les produccions
  * associades als arrays (la vinculada amb el Tipus i la referència)
  * - a efectes de símbols terminals - són indistingibles.
- * Per aquest motiu és necessari realitzar comprovacions estristes
+ * Per aquest motiu és necessari realitzar comprovacions estrictes
  * en el semàntic.
  * 
  * Si el primer identificador que es troba (contArray -> ID) és
@@ -56,7 +56,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         // i que es puguin calcular en temps de compilació
         if(!exp.isNull() && exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
             // existeix un valor numèric, comprovar que és positiu
-            int dimensio = exp.getIntValue();
+            int dimensio = *(int *) exp.getValue()->get();
 
             if(dimensio < 0){
                 driver->error(error_fora_de_rang(dimensio));
@@ -121,8 +121,9 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         // i si és una constant comprovar que el seu valor és dins el rang permès per les dimensions
         if(exp.getMode() == SimbolExpressio::Mode::CONST){
-            if(exp.getIntValue() < 0 || exp.getIntValue() >= ddim->getDimensio()){
-                driver->error( error_fora_de_rang(exp.getIntValue()) );
+			int tmpValue = *(int *) exp.getValue()->get();
+            if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
+                driver->error( error_fora_de_rang(tmpValue) );
                 this->makeNull();
                 return;
             }
@@ -131,6 +132,15 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         this->id = id;
         this->tipus = tipus;
         this->tsb = TipusSubjacentBasic::ARRAY;
+
+		// tot ha anat bé, s'ha de guardar informació per consultar el número d'element
+		struct SimbolTipusArray::ArrayIndex tmp;
+		tmp.index = exp;
+		tmp.dimensio = ddim;
+		this->refIndex.push_back(tmp);
+
+		// i guardar el número de variable
+
     }
 
     // pintar a l'arbre
@@ -173,9 +183,10 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
 
         // si l'expressió és constant, comprovar que és dins els límits
         if(exp.getMode() == SimbolExpressio::Mode::CONST){
-            if(exp.getIntValue() < 0 || exp.getIntValue() >= ddim->getDimensio()){
+			int tmpValue = *(int *) exp.getValue()->get();
+            if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
                 this->makeNull();
-                driver->error( error_fora_de_rang(exp.getIntValue()) );
+                driver->error( error_fora_de_rang(tmpValue) );
                 return;
             }
         }
@@ -185,6 +196,14 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
         this->mode = contArray.mode;
         this->id = contArray.id;
         this->tipusBasic = contArray.tipusBasic;
+
+		// afegir l'índex que s'ha processat a la llista d'índexos
+		this->refIndex = contArray.refIndex;
+
+		struct SimbolTipusArray::ArrayIndex tmp;
+		tmp.index = exp;
+		tmp.dimensio = ddim;
+		this->refIndex.push_back(tmp);
     }else{
         // s'està definint un array, el vector dimensions conté la llista de dimensions
         // trobades fins a aquest instant
@@ -195,7 +214,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
         // comprovar que l'expressió és una constant entera positiva
         if(!exp.isNull() && exp.getMode() == SimbolExpressio::Mode::CONST && exp.getTSB() == TipusSubjacentBasic::INT){
             // existeix un valor numèric, comprovar que és positiu
-            int dimensio = exp.getIntValue();
+            int dimensio = *(int*) exp.getValue()->get();
 
             if(dimensio < 0){
                 driver->error( error_fora_de_rang(dimensio) );
@@ -250,6 +269,29 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
         this->tsb = dt->getTSB();
         this->mode = array.mode;
         this->esReferencia = true;
+
+		// TODO: generació de codi si no és tot constant
+		// Si tot és constant, numElement representa el número d'índex que 
+		// es vol consultar. En cas contrari, numElement representa la variable
+		// que conté el número de l'element
+		int productori = 1;
+		bool totConstant = true;
+		int numElement = 0;
+		this->refIndex = array.refIndex;
+
+		for(int i = this->refIndex.size() - 1; i >= 0; i--){
+			totConstant = totConstant && this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST;
+
+			numElement += productori * *(int *) this->refIndex[i].index.getValue()->get();
+			productori *= this->refIndex[i].dimensio->getDimensio();
+		}
+		this->accessConstant = totConstant;
+
+		if(totConstant){
+			this->d = numElement * dt->getOcupacio();
+		}
+
+		std::cout << "Es vol accedir a l'element " << numElement << std::endl;
     }else{
         if(array.isNull()){
             this->makeNull();
@@ -324,4 +366,8 @@ std::string SimbolTipusArray::toString(){
 
 bool SimbolTipusArray::isReferencia(){
     return this->esReferencia;
+}
+
+bool SimbolTipusArray::isAccessConstant(){
+	return this->accessConstant;
 }

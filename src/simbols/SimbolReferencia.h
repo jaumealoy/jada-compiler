@@ -24,6 +24,10 @@ protected:
 
     SimbolReferencia::ModeMVP mode;
 
+	// número de variable i desplaçament
+	int r;
+	int d;
+
 public:
     SimbolReferencia();
     ~SimbolReferencia();
@@ -41,6 +45,10 @@ public:
     std::string getTipus();
     TipusSubjacentBasic getTSB();
     SimbolReferencia::ModeMVP getMode();
+
+	// desplaçament i número de variable
+	int getOffset();
+	int getReferencia();
 };
 
 #endif

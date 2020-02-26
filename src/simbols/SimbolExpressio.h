@@ -5,6 +5,7 @@
 #include "SimbolReferencia.h"
 #include "SimbolLiteral.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../utils/ValueContainer.h"
 #include <string>
 
 class SimbolArithmeticExpression;
@@ -28,6 +29,9 @@ protected:
     bool boolValue;
     char charValue;
 
+	// representar el valor de la constant de manera genèrica
+	std::shared_ptr<ValueContainer> value;
+
 public:
     SimbolExpressio();
     ~SimbolExpressio();
@@ -47,6 +51,8 @@ public:
     int getIntValue();
     bool getBoolValue();
     char getCharValue();
+
+	std::shared_ptr<ValueContainer> getValue();
 
     std::string getTipus();
     TipusSubjacentBasic getTSB();
