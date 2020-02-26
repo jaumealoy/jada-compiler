@@ -1,0 +1,15 @@
+Warning (línia 29.11 - 29.12): no es pot redefinir a
+Warning (línia 30.15 - 30.16): d no reconegut
+Error (línia 30.18 - 30.19): tipus int no és compatible amb expressió
+Warning (línia 32.25 - 32.26): chars no descriu un tipus
+Warning (línia 34.34 - 34.35): divisió entre zero
+Error (línia 34.34 - 34.35): tipus int no és compatible amb expressió
+Warning (línia 39.25 - 39.26): no pot ser una constant
+Warning (línia 39.27 - 39.28): tipus int no és compatible amb expressió
+Warning (línia 41.41 - 41.42): b no reconegut
+Warning (línia 41.46 - 41.47): tipus int no és compatible amb expressió
+Error (línia 41.46 - 41.47): no és un valor constant
+Error (línia 42.75 - 42.76): tipus _int_2_2 no és compatible amb expressió
+Warning (línia 45.24 - 45.25): fora de rang (7)
+Error (línia 45.24 - 45.25): tipus int no és compatible amb expressió
+Error (línia 46.10 - 46.10): no hi pot haver un break

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <exception>
 #include "Errors.h"
+#include "tresa.h"
 
 class Simbol;
 
@@ -21,6 +22,10 @@ private:
     std::fstream treeFile;
     std::fstream tokensFile;
     std::fstream errorsFile;
+    std::fstream tresaFile;
+
+    int cont3a = 0;
+    tresa Codi3a[40];
 
     // per comprovar si s'ha produït qualque error en la compilació
     bool exit;
@@ -46,6 +51,9 @@ public:
     void writeToTree(std::string data);
     void writeToTree(Simbol *s, std::string data);
     std::string addTreeChild(Simbol *s, std::string data);
+
+    //Per afegir codi 3@
+    void add3a(TATIPUS, int op1, int op2, int op3);
 
     void closeFiles();
 

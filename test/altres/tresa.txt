@@ -1,0 +1,1 @@
+Tipus0, Operador 1: 2, Operador 2: 3, Operador 3: 5

@@ -1,0 +1,3 @@
+Error (línia 3.5 - 3.6): syntax error, unexpected INT_LITERAL
+Error (línia 5.1 - 5.1): falta un (o més) return
+Error (línia 5.1 - 5.1): no existeix un procediment principal vàlid

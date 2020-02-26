@@ -61,10 +61,12 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
         switch (tipus) {
             case 0: // exprSimple + exprSimple
                 this->intValue = a.getIntValue() + b.getIntValue();
+                driver->add3a(SUMA, a.getIntValue(), b.getIntValue(), this->intValue);
                 break;
             
             case 1: // exprSimple - exprSimpe
                 this->intValue = a.getIntValue() - b.getIntValue();
+                driver->add3a(RESTA, a.getIntValue(), b.getIntValue(), this->intValue);
                 break;
 
             case 2: // exprSimple * exprSimpe

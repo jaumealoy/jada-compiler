@@ -2,7 +2,7 @@
 #include <exception>
 
 Driver::Driver(char *filename) : 
-        treeFile("tree.dot", std::fstream::out), errorsFile("erros.txt", std::fstream::out) {
+        treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), tresaFile("tresa.txt", std::fstream::out) {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
 
@@ -139,6 +139,12 @@ std::string Driver::addTreeChild(Simbol *s, std::string data){
     return newNodeId;
 }
 
+void Driver::add3a(TATIPUS tipus, int op1, int op2, int op3){
+    Codi3a[cont3a] = tresa(tipus, op1, op2, op3);
+    this->tresaFile << Codi3a[cont3a].toString() + "\n";
+    cont3a++;
+}
+
 void Driver::closeFiles(){
     // tancar l'arbre sintàctic
     this->writeToTree("}");
@@ -149,6 +155,9 @@ void Driver::closeFiles(){
 
     // tancar el fitxer d'errors
     this->errorsFile.close();
+
+    // tancar el fitxer 3 adreces
+    this->tresaFile.close();
 }
 
 bool Driver::exitosa(){
