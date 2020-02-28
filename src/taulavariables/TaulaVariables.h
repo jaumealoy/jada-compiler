@@ -12,14 +12,17 @@ private:
 
         int numPrograma;
 
+        
+        //Podría ser redundante o innecesario tener el nv
+        //porque coincidiría con el índice de la tabla...
         int numVariable;
-
-        //Para indicar el próximo 
-        int nextNV;
 
         Descripcio *declaracio;
 
     };
+
+    //Numero de variable siguiente a insertar
+    int nv;
 
     struct Entrada tVariables[MAX_VAR];
 public:
@@ -31,6 +34,7 @@ public:
     class Iterator {
     private:
         TaulaVariables *tv;
+        //Índice actual del iterador sobre la tv
         int index;
         Descripcio *declaracio;
 
@@ -46,6 +50,10 @@ public:
     };
 
     void init();
+    void buida();
+    void posar(Descripcio *declaracion, int np);
+    //Jaume me dijo que no querríamos descripciones pero por si acaso..
+    Descripcio *consulta(int nv);
 
 };
 #endif

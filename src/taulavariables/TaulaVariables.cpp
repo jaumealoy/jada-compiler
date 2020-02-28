@@ -38,3 +38,22 @@ Descripcio * TaulaVariables::Iterator::get() {
 int TaulaVariables::Iterator::getNV() {
     return this->index;
 }
+
+void TaulaVariables::buida() {
+    this->nv = 0;
+}
+
+void TaulaVariables::posar(Descripcio *declaracio, int np) {
+    this->tVariables[this->nv].numPrograma = np;
+    this->tVariables[this->nv].declaracio = declaracio;
+    //Puede ser inecesario por lo mismo que he comentado en el header
+    this->tVariables[this->nv].numVariable = this->nv;
+
+    this->nv += 1;
+
+}
+
+Descripcio * TaulaVariables::consulta(int nv) {
+    //Cómo nv coincide con índice...
+    return this->tVariables[nv].declaracio;
+}
