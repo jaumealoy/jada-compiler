@@ -18,22 +18,23 @@ void TaulaVariables::init() {
 
 }
 
-void TaulaVariables::Iterator::firts(int nv) {
-    
+void TaulaVariables::Iterator::first() {
+    this->index = 0;
 }
 
 void TaulaVariables::Iterator::next() {
-    
+    this->index += 1;
+    this->declaracio = this->tv->tVariables[this->index].declaracio;
 }
 
 bool TaulaVariables::Iterator::isValid() {
-    
+    return this->declaracio != nullptr;
 }
 
-Descripcio TaulaVariables::Iterator::get() {
-    
+Descripcio * TaulaVariables::Iterator::get() {
+    return this->declaracio;
 }
 
 int TaulaVariables::Iterator::getNV() {
-    
+    return this->index;
 }

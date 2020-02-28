@@ -14,6 +14,7 @@ private:
 
         int numVariable;
 
+        //Para indicar el próximo 
         int nextNV;
 
         Descripcio *declaracio;
