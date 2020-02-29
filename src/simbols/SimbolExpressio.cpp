@@ -195,7 +195,6 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 			// crear un nou contenedor pel valor
 			// si és un array (o un string) s'està accedint a un valor
 			this->value = std::make_shared<ValueContainer>(dc->getValue()->get() + ref.getOffset(), dt->getOcupacio());
-			std::cout << "Obtengut valor " << *(int *) this->value->get() << std::endl;
             break;
         }
 
@@ -305,6 +304,48 @@ void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
     Simbol::toDotFile(driver);
 }
 
+/**
+ * exprSimple -> referencia++ (tipus 0)
+ * exprSimple -> referencia-- (tipus 1)
+ */
+void SimbolExpressio::make(Driver *driver, SimbolReferencia ref, int tipus){
+	if(ref.isNull()){
+		this->makeNull();
+		return;
+	}
+
+	// La referència ha de ser un enter
+	if(ref.getTSB() != TipusSubjacentBasic::INT){
+		this->makeNull();
+		this->driver->error( error_tipus_no_compatibles_operador(ref.getTSB()) );
+		return;
+	}
+
+	// I no pot ser una referència constant
+	if(ref.getMode() == SimbolReferencia::ModeMVP::CONST){
+		this->makeNull();
+		this->driver->error( error_es_constant(ref.getId()) );
+		return;
+	}
+
+	// el resultat serà un valor enter
+	this->tsb = TipusSubjacentBasic::INT;
+	this->mode = SimbolExpressio::Mode::RESULTAT;
+
+	// i pintar a l'arbre
+    this->fills.push_back( std::to_string(ref.getNodeId()) );
+	switch(tipus){
+		case 0: // referencia++
+        	this->fills.push_back( driver->addTreeChild(this, "++") );
+			break;
+
+		case 1: // referencia--;
+        	this->fills.push_back( driver->addTreeChild(this, "--") );
+			break;
+	}
+    Simbol::toDotFile(driver);
+
+}
 
 std::string SimbolExpressio::getTipus(){
     return this->tipus;

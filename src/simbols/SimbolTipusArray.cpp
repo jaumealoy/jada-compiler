@@ -282,7 +282,10 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		for(int i = this->refIndex.size() - 1; i >= 0; i--){
 			totConstant = totConstant && this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST;
 
-			numElement += productori * *(int *) this->refIndex[i].index.getValue()->get();
+			if(this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST){
+				numElement += productori * *(int *) this->refIndex[i].index.getValue()->get();
+			}
+			
 			productori *= this->refIndex[i].dimensio->getDimensio();
 		}
 		this->accessConstant = totConstant;

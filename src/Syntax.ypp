@@ -47,6 +47,9 @@
 %token OP_DIV
 %token OP_MOD
 
+%token OP_DADD
+%token OP_DMINUS
+
 // operadors relacionals
 %token OP_GT
 %token OP_LT
@@ -261,6 +264,8 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
     | exprSimple IF exprSimple ELSE exprSimple { $$.make(this->driver, $1, $3, $5); }
     | referencia { $$.make(this->driver, $1); }
+	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
+	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); }
     | literal { $$.make(this->driver, $1); };
     | relExpr { $$.make(this->driver, $1); }
     | aritExpr { $$.make(this->driver, $1); };
@@ -278,7 +283,6 @@ relExpr : exprSimple OP_NEQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | exprSimple OP_GTE exprSimple { $$.make(this->driver, $1, $3, 3); }
     | exprSimple OP_LT exprSimple { $$.make(this->driver, $1, $3, 4); }
     | exprSimple OP_LTE exprSimple { $$.make(this->driver, $1, $3, 5); };
-
 
 referencia : ID { $$.make(this->driver, $1); }
     | array { $$.make(this->driver, $1); }
@@ -311,8 +315,8 @@ expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | referencia OP_DIV EQ exprSimple { $$.make(this->driver, $1, $4, 2); }
     | referencia OP_TIMES EQ exprSimple { $$.make(this->driver, $1, $4, 3); }
     | referencia OP_MINUS EQ exprSimple { $$.make(this->driver, $1, $4, 4); }
-    | referencia OP_MINUS OP_MINUS { $$.make(this->driver, $1, 0); }
-    | referencia OP_ADD OP_ADD { $$.make(this->driver, $1, 1); };
+	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
+	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); };
 %%
 
 // Codi de les funcions pròpies del sintàctic

@@ -42,6 +42,9 @@ op_div \/
 op_mul \*
 op_mod %
 
+op_dadd \+\+
+op_dminus --
+
 /* Símbols */
 sym_eq =
 sym_squote '
@@ -105,6 +108,9 @@ begin_comment "/*"
 {op_lt}			{ return token::OP_LT; }
 {op_eq}			{ return token::OP_EQ; }
 {op_neq}		{ return token::OP_NEQ; }
+
+{op_dadd}		{ return token::OP_DADD; }
+{op_dminus}		{ return token::OP_DMINUS; }
 
 {op_add}		{ return token::OP_ADD; }
 {op_minus}		{ return token::OP_MINUS; }

@@ -27,16 +27,7 @@ public:
 
     void setNomTipus(std::string tipus);
     std::string getNomTipus();
-
-    int getIntValue();
-    void setIntValue(int value);
-
-    char getCharValue();
-    void setCharValue(char value);
-
-    bool getBoolValue();
-    void setBoolValue(bool value);
-
+	
 	std::shared_ptr<ValueContainer> getValue();
 	void setValue(std::shared_ptr<ValueContainer> value);
 };

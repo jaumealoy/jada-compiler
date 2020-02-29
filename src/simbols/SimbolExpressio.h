@@ -43,6 +43,7 @@ public:
     void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c);
     void make(Driver *driver, SimbolRelExpr exp);
     void make(Driver *driver, SimbolArithmeticExpression exp);
+	void make(Driver *driver, SimbolReferencia ref, int tipus);
 
     // Per marcar com una referència errònia
     bool isNull();

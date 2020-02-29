@@ -11,16 +11,20 @@ Driver::Driver(char *filename) :
     this->ts.buida();
 
     // inicialitzar la taula de símbols amb els tipus propis del llenguatge
-    DescripcioTipusBasic *boolean = new DescripcioTipusBasic(TipusSubjacentBasic::BOOLEAN, 0, 1, 1);
+    DescripcioTipusBasic *boolean = new DescripcioTipusBasic(TipusSubjacentBasic::BOOLEAN, 0, 1, sizeof(bool));
     this->ts.posar("boolean", boolean, true);
 
     // afegir true i false
+	bool tmp = true;
     DescripcioConstant *dc = new DescripcioConstant("boolean");
-    dc->setBoolValue(true);
+	std::shared_ptr<ValueContainer> trueValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
+	dc->setValue(trueValue);
     this->ts.posar("true", dc, true);
 
     dc = new DescripcioConstant("boolean");
-    dc->setBoolValue(false);
+	tmp = false;
+	std::shared_ptr<ValueContainer> falseValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
+	dc->setValue(falseValue);
     this->ts.posar("false", dc, true);
 
     DescripcioTipusBasic *character = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 1);
