@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "Lexic.h"
-#include "strings/StringBuffer.h"
+#include "utils/StringBuffer.h"
 
 #undef  YY_DECL
 #define YY_DECL int Lexic::yylex( yy::Syntax::semantic_type * const lval, yy::Syntax::location_type *location )
