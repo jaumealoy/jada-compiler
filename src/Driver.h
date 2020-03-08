@@ -4,6 +4,7 @@
 #include "Lexic.h"
 #include "Syntax.tab.hpp"
 #include "taulasimbols/TaulaSimbols.h"
+#include "code/CodeGeneration.h"
 #include <fstream>
 #include <exception>
 #include "Errors.h"
@@ -33,12 +34,13 @@ public:
 
     void parse();
 
+	// anàlisi semàntica
     TaulaSimbols ts;
 
     void error(std::string msg);
     void error(std::string msg, bool atura);
     void error(std::string msg, yy::location pos, bool atura);
-
+	
     // obtenir la posició actual
     yy::location getLocation();
 
@@ -46,6 +48,9 @@ public:
     void writeToTree(std::string data);
     void writeToTree(Simbol *s, std::string data);
     std::string addTreeChild(Simbol *s, std::string data);
+
+	// generació de codi
+	CodeGeneration code;
 
     void closeFiles();
 
