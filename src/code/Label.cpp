@@ -7,3 +7,7 @@ Label::Label(){
 }
 
 Label::~Label(){}
+
+int Label::getId(){
+	return this->labelId;
+}

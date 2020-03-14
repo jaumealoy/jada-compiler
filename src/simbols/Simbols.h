@@ -48,4 +48,6 @@
 
 #include "SimbolVarInit.h"
 #include "SimbolVarDecl.h"
+
+#include "SimbolMarcador.h"
 #endif

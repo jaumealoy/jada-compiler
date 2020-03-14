@@ -5,9 +5,7 @@ SimbolWhileStatement::SimbolWhileStatement() : SimbolStatement() {
     this->nomNode = "WhileStatement";
 }
 
-SimbolWhileStatement::~SimbolWhileStatement(){
-
-}
+SimbolWhileStatement::~SimbolWhileStatement(){}
 
 /**
  * whileStatement -> while exprSimple do bloc end

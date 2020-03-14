@@ -17,6 +17,9 @@ int main(int argc, char **argv){
 	myDriver.parse();
 	myDriver.closeFiles();
 	
+	ofstream codeOutput("codi.txt");
+	myDriver.code.writeToFile(codeOutput);
+
 	if(myDriver.exitosa()){
 		cout << "Compilació exitosa" << endl;
 	}

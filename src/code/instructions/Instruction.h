@@ -1,6 +1,8 @@
 #ifndef _H_CODE_INSTRUCTION
 #define _H_CODE_INSTRUCTION
 
+#include <string>
+
 class Instruction{
 public:
 	enum Type{
@@ -18,6 +20,8 @@ public:
 
 	void setNext(Instruction *next);
 	Instruction *getNext();
+
+	std::string toString();
 };
 
 #endif

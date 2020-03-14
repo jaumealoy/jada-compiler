@@ -1,4 +1,5 @@
 #include "CodeGeneration.h"
+#include "Label.h"
 
 CodeGeneration::CodeGeneration(){
 	this->first = nullptr;
@@ -29,5 +30,25 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
 		// hi ha altres instruccions, s'insereix al final
 		this->last->setNext(inst);
 		this->last = inst;
+	}
+}
+
+/**
+ * Crea i retorna una nova etiqueta
+ */
+int CodeGeneration::addLabel(){
+	Label label;
+	return label.getId();
+}
+
+
+/**
+ * Escriu el codi actual a un arxiu de text
+ */
+void CodeGeneration::writeToFile(std::ofstream &file){
+	Instruction *act = this->first;
+	while(act != nullptr){
+		file << act->toString() << std::endl;
+		act = act->getNext();
 	}
 }

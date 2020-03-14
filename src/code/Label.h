@@ -9,6 +9,8 @@ private:
 public:
 	Label();
 	~Label();
+
+	int getId();
 };
 
 #endif

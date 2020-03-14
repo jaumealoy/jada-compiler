@@ -6,6 +6,7 @@
 
 #include "Table.hpp"
 #include "instructions/Instruction.h"
+#include <fstream>
 
 class CodeGeneration{
 private:
@@ -25,6 +26,8 @@ public:
 	int addVariable();
 	
 	Instruction *addInstruction(Instruction *inst);
+
+	void writeToFile(std::ofstream &file);
 };
 
 #endif

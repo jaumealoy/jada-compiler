@@ -6,11 +6,13 @@
 
 class SkipInstruction : public Instruction {
 private:
-	Label label;
+	int label;
 	
 public:
-	SkipInstruction(Label lbl);
+	SkipInstruction(int lbl);
 	~SkipInstruction();
+
+	std::string toString();
 };
 
 #endif

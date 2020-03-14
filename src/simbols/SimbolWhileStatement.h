@@ -12,7 +12,7 @@ public:
     SimbolWhileStatement();
     ~SimbolWhileStatement();
 
-    void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc);
+	void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc);
 };
 
 #endif
