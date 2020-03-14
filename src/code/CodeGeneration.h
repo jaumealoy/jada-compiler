@@ -7,6 +7,9 @@
 #include "Table.hpp"
 #include "instructions/Instruction.h"
 #include <fstream>
+#include <vector>
+#include "Variable.h"
+#include "Label.h"
 
 class CodeGeneration{
 private:
@@ -18,16 +21,20 @@ private:
 	Instruction *first;
 	Instruction *last;
 
+	
+
 public:
 	CodeGeneration();
 	~CodeGeneration();
 
-	int addLabel();
-	int addVariable();
+	Label addLabel();
+	Variable addVariable();
 	
 	Instruction *addInstruction(Instruction *inst);
 
 	void writeToFile(std::ofstream &file);
+
+	void backpatch(Label e, std::vector<Instruction*> i);
 };
 
 #endif

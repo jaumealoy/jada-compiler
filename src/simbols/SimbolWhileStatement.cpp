@@ -10,7 +10,7 @@ SimbolWhileStatement::~SimbolWhileStatement(){}
 /**
  * whileStatement -> while exprSimple do bloc end
  */
-void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc) {
+void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp,SimbolMarcador m, SimbolBloc bloc) {
     // És un bucle, pot contenir break al seu interior i no es propaga a l'exterior
     // però és possible que tengui un return, que sí s'hauria de propagar
     this->propaga(bloc);
@@ -30,4 +30,11 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "end") );
     Simbol::toDotFile(driver);
+
+    // GENERACIÓ CODI INTERMEDI
+    
+    GoToInstruction *g = new GoToInstruction(m.getLabel());
+    driver->code.addInstruction(g);
+    //driver->code.backpatch(m.getLabel(), bloc.get);
+    driver->code.backpatch(m.getLabel(), exp.getCert());
 }

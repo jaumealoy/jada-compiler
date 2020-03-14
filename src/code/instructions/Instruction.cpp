@@ -40,3 +40,7 @@ std::string Instruction::toString(){
 
 	return tmp;
 }
+
+Instruction::Type Instruction::getType(){
+	return this->opcode;
+}

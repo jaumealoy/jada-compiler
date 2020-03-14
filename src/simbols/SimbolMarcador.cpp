@@ -17,8 +17,12 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 	// generació de codi en funció del tipus
 	switch (tipus) {
 		case 0:
-			int e = driver->code.addLabel();
-			driver->code.addInstruction(new SkipInstruction(e));
+			this->et = driver->code.addLabel();
+			driver->code.addInstruction(new SkipInstruction(this->et));
 			break;
 	}
+}
+
+Label SimbolMarcador::getLabel() {
+	return this->et;
 }

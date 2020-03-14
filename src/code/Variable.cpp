@@ -11,4 +11,8 @@ Variable::Variable(std::string name){
 	this->name = name;
 }
 
+std::string Variable::getNom() {
+	return this->name;
+}
+
 Variable::~Variable(){};

@@ -6,10 +6,10 @@
 
 class SkipInstruction : public Instruction {
 private:
-	int label;
+	Label label;
 	
 public:
-	SkipInstruction(int lbl);
+	SkipInstruction(Label lbl);
 	~SkipInstruction();
 
 	std::string toString();

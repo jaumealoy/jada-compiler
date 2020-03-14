@@ -5,3 +5,7 @@ GoToInstruction::GoToInstruction(Label label) : Instruction(Instruction::Type::G
 }
 
 GoToInstruction::~GoToInstruction(){}
+
+void GoToInstruction::setLabel(Label l){
+	this->label = l;
+}

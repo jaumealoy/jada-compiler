@@ -10,6 +10,8 @@ public:
 	Variable();
 	Variable(std::string name);
 	~Variable();
+
+	std::string getNom();
 };
 
 #endif

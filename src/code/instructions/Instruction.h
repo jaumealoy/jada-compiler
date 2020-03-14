@@ -2,12 +2,14 @@
 #define _H_CODE_INSTRUCTION
 
 #include <string>
+#include "../Label.h"
 
 class Instruction{
 public:
 	enum Type{
 		SKIP,
-		GOTO
+		GOTO,
+		CONDJUMP
 	};
 private:
 	Instruction::Type opcode;
@@ -22,6 +24,8 @@ public:
 	Instruction *getNext();
 
 	std::string toString();
+
+	Instruction::Type getType();
 };
 
 #endif

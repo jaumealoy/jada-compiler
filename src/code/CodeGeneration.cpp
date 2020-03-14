@@ -1,5 +1,8 @@
 #include "CodeGeneration.h"
 #include "Label.h"
+#include "instructions/GoToInstruction.h"
+#include "instructions/CondJumpInstruction.h"
+
 
 CodeGeneration::CodeGeneration(){
 	this->first = nullptr;
@@ -31,14 +34,15 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
 		this->last->setNext(inst);
 		this->last = inst;
 	}
+	return inst;
 }
 
 /**
  * Crea i retorna una nova etiqueta
  */
-int CodeGeneration::addLabel(){
+Label CodeGeneration::addLabel(){
 	Label label;
-	return label.getId();
+	return label;
 }
 
 
@@ -50,5 +54,18 @@ void CodeGeneration::writeToFile(std::ofstream &file){
 	while(act != nullptr){
 		file << act->toString() << std::endl;
 		act = act->getNext();
+	}
+}
+
+void CodeGeneration::backpatch(Label e, std::vector<Instruction *> v) {
+	for(int i = 0; i < v.size(); i++) {
+		switch (v[i]->getType()) {
+			case Instruction::Type::GOTO: 
+				((GoToInstruction *) v[i])->setLabel(e); 
+				break;
+			case Instruction::Type::CONDJUMP:
+				((CondJumpInstruction *) v[i])->setLabel(e);
+				break;
+		}
 	}
 }

@@ -11,6 +11,8 @@ private:
 public:
 	GoToInstruction(Label label);
 	~GoToInstruction();
+
+	void setLabel(Label l);
 };
 
 #endif

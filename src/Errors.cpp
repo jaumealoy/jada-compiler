@@ -18,6 +18,7 @@ std::string getNomTSB(TipusSubjacentBasic a){
             return "array";
             break;
     }
+    return "";
 }
 
 /**

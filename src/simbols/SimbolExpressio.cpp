@@ -384,3 +384,12 @@ char SimbolExpressio::getCharValue(){
 std::shared_ptr<ValueContainer> SimbolExpressio::getValue(){
 	return this->value;
 }
+
+std::vector<Instruction *> SimbolExpressio::getCert() {
+    return this->ecert;
+}
+
+std::vector<Instruction *> SimbolExpressio::getFals(){
+    return this->efals;
+}
+

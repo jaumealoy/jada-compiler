@@ -7,6 +7,8 @@
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "../utils/ValueContainer.h"
 #include <string>
+#include <vector>
+#include "../code/instructions/Instruction.h"
 
 class SimbolArithmeticExpression;
 class SimbolRelExpr;
@@ -24,6 +26,9 @@ protected:
     std::string tipus;
     TipusSubjacentBasic tsb;
     SimbolExpressio::Mode mode;
+
+    std::vector<Instruction *> ecert;
+    std::vector<Instruction *> efals;
 
     int intValue;
     bool boolValue;
@@ -52,6 +57,9 @@ public:
     int getIntValue();
     bool getBoolValue();
     char getCharValue();
+
+    std::vector<Instruction *> getCert();
+    std::vector<Instruction *> getFals();
 
 	std::shared_ptr<ValueContainer> getValue();
 
