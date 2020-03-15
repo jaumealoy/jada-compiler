@@ -6,14 +6,15 @@
 #include "SimbolLiteral.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "../utils/ValueContainer.h"
-#include <string>
-#include <vector>
 #include "../code/instructions/Instruction.h"
+#include "../code/Reference.h"
+#include <vector>
+#include <string>
 
 class SimbolArithmeticExpression;
 class SimbolRelExpr;
 
-class SimbolExpressio : public Simbol {
+class SimbolExpressio : public Simbol, public Reference {
 public: 
     enum Mode{
         VAR,

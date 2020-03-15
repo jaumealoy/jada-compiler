@@ -9,3 +9,7 @@ GoToInstruction::~GoToInstruction(){}
 void GoToInstruction::setLabel(Label l){
 	this->label = l;
 }
+
+std::string GoToInstruction::toString(){
+	return "goto e" + std::to_string(this->label.getId());
+}

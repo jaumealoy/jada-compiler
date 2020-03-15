@@ -13,6 +13,8 @@ public:
 	~GoToInstruction();
 
 	void setLabel(Label l);
+
+	std::string toString();
 };
 
 #endif

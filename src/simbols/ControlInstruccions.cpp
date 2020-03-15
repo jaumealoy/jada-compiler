@@ -23,8 +23,6 @@ void ControlInstruccions::propaga(ControlInstruccions obj){
     this->_returns = obj._returns;
 }
 
-#include <iostream>
-
 void ControlInstruccions::propaga(ControlInstruccions &a, ControlInstruccions &b){
     // Si un dels dos té break, aquest també
     this->_conteBreak = (a._conteBreak || b._conteBreak) ? true : false;

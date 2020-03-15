@@ -6,11 +6,18 @@
 class Variable {
 private:
 	std::string name;
+
+	// interessa poder tenir "variables" nul·les, cosa que pot ser
+	// servir al desplaçament per indicar que no n'hi ha
+	bool null;
+
 public:
 	Variable();
+	Variable(bool null);
 	Variable(std::string name);
 	~Variable();
 
+	bool isNull();
 	std::string getNom();
 };
 

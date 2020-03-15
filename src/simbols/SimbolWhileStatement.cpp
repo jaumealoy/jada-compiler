@@ -32,9 +32,7 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp,SimbolMarcad
     Simbol::toDotFile(driver);
 
     // GENERACIÓ CODI INTERMEDI
-    
-    GoToInstruction *g = new GoToInstruction(m.getLabel());
-    driver->code.addInstruction(g);
+    driver->code.addInstruction(new GoToInstruction(m.getLabel()));
     //driver->code.backpatch(m.getLabel(), bloc.get);
     driver->code.backpatch(m.getLabel(), exp.getCert());
 }

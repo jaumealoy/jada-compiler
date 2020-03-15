@@ -9,7 +9,9 @@ public:
 	enum Type{
 		SKIP,
 		GOTO,
-		CONDJUMP
+		CONDJUMP,
+		ARITHMETIC,
+		ASSIGNMENT
 	};
 private:
 	Instruction::Type opcode;

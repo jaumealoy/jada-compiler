@@ -2,6 +2,7 @@
 #include "SimbolRelExpr.h"
 #include "SimbolArithmeticExpression.h"
 #include "../Driver.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 /**
  * L'operació de dues expressions constants dona lloc a una expressió constant
@@ -26,25 +27,16 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 	// així com toca en funció del seu TSB
 	this->value = literal.getValue();
 
-	// TODO: eliminar
-    /*if(this->tsb == TipusSubjacentBasic::INT){
-		int tmpValue = *(int *) literal.getValue()->get();
-		this->value = literal.getValue();
-    }else if(this->tsb == TipusSubjacentBasic::CHAR){
-		char tmpValue = *(char *) literal.getValue()->get();
-		this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(char));
-    }else if(this->tsb == TipusSubjacentBasic::ARRAY){
-		// conservar el valor de l'array
-		// és possible que sigui una string
-		this->value = literal.getValue();
-	}*/
-
     // prové d'un literal, és una expressió constant
     this->mode = SimbolExpressio::Mode::CONST;
 
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(literal.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	//generació de codi
+	this->r = driver->code.addVariable();
+	driver->code.addInstruction(new AssignmentInstruction(this->tsb, this->r, this->value));
 }
 
 

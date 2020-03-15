@@ -3,7 +3,6 @@
 #include "instructions/GoToInstruction.h"
 #include "instructions/CondJumpInstruction.h"
 
-
 CodeGeneration::CodeGeneration(){
 	this->first = nullptr;
 	this->last = nullptr;
@@ -33,6 +32,7 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
 		// hi ha altres instruccions, s'insereix al final
 		this->last->setNext(inst);
 		this->last = inst;
+		inst->setNext(nullptr);
 	}
 	return inst;
 }
@@ -43,6 +43,16 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
 Label CodeGeneration::addLabel(){
 	Label label;
 	return label;
+}
+
+Variable CodeGeneration::addVariable(){
+	Variable v(false);
+	return v;
+}
+
+Variable CodeGeneration::addVariable(std::string name){
+	Variable v(name);
+	return v;
 }
 
 
@@ -57,12 +67,17 @@ void CodeGeneration::writeToFile(std::ofstream &file){
 	}
 }
 
+/**
+ * Substitueix l'etiqueta dels salts (condicionals o no) per l'etiqueta
+ * passada per paràmetre
+ */
 void CodeGeneration::backpatch(Label e, std::vector<Instruction *> v) {
 	for(int i = 0; i < v.size(); i++) {
 		switch (v[i]->getType()) {
 			case Instruction::Type::GOTO: 
 				((GoToInstruction *) v[i])->setLabel(e); 
 				break;
+
 			case Instruction::Type::CONDJUMP:
 				((CondJumpInstruction *) v[i])->setLabel(e);
 				break;

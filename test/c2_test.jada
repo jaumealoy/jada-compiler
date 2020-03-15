@@ -1,0 +1,8 @@
+proc main() begin
+	int i = 5 + 8;
+	
+	boolean b;
+
+	while ((3 + 5) > 7) do
+	end;
+end main;

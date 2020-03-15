@@ -28,7 +28,9 @@ public:
 	~CodeGeneration();
 
 	Label addLabel();
+
 	Variable addVariable();
+	Variable addVariable(std::string name);
 	
 	Instruction *addInstruction(Instruction *inst);
 

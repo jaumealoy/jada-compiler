@@ -1,6 +1,8 @@
 #include "SimbolArithmeticExpression.h"
 #include "../Driver.h"
 
+#include "../code/instructions/ArithmeticInstruction.h"
+
 SimbolArithmeticExpression::SimbolArithmeticExpression() : SimbolExpressio() {
     this->nomNode = "ArithmeticExpression";
 }
@@ -59,6 +61,8 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
         return;
     }
 
+	ArithmeticInstruction::Type operation;
+
     // calcular el resultat si és constant
     if(a.getMode() == b.getMode() && a.getMode() == SimbolExpressio::Mode::CONST){
 		int valorA = *(int *) a.getValue()->get();
@@ -68,14 +72,17 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
         switch (tipus) {
             case 0: // exprSimple + exprSimple
                 resultat = valorA + valorB;
+				operation = ArithmeticInstruction::Type::ADDITION;
                 break;
             
             case 1: // exprSimple - exprSimpe
                 resultat = valorA - valorB;
+				operation = ArithmeticInstruction::Type::SUBTRACTION;
                 break;
 
             case 2: // exprSimple * exprSimpe
                 resultat = valorA * valorB;
+				operation = ArithmeticInstruction::Type::MULTIPLICATION;
                 break;
 
             case 3: // exprSimple / exprSimpe
@@ -86,6 +93,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
                 }
 
                 resultat = valorA / valorB;
+				operation = ArithmeticInstruction::Type::DIVISION;
                 break;
             
             case 4: // exprSimple % exprSimple:
@@ -96,6 +104,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
                 }
 
                 resultat = valorA % valorB;
+				operation = ArithmeticInstruction::Type::MOD;
                 break;
         }
 
@@ -121,4 +130,11 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     }
     this->fills.push_back( std::to_string(b.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// generació de codi
+	// TODO: canviar variables
+	Variable tmp;
+	Variable r1 = a.dereference(driver);
+	Variable r2 = b.dereference(driver);
+	driver->code.addInstruction(new ArithmeticInstruction(operation, tmp,r1, r2));
 }

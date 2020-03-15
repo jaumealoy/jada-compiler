@@ -5,9 +5,10 @@
 class SimbolTipusArray;
 class SimbolSubProgramCall;
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../code/Reference.h"
 #include <string>
 
-class SimbolReferencia : public Simbol {
+class SimbolReferencia : public Simbol, public Reference {
 public:
     enum ModeMVP {
         CONST,

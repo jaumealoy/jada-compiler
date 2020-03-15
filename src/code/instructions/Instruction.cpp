@@ -3,6 +3,9 @@
 
 #include "GoToInstruction.h"
 #include "SkipInstruction.h"
+#include "CondJumpInstruction.h"
+#include "ArithmeticInstruction.h"
+#include "AssignmentInstruction.h"
 
 Instruction::Instruction(){
 	this->next = nullptr;
@@ -34,8 +37,20 @@ std::string Instruction::toString(){
 			tmp = ((SkipInstruction *) this)->toString();
 			break;
 
+		case CONDJUMP:
+			tmp = ((CondJumpInstruction *) this)->toString();
+			break;
+
+		case ARITHMETIC:
+			tmp = ((ArithmeticInstruction *) this)->toString();
+			break;
+
+		case ASSIGNMENT:
+			tmp = ((AssignmentInstruction *) this)->toString();
+			break;
+
 		default:
-			tmp = "undefined insturction";
+			tmp = "undefined instruction";
 	}
 
 	return tmp;
