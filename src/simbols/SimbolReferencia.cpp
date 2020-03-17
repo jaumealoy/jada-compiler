@@ -29,10 +29,16 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
         DescripcioVariable *dv = (DescripcioVariable *) d;
         tipus = dv->getNomTipus();
         this->mode = SimbolReferencia::ModeMVP::VAR;
+
+		// obtenir la variable
+		this->r = dv->getVariable();
     }else if(d->getTipus() == Descripcio::Tipus::CONSTANT){
         DescripcioConstant *dc = (DescripcioConstant *) d;
         tipus = dc->getNomTipus();
         this->mode = SimbolReferencia::ModeMVP::CONST;
+		
+		// obtenir la variable
+		this->r = dc->getVariable();
     }else{
         // no és una constant ni una variable
         driver->error( error_no_posicio_memoria(nom) );
@@ -53,7 +59,8 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     Simbol::toDotFile(driver);
 
 	// s'accedeix a una variable, desplaçament és 0
-	this->d = 0;
+	this->d.makeNull();
+	this->dconst = 0;
 }
 
 /**
@@ -78,7 +85,7 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
 
 	// TODO: el desplaçament representa el número d'element que es vol consultar
 	if(array.isAccessConstant()){
-		this->d = array.d;
+		this->dconst = array.dconst;
 	}
 }
 
@@ -126,10 +133,6 @@ std::string SimbolReferencia::getTipus(){
     return this->tipus;
 }
 
-int SimbolReferencia::getOffset(){
-	return this->d;
-}
-
-int SimbolReferencia::getReferencia(){
-	return this->r;
+int SimbolReferencia::getConstOffset(){
+	return this->dconst;
 }

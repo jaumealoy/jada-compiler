@@ -5,7 +5,7 @@
 #include "../utils/ValueContainer.h"
 #include <memory>
 #include <string>
-
+#include "../code/Variable.h"
 
 class DescripcioConstant : public Descripcio {
 public:
@@ -21,6 +21,9 @@ private:
 	// contenedor genèric per guardar valors
 	std::shared_ptr<ValueContainer> value;
 
+	// variable per la generació de codi
+	Variable variable;
+
 public:
     DescripcioConstant(std::string tipus);
     ~DescripcioConstant();
@@ -30,6 +33,9 @@ public:
 	
 	std::shared_ptr<ValueContainer> getValue();
 	void setValue(std::shared_ptr<ValueContainer> value);
+
+	void setVariable(Variable var);
+	Variable getVariable();
 };
 
 #endif

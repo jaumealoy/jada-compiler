@@ -50,7 +50,7 @@ std::string Instruction::toString(){
 			break;
 
 		default:
-			tmp = "undefined instruction";
+			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";
 	}
 
 	return tmp;

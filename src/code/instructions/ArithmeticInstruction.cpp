@@ -12,5 +12,28 @@ ArithmeticInstruction::ArithmeticInstruction(ArithmeticInstruction::Type type, V
 ArithmeticInstruction::~ArithmeticInstruction(){}
 
 std::string ArithmeticInstruction::toString(){
-	return this->desti.getNom() + " = " + this->v1.getNom() + " op " + this->v2.getNom();
+	std::string tmp;
+	switch(this->type){
+		case ArithmeticInstruction::Type::ADDITION:
+			tmp = "+";
+			break;
+		
+		case ArithmeticInstruction::Type::SUBTRACTION:
+			tmp = "-";
+			break;
+
+		case ArithmeticInstruction::Type::MULTIPLICATION:
+			tmp = "*";
+			break;
+
+		case ArithmeticInstruction::Type::DIVISION:
+			tmp = "/";
+			break;
+
+		case ArithmeticInstruction::Type::MOD:
+			tmp = "%";
+			break;
+	}
+
+	return this->desti.getNom() + " = " + this->v1.getNom() + " " + tmp + " " + this->v2.getNom();
 }

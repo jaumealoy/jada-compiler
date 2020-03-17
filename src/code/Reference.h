@@ -15,6 +15,9 @@ public:
 	~Reference();
 
 	Variable dereference(Driver *driver);
+
+	Variable getBase();
+	Variable getOffset();
 };
 
 #endif

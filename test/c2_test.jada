@@ -1,8 +1,7 @@
 proc main() begin
-	int i = 5 + 8;
-	
-	boolean b;
+	int i = 4 + 3;
 
-	while ((3 + 5) > 7) do
+	while ( i > 0 ) do
+		i = i - 1;
 	end;
 end main;

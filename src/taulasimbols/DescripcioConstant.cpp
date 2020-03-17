@@ -22,3 +22,11 @@ std::shared_ptr<ValueContainer> DescripcioConstant::getValue(){
 void DescripcioConstant::setValue(std::shared_ptr<ValueContainer> valor){
 	this->value = valor;
 }
+
+void DescripcioConstant::setVariable(Variable var){
+	this->variable = var;
+}
+
+Variable DescripcioConstant::getVariable(){
+	return this->variable;
+}

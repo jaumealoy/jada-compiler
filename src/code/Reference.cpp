@@ -26,3 +26,12 @@ Variable Reference::dereference(Driver *driver){
 
 	return tmp;
 }
+
+
+Variable Reference::getBase(){
+	return this->r;
+}
+
+Variable Reference::getOffset(){
+	return this->d;
+}

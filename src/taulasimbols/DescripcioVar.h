@@ -3,23 +3,25 @@
 
 #include "Descripcio.h"
 #include <string>
-
+#include "../code/Variable.h"
 
 class DescripcioVariable : public Descripcio {
 private:
     std::string nomTipus;
     Descripcio::Tipus tipus;
 
-    int nv;
+    // variable per la generació de codi
+	Variable variable;
 
 public:
-    static int numVariables;
-
     DescripcioVariable(std::string tipus);
     ~DescripcioVariable();
 
     void setNomTipus(std::string tipus);
     std::string getNomTipus();
+
+	void setVariable(Variable var);
+	Variable getVariable();
 };
 
 #endif

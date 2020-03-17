@@ -9,12 +9,15 @@
 
 class AssignmentInstruction : public Instruction {
 private:
-	Variable desti;
 	std::shared_ptr<ValueContainer> value;
 	TipusSubjacentBasic tsb;
 
+	Variable desti;
+	Variable origen;
+
 public:
 	AssignmentInstruction(TipusSubjacentBasic tsb, Variable desti, std::shared_ptr<ValueContainer> value);
+	AssignmentInstruction(Variable desti, Variable origen);
 	~AssignmentInstruction();
 
 	std::string toString();

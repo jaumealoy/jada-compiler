@@ -23,6 +23,10 @@ void SimbolVarInit::make(Driver *driver, SimbolExpressio exp){
 	// el valor de l'expressió es propaga
 	this->value = exp.getValue();
 
+	// copiar dades de variables
+	this->r = exp.getBase();
+	this->d = exp.getOffset();
+
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "=") );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
@@ -53,4 +57,8 @@ void SimbolVarInit::make(Driver *driver, SimbolArrayInit exp){
 void SimbolVarInit::make(Driver *driver){
     this->makeEmpty();
     Simbol::toDotFile(driver);
+
+	// no hi ha cap variable associada
+	this->r.makeNull();
+	this->d.makeNull();
 }

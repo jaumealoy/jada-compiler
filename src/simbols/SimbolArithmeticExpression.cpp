@@ -62,6 +62,13 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     }
 
 	ArithmeticInstruction::Type operation;
+	switch (tipus) {
+		case 0: operation = ArithmeticInstruction::Type::ADDITION; break;
+		case 1: operation = ArithmeticInstruction::Type::SUBTRACTION; break;
+		case 2: operation = ArithmeticInstruction::Type::MULTIPLICATION; break;
+		case 3: operation = ArithmeticInstruction::Type::DIVISION; break;
+		case 4: operation = ArithmeticInstruction::Type::MOD; break;
+	}
 
     // calcular el resultat si és constant
     if(a.getMode() == b.getMode() && a.getMode() == SimbolExpressio::Mode::CONST){
@@ -72,17 +79,14 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
         switch (tipus) {
             case 0: // exprSimple + exprSimple
                 resultat = valorA + valorB;
-				operation = ArithmeticInstruction::Type::ADDITION;
                 break;
             
             case 1: // exprSimple - exprSimpe
                 resultat = valorA - valorB;
-				operation = ArithmeticInstruction::Type::SUBTRACTION;
                 break;
 
             case 2: // exprSimple * exprSimpe
                 resultat = valorA * valorB;
-				operation = ArithmeticInstruction::Type::MULTIPLICATION;
                 break;
 
             case 3: // exprSimple / exprSimpe
@@ -93,7 +97,6 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
                 }
 
                 resultat = valorA / valorB;
-				operation = ArithmeticInstruction::Type::DIVISION;
                 break;
             
             case 4: // exprSimple % exprSimple:
@@ -104,7 +107,6 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
                 }
 
                 resultat = valorA % valorB;
-				operation = ArithmeticInstruction::Type::MOD;
                 break;
         }
 
@@ -132,9 +134,9 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     Simbol::toDotFile(driver);
 
 	// generació de codi
-	// TODO: canviar variables
-	Variable tmp;
 	Variable r1 = a.dereference(driver);
 	Variable r2 = b.dereference(driver);
-	driver->code.addInstruction(new ArithmeticInstruction(operation, tmp,r1, r2));
+	driver->code.addInstruction(new ArithmeticInstruction(operation, this->r, r1, r2));
+
+	this->d.makeNull();
 }

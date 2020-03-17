@@ -14,7 +14,7 @@ public:
     SimbolWhileStatement();
     ~SimbolWhileStatement();
 
-	void make(Driver *driver, SimbolExpressio exp, SimbolMarcador m, SimbolBloc bloc);
+	void make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolMarcador einici, SimbolMarcador ebloc);
 };
 
 #endif

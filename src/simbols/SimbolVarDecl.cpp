@@ -3,6 +3,7 @@
 #include "../taulasimbols/DescripcioVar.h"
 #include "../taulasimbols/DescripcioConstant.h"
 #include "../Driver.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 #include <string>
 
@@ -57,6 +58,8 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
     this->tsb = dt->getTSB();
     this->tipus = tipus;
 
+	Variable var(id);
+
     Descripcio *desc = nullptr;
     if (constant){
         // És necessari inicialitzar les constants quan es declaren
@@ -78,30 +81,21 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
 		// tots els valors es tracten igual
 		dc->setValue(init.getValue());
-
-        /*switch(dt->getTSB()){
-            case TipusSubjacentBasic::INT:
-                dc->setIntValue(init.getIntValue());
-                break;
-
-            case TipusSubjacentBasic::CHAR:
-                dc->setCharValue(init.getCharValue());
-                break;
-
-            case TipusSubjacentBasic::BOOLEAN:
-                dc->setBoolValue(init.getBoolValue());
-                break;
-            case TipusSubjacentBasic::ARRAY:
-                // pot ser un array de qualsevol tipus bàsic
-                // o un string
-                break;
-        }*/
-
         desc = dc;
+
+		dc->setVariable(var);
+		if(!init.isEmpty()){
+			driver->code.addInstruction(new AssignmentInstruction(dc->getVariable(), init.dereference(driver)));
+		}
     }else{
         // és una variable
         DescripcioVariable* dv = new DescripcioVariable(tipus);
         desc = dv;
+
+		dv->setVariable(var);
+		if(!init.isEmpty()){
+			driver->code.addInstruction(new AssignmentInstruction(dv->getVariable(), init.dereference(driver)));
+		}
     }
 
     // Inserir la variable o constant, és possible que no es pugui inserir
@@ -155,6 +149,8 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
     this->tsb = varDecl.tsb;
     this->esConst = varDecl.esConst;
 
+	Variable var(id);
+
     Descripcio *desc = nullptr;
 
     if (varDecl.esConst){
@@ -174,29 +170,20 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
 
 		// tots els valors constants es tracten igual
 		dc->setValue(init.getValue());
-
-        /*switch(this->tsb){
-            case TipusSubjacentBasic::INT:
-                dc->setIntValue(init.getIntValue());
-                break;
-
-            case TipusSubjacentBasic::CHAR:
-                dc->setCharValue(init.getCharValue());
-                break;
-
-            case TipusSubjacentBasic::BOOLEAN:
-                dc->setBoolValue(init.getBoolValue());
-                break;
-            case TipusSubjacentBasic::ARRAY:
-                // pot ser un array de qualsevol tipus bàsic
-                // o un string
-                break;
-        }*/
-
         desc = dc;
+
+		dc->setVariable(var);
+		if(!init.isEmpty()){
+			driver->code.addInstruction(new AssignmentInstruction(dc->getVariable(), init.dereference(driver)));
+		}
     }else{
         DescripcioVariable *dv = new DescripcioVariable(tipus);
         desc = dv;
+
+		dv->setVariable(var);
+		if(!init.isEmpty()){
+			driver->code.addInstruction(new AssignmentInstruction(dv->getVariable(), init.dereference(driver)));
+		}
     }
 
     // Inserir la variable o constant, és possible que no es pugui inserir

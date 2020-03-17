@@ -1,6 +1,8 @@
 #include "SimbolAssignacio.h"
 #include "../Driver.h"
 
+#include "../code/instructions/AssignmentInstruction.h"
+
 SimbolAssignacio::SimbolAssignacio() : Simbol("Assignació"){}
 SimbolAssignacio::~SimbolAssignacio(){}
 
@@ -41,6 +43,20 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
     this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// generació de codi intermedi
+	switch(tipus){
+		case 0: // ref = exprSimple
+			if(ref.getOffset().isNull()){
+				// no existeix desplaçament en temps de compilació
+				Variable tmp = exp.dereference(driver);
+				driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
+			}else{
+
+			}
+			break;
+		
+	}
 }
 
 /**

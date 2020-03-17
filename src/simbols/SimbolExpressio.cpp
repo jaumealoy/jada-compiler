@@ -36,6 +36,8 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 
 	//generació de codi
 	this->r = driver->code.addVariable();
+	this->d.makeNull();
+	
 	driver->code.addInstruction(new AssignmentInstruction(this->tsb, this->r, this->value));
 }
 
@@ -186,7 +188,7 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 
 			// crear un nou contenedor pel valor
 			// si és un array (o un string) s'està accedint a un valor
-			this->value = std::make_shared<ValueContainer>(dc->getValue()->get() + ref.getOffset(), dt->getOcupacio());
+			this->value = std::make_shared<ValueContainer>(dc->getValue()->get() + ref.getConstOffset(), dt->getOcupacio());
             break;
         }
 
@@ -207,6 +209,10 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(ref.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// copiar la variable
+	this->r = ref.getBase();
+	this->d = ref.getOffset();
 }
 
 /**
@@ -294,6 +300,10 @@ void SimbolExpressio::make(Driver *driver, SimbolArithmeticExpression exp){
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// copiar les variables
+	this->r = exp.getBase();
+	this->d = exp.getOffset();
 }
 
 /**

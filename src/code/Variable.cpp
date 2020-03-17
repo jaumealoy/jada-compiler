@@ -33,3 +33,7 @@ std::string Variable::getNom() {
 bool Variable::isNull(){
 	return this->null;
 }
+
+void Variable::makeNull(){
+	this->null = true;
+}

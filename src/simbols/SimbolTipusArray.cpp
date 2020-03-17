@@ -291,7 +291,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		this->accessConstant = totConstant;
 
 		if(totConstant){
-			this->d = numElement * dt->getOcupacio();
+			this->dconst = numElement * dt->getOcupacio();
 		}
 
 		std::cout << "Es vol accedir a l'element " << numElement << std::endl;

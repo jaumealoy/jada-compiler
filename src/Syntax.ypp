@@ -238,8 +238,8 @@ forInit : varDecl { $$.make(this->driver, $1); }
 forPostExpression : expression { $$.make(this->driver, $1); }
     | { $$.make(this->driver); };
 
-whileIteration : WHILE LEFTPARAN exprSimple RIGHTPARAN DO M0 bloc BEND {
-    $$.make(this->driver, $3, $6, $7);
+whileIteration : WHILE LEFTPARAN M0 exprSimple RIGHTPARAN DO M0 bloc BEND {
+    $$.make(this->driver, $4, $8, $3, $7);
 };
 
 ifStatement : IF exprSimple DO bloc elseIfStatement BEND {

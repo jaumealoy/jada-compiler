@@ -25,10 +25,9 @@ protected:
 
     SimbolReferencia::ModeMVP mode;
 
-	// número de variable i desplaçament
-	int r;
-	int d;
-
+	// desplaçament constant
+	int dconst;
+	
 public:
     SimbolReferencia();
     ~SimbolReferencia();
@@ -47,9 +46,8 @@ public:
     TipusSubjacentBasic getTSB();
     SimbolReferencia::ModeMVP getMode();
 
-	// desplaçament i número de variable
-	int getOffset();
-	int getReferencia();
+	// desplaçament constant
+	int getConstOffset();
 };
 
 #endif

@@ -18,6 +18,8 @@ public:
 	~Variable();
 
 	bool isNull();
+	void makeNull();
+
 	std::string getNom();
 };
 
