@@ -10,7 +10,8 @@ SimbolIfStatement::~SimbolIfStatement() { }
 /**
  * ifStatement -> if exprSimple do bloc elseIfStatement end
  */
-void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolElseIfStatement elseIfStmt) {
+/*
+void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIfStmt) {
     // Qualsevol part de l'if no atura la propagació dels returns o breaks
     this->propaga(bloc, elseIfStmt);
 
@@ -27,6 +28,14 @@ void SimbolIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc blo
     this->fills.push_back( driver->addTreeChild(this, "do") );
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
     this->fills.push_back( std::to_string(elseIfStmt.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "end") );
+    Simbol::toDotFile(driver);
+}*/
+//ifStatement : elseStatement BEND
+void SimbolIfStatement::make(Driver *driver, SimbolElseStatement elseS){
+    this->propaga(elseS);
+
+    this->fills.push_back( std::to_string(elseS.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "end") );
     Simbol::toDotFile(driver);
 }
