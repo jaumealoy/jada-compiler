@@ -242,17 +242,6 @@ whileIteration : WHILE LEFTPARAN M0 exprSimple RIGHTPARAN DO M0 bloc BEND {
     $$.make(this->driver, $4, $8, $3, $7);
 };
 
-<<<<<<< HEAD
-ifStatement : IF exprSimple DO bloc elseIfStatement BEND {
-    $$.make(this->driver, $2, $4, $5);
-};
-
-elseIfStatement :  ELSE IF exprSimple DO bloc elseIfStatement { $$.make(this->driver, $3, $5, $6); }
-    | elseStatement { $$.make(this->driver, $1); } ;
-
-elseStatement : ELSE DO bloc { $$.make(this->driver, $3); }
-    | { $$.make(this->driver); };
-=======
 ifStatement : elseStatement BEND{ $$.make(this->driver, $1); };
 
 elseStatement : elseIfStatement ELSE DO M0 bloc { $$.make(this->driver, $1, $4, $5); }
@@ -260,7 +249,6 @@ elseStatement : elseIfStatement ELSE DO M0 bloc { $$.make(this->driver, $1, $4, 
 
 elseIfStatement : elseIfStatement ELSE IF exprSimple DO M0 bloc { $$.make(this->driver, $1, $4, $6, $7); }
     | IF exprSimple DO M0 bloc { $$.make(this->driver, $2, $4, $5); };
->>>>>>> cc5c35940e001db3b64d241a523f55e58edf5025
 
 switchStatement : SWITCH LEFTPARAN contSwitch BEND { $$.make(this->driver, $3); };
 

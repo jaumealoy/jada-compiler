@@ -35,7 +35,8 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
 
     // generació de codi intermedi
     driver->code.backpatch(ebloc.getLabel(), exp.getCert());
-	//driver->code.backpatch(einici.getLabel(), bloc.getSeg());
+	driver->code.backpatch(einici.getLabel(), bloc.getSeg());
+	this->seg = exp.getFals();
 
 	// és possible que bloc no contegui cap instrucció amb un goto
 	// a l'inici (com pot ser un break), és important afegir

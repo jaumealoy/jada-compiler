@@ -18,6 +18,8 @@ void SimbolStatement::make(Driver *driver, SimbolWhileStatement whileStmt){
     // pintar a l'arbre
     this->fills.push_back( std::to_string(whileStmt.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	this->seg = whileStmt.getSeg();
 }
 
 /**

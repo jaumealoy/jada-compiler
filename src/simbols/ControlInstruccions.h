@@ -2,6 +2,7 @@
 #define _H_CONTROL_INSTRUCCIONS
 
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../code/instructions/Instruction.h"
 #include "../location.hh"
 #include <string>
 #include <vector>
@@ -31,7 +32,9 @@ protected:
     void propaga(ControlInstruccions obj);
     void propaga(ControlInstruccions &a, ControlInstruccions &b);
 
-    
+	// Per guardar les possibles llistes d'instruccions de backpatching
+	std::vector<Instruction *> seg;
+
 public:
     // funcions per comprovar break
     bool conteBreak();
@@ -39,6 +42,9 @@ public:
     // funcions per comprovar returns
     std::vector<struct ReturnData> getReturns();
     bool conteReturn();
+
+	// obtenció de la llista de següents
+	std::vector<Instruction *> getSeg();
 };
 
 #endif

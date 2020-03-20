@@ -13,6 +13,7 @@ SimbolMarcador::~SimbolMarcador() {}
 void SimbolMarcador::make(Driver *driver, int tipus){
 	// indicar derivació a lambda
 	Simbol::makeEmpty();
+    Simbol::toDotFile(driver);
 
 	// generació de codi en funció del tipus
 	switch (tipus) {
