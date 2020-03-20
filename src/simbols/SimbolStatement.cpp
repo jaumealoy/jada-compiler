@@ -113,3 +113,7 @@ void SimbolStatement::make(Driver *driver, SimbolVarDecl decl){
     this->fills.push_back( std::to_string(decl.getNodeId()) );
     Simbol::toDotFile(driver);
 }
+
+std::vector<Instruction * > SimbolStatement::getSeg() {
+    return this->seg;
+}

@@ -5,7 +5,10 @@
 #include "../Label.h"
 #include "../Variable.h"
 
-enum Operator{
+
+class CondJumpInstruction : public Instruction {
+public:
+	enum Operator{
 	EQ,
 	NEQ,
 	LTE,
@@ -13,8 +16,6 @@ enum Operator{
 	GTE,
 	GT
 };
-
-class CondJumpInstruction : public Instruction {
 private:
 	Operator op;
 	Variable e1;

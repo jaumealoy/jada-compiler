@@ -281,6 +281,9 @@ void SimbolExpressio::make(Driver *driver, SimbolRelExpr exp){
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+    this->ecert = exp.getCert();
+    this->efals = exp.getFals();
 }
 
 /**

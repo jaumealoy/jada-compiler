@@ -1,6 +1,8 @@
 #include "SimbolRelExpr.h"
 #include "../Driver.h"
 
+#include "../code/instructions/CondJumpInstruction.h"
+
 SimbolRelExpr::SimbolRelExpr() : SimbolExpressio() {}
 SimbolRelExpr::~SimbolRelExpr() {}
 
@@ -55,7 +57,6 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
                         tmpValue = *(int *) a.getValue()->get() != *(int *) b.getValue()->get();
                         break;
                 }
-
                 break;
             
             case 1: // EQ
@@ -133,4 +134,34 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
     this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
     this->fills.push_back( std::to_string(b.getNodeId()) );
     Simbol::toDotFile(driver);
+
+    // generacio de codi intermedi
+    CondJumpInstruction::Operator o;
+    
+    switch (tipus) {
+        case 0: o = CondJumpInstruction::Operator::NEQ ; break;
+        case 1: o = CondJumpInstruction::Operator::EQ ; break;
+        case 2: o = CondJumpInstruction::Operator::GT ; break;
+        case 3 : o = CondJumpInstruction::Operator::GTE ; break;
+        case 4 : o = CondJumpInstruction::Operator::LT ; break;
+        case 5 : o = CondJumpInstruction::Operator::LTE ; break;
+    }
+
+    Label lab1;
+    Label lab2;
+
+    CondJumpInstruction* cji = new CondJumpInstruction(
+        o,
+        a.dereference(driver),
+        b.dereference(driver),
+        lab1
+    );
+
+    GoToInstruction* gti = new GoToInstruction(lab2);
+
+    driver->code.addInstruction(cji);
+    driver->code.addInstruction(gti);
+
+    this->ecert.push_back(cji);
+    this->efals.push_back(gti);
 }

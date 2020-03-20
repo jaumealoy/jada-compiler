@@ -7,9 +7,9 @@ SimbolStatementList::~SimbolStatementList() {}
 #include <iostream>
 
 /**
- * statementList -> statement ; statementList
+ * statementList -> statement ; M0 statementList
  */
-void SimbolStatementList::make(Driver *driver, SimbolStatement stmt, SimbolStatementList list) {
+void SimbolStatementList::make(Driver *driver, SimbolStatement stmt, SimbolMarcador m, SimbolStatementList list) {
     this->propaga(stmt, list);
 
     // pintar a l'arbre
@@ -17,6 +17,10 @@ void SimbolStatementList::make(Driver *driver, SimbolStatement stmt, SimbolState
     this->fills.push_back( driver->addTreeChild(this, ";") );
     this->fills.push_back( std::to_string(list.getNodeId()) );
     Simbol::toDotFile(driver);
+
+    // generacio de codi intermedi
+    driver->code.backpatch(m.getLabel(), stmt.getSeg());
+    this->seg = stmt.getSeg();
 }
 
 
@@ -28,4 +32,8 @@ void SimbolStatementList::make(Driver *driver){
 
     // pintar a l'arbre
     Simbol::toDotFile(driver);
+}
+
+std::vector<Instruction *> SimbolStatementList::getSeg() {
+    return this->seg;
 }

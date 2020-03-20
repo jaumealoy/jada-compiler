@@ -212,8 +212,8 @@ bloc : A statementList {
 
 A : { this->driver->ts.entrarBloc(); };
 
-statementList : statement SEMICOLON statementList { $$.make(this->driver, $1, $3); }
-    | statement error statementList { $$.make(this->driver, $1, $3); }
+statementList : statement SEMICOLON  M0 statementList { $$.make(this->driver, $1, $3, $4); }
+    | statement error M0 statementList { $$.make(this->driver, $1, $3, $4); }
     | { $$.make(this->driver); };
 
 statement : 
@@ -242,14 +242,14 @@ whileIteration : WHILE LEFTPARAN M0 exprSimple RIGHTPARAN DO M0 bloc BEND {
     $$.make(this->driver, $4, $8, $3, $7);
 };
 
-ifStatement : IF exprSimple DO M0 bloc elseIfStatement BEND {
-    $$.make(this->driver, $2, $5, $6);
+ifStatement : IF exprSimple DO bloc elseIfStatement BEND {
+    $$.make(this->driver, $2, $4, $5);
 };
 
-elseIfStatement :  ELSE IF exprSimple DO M0 bloc elseIfStatement { $$.make(this->driver, $3, $6, $7); }
+elseIfStatement :  ELSE IF exprSimple DO bloc elseIfStatement { $$.make(this->driver, $3, $5, $6); }
     | elseStatement { $$.make(this->driver, $1); } ;
 
-elseStatement : ELSE DO M0 bloc { $$.make(this->driver, $4); }
+elseStatement : ELSE DO bloc { $$.make(this->driver, $3); }
     | { $$.make(this->driver); };
 
 switchStatement : SWITCH LEFTPARAN contSwitch BEND { $$.make(this->driver, $3); };
