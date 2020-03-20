@@ -1,6 +1,7 @@
 #include "CondJumpInstruction.h"
 
-CondJumpInstruction::CondJumpInstruction(Variable e1, Variable e2, Label l) : Instruction(Instruction::Type::CONDJUMP) {
+CondJumpInstruction::CondJumpInstruction(Operator op, Variable e1, Variable e2, Label l) : Instruction(Instruction::Type::CONDJUMP) {
+	this->op = op;
 	this->e1 = e1;
 	this->e2 = e2;
 	this->l = l;
@@ -9,7 +10,30 @@ CondJumpInstruction::CondJumpInstruction(Variable e1, Variable e2, Label l) : In
 CondJumpInstruction::~CondJumpInstruction(){}
 
 std::string CondJumpInstruction::toString() {
-	return "if " + this->e1.getNom() + " = " + this->e2.getNom() +" then goto " + std::to_string(this->l.getId());
+	std::string opString;
+	switch (this->op)
+	{
+		case EQ:
+			opString = "==";
+			break;
+		case NEQ:
+			opString = "!=";
+			break;
+		case LTE:
+			opString = "<=";
+			break;
+		case LT:
+			opString = "<";
+			break;
+		case GTE:
+			opString = "<=";
+		case GT:
+			opString = ">";
+			break;
+		default:
+			break;
+	}
+	return "if " + this->e1.getNom() + " " + opString + " " + this->e2.getNom() +" then goto " + std::to_string(this->l.getId());
 }
 
 void CondJumpInstruction::setLabel(Label l){
