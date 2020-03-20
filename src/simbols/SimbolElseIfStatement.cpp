@@ -10,7 +10,7 @@ SimbolElseIfStatement::~SimbolElseIfStatement(){}
 /**
  * elseIfStatement -> else if exprSimple do bloc end elseIfStatement
  */
-void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc bloc, SimbolElseIfStatement elseIf){
+/*void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIf){
     // comprovar que l'expressió és un boolean
     if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
         driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
@@ -27,11 +27,51 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc
     this->fills.push_back( driver->addTreeChild(this, "end") );
     this->fills.push_back( std::to_string(elseIf.getNodeId()) );
     Simbol::toDotFile(driver);
+}*/
+
+//ElseIfStatement -> IF exprSimple DO M0 bloc 
+
+void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc){
+    // comprovar que l'expressió és un boolean
+    if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
+        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
+    }
+
+    // propagar els possibles returns i breaks que benguin de bloc i elseIfStatement
+    this->propaga(bloc);
+
+    // pintar a l'arbre
+    this->fills.push_back( driver->addTreeChild(this, "if") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
+    this->fills.push_back( std::to_string(bloc.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "end") );
+    //this->fills.push_back( std::to_string(elseIf.getNodeId()) );
+    Simbol::toDotFile(driver);
+}
+
+//elseIfStatement -> elseIfStatement ELSE IF exprSimple DO M0 bloc
+void SimbolElseIfStatement::make(Driver *driver, SimbolElseIfStatement elseif, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc){
+    // comprovar que l'expressió és un boolean
+    if (exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
+        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
+    }
+
+    this->propaga(bloc, elseif);
+
+    // pintar a l'arbre
+    this->fills.push_back( std::to_string(elseif.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "else if") );
+    this->fills.push_back( std::to_string(exp.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
+    this->fills.push_back( std::to_string(bloc.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 /**
  * elseIfStatement -> elseStatement
  */
+/*
 void SimbolElseIfStatement::make(Driver *driver, SimbolElseStatement elseBloc){
     if(!elseBloc.isEmpty()){
         // no és una derivació a lambda
@@ -43,4 +83,5 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolElseStatement elseBloc){
     this->fills.push_back( std::to_string(elseBloc.getNodeId()) );
     Simbol::toDotFile(driver);
 }
+*/
 
