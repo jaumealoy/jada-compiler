@@ -9,13 +9,13 @@
 class CondJumpInstruction : public Instruction {
 public:
 	enum Operator{
-	EQ,
-	NEQ,
-	LTE,
-	LT,
-	GTE,
-	GT
-};
+		EQ,
+		NEQ,
+		LTE,
+		LT,
+		GTE,
+		GT
+	};
 private:
 	Operator op;
 	Variable e1;

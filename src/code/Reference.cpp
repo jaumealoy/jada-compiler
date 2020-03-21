@@ -5,6 +5,11 @@
 Reference::Reference(){}
 Reference::~Reference(){}
 
+Reference::Reference(Variable r, Variable d){
+	this->r = r;
+	this->d = d;
+}
+
 Variable Reference::dereference(Driver *driver){
 	// crear variable resultant
 	Variable tmp;

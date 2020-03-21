@@ -166,7 +166,7 @@ varDecl : CONST Tipus ID varInit { $$.make(this->driver, $2, $3, $4, true); }
     | Tipus ID varInit { $$.make(this->driver, $1, $2, $3, false); }
     | varDecl COMA ID varInit { $$.make(this->driver, $1, $3, $4); };
 
-varInit : EQ exprSimple{ $$.make(this->driver, $2); }
+varInit : EQ exprSimple { $$.make(this->driver, $2); }
     | EQ arrayInit { $$.make(this->driver, $2); }
     | { $$.make(this->driver); };
 
@@ -260,8 +260,8 @@ contSwitch : exprSimple RIGHTPARAN BBEGIN DEFAULT BBEGIN bloc BEND { $$.make(thi
 
 exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
-    | exprSimple AND exprSimple { $$.make(this->driver, $1, $3, 0); }
-    | exprSimple OR exprSimple { $$.make(this->driver, $1, $3, 1); }
+    | exprSimple AND M0 exprSimple { $$.make(this->driver, $1, $3, $4, 0); }
+    | exprSimple OR M0 exprSimple { $$.make(this->driver, $1, $3, $4, 1); }
     | exprSimple IF exprSimple ELSE exprSimple { $$.make(this->driver, $1, $3, $5); }
     | referencia { $$.make(this->driver, $1); }
 	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
