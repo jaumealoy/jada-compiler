@@ -37,8 +37,12 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarc
         driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
     }
 
-    // propagar els possibles returns i breaks que benguin de bloc i elseIfStatement
+    // propagar els possibles returns i breaks que venguin de bloc i elseIfStatement
     this->propaga(bloc);
+
+    //generació de codi
+    driver->code.backpatch(marc.getLabel(), exp.getCert());
+    printf("%d", marc.getLabel().getId());
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "if") );
@@ -59,6 +63,10 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolElseIfStatement elseif, S
 
     this->propaga(bloc, elseif);
 
+    //Generació de codi
+    driver->code.backpatch(marc.getLabel(), exp.getCert());
+    elseif.seg = exp.getFals();
+    
     // pintar a l'arbre
     this->fills.push_back( std::to_string(elseif.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "else if") );

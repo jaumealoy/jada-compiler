@@ -19,11 +19,20 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 	switch (tipus) {
 		case 0:
 			this->et = driver->code.addLabel();
-			driver->code.addInstruction(new SkipInstruction(this->et));
+			driver->code.addInstruction(new SkipInstruction(Label()));
 			break;
+		case 1:
+			//this->seg.(driver->code.addInstruction(new GoToInstruction(this->et)));
+
+			this->et = driver->code.addLabel();
+			driver->code.addInstruction(new SkipInstruction(Label()));
 	}
 }
 
 Label SimbolMarcador::getLabel() {
 	return this->et;
+}
+
+std::vector<Instruction * > SimbolMarcador::getSeg(){
+	return this->seg;
 }

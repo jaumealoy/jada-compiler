@@ -1,0 +1,2 @@
+trueConst = true
+falseConst = false
