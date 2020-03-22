@@ -7,17 +7,39 @@
 #include "../../taulasimbols/TipusSubjacentBasic.h"
 #include <memory>
 
+
+/**
+ * Existeixen diferents tipus d'assignacions
+ * a = b
+ * a[c] = b
+ * a = b[c]
+ * i és necessari contemplar els diferents casos
+ */
+
 class AssignmentInstruction : public Instruction {
+public:
+	enum Type{
+		SIMPLE,
+		SOURCE_OFF, // a = b[c]
+		TARGET_OFF // a[c] = b
+	};
+
 private:
+	// indicar valors constants
 	std::shared_ptr<ValueContainer> value;
 	TipusSubjacentBasic tsb;
 
+	// variables per indicar les diferents variables
 	Variable desti;
 	Variable origen;
+	Variable offset;
+
+	AssignmentInstruction::Type type;
 
 public:
 	AssignmentInstruction(TipusSubjacentBasic tsb, Variable desti, std::shared_ptr<ValueContainer> value);
 	AssignmentInstruction(Variable desti, Variable origen);
+	AssignmentInstruction(AssignmentInstruction::Type, Variable a, Variable b, Variable c);
 	~AssignmentInstruction();
 
 	std::string toString();

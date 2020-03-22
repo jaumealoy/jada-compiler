@@ -43,9 +43,10 @@ void SimbolVarInit::make(Driver *driver, SimbolExpressio exp){
 		Label eFals = driver->code.addLabel();
 		driver->code.backpatch(eFals, exp.getFals());
 
-		// no importa generar codi addicional perquè l'assignació
-		// és una assignació normal
+		// guardar dins la variable el valor de l'expressió boolean
 		driver->code.addInstruction(new SkipInstruction(eCert));
+		
+
 		driver->code.addInstruction(new SkipInstruction(eFals));
 	}
 }
