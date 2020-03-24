@@ -134,6 +134,7 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     Simbol::toDotFile(driver);
 
 	// generació de codi
+	this->r = driver->code.addVariable();
 	Variable r1 = a.dereference(driver);
 	Variable r2 = b.dereference(driver);
 	driver->code.addInstruction(new ArithmeticInstruction(operation, this->r, r1, r2));

@@ -42,7 +42,7 @@ std::string AssignmentInstruction::toString(){
 			tmp = this->desti.getNom() + " = ";
 	}
 
-	if(origen.isNull()){
+	if(origen.isNull()){ // és una constant
 		switch(this->tsb){
 			case TipusSubjacentBasic::BOOLEAN: {
 				bool boolValue = *(bool *) this->value->get();
@@ -73,7 +73,15 @@ std::string AssignmentInstruction::toString(){
 				tmp += "valor no vàlid";
 		}
 	}else{
-		tmp += this->origen.getNom();
+		switch (this->type) {
+			case AssignmentInstruction::Type::SOURCE_OFF:
+				tmp += this->origen.getNom() + "[" + this->offset.getNom() + "]";
+				break;
+
+			default:
+				tmp += this->origen.getNom();
+		}
+		
 	}
 
 	return tmp;

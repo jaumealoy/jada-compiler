@@ -21,7 +21,12 @@ private:
 	Instruction *first;
 	Instruction *last;
 
-	
+	// comptadors de variables, etiquetes i subprogrames
+	int labelCounter;
+	int variableCounter;
+	int subprogramCounter;
+
+	void move(Instruction *inst, Instruction *after);
 
 public:
 	CodeGeneration();
@@ -37,6 +42,8 @@ public:
 	void writeToFile(std::ofstream &file);
 
 	void backpatch(Label e, std::vector<Instruction*> i);
+	void move(Instruction *start, Instruction *end, Instruction *after);
+	void remove(Instruction *inst);
 };
 
 #endif

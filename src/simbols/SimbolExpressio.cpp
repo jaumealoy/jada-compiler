@@ -61,7 +61,7 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
     this->tsb = exp.getTSB();
 
     switch (tipus) {
-        case 0: // exprSimple -> not exprSimple
+        case 0: { // exprSimple -> not exprSimple
             // comprovar que exprSimple és un boolean
             if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
                 driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
@@ -75,9 +75,16 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
 				this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(bool));
             }
 
+			// canviar les coes d'instruccions
+			// els salts a cert ara van a fals, i al revés
+			std::vector<Instruction *> tmp = exp.getCert();
+			this->ecert = exp.getFals();
+			this->efals = tmp;
+
             break;
-        
-        case 1: // exprSimple -> ( exprSimple )
+		}
+
+        case 1: { // exprSimple -> ( exprSimple )
             // el valor pot ser un enter o boolean
 
             // copiarem el seus valors independentment de si són constants o no
@@ -89,8 +96,17 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
                 this->makeNull();
             }
 
-            break;
+			// no importa crear una altra variable temporal
+			this->r = exp.getBase();
+			this->d = exp.getOffset();
 
+			// en cas que siguin expressions booleanes
+			this->ecert = exp.getCert();
+			this->efals = exp.getFals();
+
+            break;
+		}
+		
         default:
             this->makeNull();
     }

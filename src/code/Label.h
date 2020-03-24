@@ -10,6 +10,9 @@ private:
 
 public:
 	Label();
+	Label(int id);
+	Label(int id, std::string name);
+
 	~Label();
 
 	int getId();
