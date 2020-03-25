@@ -1,0 +1,10 @@
+proc main() begin
+	int i = 47 + 33 * 7;
+	switch(i) begin
+		case 1 do
+			int t = 0;
+			break;
+		case 2 do
+			int j = 87;
+	end;
+end main;

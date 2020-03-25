@@ -55,6 +55,7 @@ std::string error_noms_cap(std::string real, std::string esperat);
 
 // Errors Switch
 std::string error_default_definit();
+std::string error_default_darrer();
 std::string error_case_definit(std::string a);
 
 #endif

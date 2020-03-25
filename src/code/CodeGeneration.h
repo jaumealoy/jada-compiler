@@ -6,10 +6,11 @@
 
 #include "Table.hpp"
 #include "instructions/Instruction.h"
-#include <fstream>
-#include <vector>
 #include "Variable.h"
 #include "Label.h"
+#include <list>
+#include <vector>
+#include <fstream>
 
 class CodeGeneration{
 private:
@@ -41,7 +42,10 @@ public:
 
 	void writeToFile(std::ofstream &file);
 
+	void backpatch(Label e, Instruction *i);
 	void backpatch(Label e, std::vector<Instruction*> i);
+	void backpatch(Label e, std::list<Instruction*> i);
+
 	void move(Instruction *start, Instruction *end, Instruction *after);
 	void remove(Instruction *inst);
 };

@@ -72,19 +72,32 @@ void CodeGeneration::writeToFile(std::ofstream &file){
  * Substitueix l'etiqueta dels salts (condicionals o no) per l'etiqueta
  * passada per paràmetre
  */
-void CodeGeneration::backpatch(Label e, std::vector<Instruction *> v) {
-	for(int i = 0; i < v.size(); i++) {
-		switch (v[i]->getType()) {
-			case Instruction::Type::GOTO: 
-				((GoToInstruction *) v[i])->setLabel(e); 
-				break;
+void CodeGeneration::backpatch(Label e, Instruction *v) {
+	switch (v->getType()) {
+		case Instruction::Type::GOTO: 
+			((GoToInstruction *) v)->setLabel(e); 
+			break;
 
-			case Instruction::Type::CONDJUMP:
-				((CondJumpInstruction *) v[i])->setLabel(e);
-				break;
-		}
+		case Instruction::Type::CONDJUMP:
+			((CondJumpInstruction *) v)->setLabel(e);
+			break;
 	}
 }
+
+void CodeGeneration::backpatch(Label e, std::vector<Instruction *> v) {
+	for(int i = 0; i < v.size(); i++) {
+		this->backpatch(e, v[i]);
+	}
+}
+
+void CodeGeneration::backpatch(Label e, std::list<Instruction *> v) {
+	std::list<Instruction *>::iterator it = v.begin();
+	while(it != v.end()){
+		this->backpatch(e, *it);
+		it++;
+	}
+}
+
 
 /**
  * Mou les instruccions situades entre start i end (inloses) després d'after

@@ -13,5 +13,6 @@ public:
 	char *get();
 	void set(const char *value, unsigned int valueSize);
 	unsigned int getSize();
+	friend bool operator==(const ValueContainer &left, const ValueContainer &right);
 };
 #endif

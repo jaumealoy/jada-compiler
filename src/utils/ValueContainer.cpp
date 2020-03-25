@@ -39,3 +39,13 @@ void ValueContainer::set(const char *value, unsigned int valueSize){
 unsigned int ValueContainer::getSize(){
 	return this->valueSize;
 }
+
+bool operator==(const ValueContainer &left, const ValueContainer &right){
+	if(left.valueSize == right.valueSize){
+		if(memcmp(left.value, right.value, left.valueSize) == 0){
+			return true;
+		}
+	}
+
+	return false;
+}
