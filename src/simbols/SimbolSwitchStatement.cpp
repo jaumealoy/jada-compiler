@@ -24,11 +24,7 @@ void SimbolSwitchStatement::make(Driver *driver, SimbolContSwitch cont) {
 	driver->code.addInstruction(new SkipInstruction(cont.getFi()));
 
 	// canviar les etiquetes anteriors
-	if(cont.getPreviousCondJump() != nullptr){
-		driver->code.backpatch(cont.getFi(), cont.getPreviousCondJump());
-	}
-
-	if(cont.getPreviousGoTo() != nullptr){
-		driver->code.backpatch(cont.getFi(), cont.getPreviousGoTo());
-	}
+	driver->code.backpatch(cont.getFi(), cont.getPreviousCondJump());
+	driver->code.backpatch(cont.getFi(), cont.getPreviousGoTo());
+	
 }

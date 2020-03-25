@@ -3,6 +3,7 @@
 #include "../Driver.h"
 #include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/CondJumpInstruction.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 SimbolSwitchCaseCont::SimbolSwitchCaseCont() : Simbol("SwitchCaseCont") {}
 SimbolSwitchCaseCont::~SimbolSwitchCaseCont() {}
@@ -85,12 +86,49 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 
 	// és possible que el case anterior tengui un salt incondicional 
 	// a un etiqueta no definida
-	if(cont.getPreviousCondJump() != nullptr){
+	if(cont.getPreviousCondJump().size() > 0){
 		driver->code.backpatch(m1.getLabel(), cont.getPreviousCondJump());
 	}
 
+	Label lstart = driver->code.addLabel(); // etiqueta d'inici del bloc
+
 	if(this->tsb == TipusSubjacentBasic::BOOLEAN){
-		// TODO: gestionar avaluació condicionada	
+		// Afegir etiquetes de final d'avaluació condicionada
+		Label boolEnd = driver->code.addLabel();
+		Label trueCase = driver->code.addLabel();
+		Label falseCase = driver->code.addLabel();
+		Variable tmp = driver->code.addVariable();
+
+		// exp = true
+		driver->code.addInstruction(new SkipInstruction(trueCase));
+		driver->code.backpatch(trueCase, exp.getCert());
+		driver->code.addInstruction(new AssignmentInstruction(
+			tmp,
+			((DescripcioConstant *) driver->ts.consulta("true"))->getVariable()
+		));
+		driver->code.addInstruction(new GoToInstruction(boolEnd));
+
+		// exp = false
+		driver->code.addInstruction(new SkipInstruction(falseCase));
+		driver->code.backpatch(falseCase, exp.getFals());
+		driver->code.addInstruction(new AssignmentInstruction(
+			tmp,
+			((DescripcioConstant *) driver->ts.consulta("false"))->getVariable()
+		));
+
+		// final
+		driver->code.addInstruction(new SkipInstruction(boolEnd));
+
+		// generar salt condicional
+		CondJumpInstruction *inst = new CondJumpInstruction(
+			CondJumpInstruction::Operator::NEQ,
+			tmp,
+			this->r,
+			Label() // la definirem posteriorment
+		);
+
+		driver->code.addInstruction(inst);
+		this->previousCondJump.push_back(inst);
 	}else{
 		// generar salt condicional
 		CondJumpInstruction *inst = new CondJumpInstruction(
@@ -99,23 +137,22 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 			this->r,
 			Label() // la definirem posteriorment
 		);
-		
+
 		driver->code.addInstruction(inst);
-		this->previousCondJump = inst;
+		this->previousCondJump.push_back(inst);
 	}
 
 	// aquí comença el codi del bloc (indicar l'etiqueta d'inici)
-	Label lstart = driver->code.addLabel();
 	driver->code.addInstruction(new SkipInstruction(lstart));
 
 	// canviar les etiquetes anteriors
-	if(cont.getPreviousGoTo() != nullptr){
+	if(cont.getPreviousGoTo().size() > 0){
 		driver->code.backpatch(lstart, cont.getPreviousGoTo());
 	}
 }
 
-Instruction * SimbolSwitchCaseCont::getPreviousGoTo(){ return this->previousGoTo; }
-Instruction *SimbolSwitchCaseCont::getPreviousCondJump(){ return this->previousCondJump; }
+std::list<Instruction *> SimbolSwitchCaseCont::getPreviousGoTo(){ return this->previousGoTo; }
+std::list<Instruction *> SimbolSwitchCaseCont::getPreviousCondJump(){ return this->previousCondJump; }
 Label SimbolSwitchCaseCont::getFi(){ return this->fi; }
 
 Variable SimbolSwitchCaseCont::getVariable(){ return this->r; }

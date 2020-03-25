@@ -25,8 +25,8 @@ private:
 	// etiquetes per la generació de codi
 	Label fi;
 
-	Instruction *previousGoTo; // goto incondicional (si no hi ha break)
-	Instruction *previousCondJump; // salt condicional d'avaluar la condició
+	std::list<Instruction *> previousGoTo; // goto incondicional (si no hi ha break)
+	std::list<Instruction *> previousCondJump; // salt condicional d'avaluar la condició
 
 public: 
     SimbolContSwitch();
@@ -36,8 +36,8 @@ public:
 	void make(Driver *driver, SimbolContSwitch cont, SimbolBloc bloc, SimbolMarcador m);
 	void make(Driver *driver, SimbolSwitchCaseCont cont, SimbolBloc bloc);
 
-	Instruction *getPreviousGoTo();
-	Instruction *getPreviousCondJump();
+	std::list<Instruction *> getPreviousGoTo();
+	std::list<Instruction *> getPreviousCondJump();
 	Label getFi();
 
 	Variable getVariable();

@@ -7,4 +7,10 @@ proc main() begin
 		case 2 do
 			int j = 87;
 	end;
+
+	boolean b;
+	switch (b) begin
+		case true do
+		case false do
+	end;
 end main;
