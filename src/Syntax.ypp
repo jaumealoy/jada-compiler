@@ -143,7 +143,6 @@
 %type <SimbolArrayFinalList> arrayFinalList
 
 %type <SimbolMarcador> M0
-%type <SimbolMarcador> M1
 
 %left OP_TIMES OP_DIV OP_MOD AND NOT
 %left OP_ADD OP_MINUS OR
@@ -245,10 +244,10 @@ whileIteration : WHILE LEFTPARAN M0 exprSimple RIGHTPARAN DO M0 bloc BEND {
 
 ifStatement : elseStatement BEND{ $$.make(this->driver, $1); };
 
-elseStatement : elseIfStatement ELSE DO M1 bloc { $$.make(this->driver, $1, $4, $5); }
+elseStatement : elseIfStatement ELSE DO M0 bloc { $$.make(this->driver, $1, $4, $5); }
     | elseIfStatement { $$.make(this->driver, $1); };
 
-elseIfStatement : elseIfStatement ELSE IF exprSimple DO M0 bloc { $$.make(this->driver, $1, $4, $6, $7); }
+elseIfStatement : elseIfStatement ELSE IF M0 exprSimple DO M0 bloc { $$.make(this->driver, $1, $4, $5, $7, $8); }
     | IF exprSimple DO M0 bloc { $$.make(this->driver, $2, $4, $5); };
 
 switchStatement : SWITCH LEFTPARAN contSwitch BEND { $$.make(this->driver, $3); };
@@ -320,7 +319,6 @@ expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
 	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); };
 
 M0 : { $$.make(this->driver, 0); };
-M1 : { $$.make(this->driver, 1); };
 %%
 
 // Codi de les funcions pròpies del sintàctic

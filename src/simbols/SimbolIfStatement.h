@@ -9,6 +9,7 @@
 
 class SimbolIfStatement : public SimbolStatement {
 private:
+    Label final;
 public:
     SimbolIfStatement();
     ~SimbolIfStatement();

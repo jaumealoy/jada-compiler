@@ -8,13 +8,16 @@
 
 class SimbolElseIfStatement : public SimbolStatement {
 private:
+
 public:
     SimbolElseIfStatement();
     ~SimbolElseIfStatement();
 
+    Label final;
+
     //void make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIf);
-    void make(Driver *driver, SimbolElseIfStatement elseif, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc);
-    void make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc);
+    void make(Driver *driver, SimbolElseIfStatement elseif, SimbolMarcador einici, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc);
+    void make(Driver *driver, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc);
     //void make(Driver *driver, SimbolElseStatement elseBloc);
 };
 
