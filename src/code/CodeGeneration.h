@@ -11,6 +11,7 @@
 #include <list>
 #include <vector>
 #include <fstream>
+#include "SubProgram.h"
 
 class CodeGeneration{
 private:
@@ -39,6 +40,8 @@ public:
 	Variable addVariable(std::string name);
 	
 	Instruction *addInstruction(Instruction *inst);
+
+	SubProgram *addSubProgram(std::string id);
 
 	void writeToFile(std::ofstream &file);
 

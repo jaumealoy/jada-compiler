@@ -11,7 +11,8 @@ public:
 		GOTO,
 		CONDJUMP,
 		ARITHMETIC,
-		ASSIGNMENT
+		ASSIGNMENT,
+		CALL
 	};
 private:
 	Instruction::Type opcode;

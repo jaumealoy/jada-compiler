@@ -3,11 +3,12 @@
 
 #include "Descripcio.h"
 #include <string>
+#include "../code/SubProgram.h"
 
 class DescripcioProc : public Descripcio {
 private:
     // número de procedure
-    int np;
+    SubProgram* sp;
 
 public:
     static int numProcedure;

@@ -166,3 +166,7 @@ void CodeGeneration::remove(Instruction *inst){
 
 	//delete inst;
 }
+
+SubProgram * CodeGeneration::addSubProgram(std::string id) {
+	return new SubProgram(++this->subprogramCounter, id);
+}

@@ -1,5 +1,7 @@
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"
+#include "../code/instructions/CallInstruction.h"
+
 
 #include "../Driver.h"
 
@@ -65,6 +67,9 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, id + "()") );
     Simbol::toDotFile(driver);
+
+    // generacio de codi
+    //driver->code.addInstruction(new CallInstruction(driver->code.));
 }
 
 /**

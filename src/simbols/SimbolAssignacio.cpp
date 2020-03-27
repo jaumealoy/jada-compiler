@@ -2,6 +2,7 @@
 #include "../Driver.h"
 
 #include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 
 SimbolAssignacio::SimbolAssignacio() : Simbol("Assignació"){}
 SimbolAssignacio::~SimbolAssignacio(){}
@@ -64,8 +65,39 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 				}
 			}else{
 				// és un boolean, s'haurà fet qualque salt condicional
-				// TODO
-			}
+				Label ec = driver->code.addLabel();
+                Label ef = driver->code.addLabel();
+                Label efi = driver->code.addLabel();
+
+                driver->code.addInstruction(new SkipInstruction(ec));
+                driver->code.backpatch(ec, exp.getCert());
+                DescripcioConstant* c = (DescripcioConstant *) driver->ts.consulta("true");
+                DescripcioConstant* f = (DescripcioConstant *) driver->ts.consulta("false");
+                if (ref.getOffset().isNull()) {
+                    driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), c->getVariable()));
+                } else {
+                    driver->code.addInstruction(new AssignmentInstruction(
+                        AssignmentInstruction::Type::TARGET_OFF,
+                        ref.getBase(),
+                        c->getVariable(),
+                        ref.getOffset()                        
+                        ));
+                }
+                driver->code.addInstruction(new GoToInstruction(efi));
+                driver->code.addInstruction(new SkipInstruction(ef));
+                driver->code.backpatch(ef, exp.getFals());
+                if (ref.getOffset().isNull()) {
+                    driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), f->getVariable()));
+                } else {
+                    driver->code.addInstruction(new AssignmentInstruction(
+                        AssignmentInstruction::Type::TARGET_OFF,
+                        ref.getBase(),
+                        f->getVariable(),
+                        ref.getOffset() 
+                    ));
+                }
+                driver->code.addInstruction(new SkipInstruction(efi));
+            }
 			break;
 		
 	}

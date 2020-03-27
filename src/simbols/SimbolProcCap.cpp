@@ -28,7 +28,9 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
     DescripcioProc *d = new DescripcioProc();
     
     // inserir el procedure
+    SubProgram* sp = driver->code.addSubProgram(nom);
     driver->ts.posar(nom, d);
+
 
     this->nom = nom;
 

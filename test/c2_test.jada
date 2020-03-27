@@ -1,7 +1,7 @@
 proc main() begin
-	int i = 4 + 3;
-
-	while ( i > 0 ) do
-		i = i - 1;
-	end;
+	int i = 4 + 2;
+	boolean[6] array;
+	array[0] = false;
+	array[3] = true;
+	boolean e = false;
 end main;

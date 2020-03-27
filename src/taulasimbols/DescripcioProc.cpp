@@ -3,7 +3,6 @@
 int DescripcioProc::numProcedure = 0;
 
 DescripcioProc::DescripcioProc() : Descripcio(Descripcio::Tipus::PROCEDIMENT) {
-    this->np = DescripcioProc::numProcedure++;
 }
 
 DescripcioProc::~DescripcioProc() {}
