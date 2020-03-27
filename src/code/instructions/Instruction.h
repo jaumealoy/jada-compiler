@@ -15,7 +15,10 @@ public:
 	};
 private:
 	Instruction::Type opcode;
+
+	// llista doblement encadenada
 	Instruction *next;
+	Instruction *prev;
 
 public:
 	Instruction();
@@ -24,6 +27,9 @@ public:
 
 	void setNext(Instruction *next);
 	Instruction *getNext();
+
+	void setPrevious(Instruction *previous);
+	Instruction *getPrevious();
 
 	std::string toString();
 

@@ -28,6 +28,7 @@ private:
 
 protected:
     std::vector<Instruction *> seg;
+    Label label;
 
 public:
     SimbolStatement();

@@ -11,4 +11,7 @@ void SimbolBloc::make(Driver *driver, SimbolStatementList list){
     // pintar a l'arbre
     this->fills.push_back(std::to_string(list.getNodeId()));
     Simbol::toDotFile(driver);
+
+	// la següent instrucció d'aquest bloc no es coneix encara
+	this->seg = list.getSeg();
 }

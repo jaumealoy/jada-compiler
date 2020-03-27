@@ -47,12 +47,24 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 	// generació de codi intermedi
 	switch(tipus){
 		case 0: // ref = exprSimple
-			if(ref.getOffset().isNull()){
-				// no existeix desplaçament en temps de compilació
-				Variable tmp = exp.dereference(driver);
-				driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
-			}else{
+			Variable tmp = exp.dereference(driver);
 
+			if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
+				if(ref.getOffset().isNull()){
+					// no existeix desplaçament en temps de compilació
+					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
+				}else{
+					// és una assignació de l'estil a[c] = b
+					driver->code.addInstruction(new AssignmentInstruction(
+						AssignmentInstruction::Type::TARGET_OFF,
+						ref.getBase(),
+						tmp,
+						ref.getOffset()
+					));
+				}
+			}else{
+				// és un boolean, s'haurà fet qualque salt condicional
+				// TODO
 			}
 			break;
 		

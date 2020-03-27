@@ -27,6 +27,11 @@ void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif, Sim
     this->fills.push_back( std::to_string(elseif.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "else do") );
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
+
+    this->final = elseif.final;
+    driver->code.backpatch(marc.getLabel(), elseif.getSeg());
+    driver->code.backpatch(final, bloc.getSeg());
+
     Simbol::toDotFile(driver);
 }
 
@@ -36,6 +41,9 @@ void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif){
 
     this->fills.push_back( std::to_string(elseif.getNodeId()) );
     Simbol::toDotFile(driver);
+
+    this->seg = elseif.getSeg();
+    this->final = elseif.final;
 }
 /**
  * elseStatement -> lambda

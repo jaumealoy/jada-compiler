@@ -13,6 +13,7 @@ SimbolMarcador::~SimbolMarcador() {}
 void SimbolMarcador::make(Driver *driver, int tipus){
 	// indicar derivació a lambda
 	Simbol::makeEmpty();
+    Simbol::toDotFile(driver);
 
 	// generació de codi en funció del tipus
 	switch (tipus) {
@@ -20,9 +21,24 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 			this->et = driver->code.addLabel();
 			driver->code.addInstruction(new SkipInstruction(this->et));
 			break;
+		case 2:
+			// és un marcador que crea una instrucció skip
+			// que serveix per marcar blocs de codi
+			// Aquesta instrucció s'eliminarà en qualque moment
+			// No importa que l'etiqueta no existeixi
+			this->inst = driver->code.addInstruction(new SkipInstruction(this->et));
+			break;
 	}
 }
 
 Label SimbolMarcador::getLabel() {
 	return this->et;
+}
+
+std::vector<Instruction *> SimbolMarcador::getSeg(){
+	return this->seg;
+}
+
+Instruction * SimbolMarcador::getInstruction(){
+	return this->inst;
 }

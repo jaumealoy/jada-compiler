@@ -1,7 +1,10 @@
 #include "SimbolTipusArray.h"
 #include "../Driver.h"
 #include "SimbolExpressio.h"
+#include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/ArithmeticInstruction.h"
 #include <iostream>
+#include <memory>
 
 SimbolTipusArray::SimbolTipusArray() : SimbolReferencia(), dimensions() {
     this->nomNode = "TipusArray";
@@ -88,10 +91,14 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         if(d->getTipus() == Descripcio::Tipus::VARIABLE){
             tipus = ((DescripcioVariable *) d)->getNomTipus();
             this->mode = SimbolReferencia::ModeMVP::VAR;
+			this->r =  ((DescripcioVariable *) d)->getVariable();
         }else{
             tipus = ((DescripcioConstant *) d)->getNomTipus();
             this->mode = SimbolReferencia::ModeMVP::CONST;
+			this->r =  ((DescripcioConstant *) d)->getVariable();
         }
+
+		this->d.makeNull();
 
         // obtenir el tsb (sabem que el tipus existeix sí o sí perquè s'haurà
         // inserit automàticament en definir una variable d'aquest tipus)
@@ -138,9 +145,6 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 		tmp.index = exp;
 		tmp.dimensio = ddim;
 		this->refIndex.push_back(tmp);
-
-		// i guardar el número de variable
-
     }
 
     // pintar a l'arbre
@@ -204,6 +208,9 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
 		tmp.index = exp;
 		tmp.dimensio = ddim;
 		this->refIndex.push_back(tmp);
+
+		this->r = contArray.r;
+		this->d = contArray.d;
     }else{
         // s'està definint un array, el vector dimensions conté la llista de dimensions
         // trobades fins a aquest instant
@@ -279,7 +286,50 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		int numElement = 0;
 		this->refIndex = array.refIndex;
 
+		// calcular el desplaçament en temps d'execució
+		this->d = driver->code.addVariable();
+		int intValue = 0; // TODO: falta determinar si es vol indicar el començament 
+						  // de l'element o el final (ara mateix indicaria el final)
+		driver->code.addInstruction(new AssignmentInstruction(
+			TipusSubjacentBasic::INT,
+			this->d,
+			std::make_shared<ValueContainer>((const char *) &intValue, sizeof(int))
+		));
+
 		for(int i = this->refIndex.size() - 1; i >= 0; i--){
+			Variable tmp = this->refIndex[i].index.dereference(driver);
+			Variable paux = driver->code.addVariable();
+
+			// carregar productori dins variable temporal
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				paux,
+				std::make_shared<ValueContainer>((const char *) &productori, sizeof(int))
+			));
+
+			// multiplicar productori per valor de l'índex
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::MULTIPLICATION,
+				paux,
+				paux,
+				tmp
+			));
+
+			// sumar el desplaçament
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::ADDITION,
+				this->d,
+				this->d,
+				paux
+			));
+
+			productori *= this->refIndex[i].dimensio->getDimensio();
+		}
+
+		this->r = array.r;
+
+
+		/*for(int i = this->refIndex.size() - 1; i >= 0; i--){
 			totConstant = totConstant && this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST;
 
 			if(this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST){
@@ -292,7 +342,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 
 		if(totConstant){
 			this->dconst = numElement * dt->getOcupacio();
-		}
+		}*/
 
 		std::cout << "Es vol accedir a l'element " << numElement << std::endl;
     }else{

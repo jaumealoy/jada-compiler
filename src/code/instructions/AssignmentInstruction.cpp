@@ -6,6 +6,8 @@ AssignmentInstruction::AssignmentInstruction(TipusSubjacentBasic tsb, Variable d
 	this->desti = desti;
 	this->tsb = tsb;
 	this->value = value;
+	this->offset.makeNull();
+	this->type = AssignmentInstruction::Type::SIMPLE;
 }
 
 AssignmentInstruction::AssignmentInstruction(Variable desti, Variable origen)
@@ -13,14 +15,34 @@ AssignmentInstruction::AssignmentInstruction(Variable desti, Variable origen)
 {
 	this->origen = origen;
 	this->desti = desti;
+	this->offset.makeNull();
+	this->type = AssignmentInstruction::Type::SIMPLE;
+}
+
+AssignmentInstruction::AssignmentInstruction(AssignmentInstruction::Type type, Variable a, Variable b, Variable c) 
+	: Instruction(Instruction::Type::ASSIGNMENT)
+{
+	this->desti = a;
+	this->origen = b;
+	this->offset = c;
+	this->type = type;
 }
 
 AssignmentInstruction::~AssignmentInstruction(){}
 
 std::string AssignmentInstruction::toString(){
-	std::string tmp = this->desti.getNom() + " = ";
+	std::string tmp;
 
-	if(origen.isNull()){
+	switch (type){
+		case AssignmentInstruction::Type::TARGET_OFF:
+			tmp += this->desti.getNom() + "["+ this->offset.getNom() +"] = ";
+			break;
+
+		default:
+			tmp = this->desti.getNom() + " = ";
+	}
+
+	if(origen.isNull()){ // és una constant
 		switch(this->tsb){
 			case TipusSubjacentBasic::BOOLEAN: {
 				bool boolValue = *(bool *) this->value->get();
@@ -51,7 +73,15 @@ std::string AssignmentInstruction::toString(){
 				tmp += "valor no vàlid";
 		}
 	}else{
-		tmp += this->origen.getNom();
+		switch (this->type) {
+			case AssignmentInstruction::Type::SOURCE_OFF:
+				tmp += this->origen.getNom() + "[" + this->offset.getNom() + "]";
+				break;
+
+			default:
+				tmp += this->origen.getNom();
+		}
+		
 	}
 
 	return tmp;

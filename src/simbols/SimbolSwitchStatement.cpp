@@ -1,4 +1,5 @@
 #include "SimbolSwitchStatement.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../Driver.h"
 
 SimbolSwitchStatement::SimbolSwitchStatement() : SimbolStatement() {
@@ -18,4 +19,12 @@ void SimbolSwitchStatement::make(Driver *driver, SimbolContSwitch cont) {
     this->fills.push_back( std::to_string(cont.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "end") );
     Simbol::toDotFile(driver);
+
+	// indicar el final
+	driver->code.addInstruction(new SkipInstruction(cont.getFi()));
+
+	// canviar les etiquetes anteriors
+	driver->code.backpatch(cont.getFi(), cont.getPreviousCondJump());
+	driver->code.backpatch(cont.getFi(), cont.getPreviousGoTo());
+	
 }

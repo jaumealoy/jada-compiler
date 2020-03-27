@@ -87,6 +87,9 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
 	if(array.isAccessConstant()){
 		this->dconst = array.dconst;
 	}
+
+	this->r = array.getBase();
+	this->d = array.getOffset();
 }
 
 

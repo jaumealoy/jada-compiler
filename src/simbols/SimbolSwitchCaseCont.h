@@ -1,20 +1,21 @@
-#ifndef _H_SIMBOL_CONTSWITCH
-#define _H_SIMBOL_CONTSWITCH
+#ifndef _H_SIMBOL_SWITCH_CASE_CONT
+#define _H_SIMBOL_SWITCH_CASE_CONT
 
 #include "Simbol.h"
-#include "SimbolStatement.h"
 #include "SimbolExpressio.h"
-#include "SimbolBloc.h"
 #include "SimbolMarcador.h"
-#include "SimbolSwitchCaseCont.h"
-#include "../code/Label.h"
+#include "../utils/ValueContainer.h"
 #include "../code/Variable.h"
+#include "../code/Label.h"
 #include <list>
 #include <memory>
 
-class SimbolContSwitch : public SimbolStatement {
+class Driver;
+class SimbolContSwitch;
+
+class SimbolSwitchCaseCont : public Simbol {
 private:
-    bool teDefault;
+	bool teDefault;
     std::list<std::shared_ptr<ValueContainer>> valors;
 
 	// dades de l'expressió principal
@@ -28,13 +29,11 @@ private:
 	std::list<Instruction *> previousGoTo; // goto incondicional (si no hi ha break)
 	std::list<Instruction *> previousCondJump; // salt condicional d'avaluar la condició
 
-public: 
-    SimbolContSwitch();
-    ~SimbolContSwitch();
+public:
+	SimbolSwitchCaseCont();
+	~SimbolSwitchCaseCont();
 
-    void make(Driver *driver, SimbolExpressio exp);
-	void make(Driver *driver, SimbolContSwitch cont, SimbolBloc bloc, SimbolMarcador m);
-	void make(Driver *driver, SimbolSwitchCaseCont cont, SimbolBloc bloc);
+	void make(Driver *driver, SimbolContSwitch cont, SimbolExpressio exp, SimbolMarcador m);
 
 	std::list<Instruction *> getPreviousGoTo();
 	std::list<Instruction *> getPreviousCondJump();

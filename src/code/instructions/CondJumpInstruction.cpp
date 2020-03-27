@@ -27,13 +27,15 @@ std::string CondJumpInstruction::toString() {
 			break;
 		case GTE:
 			opString = "<=";
+			break;
 		case GT:
 			opString = ">";
 			break;
 		default:
 			break;
 	}
-	return "if " + this->e1.getNom() + " " + opString + " " + this->e2.getNom() +" then goto " + std::to_string(this->l.getId());
+
+	return "if " + this->e1.getNom() + " " + opString + " " + this->e2.getNom() +" then goto " + this->l.toString();
 }
 
 void CondJumpInstruction::setLabel(Label l){

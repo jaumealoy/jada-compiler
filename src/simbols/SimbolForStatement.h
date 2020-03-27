@@ -7,6 +7,7 @@
 #include "SimbolExpressio.h"
 #include "SimbolForInit.h"
 #include "SimbolForPostExpression.h"
+#include "SimbolMarcador.h"
 
 class SimbolForStatement : public SimbolStatement {
 private:
@@ -14,7 +15,8 @@ public:
     SimbolForStatement();
     ~SimbolForStatement();
 
-    void make(Driver *driver, SimbolForInit init, SimbolExpressio exp, SimbolForPostExpression post, SimbolBloc bloc);
+    void make(Driver *driver, SimbolForInit init, SimbolExpressio exp, 
+		SimbolForPostExpression post, SimbolBloc bloc, SimbolMarcador cond, SimbolMarcador start, SimbolMarcador end);
 };
 
 #endif

@@ -58,7 +58,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
     this->tsb = dt->getTSB();
     this->tipus = tipus;
 
-	Variable var(id);
+	Variable var = driver->code.addVariable(id);
 
     Descripcio *desc = nullptr;
     if (constant){
@@ -149,7 +149,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
     this->tsb = varDecl.tsb;
     this->esConst = varDecl.esConst;
 
-	Variable var(id);
+	Variable var = driver->code.addVariable(id);
 
     Descripcio *desc = nullptr;
 

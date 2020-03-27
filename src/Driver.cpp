@@ -1,4 +1,7 @@
 #include "Driver.h"
+
+#include "code/instructions/AssignmentInstruction.h"
+
 #include <exception>
 
 Driver::Driver(char *filename) : 
@@ -19,12 +22,30 @@ Driver::Driver(char *filename) :
     DescripcioConstant *dc = new DescripcioConstant("boolean");
 	std::shared_ptr<ValueContainer> trueValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(trueValue);
+	
+	Variable tmpV = this->code.addVariable("trueConst");
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::BOOLEAN,
+		tmpV,
+		trueValue
+	));
+	dc->setVariable(tmpV);
+
     this->ts.posar("true", dc, true);
 
     dc = new DescripcioConstant("boolean");
 	tmp = false;
 	std::shared_ptr<ValueContainer> falseValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(falseValue);
+
+	tmpV = this->code.addVariable("falseConst");
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::BOOLEAN,
+		tmpV,
+		falseValue
+	));
+	dc->setVariable(tmpV);
+
     this->ts.posar("false", dc, true);
 
     DescripcioTipusBasic *character = new DescripcioTipusBasic(TipusSubjacentBasic::CHAR, 0, 255, 1);

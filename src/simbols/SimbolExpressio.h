@@ -4,6 +4,7 @@
 #include "Simbol.h"
 #include "SimbolReferencia.h"
 #include "SimbolLiteral.h"
+#include "SimbolMarcador.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "../utils/ValueContainer.h"
 #include "../code/instructions/Instruction.h"
@@ -43,7 +44,7 @@ public:
     ~SimbolExpressio();
 
     void make(Driver *driver, SimbolExpressio exp, int tipus);
-    void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus);
+    void make(Driver *driver, SimbolExpressio a, SimbolMarcador m, SimbolExpressio b, int tipus);
     void make(Driver *driver, SimbolReferencia ref);
     void make(Driver *driver, SimbolLiteral literal);
     void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c);

@@ -3,6 +3,8 @@
 #include "SimbolWhileStatement.h"
 #include "SimbolSwitchStatement.h"
 #include "../Driver.h"
+#include "../code/instructions/GoToInstruction.h"
+#include "../code/Label.h"
 #include <iostream>
 
 
@@ -18,6 +20,8 @@ void SimbolStatement::make(Driver *driver, SimbolWhileStatement whileStmt){
     // pintar a l'arbre
     this->fills.push_back( std::to_string(whileStmt.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	this->seg = whileStmt.getSeg();
 }
 
 /**
@@ -29,6 +33,8 @@ void SimbolStatement::make(Driver *driver, SimbolForStatement forStmt){
     // pintar a l'arbre
     this->fills.push_back( std::to_string(forStmt.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	this->seg = forStmt.getSeg();
 }
 
 /**
@@ -70,6 +76,11 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
 void SimbolStatement::make(Driver *driver, SimbolStatement::Tipus tipus){
     if(tipus == SimbolStatement::Tipus::BREAK){
         this->_conteBreak = true;
+
+		// generar un goto incondicial
+		GoToInstruction *inst = new GoToInstruction(Label());
+		driver->code.addInstruction(inst);
+		this->_breakList.push_back(inst);
     }
 
     // pintar a l'arbre

@@ -9,7 +9,10 @@ class SimbolElseIfStatement;
 
 class SimbolElseStatement : public SimbolStatement {
 private:
+
 public:
+    Label final;
+
     SimbolElseStatement();
     ~SimbolElseStatement();
 

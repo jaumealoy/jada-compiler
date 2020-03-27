@@ -2,6 +2,9 @@
 #include "SimbolRelExpr.h"
 #include "SimbolArithmeticExpression.h"
 #include "../Driver.h"
+#include "../code/Reference.h"
+#include "../code/instructions/CondJumpInstruction.h"
+#include "../code/instructions/GoToInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
 
 /**
@@ -58,7 +61,7 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
     this->tsb = exp.getTSB();
 
     switch (tipus) {
-        case 0: // exprSimple -> not exprSimple
+        case 0: { // exprSimple -> not exprSimple
             // comprovar que exprSimple és un boolean
             if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
                 driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
@@ -72,9 +75,16 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
 				this->value = std::make_shared<ValueContainer>((const char *) &tmpValue, sizeof(bool));
             }
 
+			// canviar les coes d'instruccions
+			// els salts a cert ara van a fals, i al revés
+			std::vector<Instruction *> tmp = exp.getCert();
+			this->ecert = exp.getFals();
+			this->efals = tmp;
+
             break;
-        
-        case 1: // exprSimple -> ( exprSimple )
+		}
+
+        case 1: { // exprSimple -> ( exprSimple )
             // el valor pot ser un enter o boolean
 
             // copiarem el seus valors independentment de si són constants o no
@@ -86,8 +96,17 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
                 this->makeNull();
             }
 
-            break;
+			// no importa crear una altra variable temporal
+			this->r = exp.getBase();
+			this->d = exp.getOffset();
 
+			// en cas que siguin expressions booleanes
+			this->ecert = exp.getCert();
+			this->efals = exp.getFals();
+
+            break;
+		}
+		
         default:
             this->makeNull();
     }
@@ -105,10 +124,10 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio exp, int tipus){
 }
 
 /**
- * exprSimple -> exprSimple AND exprSimple
- * exprSimple -> exprSimple OR exprSimple
+ * exprSimple -> exprSimple AND M exprSimple
+ * exprSimple -> exprSimple OR M exprSimple
  */
-void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus){
+void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolMarcador m, SimbolExpressio b, int tipus){
     if(a.isNull() || b.isNull()){
         this->makeNull();
         return;
@@ -160,6 +179,37 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
     }
     this->fills.push_back( std::to_string(b.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// segur que a i b són booleans
+	switch (tipus){
+		case 0: // AND
+			// si un operand de l'and és cert, s'ha d'avaluar el següent
+			// valor, és a dir, b
+			driver->code.backpatch(m.getLabel(), a.getCert());
+
+			// les possibles etiquetes de cert de b han de tenir un valor
+			this->ecert = b.getCert();
+
+			this->efals = a.getFals();
+			for(int i = 0; i < b.getFals().size(); i++){
+				this->efals.push_back(b.getFals()[i]);
+			}
+
+			break;
+
+		case 1: // OR
+			// si un operand és fals, s'ha d'avaluar el següent valor,
+			// és a dir, b
+			driver->code.backpatch(m.getLabel(), a.getFals());
+
+			// les etiquetes de cert han de tenir un possible valor
+			this->efals = b.getFals();
+
+			
+			break;
+
+	}
+
 }
 
 
@@ -213,6 +263,36 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 	// copiar la variable
 	this->r = ref.getBase();
 	this->d = ref.getOffset();
+
+	// en cas de tractar-se d'un boolean s'hauria de saltar al lloc corresponent
+	if(ref.getTSB() == TipusSubjacentBasic::BOOLEAN){
+		// obtenir el número de variable associat a true i false
+		// de la TS
+		DescripcioConstant *dtrue = (DescripcioConstant *) driver->ts.consulta("true");
+		DescripcioConstant *dfalse = (DescripcioConstant *) driver->ts.consulta("false");
+
+		// desreferenciar el valor (si és necessari)
+		Reference refValue(this->r, this->d);
+		Variable tmp = refValue.dereference(driver);
+		
+		Label l;
+
+		// afegir salts condicionals
+		CondJumpInstruction *trueJump = new CondJumpInstruction(
+			CondJumpInstruction::Operator::EQ,
+			dtrue->getVariable(),
+			tmp,
+			l
+		);
+		
+		driver->code.addInstruction(trueJump);
+		this->ecert.push_back(trueJump);
+
+		Label lfalse;
+		GoToInstruction *falseJump = new GoToInstruction(lfalse);
+		driver->code.addInstruction(falseJump);
+		this->efals.push_back(falseJump);
+	}
 }
 
 /**

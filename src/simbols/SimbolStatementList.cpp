@@ -33,7 +33,3 @@ void SimbolStatementList::make(Driver *driver){
     // pintar a l'arbre
     Simbol::toDotFile(driver);
 }
-
-std::vector<Instruction *> SimbolStatementList::getSeg() {
-    return this->seg;
-}

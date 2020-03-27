@@ -1,0 +1,9 @@
+proc main() begin
+	int a;
+    int b;
+
+	
+	while (a > 2) do
+		b = 5;
+	end;
+end main;
