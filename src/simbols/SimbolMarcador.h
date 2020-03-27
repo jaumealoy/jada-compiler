@@ -9,6 +9,8 @@ class SimbolMarcador : public Simbol {
 private:
 	Label et;
 	std::vector<Instruction *> seg;
+	Instruction *inst;
+
 public:
 	SimbolMarcador();
 	~SimbolMarcador();
@@ -17,6 +19,8 @@ public:
 
 	Label getLabel();
 	std::vector<Instruction * > getSeg();
+
+	Instruction *getInstruction();
 };
 
 

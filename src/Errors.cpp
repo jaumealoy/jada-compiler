@@ -228,6 +228,10 @@ std::string error_default_definit(){
     return "ja existeix un case default definit";
 }
 
+std::string error_default_darrer(){
+    return "el default ha de ser la darrera opció";
+}
+
 std::string error_case_definit(std::string a){
     return "cas '" + a + "' duplicat";
 }

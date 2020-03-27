@@ -6,6 +6,7 @@
 #include "../location.hh"
 #include <string>
 #include <vector>
+#include <list>
 
 /**
  * Dades necessàries per controlar blocs d'instruccions i llistes d'instruccions
@@ -25,6 +26,7 @@ public:
 protected:
     // Per comprovar si té break
     bool _conteBreak;
+	std::list<Instruction *> _breakList;
 
     // Per comprovar si conté returns i el seu tipus
     std::vector<struct ReturnData> _returns;
@@ -38,7 +40,8 @@ protected:
 public:
     // funcions per comprovar break
     bool conteBreak();
-    
+	std::list<Instruction *> getBreaks();
+
     // funcions per comprovar returns
     std::vector<struct ReturnData> getReturns();
     bool conteReturn();

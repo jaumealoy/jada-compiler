@@ -35,6 +35,7 @@
 
 #include "SimbolSwitchStatement.h"
 #include "SimbolContSwitch.h"
+#include "SimbolSwitchCaseCont.h"
 
 #include "SimbolReferencia.h"
 #include "SimbolSubProgramCall.h"

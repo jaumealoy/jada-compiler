@@ -15,9 +15,6 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
     // però és possible que tengui un return, que sí s'hauria de propagar
     this->propaga(bloc);
 
-    // i no es propaga el break
-    this->_conteBreak = false;
-
     // Comprovar que l'expressió del while és un boolean
     if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
         driver->error( error_tipus_esperat("boolean") );
@@ -37,6 +34,16 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
     driver->code.backpatch(ebloc.getLabel(), exp.getCert());
 	driver->code.backpatch(einici.getLabel(), bloc.getSeg());
 	this->seg = exp.getFals();
+
+	// tots els breaks s'han d'afegir seg
+	std::list<Instruction *>::iterator it;
+	for(it = this->_breakList.begin(); it != this->_breakList.end(); it++){
+		this->seg.push_back(*it);
+	}
+
+	// i no es propaga el break
+    this->_conteBreak = false;
+	this->_breakList.clear();
 
 	// és possible que bloc no contegui cap instrucció amb un goto
 	// a l'inici (com pot ser un break), és important afegir

@@ -9,11 +9,13 @@
 
 Instruction::Instruction(){
 	this->next = nullptr;
+	this->prev = nullptr;
 }
 
 Instruction::Instruction(Instruction::Type opcode){
 	this->opcode = opcode;
 	this->next = nullptr;
+	this->prev = nullptr;
 }
 
 Instruction::~Instruction(){}
@@ -24,6 +26,14 @@ void Instruction::setNext(Instruction *next){
 
 Instruction * Instruction::getNext(){
 	return this->next;
+}
+
+void Instruction::setPrevious(Instruction *previous){
+	this->prev = previous;
+}
+
+Instruction * Instruction::getPrevious(){
+	return this->prev;
 }
 
 std::string Instruction::toString(){
