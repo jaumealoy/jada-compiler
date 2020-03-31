@@ -59,7 +59,7 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
     Simbol::toDotFile(driver);
 
 	// s'accedeix a una variable, desplaçament és 0
-	this->d.makeNull();
+	this->d = nullptr;
 	this->dconst = 0;
 }
 

@@ -45,6 +45,6 @@ void ControlInstruccions::propaga(ControlInstruccions &a, ControlInstruccions &b
 /**
  * Obtenir les instruccions que poden necessitar un backpatching
  */
-std::vector<Instruction *> ControlInstruccions::getSeg(){
+std::list<Instruction *> ControlInstruccions::getSeg(){
 	return this->seg;
 }

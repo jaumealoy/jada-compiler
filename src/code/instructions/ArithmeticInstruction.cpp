@@ -1,6 +1,6 @@
 #include "ArithmeticInstruction.h"
 
-ArithmeticInstruction::ArithmeticInstruction(ArithmeticInstruction::Type type, Variable desti, Variable v1, Variable v2) 
+ArithmeticInstruction::ArithmeticInstruction(ArithmeticInstruction::Type type, Variable *desti, Variable *v1, Variable *v2) 
 	: Instruction(Instruction::Type::ARITHMETIC) 
 {
 	this->type = type;
@@ -35,5 +35,5 @@ std::string ArithmeticInstruction::toString(){
 			break;
 	}
 
-	return this->desti.getNom() + " = " + this->v1.getNom() + " " + tmp + " " + this->v2.getNom();
+	return this->desti->getNom() + " = " + this->v1->getNom() + " " + tmp + " " + this->v2->getNom();
 }

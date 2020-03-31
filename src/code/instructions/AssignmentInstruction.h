@@ -30,16 +30,16 @@ private:
 	TipusSubjacentBasic tsb;
 
 	// variables per indicar les diferents variables
-	Variable desti;
-	Variable origen;
-	Variable offset;
+	Variable *desti;
+	Variable *origen;
+	Variable *offset;
 
 	AssignmentInstruction::Type type;
 
 public:
-	AssignmentInstruction(TipusSubjacentBasic tsb, Variable desti, std::shared_ptr<ValueContainer> value);
-	AssignmentInstruction(Variable desti, Variable origen);
-	AssignmentInstruction(AssignmentInstruction::Type, Variable a, Variable b, Variable c);
+	AssignmentInstruction(TipusSubjacentBasic tsb, Variable *desti, std::shared_ptr<ValueContainer> value);
+	AssignmentInstruction(Variable *desti, Variable *origen);
+	AssignmentInstruction(AssignmentInstruction::Type, Variable *a, Variable *b, Variable *c);
 	~AssignmentInstruction();
 
 	std::string toString();

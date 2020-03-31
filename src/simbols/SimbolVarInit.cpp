@@ -77,6 +77,6 @@ void SimbolVarInit::make(Driver *driver){
     Simbol::toDotFile(driver);
 
 	// no hi ha cap variable associada
-	this->r.makeNull();
-	this->d.makeNull();
+	this->r = nullptr;
+	this->d = nullptr;
 }

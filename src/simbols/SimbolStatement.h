@@ -27,7 +27,7 @@ private:
     SimbolStatement::Tipus tipus;
 
 protected:
-    std::vector<Instruction *> seg;
+    std::list<Instruction *> seg;
     Label label;
 
 public:
@@ -44,7 +44,7 @@ public:
     void make(Driver *driver, SimbolExpressio exp);
     void make(Driver *driver, SimbolStatement::Tipus tipus);
 
-    std::vector<Instruction * > getSeg();
+    std::list<Instruction * > getSeg();
 };
 
 #endif

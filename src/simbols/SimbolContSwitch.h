@@ -20,7 +20,7 @@ private:
 	// dades de l'expressió principal
 	std::string tipus;
     TipusSubjacentBasic tsb;
-	Variable r;
+	Variable *r;
 
 	// etiquetes per la generació de codi
 	Label fi;
@@ -40,7 +40,7 @@ public:
 	std::list<Instruction *> getPreviousCondJump();
 	Label getFi();
 
-	Variable getVariable();
+	Variable *getVariable();
 	TipusSubjacentBasic getTSB();
 	std::string getTipus();
 	bool hasDefault();

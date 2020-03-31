@@ -1,6 +1,7 @@
 #ifndef _H_CODE_VARIABLE
 #define _H_CODE_VARIABLE
 
+#include "../taulasimbols/TipusSubjacentBasic.h"
 #include <string>
 
 class Variable {
@@ -11,6 +12,9 @@ private:
 	// interessa poder tenir "variables" nul·les, cosa que pot ser
 	// servir al desplaçament per indicar que no n'hi ha
 	bool null;
+
+	// dades de la variable
+	TipusSubjacentBasic tsb;
 
 public:
 	Variable();

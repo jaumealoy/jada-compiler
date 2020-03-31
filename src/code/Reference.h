@@ -6,18 +6,18 @@ class Driver;
 
 class Reference {
 protected:
-	Variable r; // base
-	Variable d; // offset
+	Variable *r; // base
+	Variable *d; // offset
 
 public:
-	Reference(Variable r, Variable d);
+	Reference(Variable *r, Variable *d);
 	Reference();
 	~Reference();
 
-	Variable dereference(Driver *driver);
+	Variable *dereference(Driver *driver, TipusSubjacentBasic tsb);
 
-	Variable getBase();
-	Variable getOffset();
+	Variable *getBase();
+	Variable *getOffset();
 };
 
 #endif

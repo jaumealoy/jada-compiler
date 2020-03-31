@@ -97,7 +97,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 		Label boolEnd = driver->code.addLabel();
 		Label trueCase = driver->code.addLabel();
 		Label falseCase = driver->code.addLabel();
-		Variable tmp = driver->code.addVariable();
+		Variable *tmp = driver->code.addVariable(this->tsb);
 
 		// exp = true
 		driver->code.addInstruction(new SkipInstruction(trueCase));
@@ -133,7 +133,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 		// generar salt condicional
 		CondJumpInstruction *inst = new CondJumpInstruction(
 			CondJumpInstruction::Operator::NEQ,
-			exp.dereference(driver),
+			exp.dereference(driver, exp.getTSB()),
 			this->r,
 			Label() // la definirem posteriorment
 		);
@@ -155,7 +155,7 @@ std::list<Instruction *> SimbolSwitchCaseCont::getPreviousGoTo(){ return this->p
 std::list<Instruction *> SimbolSwitchCaseCont::getPreviousCondJump(){ return this->previousCondJump; }
 Label SimbolSwitchCaseCont::getFi(){ return this->fi; }
 
-Variable SimbolSwitchCaseCont::getVariable(){ return this->r; }
+Variable *SimbolSwitchCaseCont::getVariable(){ return this->r; }
 TipusSubjacentBasic SimbolSwitchCaseCont::getTSB(){ return this->tsb; }
 std::string SimbolSwitchCaseCont::getTipus(){ return this->tipus; }
 bool SimbolSwitchCaseCont::hasDefault(){ return this->teDefault; }

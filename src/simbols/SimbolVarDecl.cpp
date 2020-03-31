@@ -58,7 +58,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
     this->tsb = dt->getTSB();
     this->tipus = tipus;
 
-	Variable var = driver->code.addVariable(id);
+	Variable *var = driver->code.addVariable(this->tsb, id);
 
     Descripcio *desc = nullptr;
     if (constant){
@@ -85,7 +85,12 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
 		dc->setVariable(var);
 		if(!init.isEmpty()){
-			driver->code.addInstruction(new AssignmentInstruction(dc->getVariable(), init.dereference(driver)));
+			driver->code.addInstruction(
+				new AssignmentInstruction(
+					dc->getVariable(), 
+					init.dereference(driver, init.getTSB())
+				)
+			);
 		}
     }else{
         // és una variable
@@ -94,7 +99,12 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
 		dv->setVariable(var);
 		if(!init.isEmpty()){
-			driver->code.addInstruction(new AssignmentInstruction(dv->getVariable(), init.dereference(driver)));
+			driver->code.addInstruction(
+				new AssignmentInstruction(
+					dv->getVariable(), 
+					init.dereference(driver, init.getTSB())
+				)
+			);
 		}
     }
 
@@ -149,7 +159,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
     this->tsb = varDecl.tsb;
     this->esConst = varDecl.esConst;
 
-	Variable var = driver->code.addVariable(id);
+	Variable *var = driver->code.addVariable(this->tsb, id);
 
     Descripcio *desc = nullptr;
 
@@ -174,7 +184,12 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
 
 		dc->setVariable(var);
 		if(!init.isEmpty()){
-			driver->code.addInstruction(new AssignmentInstruction(dc->getVariable(), init.dereference(driver)));
+			driver->code.addInstruction(
+				new AssignmentInstruction(
+					dc->getVariable(),
+					init.dereference(driver, init.getTSB())
+				)
+			);
 		}
     }else{
         DescripcioVariable *dv = new DescripcioVariable(tipus);
@@ -182,7 +197,12 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
 
 		dv->setVariable(var);
 		if(!init.isEmpty()){
-			driver->code.addInstruction(new AssignmentInstruction(dv->getVariable(), init.dereference(driver)));
+			driver->code.addInstruction(
+				new AssignmentInstruction(
+					dv->getVariable(), 
+					init.dereference(driver, init.getTSB())
+				)
+			);
 		}
     }
 

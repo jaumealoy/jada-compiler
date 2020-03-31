@@ -36,7 +36,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp){
 		Label boolEnd = driver->code.addLabel();
 		Label trueCase = driver->code.addLabel();
 		Label falseCase = driver->code.addLabel();
-		this->r = driver->code.addVariable();
+		this->r = driver->code.addVariable(exp.getTSB());
 
 		// exp = true
 		driver->code.addInstruction(new SkipInstruction(trueCase));
@@ -58,7 +58,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp){
 		// final
 		driver->code.addInstruction(new SkipInstruction(boolEnd));
 	}else{
-		this->r = exp.dereference(driver);
+		this->r = exp.dereference(driver, exp.getTSB());
 	}
 
 	// pintar a l'arbre
@@ -145,7 +145,7 @@ std::list<Instruction *> SimbolContSwitch::getPreviousGoTo(){ return this->previ
 std::list<Instruction *> SimbolContSwitch::getPreviousCondJump(){ return this->previousCondJump; }
 Label SimbolContSwitch::getFi(){ return this->fi; }
 
-Variable SimbolContSwitch::getVariable(){ return this->r; }
+Variable *SimbolContSwitch::getVariable(){ return this->r; }
 TipusSubjacentBasic SimbolContSwitch::getTSB(){ return this->tsb; }
 std::string SimbolContSwitch::getTipus(){ return this->tipus; }
 bool SimbolContSwitch::hasDefault(){ return this->teDefault; }

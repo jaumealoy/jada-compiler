@@ -38,8 +38,8 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     Simbol::toDotFile(driver);
 
 	//generació de codi
-	this->r = driver->code.addVariable();
-	this->d.makeNull();
+	this->r = driver->code.addVariable(literal.getTSB());
+	this->d = nullptr;
 	
 	driver->code.addInstruction(new AssignmentInstruction(this->tsb, this->r, this->value));
 }
@@ -272,8 +272,7 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 		DescripcioConstant *dfalse = (DescripcioConstant *) driver->ts.consulta("false");
 
 		// desreferenciar el valor (si és necessari)
-		Reference refValue(this->r, this->d);
-		Variable tmp = refValue.dereference(driver);
+		Variable *tmp = this->dereference(driver, this->tsb);
 		
 		Label l;
 

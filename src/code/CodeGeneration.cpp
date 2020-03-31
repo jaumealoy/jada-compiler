@@ -49,12 +49,23 @@ Label CodeGeneration::addLabel(){
 	return Label(++this->labelCounter);
 }
 
-Variable CodeGeneration::addVariable(){
-	return Variable(false, ++this->variableCounter);
+/**
+ * Crea i retorna una nova variable, amb nom o sense
+ */
+Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb){
+	Variable *tmp = this->vars.add(
+		new Variable(false, ++this->variableCounter)
+	);
+
+	return tmp;
 }
 
-Variable CodeGeneration::addVariable(std::string name){
-	return Variable(++this->variableCounter, name);
+Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name){
+	Variable *tmp = this->vars.add(
+		new Variable(++this->variableCounter, name)
+	);
+
+	return tmp;
 }
 
 /**
@@ -166,6 +177,58 @@ void CodeGeneration::remove(Instruction *inst){
 
 	//delete inst;
 }
+
+/**
+ * Unió de conjunts
+ */
+std::vector<Instruction *> CodeGeneration::concat(std::vector<Instruction *> list1, std::vector<Instruction *> list2){
+	std::vector<Instruction *> tmp;
+	tmp.reserve(list1.size() + list2.size());
+
+	for(int i = 0; i < list1.size(); i++){
+		tmp.push_back(list1[i]);
+	}
+
+	for(int i = 0; i < list2.size(); i++){
+		tmp.push_back(list2[i]);
+	}
+
+	return tmp;
+}
+
+std::list<Instruction *> CodeGeneration::concat(std::list<Instruction *> list1, std::list<Instruction *> list2){
+	std::list<Instruction *> tmp;
+
+	std::list<Instruction *>::iterator it = list1.begin();
+	while(it != list1.end()){
+		tmp.push_back(*it);
+		it++;
+	}
+
+	it = list2.begin();
+	while(it != list2.end()){
+		tmp.push_back(*it);
+		it++;
+	}
+
+	return tmp;
+}
+
+/**
+ * Converteix un conjunt vector a una estructura llista
+ */
+std::list<Instruction *> CodeGeneration::convert(std::vector<Instruction *> list) {
+	std::list<Instruction *> tmp;
+
+	std::vector<Instruction *>::iterator it = list.begin();
+	while(it != list.end()){
+		tmp.push_back(*it);
+		it++;
+	}
+
+	return tmp;
+}
+
 
 SubProgram * CodeGeneration::addSubProgram(std::string id) {
 	return new SubProgram(++this->subprogramCounter, id);

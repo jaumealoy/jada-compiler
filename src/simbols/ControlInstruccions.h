@@ -35,7 +35,7 @@ protected:
     void propaga(ControlInstruccions &a, ControlInstruccions &b);
 
 	// Per guardar les possibles llistes d'instruccions de backpatching
-	std::vector<Instruction *> seg;
+	std::list<Instruction *> seg;
 
 public:
     // funcions per comprovar break
@@ -47,7 +47,7 @@ public:
     bool conteReturn();
 
 	// obtenció de la llista de següents
-	std::vector<Instruction *> getSeg();
+	std::list<Instruction *> getSeg();
 };
 
 #endif

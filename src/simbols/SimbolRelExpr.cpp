@@ -152,8 +152,8 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 
     CondJumpInstruction* cji = new CondJumpInstruction(
         o,
-        a.dereference(driver),
-        b.dereference(driver),
+        a.dereference(driver, a.getTSB()),
+        b.dereference(driver, b.getTSB()),
         lab1
     );
 

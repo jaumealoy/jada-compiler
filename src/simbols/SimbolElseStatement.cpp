@@ -9,18 +9,8 @@ SimbolElseStatement::SimbolElseStatement() : SimbolStatement() {
 SimbolElseStatement::~SimbolElseStatement(){}
 
 /**
- * elseStatement -> else do bloc 
+ * elseStatement -> elseIfStatement else do M0 bloc
  */
-/*void SimbolElseStatement::make(Driver *driver, SimbolMarcador marc, SimbolBloc bloc){
-    this->propaga(bloc);
-
-    // pintar a l'arbre
-    this->fills.push_back( driver->addTreeChild(this, "else do") );
-    this->fills.push_back( std::to_string(bloc.getNodeId()) );
-    Simbol::toDotFile(driver);
-}*/
-
-//elseStatement : elseIfStatement ELSE DO M0 bloc
 void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif, SimbolMarcador marc, SimbolBloc bloc){
     this->propaga(elseif, bloc);
 
@@ -28,14 +18,20 @@ void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif, Sim
     this->fills.push_back( driver->addTreeChild(this, "else do") );
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
 
-    this->final = elseif.final;
-    driver->code.backpatch(marc.getLabel(), elseif.getSeg());
-    driver->code.backpatch(final, bloc.getSeg());
-
     Simbol::toDotFile(driver);
+
+	// indicar que el següent bloc comença a marc.label
+	driver->code.backpatch(marc.getLabel(), elseif.getSeg());
+
+	// no importa afegir una instrucció després de bloc per indicar el final
+	// ja és el final
+    this->seg = bloc.getSeg();
+	this->finals = elseif.getFinals();
 }
 
-//elseStatement -> elseIfStatement { $$.make(this->driver, $1);
+/**
+ * elseStatement -> elseIfStatement
+ */
 void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif){
     this->propaga(elseif);
 
@@ -43,15 +39,9 @@ void SimbolElseStatement::make(Driver *driver, SimbolElseIfStatement elseif){
     Simbol::toDotFile(driver);
 
     this->seg = elseif.getSeg();
-    this->final = elseif.final;
+	this->finals = elseif.getFinals();
 }
-/**
- * elseStatement -> lambda
- */
-/*
-void SimbolElseStatement::make(Driver *driver){
-    this->makeEmpty();
 
-    // i pintar a l'arbre
-    Simbol::toDotFile(driver);
-}*/
+std::list<Instruction *> SimbolElseStatement::getFinals(){
+	return this->finals;
+}

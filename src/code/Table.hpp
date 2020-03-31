@@ -1,6 +1,7 @@
 #ifndef _H_CODE_TABLE
 #define _H_CODE_TABLE
 
+#include <iostream>
 #include <exception>
 
 template <class T, int elements>
@@ -15,22 +16,25 @@ public:
 	Table(){
 		// fa referència al darrer element ocupat
 		this->lastIndex = -1;
+		this->data = new T[elements];
 	}
 
-	~Table(){}
+	~Table(){
+		delete[] this->data;
+	}
 
 	/**
 	 * Afegeix un element a la taula i retorna la
 	 * posició on s'ha inserit
 	 */
-	int add(T value){
+	T add(T value){
 		if(this->lastIndex >= elements){
 			throw new Table::StorageError();
 		}
 
 		this->data[++this->lastIndex] = value;
 
-		return this->lastIndex;
+		return this->data[this->lastIndex];
 	}
 
 	/**

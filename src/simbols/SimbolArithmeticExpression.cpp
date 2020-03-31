@@ -134,10 +134,10 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio a, SimbolE
     Simbol::toDotFile(driver);
 
 	// generació de codi
-	this->r = driver->code.addVariable();
-	Variable r1 = a.dereference(driver);
-	Variable r2 = b.dereference(driver);
+	this->r = driver->code.addVariable(this->tsb);
+	Variable *r1 = a.dereference(driver, a.getTSB());
+	Variable *r2 = b.dereference(driver, b.getTSB());
 	driver->code.addInstruction(new ArithmeticInstruction(operation, this->r, r1, r2));
 
-	this->d.makeNull();
+	this->d = nullptr;
 }

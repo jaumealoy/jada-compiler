@@ -15,10 +15,10 @@ std::string DescripcioVariable::getNomTipus(){
     return this->nomTipus;
 }
 
-void DescripcioVariable::setVariable(Variable var){
+void DescripcioVariable::setVariable(Variable *var){
 	this->variable = var;
 }
 
-Variable DescripcioVariable::getVariable(){
+Variable *DescripcioVariable::getVariable(){
 	return this->variable;
 }

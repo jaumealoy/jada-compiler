@@ -98,7 +98,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 			this->r =  ((DescripcioConstant *) d)->getVariable();
         }
 
-		this->d.makeNull();
+		this->d = nullptr;
 
         // obtenir el tsb (sabem que el tipus existeix sí o sí perquè s'haurà
         // inserit automàticament en definir una variable d'aquest tipus)
@@ -287,7 +287,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		this->refIndex = array.refIndex;
 
 		// calcular el desplaçament en temps d'execució
-		this->d = driver->code.addVariable();
+		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
 		int intValue = 0; // TODO: falta determinar si es vol indicar el començament 
 						  // de l'element o el final (ara mateix indicaria el final)
 		driver->code.addInstruction(new AssignmentInstruction(
@@ -297,8 +297,8 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		));
 
 		for(int i = this->refIndex.size() - 1; i >= 0; i--){
-			Variable tmp = this->refIndex[i].index.dereference(driver);
-			Variable paux = driver->code.addVariable();
+			Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
+			Variable *paux = driver->code.addVariable(TipusSubjacentBasic::INT);
 
 			// carregar productori dins variable temporal
 			driver->code.addInstruction(new AssignmentInstruction(

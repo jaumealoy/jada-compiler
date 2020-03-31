@@ -11,7 +11,7 @@ private:
     Descripcio::Tipus tipus;
 
     // variable per la generació de codi
-	Variable variable;
+	Variable *variable;
 
 public:
     DescripcioVariable(std::string tipus);
@@ -20,8 +20,8 @@ public:
     void setNomTipus(std::string tipus);
     std::string getNomTipus();
 
-	void setVariable(Variable var);
-	Variable getVariable();
+	void setVariable(Variable *var);
+	Variable *getVariable();
 };
 
 #endif

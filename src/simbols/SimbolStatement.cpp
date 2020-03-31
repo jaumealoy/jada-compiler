@@ -46,6 +46,8 @@ void SimbolStatement::make(Driver *driver, SimbolIfStatement ifStmt){
     // pintar a l'arbre
     this->fills.push_back( std::to_string(ifStmt.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	this->seg = ifStmt.getSeg();
 }
 
 /**
@@ -125,6 +127,6 @@ void SimbolStatement::make(Driver *driver, SimbolVarDecl decl){
     Simbol::toDotFile(driver);
 }
 
-std::vector<Instruction * > SimbolStatement::getSeg() {
+std::list<Instruction * > SimbolStatement::getSeg() {
     return this->seg;
 }

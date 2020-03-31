@@ -33,7 +33,7 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
     // generació de codi intermedi
     driver->code.backpatch(ebloc.getLabel(), exp.getCert());
 	driver->code.backpatch(einici.getLabel(), bloc.getSeg());
-	this->seg = exp.getFals();
+	this->seg = CodeGeneration::convert(exp.getFals());
 
 	// tots els breaks s'han d'afegir seg
 	std::list<Instruction *>::iterator it;

@@ -45,20 +45,24 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarc
     this->fills.push_back( driver->addTreeChild(this, "do") );
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "end") );
-    //this->fills.push_back( std::to_string(elseIf.getNodeId()) );
     Simbol::toDotFile(driver);
 
-    //generació de codi
+    // generació de codi
     driver->code.backpatch(ebloc.getLabel(), exp.getCert());
-    //driver->code.backpatch(einici.getLabel(), bloc.getSeg());
-    this->seg = exp.getFals();
-    this->final = driver->code.addLabel();
-    driver->code.backpatch(final, bloc.getSeg());
-    driver->code.addInstruction(new GoToInstruction(this->final));
+    this->seg = CodeGeneration::convert(exp.getFals());
+
+	// el final no es coneix però no és el mateix punt que el següent else if / else
+	this->finals = bloc.getSeg();
+
+	// aquesta instrucció és la del final del bloc, no s'ha d'executar cap bloc més
+    Instruction *inst = driver->code.addInstruction(new GoToInstruction(Label()));
+	this->finals.push_back(inst);
 
 }
 
-//elseIfStatement -> elseIfStatement ELSE IF M0 exprSimple DO M0 bloc
+/**
+ * elseIfStatement -> elseIfStatement ELSE IF M0 exprSimple DO M0 bloc
+ */
 void SimbolElseIfStatement::make(Driver *driver, SimbolElseIfStatement elseif, SimbolMarcador einici, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc){
     // comprovar que l'expressió és un boolean
     if (exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
@@ -75,13 +79,23 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolElseIfStatement elseif, S
     this->fills.push_back( std::to_string(bloc.getNodeId()) );
     Simbol::toDotFile(driver);
 
-    //generació de codi
-    driver->code.backpatch(ebloc.getLabel(), exp.getCert());
+    // generació de codi
+	// els possibles salts de l'avaluació a fals de l'expressió del else if / if anterior
     driver->code.backpatch(einici.getLabel(), elseif.getSeg());
-    //driver->code.backpatch(einici.getLabel(), bloc.getSeg());
-    this->seg = exp.getFals();
-    this->final = elseif.final;
-    driver->code.backpatch(final, bloc.getSeg());
-    driver->code.addInstruction(new GoToInstruction(this->final));
 
+	// el salts de l'avaluació a cert de l'expressió actual
+    driver->code.backpatch(ebloc.getLabel(), exp.getCert());
+
+	// els salts al següent else if / else
+    this->seg = CodeGeneration::convert(exp.getFals());
+
+	// el final és deconegut i no és el mateix punt que l'inici del següent
+	// else if / else
+    this->finals = elseif.getFinals();
+    Instruction *inst = driver->code.addInstruction( new GoToInstruction(Label()) );
+	this->finals.push_back(inst);
+}
+
+std::list<Instruction *> SimbolElseIfStatement::getFinals(){
+	return this->finals;
 }

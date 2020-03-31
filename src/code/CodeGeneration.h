@@ -6,18 +6,18 @@
 
 #include "Table.hpp"
 #include "instructions/Instruction.h"
+#include "SubProgram.h"
 #include "Variable.h"
 #include "Label.h"
 #include <list>
 #include <vector>
 #include <fstream>
-#include "SubProgram.h"
 
 class CodeGeneration{
 private:
 	// taules de variables i procediments
-	Table<char, MAX_VAR> vars;
-	Table<char, MAX_PROC> programs;
+	Table<Variable *, MAX_VAR> vars;
+	Table<SubProgram *, MAX_PROC> programs;
 
 	// seqüència del codi
 	Instruction *first;
@@ -36,8 +36,8 @@ public:
 
 	Label addLabel();
 
-	Variable addVariable();
-	Variable addVariable(std::string name);
+	Variable *addVariable(TipusSubjacentBasic tsb);
+	Variable *addVariable(TipusSubjacentBasic tsb, std::string name);
 	
 	Instruction *addInstruction(Instruction *inst);
 
@@ -48,6 +48,10 @@ public:
 	void backpatch(Label e, Instruction *i);
 	void backpatch(Label e, std::vector<Instruction*> i);
 	void backpatch(Label e, std::list<Instruction*> i);
+
+	static std::vector<Instruction *> concat(std::vector<Instruction *> list1, std::vector<Instruction *> list2);
+	static std::list<Instruction *> concat(std::list<Instruction *> list1, std::list<Instruction *> list2);
+	static std::list<Instruction *> convert(std::vector<Instruction *> list);
 
 	void move(Instruction *start, Instruction *end, Instruction *after);
 	void remove(Instruction *inst);

@@ -15,15 +15,14 @@ public:
 	};
 
 private:
-	Variable v1;
-	Variable v2;
-
-	Variable desti;
+	Variable *v1;
+	Variable *v2;
+	Variable *desti;
 
 	ArithmeticInstruction::Type type;
 
 public:
-	ArithmeticInstruction(ArithmeticInstruction::Type type, Variable desti, Variable v1, Variable v2);
+	ArithmeticInstruction(ArithmeticInstruction::Type type, Variable *desti, Variable *v1, Variable *v2);
 	~ArithmeticInstruction();
 
 	std::string toString();

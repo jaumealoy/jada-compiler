@@ -1,9 +1,14 @@
 #include "CondJumpInstruction.h"
 
-CondJumpInstruction::CondJumpInstruction(Operator op, Variable e1, Variable e2, Label l) : Instruction(Instruction::Type::CONDJUMP) {
+CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label l) 
+	: Instruction(Instruction::Type::CONDJUMP) 
+{
+	// e1 op e2
 	this->op = op;
 	this->e1 = e1;
 	this->e2 = e2;
+
+	// etiqueta de salt si e1 op e2 és cert
 	this->l = l;
 }
 
@@ -35,7 +40,7 @@ std::string CondJumpInstruction::toString() {
 			break;
 	}
 
-	return "if " + this->e1.getNom() + " " + opString + " " + this->e2.getNom() +" then goto " + this->l.toString();
+	return "if " + this->e1->getNom() + " " + opString + " " + this->e2->getNom() +" then goto " + this->l.toString();
 }
 
 void CondJumpInstruction::setLabel(Label l){

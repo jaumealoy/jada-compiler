@@ -8,17 +8,16 @@
 
 class SimbolElseIfStatement : public SimbolStatement {
 private:
-
+	// instruccions que han d'anar al final del l'if
+	std::list<Instruction *> finals;
 public:
     SimbolElseIfStatement();
     ~SimbolElseIfStatement();
 
-    Label final;
-
-    //void make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIf);
     void make(Driver *driver, SimbolElseIfStatement elseif, SimbolMarcador einici, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc);
     void make(Driver *driver, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc);
-    //void make(Driver *driver, SimbolElseStatement elseBloc);
+
+	std::list<Instruction *> getFinals();
 };
 
 #endif

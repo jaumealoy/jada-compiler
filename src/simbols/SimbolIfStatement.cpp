@@ -12,13 +12,11 @@ SimbolIfStatement::~SimbolIfStatement() { }
 void SimbolIfStatement::make(Driver *driver, SimbolElseStatement elseS){
     this->propaga(elseS);
 
-
     this->fills.push_back( std::to_string(elseS.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "end") );
     Simbol::toDotFile(driver);
 
-    //Etiqueta del final
-    driver->code.addInstruction(new SkipInstruction(elseS.final));
-    this->seg = elseS.getSeg();
-    //printf("%d", lfinal.getId());
+    // El final de l'if es podria posar en aquest punt, però
+	// les instruccions ja tenen el backpatch del següent
+    this->seg = CodeGeneration::concat(elseS.getFinals(), elseS.getSeg());
 }

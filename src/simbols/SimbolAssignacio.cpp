@@ -48,10 +48,10 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 	// generació de codi intermedi
 	switch(tipus){
 		case 0: // ref = exprSimple
-			Variable tmp = exp.dereference(driver);
+			Variable *tmp = exp.dereference(driver, exp.getTSB());
 
 			if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-				if(ref.getOffset().isNull()){
+				if(ref.getOffset() == nullptr){
 					// no existeix desplaçament en temps de compilació
 					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
 				}else{
@@ -73,7 +73,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
                 driver->code.backpatch(ec, exp.getCert());
                 DescripcioConstant* c = (DescripcioConstant *) driver->ts.consulta("true");
                 DescripcioConstant* f = (DescripcioConstant *) driver->ts.consulta("false");
-                if (ref.getOffset().isNull()) {
+                if (ref.getOffset() == nullptr) {
                     driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), c->getVariable()));
                 } else {
                     driver->code.addInstruction(new AssignmentInstruction(
@@ -86,7 +86,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
                 driver->code.addInstruction(new GoToInstruction(efi));
                 driver->code.addInstruction(new SkipInstruction(ef));
                 driver->code.backpatch(ef, exp.getFals());
-                if (ref.getOffset().isNull()) {
+                if (ref.getOffset() == nullptr) {
                     driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), f->getVariable()));
                 } else {
                     driver->code.addInstruction(new AssignmentInstruction(
