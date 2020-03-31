@@ -4,10 +4,12 @@
 
 #include <exception>
 
-Driver::Driver(char *filename) : 
-        treeFile("tree.dot", std::fstream::out), errorsFile("erros.txt", std::fstream::out) {
+Driver::Driver(char *filename) 
+	: treeFile("tree.dot", std::fstream::out), errorsFile("erros.txt", std::fstream::out)
+{
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
+	this->code = CodeGeneration();
 
     // inicialitzar la taula de símbols
     this->ts = TaulaSimbols();
@@ -63,11 +65,11 @@ Driver::Driver(char *filename) :
     readChar->setTipusRetorn("char");
     this->ts.posar("readChar", readChar);
 
-    DescripcioProc *printChar = new DescripcioProc();
+    DescripcioProc *printChar = new DescripcioProc(nullptr);
     this->ts.posar("printChar", printChar);
     this->ts.posarParam("printChar", "caracter", new DescripcioArgument("char", DescripcioArgument::IN));
 
-    DescripcioProc *print = new DescripcioProc();
+    DescripcioProc *print = new DescripcioProc(nullptr);
     this->ts.posar("print", print);
     this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
 
@@ -80,7 +82,7 @@ Driver::Driver(char *filename) :
     readInt->setTipusRetorn("int");
     this->ts.posar("readInt", readInt);
 
-    DescripcioProc *writeInt = new DescripcioProc();
+    DescripcioProc *writeInt = new DescripcioProc(nullptr);
     this->ts.posar("printInt", writeInt);
     this->ts.posarParam("printInt", "num", new DescripcioArgument("int", DescripcioArgument::IN));
 

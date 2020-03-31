@@ -2,15 +2,15 @@
 #define _H_CALL INSTRUCTION
 
 #include "Instruction.h"
+#include "../SubProgram.h"
 
 class CallInstruction : public Instruction {
 private:
-    int np;
+	SubProgram *program;
+	
 public:
-    CallInstruction(int np);
+    CallInstruction(SubProgram *);
     ~CallInstruction();
-
-    void setNP(int np);
 
     std::string toString();
 };

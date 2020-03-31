@@ -13,6 +13,7 @@ public:
 	~SkipInstruction();
 
 	std::string toString();
+	std::string generateAssembly();
 };
 
 #endif

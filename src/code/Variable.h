@@ -2,6 +2,7 @@
 #define _H_CODE_VARIABLE
 
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "SubProgram.h"
 #include <string>
 
 class Variable {
@@ -15,19 +16,34 @@ private:
 
 	// dades de la variable
 	TipusSubjacentBasic tsb;
+	int ocupacio;
+	int offset;
+
+	// indica de quin subprograma és
+	SubProgram *subprograma;
 
 public:
 	Variable();
-	Variable(int id);
-	Variable(bool null);
-	Variable(bool null, int id);
-	Variable(int id, std::string name);
+	Variable(SubProgram *, int id);
+	Variable(SubProgram *, int id, std::string name);
 	~Variable();
 
 	bool isNull();
 	void makeNull();
 
 	std::string getNom();
+	std::string getAssemblyTag();
+
+	void setOffset(int);
+	int getOffset();
+
+
+	// gestió de l'ocupació
+	void setOcupacio(TipusSubjacentBasic tsb);
+	void setOcupacio(TipusSubjacentBasic tsb, TipusSubjacentBasic unitari);
+	int getOcupacio();
+
+	SubProgram *getSubPrograma();
 };
 
 #endif

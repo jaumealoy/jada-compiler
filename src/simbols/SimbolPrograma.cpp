@@ -1,5 +1,6 @@
 #include "SimbolPrograma.h"
 #include "../Driver.h"
+#include "../code/instructions/CallInstruction.h"
 
 /**
  * Si s'arriba a aplicar aquesta reducció significa que no s'ha produït 
@@ -37,6 +38,10 @@ void SimbolPrograma::make(Driver *driver, SimbolDeclList declList){
     // representar el node a l'arbre
     this->fills.push_back(std::to_string(declList.getNodeId()));
     this->toDotFile(driver);
+
+	// invocar la crida al programa principal
+	SubProgram *main = ((DescripcioProc *) d)->getSubPrograma();
+	driver->code.addInstruction(new CallInstruction(main));
 }
 
 void SimbolPrograma::toDotFile(Driver *driver){

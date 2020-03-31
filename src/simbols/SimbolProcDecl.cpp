@@ -7,9 +7,10 @@ SimbolProcDecl::SimbolProcDecl() : Simbol("ProcDecl") {}
 SimbolProcDecl::~SimbolProcDecl(){}
 
 /**
- * procDecl -> proc procCap begin bloc end id;
+ * procDecl -> M1 proc procCap begin bloc end id M0;
  */
-void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, std::string nom){
+void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, 
+		SimbolBloc bloc, std::string nom, SimbolMarcador salt, SimbolMarcador et){
     // Comprovar que els noms de la capçalera i l'end coincideixen
     if(cap.getNomProcedure() != nom){
         // error (no crític)
@@ -28,6 +29,7 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, st
 
     // variables locals de la funció
     driver->ts.surtirBloc();
+	driver->code.leaveSubProgram();
 
     // afegir fills
     this->fills.push_back( driver->addTreeChild(this, "proc") );;
@@ -36,4 +38,7 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, st
     this->fills.push_back( driver->addTreeChild(this, "end " + nom + ";") );
     
     Simbol::toDotFile(driver);
+
+	// backpatch al final de l'instrucció
+	driver->code.backpatch(et.getLabel(), salt.getSeg());
 }

@@ -45,6 +45,8 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
         return;
     }
 
+	SubProgram *program = nullptr;
+
     // si és una funció, assignar el tipus de retorn a la referènca
     if(d->getTipus() == Descripcio::Tipus::FUNCIO){
         DescripcioFuncio *df = (DescripcioFuncio *) d;
@@ -56,10 +58,14 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
         // segur que és un tipus, sinó s'hauria produït un error a l'hora d'inserir la funció
         DescripcioTipus *dt = (DescripcioTipus *) d;
         this->tsb = dt->getTSB();
+
+		program = df->getSubPrograma();
     }else{
         // és un procediment, no té valor de retorn
         this->tsb = TipusSubjacentBasic::NUL;
         this->tipus.clear();
+
+		program = ((DescripcioProc *) d)->getSubPrograma();
     }
 
     this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
@@ -69,7 +75,7 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     Simbol::toDotFile(driver);
 
     // generacio de codi
-    //driver->code.addInstruction(new CallInstruction(driver->code.));
+    driver->code.addInstruction(new CallInstruction(program));
 }
 
 /**

@@ -1,9 +1,7 @@
 #include "DescripcioFuncio.h"
 
-int DescripcioFuncio::numFuncio = 0;
-
 DescripcioFuncio::DescripcioFuncio() : Descripcio(Descripcio::Tipus::FUNCIO) {
-    this->nf = DescripcioFuncio::numFuncio++;
+    this->subprograma = nullptr;
 }
 
 DescripcioFuncio::~DescripcioFuncio() {}
@@ -14,4 +12,8 @@ void DescripcioFuncio::setTipusRetorn(std::string tipus){
 
 std::string DescripcioFuncio::getTipusRetorn(){
     return this->tipusRetorn;
+}
+
+SubProgram *DescripcioFuncio::getSubPrograma() {
+	return this->subprograma;
 }

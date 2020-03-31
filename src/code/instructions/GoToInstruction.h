@@ -15,6 +15,7 @@ public:
 	void setLabel(Label l);
 
 	std::string toString();
+	std::string generateAssembly();
 };
 
 #endif

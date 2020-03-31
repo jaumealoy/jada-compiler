@@ -1,4 +1,5 @@
 #include "SimbolProcContCap.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../Driver.h"
 
 SimbolProcContCap::SimbolProcContCap() : Simbol("ProcContCap") {}
@@ -52,8 +53,15 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
 
     }
 
+	// crear el procedure a la generació de codi
+	Label start = driver->code.addLabel();
+	SubProgram *subprogram = driver->code.addSubProgram(nomFuncio, start);
+
+	// indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(start));
+
     // Inserir el procedure a la taula de símbols
-    DescripcioProc *df = new DescripcioProc();
+    DescripcioProc *df = new DescripcioProc(subprogram);
     driver->ts.posar(nomFuncio, df);
 
     this->nomProcedure = nomFuncio;
@@ -67,7 +75,9 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
         arg->setTipusArgument(DescripcioArgument::IN);
     }
 
+	// afegir el parèmetre a la taula de símbols i a la generació de codi
     driver->ts.posarParam(nomFuncio, nomParametre, arg);
+	subprogram->addParameter();
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nomProcedure + " (") );
@@ -144,6 +154,11 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolArgTyp
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);
+
+	// s'ha d'actualitzar subprograma de la generació de codi
+	// segur que existeix a la TS perquè s'ha afegit anteriorment
+	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nomProcedure);
+	dp->getSubPrograma()->addParameter();
 }
 
 std::string SimbolProcContCap::getNomProcedure(){

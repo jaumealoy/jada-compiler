@@ -11,9 +11,10 @@
 #include "Label.h"
 #include <list>
 #include <vector>
+#include <stack>
 #include <fstream>
 
-class CodeGeneration{
+class CodeGeneration {
 private:
 	// taules de variables i procediments
 	Table<Variable *, MAX_VAR> vars;
@@ -30,31 +31,51 @@ private:
 
 	void move(Instruction *inst, Instruction *after);
 
+	// per controlar a quin subprograma es troba actualment
+	std::stack<SubProgram *> subprogrames;
+	int nivellProfunditat;
+
+	// actualització de les taules de variables i subprogrames
+	void updateVariableTable();
+	void updateSubProgramTable();
+
 public:
 	CodeGeneration();
 	~CodeGeneration();
 
 	Label addLabel();
-
+	
+	// gestió de les variables
 	Variable *addVariable(TipusSubjacentBasic tsb);
 	Variable *addVariable(TipusSubjacentBasic tsb, std::string name);
 	
-	Instruction *addInstruction(Instruction *inst);
+	// gestió dels subprogrames
+	SubProgram *addSubProgram(std::string id, Label label);
+	void enterSubProgram(SubProgram *subprogram);
+	void leaveSubProgram();
 
-	SubProgram *addSubProgram(std::string id);
-
-	void writeToFile(std::ofstream &file);
-
+	// funcions de backpatch
 	void backpatch(Label e, Instruction *i);
 	void backpatch(Label e, std::vector<Instruction*> i);
 	void backpatch(Label e, std::list<Instruction*> i);
 
+	// gestió de conjunts
 	static std::vector<Instruction *> concat(std::vector<Instruction *> list1, std::vector<Instruction *> list2);
 	static std::list<Instruction *> concat(std::list<Instruction *> list1, std::list<Instruction *> list2);
 	static std::list<Instruction *> convert(std::vector<Instruction *> list);
 
+	// gestió de les instruccions
+	Instruction *addInstruction(Instruction *inst);
 	void move(Instruction *start, Instruction *end, Instruction *after);
 	void remove(Instruction *inst);
+
+	// generació de codi
+	void writeToFile(std::ofstream &file);
+	void generateAssembly(std::ofstream &file);
+
+	// funcions auxiliar
+	static std::string getSizeTag(bool, TipusSubjacentBasic);
+	static std::string getSizeTag(bool, int);
 };
 
 #endif

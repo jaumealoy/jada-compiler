@@ -20,7 +20,14 @@ public:
 	}
 
 	~Table(){
-		delete[] this->data;
+		for(int i = 0; i <= this->lastIndex; i++){
+			if(this->data[i] != nullptr) {
+				delete this->data[i];
+				this->data[i] = nullptr;
+			}
+		}
+
+		//delete this->data;
 	}
 
 	/**
@@ -47,6 +54,14 @@ public:
 		}
 
 		return this->data[idx];
+	}
+
+	/**
+	 * Retorna el número d'elements ocupats a la taula
+	 */
+	int size() { 
+		// lastIndex simbolitza el darrer element ocupat
+		return this->lastIndex + 1;
 	}
 };
 

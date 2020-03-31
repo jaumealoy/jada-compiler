@@ -1,4 +1,5 @@
 #include "SimbolProcCap.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../Driver.h"
 
 SimbolProcCap::SimbolProcCap() : Simbol("ProcCap") {}
@@ -24,18 +25,26 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
         return;
     }
 
-    // Crear un procedure sense paràmetres
-    DescripcioProc *d = new DescripcioProc();
-    
-    // inserir el procedure
-    SubProgram* sp = driver->code.addSubProgram(nom);
-    driver->ts.posar(nom, d);
+	// crear el procedure a la generació de codi
+	Label start = driver->code.addLabel();
+	SubProgram *subprogram = driver->code.addSubProgram(nom, start);
 
+	// indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(start));
+    
+	// Crear un procedure sense paràmetres
+    DescripcioProc *d = new DescripcioProc(subprogram);
+    
+    // i també inserir el procedure a la taula de símbols
+    driver->ts.posar(nom, d);
 
     this->nom = nom;
 
     // entrar bloc
     driver->ts.entrarBloc();
+
+	// entrar al subprograma (generació de codi)
+	driver->code.enterSubProgram(subprogram);
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom + "()") );
@@ -50,6 +59,10 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 
     // entrar bloc i definir paràmetres
     driver->ts.entrarBloc();
+
+	// entrar al subprograma (generació de codi)
+	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nom);
+	driver->code.enterSubProgram(dp->getSubPrograma());
 
     TaulaSimbols::Iterator it = driver->ts.getParametres();
     it.first(this->nom);

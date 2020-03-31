@@ -1,8 +1,9 @@
 #ifndef _H_CODE_INSTRUCTION
 #define _H_CODE_INSTRUCTION
 
-#include <string>
 #include "../Label.h"
+#include "../SubProgram.h"
+#include <string>
 
 class Instruction{
 public:
@@ -12,7 +13,8 @@ public:
 		CONDJUMP,
 		ARITHMETIC,
 		ASSIGNMENT,
-		CALL
+		CALL,
+		PUTPARAM
 	};
 private:
 	Instruction::Type opcode;
@@ -21,20 +23,32 @@ private:
 	Instruction *next;
 	Instruction *prev;
 
+protected:
+	// Tota instrucció està dins un determinat subprograma,
+	// per controlar els accessos a variables
+	SubProgram *invokingProgram;
+
 public:
 	Instruction();
 	Instruction(Instruction::Type opcode);
 	~Instruction();
 
+	// control de la llista d'instruccions
 	void setNext(Instruction *next);
 	Instruction *getNext();
 
 	void setPrevious(Instruction *previous);
 	Instruction *getPrevious();
 
-	std::string toString();
-
 	Instruction::Type getType();
+
+	// per gestionar el context de les variables
+	void setInvokingSubProgram(SubProgram *);
+	SubProgram *getInvokingSubProgram();
+
+	// per representar
+	std::string toString();
+	std::string generateAssembly();
 };
 
 #endif

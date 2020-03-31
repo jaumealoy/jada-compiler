@@ -2,24 +2,25 @@
 #define _H_DESCRIPCIO_FUNCIO
 
 #include "Descripcio.h"
+#include "../code/SubProgram.h"
 #include <string>
 
 class DescripcioFuncio : public Descripcio {
 private:
-    // número de funció
-    int nf;
+    // definicó del subprograma
+    SubProgram *subprograma;
 
     // tipus del valor de retorn
     std::string tipusRetorn;
 
-public:
-    static int numFuncio;
-    
+public:   
     DescripcioFuncio();
     ~DescripcioFuncio();
 
     void setTipusRetorn(std::string tipus);
     std::string getTipusRetorn();
+
+	SubProgram *getSubPrograma();
 };
 
 #endif

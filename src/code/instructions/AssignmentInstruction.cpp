@@ -1,4 +1,5 @@
 #include "AssignmentInstruction.h"
+#include "../CodeGeneration.h"
 #include <exception>
 #include <iostream>
 
@@ -46,6 +47,9 @@ AssignmentInstruction::AssignmentInstruction(AssignmentInstruction::Type type, V
 
 AssignmentInstruction::~AssignmentInstruction(){}
 
+/**
+ * Generació de codi intermedi
+ */
 std::string AssignmentInstruction::toString(){
 	std::string tmp;
 
@@ -102,3 +106,44 @@ std::string AssignmentInstruction::toString(){
 
 	return tmp;
 }
+
+std::string AssignmentInstruction::generateAssembly(){
+	std::string tmp;
+
+	switch (this->type) {
+		case AssignmentInstruction::Type::SIMPLE:
+			if (origen == nullptr) {
+				int mida = this->desti->getOcupacio();
+				int valorConstant = 0;
+
+				switch (mida) {
+					case 1:
+						valorConstant = (int) *this->value->get();
+						break;
+
+					case 4:
+						valorConstant = *(int *) this->value->get();
+						break;
+
+					case 8:
+						valorConstant = *(long *) this->value->get();
+						break;
+				}
+
+				// es tracta d'un valor constant
+				tmp = "mov";
+				tmp += CodeGeneration::getSizeTag(true, mida);
+				tmp += "\t$" + std::to_string(valorConstant) + ",";
+				
+				if(this->getInvokingSubProgram() == this->desti->getSubPrograma() && this->desti->getSubPrograma()->getNivellProfunditat() == 0) {
+					tmp += " " + this->desti->getAssemblyTag();
+				}
+			}
+
+			break;
+		default:
+			tmp = "";
+	}
+
+	return tmp;
+};

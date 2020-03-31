@@ -13,3 +13,7 @@ void GoToInstruction::setLabel(Label l){
 std::string GoToInstruction::toString(){
 	return "goto e" + std::to_string(this->label.getId());
 }
+
+std::string GoToInstruction::generateAssembly(){
+	return "jmp\te" + std::to_string(this->label.getId());
+}

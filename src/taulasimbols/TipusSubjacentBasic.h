@@ -1,5 +1,5 @@
 #ifndef _H_TSB
-#define _H_TSB 1
+#define _H_TSB
 
 enum TipusSubjacentBasic {
     BOOLEAN,
@@ -7,6 +7,13 @@ enum TipusSubjacentBasic {
     INT,
     ARRAY,
     NUL
+};
+
+class TSB {
+private:
+
+public:
+	static int sizeOf(TipusSubjacentBasic tsb);
 };
 
 #endif

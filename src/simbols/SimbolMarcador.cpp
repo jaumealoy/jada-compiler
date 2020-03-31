@@ -21,6 +21,13 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 			this->et = driver->code.addLabel();
 			driver->code.addInstruction(new SkipInstruction(this->et));
 			break;
+		
+		case 1:
+			// goto incondicional sense destí
+			this->inst = driver->code.addInstruction(new GoToInstruction(Label()));
+			this->seg.push_back(this->inst);
+			break;
+
 		case 2:
 			// és un marcador que crea una instrucció skip
 			// que serveix per marcar blocs de codi
