@@ -26,6 +26,9 @@ private:
     // per comprovar si s'ha produït qualque error en la compilació
     bool exit;
 
+	// inicialització de les funcions pròpies del llenguatge
+	void initPrintInt();
+
 public:
     class Error : public std::exception {};
 

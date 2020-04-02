@@ -195,8 +195,8 @@ funcCap : funcContCap RIGHTPARAN COLON Tipus { $$.make(this->driver, $1, $4); }
 funcContCap : ID LEFTPARAN argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); }
     | funcContCap COMA argType Tipus ID { $$.make(this->driver, $1, $3, $4, $5); };
 
-procDecl : PROC M1 procCap BBEGIN bloc BEND ID SEMICOLON M0 {
-    $$.make(this->driver, $3, $5, $7, $2, $9);
+procDecl : PROC M1 procCap BBEGIN bloc BEND ID SEMICOLON {
+    $$.make(this->driver, $3, $5, $7, $2);
 };
 
 procCap : procContCap RIGHTPARAN { $$.make(this->driver, $1); }

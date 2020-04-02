@@ -8,12 +8,15 @@
 class PutParamInstruction : public Instruction {
 private:
 	// valor que es vol passar
-	Variable *variable;
+	Variable *valor;
+
+	// variable del paràmetre
+	Variable *argument;
 
 	// subprograma al qual es vol passar
 	SubProgram *programa;
 public:
-	PutParamInstruction(Variable *var, SubProgram *program);
+	PutParamInstruction(Variable *var, Variable *arg, SubProgram *program);
 	~PutParamInstruction();
 
 	std::string toString();

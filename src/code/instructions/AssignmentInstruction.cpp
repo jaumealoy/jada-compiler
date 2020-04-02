@@ -113,6 +113,7 @@ std::string AssignmentInstruction::generateAssembly(){
 	switch (this->type) {
 		case AssignmentInstruction::Type::SIMPLE:
 			if (origen == nullptr) {
+				// es tracta d'un valor constant variable = constant
 				int mida = this->desti->getOcupacio();
 				int valorConstant = 0;
 
@@ -130,17 +131,30 @@ std::string AssignmentInstruction::generateAssembly(){
 						break;
 				}
 
-				// es tracta d'un valor constant
 				tmp = "mov";
 				tmp += CodeGeneration::getSizeTag(true, mida);
 				tmp += "\t$" + std::to_string(valorConstant) + ",";
-				
-				if(this->getInvokingSubProgram() == this->desti->getSubPrograma() && this->desti->getSubPrograma()->getNivellProfunditat() == 0) {
-					tmp += " " + this->desti->getAssemblyTag();
-				}
+				tmp += " " + this->getAssemblyVariable(this->desti);
+			} else {
+				// és una assignació entre variables
+				// mov registre, b
+				int mida = desti->getOcupacio();
+
+				// mov origen, registre A
+				tmp = "mov";
+				tmp += CodeGeneration::getSizeTag(true, mida);
+				tmp += "\t" + this->getAssemblyVariable(this->origen) + ", %";
+				tmp += CodeGeneration::getRegister(CodeGeneration::Register::A, mida) + "\n";
+
+				// mov registre A, desti
+				tmp += "mov";
+				tmp += CodeGeneration::getSizeTag(true, mida);
+				tmp += "\t%" + CodeGeneration::getRegister(CodeGeneration::Register::A, mida) + ", ";
+				tmp += this->getAssemblyVariable(this->desti);
 			}
 
 			break;
+
 		default:
 			tmp = "";
 	}

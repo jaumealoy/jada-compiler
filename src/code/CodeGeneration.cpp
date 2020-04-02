@@ -16,7 +16,8 @@ CodeGeneration::CodeGeneration(){
 	// però es permeten variables globals, per simplificar el control
 	// es crearà un subprograma que representa tot el subprograma
 	this->nivellProfunditat = 0;
-	SubProgram *global = new SubProgram(this->nivellProfunditat, "_start");
+	Label mStart = this->addLabel();
+	SubProgram *global = new SubProgram(this->nivellProfunditat, mStart, "_start");
 	this->subprogrames.push(global);
 }
 
@@ -60,15 +61,23 @@ Label CodeGeneration::addLabel(){
 	return Label(++this->labelCounter);
 }
 
+Label CodeGeneration::addLabel(std::string name){
+	return Label(++this->labelCounter, name);
+}
+
 /**
  * Crea i retorna una nova variable, amb nom o sense
  */
 Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb){
+	return this->addVariable(tsb, false);
+}
+
+Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, bool parameter){
 	// el subprograma actual és
 	SubProgram *actual = this->subprogrames.top();
 
 	Variable *tmp = this->vars.add(
-		new Variable(actual, ++this->variableCounter)
+		new Variable(actual, ++this->variableCounter, parameter)
 	);
 
 	// indicar l'ocupació
@@ -78,11 +87,15 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb){
 }
 
 Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name){
+	return this->addVariable(tsb, name, false);
+}
+
+Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name, bool parameter){
 	// el subprograma actual és
 	SubProgram *actual = this->subprogrames.top();
 
 	Variable *tmp = this->vars.add(
-		new Variable(actual, ++this->variableCounter, name)
+		new Variable(actual, ++this->variableCounter, name, parameter)
 	);
 
 	// indicar l'ocupació
@@ -96,7 +109,9 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name)
  */
 SubProgram *CodeGeneration::addSubProgram(std::string id, Label label) {
 	// el nivell d'aquest subprograma és l'actual
-	return new SubProgram(this->nivellProfunditat + 1, id);
+	SubProgram *programa = new SubProgram(this->nivellProfunditat + 1, label, id);
+	this->programs.add(programa);
+	return programa;
 }
 
 /**
@@ -144,6 +159,8 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 	// el "subprograma" que s'ha creat artificialment
 	SubProgram *start = this->subprogrames.top();
 
+	file << ".global _start" << std::endl;
+
 	// secció .data
 	file << ".data" << std::endl;
 
@@ -156,12 +173,13 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 		Variable *tmp = this->vars.get(i);
 		if(tmp->getSubPrograma() != start) continue;
 		
-		file << "\t" << tmp->getAssemblyTag();
+		file << "\t" << tmp->getAssemblyTag() + ":";
 		file << "\t.fill\t" << tmp->getOcupacio() << ", 1, 0";
 		file << std::endl;
 	}
 	
 	file << ".text" << std::endl;
+	file << "_start:" << std::endl;
 
 	// ara es pot representar cada instrucció
 	Instruction *act = this->first;
@@ -169,6 +187,24 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 		file << act->generateAssembly() << std::endl;
 		act = act->getNext();
 	}
+
+	// indicar fi del programa
+	/* movq $1, %rax
+	movq $0, %rbx
+	int	$0x80*/
+
+	file << "movq\t$1, %rax" << std::endl;
+	file << "movq\t$0, %rbx" << std::endl;
+	file << "int\t$0x80" << std::endl;
+	
+	// TODO: implementar els subprogrames propis en C3A?
+	// incloure els subprogrames propis
+	std::ifstream printIntCode("programs/printInt.asm");
+	std::string line;
+	while(std::getline(printIntCode, line)){
+		file << line << std::endl;
+	}
+
 
 	std::cout << "Final assembly" << std::endl;
 }
@@ -341,11 +377,15 @@ void CodeGeneration::updateVariableTable() {
 			continue;
 		}
 
-		int currentOffset = subprograma->getOcupacioVariables();
-		actual->setOffset(currentOffset);
+		// els paràmetres ja tenen els offsets calculats quan es defineix el subprograma
+		if(!actual->isParameter()){
+			int currentOffset = subprograma->getOcupacioVariables();
+			actual->setOffset(currentOffset);
 
-		// actualitzar l'ocupació de les variables del subprograma
-		subprograma->setOcupacioVariables(currentOffset + actual->getOcupacio());
+			subprograma->addVariable(actual);
+		}
+
+		std::cout << "Variable " << actual->getNom() << " del subprograma " << subprograma->getNom() << " té mida " << actual->getOcupacio() << " offset: " << actual->getOffset() << std::endl;		
 	}
 }
 
@@ -356,7 +396,7 @@ void CodeGeneration::updateVariableTable() {
 void CodeGeneration::updateSubProgramTable() {
 	for(int i = 0; i < this->programs.size(); i++) {
 		// reiniciar el comptador de l'ocupació de variables
-		this->programs.get(i)->setOcupacioVariables(0);
+		this->programs.get(i)->resetOffsets();
 	}
 }
 
@@ -365,6 +405,9 @@ void CodeGeneration::updateSubProgramTable() {
  */
 std::string CodeGeneration::getSizeTag(bool instructionTag, int mida) {
 	std::string tmp = "";
+
+	std::string instructionTags[] = {"b", "l", "q"};
+	std::string dataTags[] = {"byte", "long", "quad"};
 
 	switch (mida) {
 		case 1: 
@@ -400,4 +443,53 @@ std::string CodeGeneration::getSizeTag(bool instructionTag, int mida) {
 
 std::string CodeGeneration::getSizeTag(bool instructionTag, TipusSubjacentBasic tsb) {
 	return getSizeTag(instructionTag, TSB::sizeOf(tsb));
+}
+
+std::string CodeGeneration::getRegister(Register reg, int size){
+	std::string tmp;
+
+	// registres d'1 byte
+	std::string byteRegister[] = {
+		"al", "bl", "cl", "dl", 
+		"sil", "dil", "bpl", "spl", 
+		"r8b", "r9b", "r10b", "r11b",
+		"r12b", "r13b", "r14b", "r15b"
+	};
+
+	// registres de 4 bytes
+	std::string longRegister[] = {
+		"eax", "ebx", "ecx", "edx", 
+		"esi", "edi", "ebp", "esp", 
+		"r8d", "r9d", "r10d", "r11d",
+		"r12d", "r13d", "r14d", "r15d"
+	};
+
+	// registres de 8 bytes
+	std::string quadRegister[] = {
+		"rax", "rbx", "rcx", "rdx", 
+		"rsi", "rdi", "rbp", "rsp", 
+		"r8", "r9", "r10", "r11",
+		"r12", "r13", "r14", "r15"
+	};
+
+	std::string *array;
+	switch (size) {
+		case 1:
+			array = byteRegister;
+			break;
+
+		case 4:
+			array = longRegister;
+			break;
+
+		case 8:
+			array = quadRegister;
+			break;
+
+		default:
+			array = longRegister;
+	}
+
+	tmp = array[reg];
+	return tmp;
 }

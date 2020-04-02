@@ -13,6 +13,7 @@ public:
     ~CallInstruction();
 
     std::string toString();
+	std::string generateAssembly();
 };
 
  #endif

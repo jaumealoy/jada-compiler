@@ -1,5 +1,6 @@
 #include "SimbolProcCap.h"
 #include "../code/instructions/SkipInstruction.h"
+#include "../code/instructions/SubProgramInitInstruction.h"
 #include "../Driver.h"
 
 SimbolProcCap::SimbolProcCap() : Simbol("ProcCap") {}
@@ -26,7 +27,7 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
     }
 
 	// crear el procedure a la generació de codi
-	Label start = driver->code.addLabel();
+	Label start = driver->code.addLabel(nom);
 	SubProgram *subprogram = driver->code.addSubProgram(nom, start);
 
 	// indicar l'etiqueta d'inici del subprograma
@@ -45,6 +46,7 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
 
 	// entrar al subprograma (generació de codi)
 	driver->code.enterSubProgram(subprogram);
+	driver->code.addInstruction(new SubProgramInitInstruction(subprogram));
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom + "()") );
@@ -63,13 +65,22 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 	// entrar al subprograma (generació de codi)
 	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nom);
 	driver->code.enterSubProgram(dp->getSubPrograma());
+	driver->code.addInstruction(new SubProgramInitInstruction(dp->getSubPrograma()));
 
     TaulaSimbols::Iterator it = driver->ts.getParametres();
     it.first(this->nom);
 
+	int ocupacioParametres = 0;
     while(it.valid()){
         DescripcioArgument *da = (DescripcioArgument *) it.get();
         Descripcio *d = nullptr;
+
+		// obtenció del TSB de la variable
+		DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(da->getNomTipusArgument());
+		Variable *var = driver->code.addVariable(dt->getTSB(), it.getId(), true);
+		//ocupacioParametres += var->getOcupacio();
+		dp->getSubPrograma()->addParameter(var);
+		da->setVariable(var);
 
         if(da->getTipusArgument() == DescripcioArgument::Tipus::IN){
             DescripcioConstant *dv = new DescripcioConstant(da->getNomTipusArgument());
@@ -82,6 +93,11 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
         driver->ts.posar(it.getId(), d);
         it.next();
     }
+
+	// l'ocupació final dels paràmetres serà el múltiple de 8 més pròxim
+	//int mod = ocupacioParametres % 8;
+	//ocupacioParametres = (mod == 0) ? ocupacioParametres : (ocupacioParametres + mod);
+	//dp->getSubPrograma()->setOcupacioParametres(ocupacioParametres);
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );

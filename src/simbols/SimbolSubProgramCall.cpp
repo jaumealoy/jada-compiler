@@ -1,7 +1,8 @@
 #include "SimbolSubProgramCall.h"
 #include "SimbolSubProgramContCall.h"
 #include "../code/instructions/CallInstruction.h"
-
+#include "../code/instructions/PutParamInstruction.h"
+#include "../code/instructions/PreAmbleInstruction.h"
 
 #include "../Driver.h"
 
@@ -107,11 +108,14 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
     this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
 
     Descripcio *d = driver->ts.consulta(this->id);
+	SubProgram *programa = nullptr;
+
     // segur que existeix, en cas contrari s'hauria marcat com a nul
     if(d->getTipus() == Descripcio::Tipus::FUNCIO){
         // és una funció, s'ha d'especificar el tipus de retorn
         DescripcioFuncio *df = (DescripcioFuncio *) d;
         this->tipus = df->getTipusRetorn();
+		programa = df->getSubPrograma();
 
         DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(this->tipus);
         this->tsb = dt->getTSB();
@@ -119,10 +123,43 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
         // és un procediment
         this->tipus.clear();
         this->tsb = TipusSubjacentBasic::NUL;
+
+		programa = ((DescripcioProc *) d)->getSubPrograma();
     }
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cont.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, ")") );
     Simbol::toDotFile(driver);
+
+	// generació de codi
+	// posar els paràmetres a la pila
+	std::list<SimbolExpressio> params = cont.getCallParams();
+	int size = params.size();
+
+	// reservar espai per tots els paràmetres
+	driver->code.addInstruction(new PreAmbleInstruction(programa));
+
+	tmp = driver->ts.getParametres();
+	tmp.first(this->id);
+
+	for(int i = 0; i < size; i++) {
+		DescripcioArgument *da = (DescripcioArgument *) tmp.get();
+		SimbolExpressio valor = params.back();
+		params.pop_back();
+
+		if (valor.getTSB() == TipusSubjacentBasic::BOOLEAN) {
+			// TODO: empilar valors true o false segons correspongui
+		} else {
+			Variable *var = valor.dereference(driver, valor.getTSB());
+			driver->code.addInstruction(new PutParamInstruction(var, da->getVariable(), programa));
+		}
+
+		tmp.next();
+	}
+
+
+	// invocar el subprograma
+	driver->code.addInstruction(new CallInstruction(programa));
+
 }

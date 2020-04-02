@@ -13,7 +13,7 @@ public:
     ~SimbolProcDecl();
 
     void make(Driver *driver, SimbolProcCap cap, SimbolBloc bloc, std::string nom, 
-		SimbolMarcador salt, SimbolMarcador et);
+		SimbolMarcador salt);
 };
 
 #endif

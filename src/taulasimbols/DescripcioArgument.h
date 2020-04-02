@@ -2,8 +2,8 @@
 #define _H_DESCRIPCIOARG
 
 #include "Descripcio.h"
+#include "../code/Variable.h"
 #include <string>
-
 
 class DescripcioArgument : public Descripcio {
 public:
@@ -17,25 +17,21 @@ private:
     std::string nomTipus;
     DescripcioArgument::Tipus tipus;
 
+	// variable associada al paràmetre
+	Variable *var;
+
 public:
-    DescripcioArgument(std::string tipus, DescripcioArgument::Tipus tipusArg) : Descripcio(Descripcio::Tipus::ARGUMENT) {
-        this->nomTipus = tipus;
-        this->tipus = tipusArg;
-    }
+	DescripcioArgument(std::string tipus, DescripcioArgument::Tipus tipusArg);
+	~DescripcioArgument();
 
-    ~DescripcioArgument(){}
+    void setTipusArgument(DescripcioArgument::Tipus argType);
+    DescripcioArgument::Tipus getTipusArgument();
 
-    void setTipusArgument(DescripcioArgument::Tipus argType){
-        this->tipus = argType;
-    }
+	// tipus (descripció de tipus)
+	std::string getNomTipusArgument();
 
-    DescripcioArgument::Tipus getTipusArgument(){
-        return this->tipus;
-    }
-
-    std::string getNomTipusArgument(){
-        return this->nomTipus;
-    }
+	void setVariable(Variable *var);
+	Variable *getVariable();
 };
 
 #endif

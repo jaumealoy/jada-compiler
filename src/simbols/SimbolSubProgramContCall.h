@@ -9,6 +9,9 @@ class SimbolSubProgramContCall : public SimbolReferencia {
 private:
     TaulaSimbols::Iterator it;
 
+	// llista dels valors dels paràmetres
+	std::list<SimbolExpressio> params;
+
 public:
     SimbolSubProgramContCall();
     ~SimbolSubProgramContCall();
@@ -17,6 +20,7 @@ public:
     void make(Driver *driver, SimbolSubProgramContCall cont, SimbolExpressio exp);
 
     TaulaSimbols::Iterator getParametres();
+	std::list<SimbolExpressio> getCallParams();
 };
 
 #endif

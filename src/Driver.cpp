@@ -63,7 +63,7 @@ Driver::Driver(char *filename)
     // funcions pròpies
     DescripcioFuncio *readChar = new DescripcioFuncio();
     readChar->setTipusRetorn("char");
-    this->ts.posar("readChar", readChar);
+    //this->ts.posar("readChar", readChar);
 
     DescripcioProc *printChar = new DescripcioProc(nullptr);
     this->ts.posar("printChar", printChar);
@@ -71,20 +71,27 @@ Driver::Driver(char *filename)
 
     DescripcioProc *print = new DescripcioProc(nullptr);
     this->ts.posar("print", print);
-    this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
+    //this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
 
     DescripcioFuncio *read = new DescripcioFuncio();
     read->setTipusRetorn("int");
     this->ts.posar("read", read);
-    this->ts.posarParam("read", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
+    //this->ts.posarParam("read", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
 
     DescripcioFuncio *readInt = new DescripcioFuncio();
     readInt->setTipusRetorn("int");
-    this->ts.posar("readInt", readInt);
+    //this->ts.posar("readInt", readInt);
 
-    DescripcioProc *writeInt = new DescripcioProc(nullptr);
+	SubProgram *writeIntProgram = this->code.addSubProgram("printInt", this->code.addLabel("printInt"));
+	DescripcioArgument *daIntParam = new DescripcioArgument("int", DescripcioArgument::IN);
+	this->code.enterSubProgram(writeIntProgram);
+	Variable *var = this->code.addVariable(TipusSubjacentBasic::INT, true);
+	writeIntProgram->addParameter(var);
+	daIntParam->setVariable(var);
+	this->code.leaveSubProgram();
+    DescripcioProc *writeInt = new DescripcioProc(writeIntProgram);
     this->ts.posar("printInt", writeInt);
-    this->ts.posarParam("printInt", "num", new DescripcioArgument("int", DescripcioArgument::IN));
+    this->ts.posarParam("printInt", "num", daIntParam);
 
 
     // inicialitzar fitxer de l'arbre

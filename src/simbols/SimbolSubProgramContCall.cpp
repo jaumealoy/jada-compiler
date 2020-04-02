@@ -77,6 +77,10 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
     this->fills.push_back( driver->addTreeChild(this, id + "(") );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// incialitzar la llista de paràmetres
+	this->params.clear();
+	this->params.push_back(exp);
 }
 
 /**
@@ -140,8 +144,15 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
     this->fills.push_back( driver->addTreeChild(this, ",") );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// continuar la llista de paràmetres
+	this->params = cont.params;
+	this->params.push_back(exp);
 }
 
+std::list<SimbolExpressio> SimbolSubProgramContCall::getCallParams(){
+	return this->params;
+}
 
 TaulaSimbols::Iterator SimbolSubProgramContCall::getParametres(){
     return this->it;

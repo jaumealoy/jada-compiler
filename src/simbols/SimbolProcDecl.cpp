@@ -1,6 +1,7 @@
 #include "SimbolProcDecl.h"
+#include "../code/instructions/ReturnInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../Driver.h"
-
 
 SimbolProcDecl::SimbolProcDecl() : Simbol("ProcDecl") {}
 
@@ -10,7 +11,7 @@ SimbolProcDecl::~SimbolProcDecl(){}
  * procDecl -> M1 proc procCap begin bloc end id M0;
  */
 void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap, 
-		SimbolBloc bloc, std::string nom, SimbolMarcador salt, SimbolMarcador et){
+		SimbolBloc bloc, std::string nom, SimbolMarcador salt){
     // Comprovar que els noms de la capçalera i l'end coincideixen
     if(cap.getNomProcedure() != nom){
         // error (no crític)
@@ -39,6 +40,12 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap,
     
     Simbol::toDotFile(driver);
 
+	// afegir retorn del subprograma
+	SubProgram *programa = ((DescripcioProc *) driver->ts.consulta(cap.getNomProcedure()))->getSubPrograma();
+	driver->code.addInstruction(new ReturnInstruction(programa));
+
 	// backpatch al final de l'instrucció
-	driver->code.backpatch(et.getLabel(), salt.getSeg());
+	Label finalPrograma = driver->code.addLabel();
+	driver->code.addInstruction(new SkipInstruction(finalPrograma));
+	driver->code.backpatch(finalPrograma, salt.getSeg());
 }

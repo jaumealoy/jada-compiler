@@ -75,9 +75,10 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
         arg->setTipusArgument(DescripcioArgument::IN);
     }
 
-	// afegir el parèmetre a la taula de símbols i a la generació de codi
+	// afegir el parèmetre a la taula de símbols
+	// el paràmetre s'afegirà al SubProgram una vegada s'hagi processat la
+	// capçalera completa
     driver->ts.posarParam(nomFuncio, nomParametre, arg);
-	subprogram->addParameter();
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nomProcedure + " (") );
@@ -87,7 +88,6 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
     Simbol::toDotFile(driver);
 
     // generació de codi
-
     driver->code.addLabel();
 }
 
@@ -157,8 +157,8 @@ void SimbolProcContCap::make(Driver *driver, SimbolProcContCap cap, SimbolArgTyp
 
 	// s'ha d'actualitzar subprograma de la generació de codi
 	// segur que existeix a la TS perquè s'ha afegit anteriorment
-	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nomProcedure);
-	dp->getSubPrograma()->addParameter();
+	//DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nomProcedure);
+	//dp->getSubPrograma()->addParameter();
 }
 
 std::string SimbolProcContCap::getNomProcedure(){

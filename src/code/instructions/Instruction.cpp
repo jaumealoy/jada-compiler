@@ -7,6 +7,11 @@
 #include "ArithmeticInstruction.h"
 #include "AssignmentInstruction.h"
 #include "CallInstruction.h"
+#include "PreAmbleInstruction.h"
+#include "PutParamInstruction.h"
+#include "SubProgramInitInstruction.h"
+#include "ReturnInstruction.h"
+#include "../CodeGeneration.h"
 
 Instruction::Instruction(){
 	this->next = nullptr;
@@ -68,6 +73,22 @@ std::string Instruction::toString(){
 			tmp = ((CallInstruction *) this)->toString();
 			break;
 
+		case PUTPARAM:
+			tmp = ((PutParamInstruction *) this)->toString();
+			break;
+
+		case PREAMBLE:
+			tmp = ((PreAmbleInstruction *) this)->toString();
+			break;
+
+		case PROGRAMINIT:
+			tmp = ((SubProgramInitInstruction *) this)->toString();
+			break;
+
+		case RETURN:
+			tmp = ((ReturnInstruction *) this)->toString();
+			break;
+
 		default:
 			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";
 	}
@@ -94,6 +115,26 @@ std::string Instruction::generateAssembly(){
 			tmp = ((AssignmentInstruction *) this)->generateAssembly();
 			break;
 
+		case Type::PREAMBLE:
+			tmp = ((PreAmbleInstruction *) this)->generateAssembly();
+			break;
+
+		case Type::PUTPARAM:
+			tmp = ((PutParamInstruction *) this)->generateAssembly();
+			break;
+
+		case Type::CALL:
+			tmp = ((CallInstruction *) this)->generateAssembly();
+			break;
+
+		case Type::PROGRAMINIT:
+			tmp = ((SubProgramInitInstruction *) this)->generateAssembly();
+			break;
+
+		case Type::RETURN:
+			tmp = ((ReturnInstruction *) this)->generateAssembly();
+			break;
+
 		default:
 			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";
 	}
@@ -112,6 +153,27 @@ void Instruction::setInvokingSubProgram(SubProgram *program) {
 
 SubProgram *Instruction::getInvokingSubProgram(){
 	return this->invokingProgram;
+}
+
+/**
+ * Retorna la representació adequada de la variable en funció
+ * de la profunditat del programa
+ */
+std::string Instruction::getAssemblyVariable(Variable *var){
+	std::string tmp;
+
+	if (var->getSubPrograma()->getNivellProfunditat() == 0) {
+		// és una variable global definida al .bss o .data
+		tmp = var->getAssemblyTag();	
+	} else {
+		// per construcció de JADA és impossible que es doni un altre cas
+		// perquè no es permet la declaració de subprogrames dins subprogrames
+		// this->invokingProgram->getNivellProfunditat() == var->getSubPrograma()->getNivellProfunditat()
+		// les adreces són de 8 bytes
+		tmp = std::to_string(var->getOffset()) + "(%" + CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) + ")";
+	}
+
+	return tmp;
 }
 
 Instruction::Type Instruction::getType(){

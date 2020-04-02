@@ -22,7 +22,7 @@ private:
 public:
     Descripcio();
     Descripcio(Descripcio::Tipus type);
-    virtual ~Descripcio();
+    ~Descripcio();
 
     Descripcio::Tipus getTipus();
 };

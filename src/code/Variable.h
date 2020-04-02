@@ -14,9 +14,13 @@ private:
 	// servir al desplaçament per indicar que no n'hi ha
 	bool null;
 
+	// indica si una variable és o no un paràmetre d'un subprograma
+	bool parameter;
+
 	// dades de la variable
 	TipusSubjacentBasic tsb;
 	int ocupacio;
+	int ocupacioExtra;
 	int offset;
 
 	// indica de quin subprograma és
@@ -24,8 +28,8 @@ private:
 
 public:
 	Variable();
-	Variable(SubProgram *, int id);
-	Variable(SubProgram *, int id, std::string name);
+	Variable(SubProgram *, int id, bool);
+	Variable(SubProgram *, int id, std::string name, bool parameter);
 	~Variable();
 
 	bool isNull();
@@ -34,14 +38,20 @@ public:
 	std::string getNom();
 	std::string getAssemblyTag();
 
+	// gestió de l'offset
 	void setOffset(int);
 	int getOffset();
-
+	bool isParameter();
 
 	// gestió de l'ocupació
 	void setOcupacio(TipusSubjacentBasic tsb);
 	void setOcupacio(TipusSubjacentBasic tsb, TipusSubjacentBasic unitari);
 	int getOcupacio();
+
+	int getOcupacioExtra();
+	void setOcupacioExtra(int ocupacio);
+
+	TipusSubjacentBasic getTSB();
 
 	SubProgram *getSubPrograma();
 };

@@ -1,7 +1,4 @@
 proc main() begin
-	int i = 4 + 2;
-	boolean[6] array;
-	array[0] = false;
-	array[3] = true;
-	boolean e = false;
+	int i = 2;
+	printInt(i);
 end main;

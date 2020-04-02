@@ -3,6 +3,7 @@
 
 #include "../Label.h"
 #include "../SubProgram.h"
+#include "../Variable.h"
 #include <string>
 
 class Instruction{
@@ -14,7 +15,10 @@ public:
 		ARITHMETIC,
 		ASSIGNMENT,
 		CALL,
-		PUTPARAM
+		PUTPARAM,
+		PREAMBLE,
+		PROGRAMINIT,
+		RETURN
 	};
 private:
 	Instruction::Type opcode;
@@ -27,6 +31,7 @@ protected:
 	// Tota instrucció està dins un determinat subprograma,
 	// per controlar els accessos a variables
 	SubProgram *invokingProgram;
+	std::string getAssemblyVariable(Variable *var);
 
 public:
 	Instruction();
