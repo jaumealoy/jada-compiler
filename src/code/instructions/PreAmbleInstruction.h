@@ -22,7 +22,7 @@ public:
 	SubProgram *getPrograma();	
 
 	std::string toString();
-	std::string generateAssembly();
+	void generateAssembly(CodeGeneration *code);
 };
 
 #endif

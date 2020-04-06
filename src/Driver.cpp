@@ -1,15 +1,18 @@
 #include "Driver.h"
 
+#include "code/instructions/SkipInstruction.h"
 #include "code/instructions/AssignmentInstruction.h"
+#include "code/instructions/ReturnInstruction.h"
+#include "code/instructions/AssemblyInstruction.h"
+#include "code/instructions/PreAmbleInstruction.h"
 
 #include <exception>
 
 Driver::Driver(char *filename) 
-	: treeFile("tree.dot", std::fstream::out), errorsFile("erros.txt", std::fstream::out)
+	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out)
 {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
-	this->code = CodeGeneration();
 
     // inicialitzar la taula de símbols
     this->ts = TaulaSimbols();
@@ -65,9 +68,7 @@ Driver::Driver(char *filename)
     readChar->setTipusRetorn("char");
     //this->ts.posar("readChar", readChar);
 
-    DescripcioProc *printChar = new DescripcioProc(nullptr);
-    this->ts.posar("printChar", printChar);
-    this->ts.posarParam("printChar", "caracter", new DescripcioArgument("char", DescripcioArgument::IN));
+	this->initPrintChar();   
 
     DescripcioProc *print = new DescripcioProc(nullptr);
     this->ts.posar("print", print);
@@ -187,4 +188,48 @@ void Driver::closeFiles(){
 
 bool Driver::exitosa(){
     return this->exit;
+}
+
+/**
+ * Crea la funció printChar i genera el codi de 3 adreces
+ * que necessita.
+ * 
+ * printChar(char caracter)
+ */
+void Driver::initPrintChar(){
+	Label end = this->code.addLabel();
+
+	this->code.addInstruction(new GoToInstruction(end));
+
+	// generació de codi
+	Label start = this->code.addLabel("printChar");
+	this->code.addInstruction(new SkipInstruction(start));
+	SubProgram *printCharProgram = this->code.addSubProgram("printChar", start);
+	this->code.addInstruction(new PreAmbleInstruction(printCharProgram));
+
+	// taula de símbols
+	DescripcioProc *printChar = new DescripcioProc(printCharProgram);
+    this->ts.posar("printChar", printChar);
+	DescripcioArgument *darg = new DescripcioArgument("char", DescripcioArgument::IN);
+    this->ts.posarParam("printChar", "caracter", darg);
+
+	// entrar al subprograma
+	this->code.enterSubProgram(printCharProgram);
+
+	// crear variables associades als paràmetres
+	Variable *arg1 = this->code.addVariable(TipusSubjacentBasic::CHAR, true);
+	darg->setVariable(arg1);
+	printCharProgram->addParameter(arg1);
+
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rax")); // sys_write
+	this->code.addInstruction(new AssemblyInstruction("lea\t"+ std::to_string(arg1->getOffset()) +"(%rbp), %rsi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rdi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdx")); // buffer size
+	this->code.addInstruction(new AssemblyInstruction("syscall"));
+
+	// acabar el subprograma
+	this->code.addInstruction(new ReturnInstruction(printCharProgram));
+	this->code.leaveSubProgram();
+
+	this->code.addInstruction(new SkipInstruction(end));
 }

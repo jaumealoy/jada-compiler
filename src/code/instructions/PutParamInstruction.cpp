@@ -23,18 +23,14 @@ std::string PutParamInstruction::toString(){
  * Una opció és gastar 8 bytes per cada paràmetre o bé aproximar al múltiple
  * de 8 més pròxim.
  */
-std::string PutParamInstruction::generateAssembly(){
+void PutParamInstruction::generateAssembly(CodeGeneration *code){
 	std::string tmp;
 
 	// carregar el valor al registre corresponent
-	tmp = "mov" + CodeGeneration::getSizeTag(true, this->valor->getOcupacio());
-	tmp += "\t" + this->getAssemblyVariable(this->valor) + ", %";
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::A, this->valor->getOcupacio()) + "\n";
+	code->load(this, this->valor, CodeGeneration::Register::A);
 
-	tmp = "mov" + CodeGeneration::getSizeTag(true, this->valor->getOcupacio());
-	tmp += "\t%" + CodeGeneration::getRegister(CodeGeneration::Register::A, this->valor->getOcupacio()) + ", ";
-	tmp += std::to_string(this->argument->getOffset() - 8) + "(%"; // - 8 perquè encara no s'ha inserit @return
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + ")";
-
-	return tmp;
+	code->output << "mov" + CodeGeneration::getSizeTag(true, this->valor->getOcupacio());
+	code->output << "\t%" + CodeGeneration::getRegister(CodeGeneration::Register::A, this->valor->getOcupacio()) + ", ";
+	code->output << std::to_string(this->argument->getOffset() - 8) + "(%"; // - 8 perquè encara no s'ha inserit @return
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + ")";
 }

@@ -28,7 +28,8 @@ int SubProgram::getNivellProfunditat() {
 }
 
 int SubProgram::getOcupacioVariables() {
-	return this->ocupacioVariables;
+	int mod = (this->ocupacioVariables / 8 + 1) * 8 - this->ocupacioVariables;
+	return this->ocupacioVariables + mod;
 }
 
 /*void SubProgram::setOcupacioVariables(int ocupacio) {
@@ -62,7 +63,7 @@ void SubProgram::addVariable(Variable *var) {
 		return;
 	}
 
-	this->ocupacioParametres += var->getOcupacio();
+	this->ocupacioVariables += var->getOcupacio();
 
 	// actualitza l'offset de la variable (amb aquest ordre)
 	this->currentOffsetVariables -= var->getOcupacio();
@@ -80,7 +81,7 @@ void SubProgram::addVariable(Variable *var) {
 }*/
 
 int SubProgram::getOcupacioParametres(){
-	int mod = this->ocupacioParametres % 8;
+	int mod = (this->ocupacioParametres / 8 + 1) * 8 - this->ocupacioParametres;
 	return this->ocupacioParametres + mod;
 }
 

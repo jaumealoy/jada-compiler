@@ -107,7 +107,7 @@ std::string AssignmentInstruction::toString(){
 	return tmp;
 }
 
-std::string AssignmentInstruction::generateAssembly(){
+void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 	std::string tmp;
 
 	switch (this->type) {
@@ -131,26 +131,17 @@ std::string AssignmentInstruction::generateAssembly(){
 						break;
 				}
 
-				tmp = "mov";
-				tmp += CodeGeneration::getSizeTag(true, mida);
-				tmp += "\t$" + std::to_string(valorConstant) + ",";
-				tmp += " " + this->getAssemblyVariable(this->desti);
+				code->output << "mov";
+				code->output << CodeGeneration::getSizeTag(true, mida);
+				code->output << "\t$" + std::to_string(valorConstant) + ",";
+				code->output << " " + this->getAssemblyVariable(this->desti);
 			} else {
 				// és una assignació entre variables
-				// mov registre, b
-				int mida = desti->getOcupacio();
-
 				// mov origen, registre A
-				tmp = "mov";
-				tmp += CodeGeneration::getSizeTag(true, mida);
-				tmp += "\t" + this->getAssemblyVariable(this->origen) + ", %";
-				tmp += CodeGeneration::getRegister(CodeGeneration::Register::A, mida) + "\n";
+				code->load(this, this->origen, CodeGeneration::Register::A);
 
 				// mov registre A, desti
-				tmp += "mov";
-				tmp += CodeGeneration::getSizeTag(true, mida);
-				tmp += "\t%" + CodeGeneration::getRegister(CodeGeneration::Register::A, mida) + ", ";
-				tmp += this->getAssemblyVariable(this->desti);
+				code->store(this, CodeGeneration::Register::A, desti);
 			}
 
 			break;
@@ -159,5 +150,4 @@ std::string AssignmentInstruction::generateAssembly(){
 			tmp = "";
 	}
 
-	return tmp;
 };

@@ -18,14 +18,23 @@ std::string PreAmbleInstruction::toString(){
 }
 
 /**
- * S'ha de reservar espai a la pila pels paràmetres
+ * Reservar espai per les variables locals i inicialitzar
  */
-std::string PreAmbleInstruction::generateAssembly() {
-	std::string tmp;
+void PreAmbleInstruction::generateAssembly(CodeGeneration *code) {
+	// guardar el base pointer anterior
+	code->output << "push\t%" + CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) + "\n";
 
-	tmp = "sub" + CodeGeneration::getSizeTag(true, 8);
-	tmp += "\t$" + std::to_string(this->programa->getOcupacioParametres()) + ", %";
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
+	// i actualitzar el base pointer
+	code->output << "mov" << CodeGeneration::getSizeTag(true, 8) << "\t%";
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
+	code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) << std::endl;
+	code->output << "add" << CodeGeneration::getSizeTag(true, 8) << "\t$8, %"; // per compensar el push
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) << std::endl;
+	
+	// reservar espai per variables locals
+	code->output << "sub" + CodeGeneration::getSizeTag(true, 8) << "\t$";
+	code->output << std::to_string(this->programa->getOcupacioVariables()) << ", %";
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
 
-	return tmp;
+	// TODO: inicialitzar punters arrays!
 }

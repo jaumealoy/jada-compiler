@@ -15,15 +15,14 @@ std::string CallInstruction::toString() {
  * Invocar el subprograma (call) i eliminar 
  * els paràmetres d'entrada de la pila
  */
-std::string CallInstruction::generateAssembly() {
+void CallInstruction::generateAssembly(CodeGeneration *code) {
 	std::string tmp;
 
-	tmp = "call \t" + this->program->getNom() + "\n";
+	// invocar el subprograma
+	code->output << "call \t" << this->program->getNom() << std::endl;
 
 	// eliminar paràmetres
-	tmp += "add" + CodeGeneration::getSizeTag(true, 8);
-	tmp += "\t$" + std::to_string(this->program->getOcupacioParametres()) + ", %";
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
-
-	return tmp;
+	code->output << "add" + CodeGeneration::getSizeTag(true, 8);
+	code->output << "\t$" + std::to_string(this->program->getOcupacioParametres()) + ", %";
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
 }

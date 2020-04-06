@@ -3,6 +3,7 @@
 #include "../code/instructions/CallInstruction.h"
 #include "../code/instructions/PutParamInstruction.h"
 #include "../code/instructions/PreAmbleInstruction.h"
+#include "../code/instructions/AssemblyInstruction.h"
 
 #include "../Driver.h"
 
@@ -138,7 +139,10 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 	int size = params.size();
 
 	// reservar espai per tots els paràmetres
-	driver->code.addInstruction(new PreAmbleInstruction(programa));
+	int espai = programa->getOcupacioParametres();
+	driver->code.addInstruction(new AssemblyInstruction(
+		"subq\t$" + std::to_string(espai) + ", %" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8)
+	));
 
 	tmp = driver->ts.getParametres();
 	tmp.first(this->id);

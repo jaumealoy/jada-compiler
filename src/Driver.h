@@ -26,8 +26,12 @@ private:
     // per comprovar si s'ha produït qualque error en la compilació
     bool exit;
 
+	// mode debug
+	bool debug;
+
 	// inicialització de les funcions pròpies del llenguatge
 	void initPrintInt();
+	void initPrintChar();
 
 public:
     class Error : public std::exception {};
@@ -54,6 +58,7 @@ public:
 
 	// generació de codi
 	CodeGeneration code;
+	bool isDebug();
 
     void closeFiles();
 

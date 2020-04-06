@@ -1,6 +1,6 @@
 #include "SimbolProcCap.h"
 #include "../code/instructions/SkipInstruction.h"
-#include "../code/instructions/SubProgramInitInstruction.h"
+#include "../code/instructions/PreAmbleInstruction.h"
 #include "../Driver.h"
 
 SimbolProcCap::SimbolProcCap() : Simbol("ProcCap") {}
@@ -46,7 +46,7 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
 
 	// entrar al subprograma (generació de codi)
 	driver->code.enterSubProgram(subprogram);
-	driver->code.addInstruction(new SubProgramInitInstruction(subprogram));
+	driver->code.addInstruction(new PreAmbleInstruction(subprogram));
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom + "()") );
@@ -65,7 +65,7 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 	// entrar al subprograma (generació de codi)
 	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nom);
 	driver->code.enterSubProgram(dp->getSubPrograma());
-	driver->code.addInstruction(new SubProgramInitInstruction(dp->getSubPrograma()));
+	driver->code.addInstruction(new PreAmbleInstruction(dp->getSubPrograma()));
 
     TaulaSimbols::Iterator it = driver->ts.getParametres();
     it.first(this->nom);

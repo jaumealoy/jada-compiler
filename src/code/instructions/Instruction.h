@@ -6,6 +6,8 @@
 #include "../Variable.h"
 #include <string>
 
+class CodeGeneration;
+
 class Instruction{
 public:
 	enum Type{
@@ -17,8 +19,8 @@ public:
 		CALL,
 		PUTPARAM,
 		PREAMBLE,
-		PROGRAMINIT,
-		RETURN
+		RETURN,
+		ASSEMBLY
 	};
 private:
 	Instruction::Type opcode;
@@ -31,7 +33,6 @@ protected:
 	// Tota instrucció està dins un determinat subprograma,
 	// per controlar els accessos a variables
 	SubProgram *invokingProgram;
-	std::string getAssemblyVariable(Variable *var);
 
 public:
 	Instruction();
@@ -53,7 +54,8 @@ public:
 
 	// per representar
 	std::string toString();
-	std::string generateAssembly();
+	std::string getAssemblyVariable(Variable *var);
+	void generateAssembly(CodeGeneration *code);
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "SkipInstruction.h"
+#include "../CodeGeneration.h"
 
 SkipInstruction::SkipInstruction(Label label) : Instruction(Instruction::Type::SKIP){
 	this->label = label;
@@ -17,6 +18,6 @@ std::string SkipInstruction::toString(){
  * Traducció a codi assemblador
  * Indicar una etiqueta consisteix en posar l'etiqueta al codi
  */
-std::string SkipInstruction::generateAssembly() {
-	return this->label.toString() + ":";
+void SkipInstruction::generateAssembly(CodeGeneration *code) {
+	code->output << this->label.toString() + ":";
 }

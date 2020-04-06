@@ -20,7 +20,7 @@ public:
 	~PutParamInstruction();
 
 	std::string toString();
-	std::string generateAssembly();
+	void generateAssembly(CodeGeneration *);
 };
 
 #endif

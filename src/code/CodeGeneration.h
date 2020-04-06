@@ -74,14 +74,21 @@ public:
 
 	// generació de codi
 	void writeToFile(std::ofstream &file);
-	void generateAssembly(std::ofstream &file);
-
+	void generateAssembly();
+	
 	// funcions auxiliar
 	static std::string getSizeTag(bool, TipusSubjacentBasic);
 	static std::string getSizeTag(bool, int);
 
 	enum Register { A, B, C, D, SI, DI, BP, SP, R8, R9, R10, R11, R12, R13, R14 };
 	static std::string getRegister(Register reg, int size);
+
+	// macros
+	void load(Instruction *caller, Variable *var, Register reg);
+	void store(Instruction *caller, Register reg, Variable *var);
+
+	// arxiu de sortida en assemblador
+	std::ofstream output;
 };
 
 #endif

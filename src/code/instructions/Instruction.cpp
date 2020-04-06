@@ -9,8 +9,8 @@
 #include "CallInstruction.h"
 #include "PreAmbleInstruction.h"
 #include "PutParamInstruction.h"
-#include "SubProgramInitInstruction.h"
 #include "ReturnInstruction.h"
+#include "AssemblyInstruction.h"
 #include "../CodeGeneration.h"
 
 Instruction::Instruction(){
@@ -81,10 +81,6 @@ std::string Instruction::toString(){
 			tmp = ((PreAmbleInstruction *) this)->toString();
 			break;
 
-		case PROGRAMINIT:
-			tmp = ((SubProgramInitInstruction *) this)->toString();
-			break;
-
 		case RETURN:
 			tmp = ((ReturnInstruction *) this)->toString();
 			break;
@@ -99,47 +95,44 @@ std::string Instruction::toString(){
 /**
  * Genera el codi assemblador de cada instrucció
  */
-std::string Instruction::generateAssembly(){
+void Instruction::generateAssembly(CodeGeneration *code){
 	std::string tmp;
 
 	switch (this->opcode) {
 		case Type::SKIP:
-			tmp = ((SkipInstruction *) this)->generateAssembly();
+			((SkipInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::GOTO:
-			tmp = ((GoToInstruction *) this)->generateAssembly();
+			((GoToInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::ASSIGNMENT:
-			tmp = ((AssignmentInstruction *) this)->generateAssembly();
+			((AssignmentInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::PREAMBLE:
-			tmp = ((PreAmbleInstruction *) this)->generateAssembly();
+			((PreAmbleInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::PUTPARAM:
-			tmp = ((PutParamInstruction *) this)->generateAssembly();
+			((PutParamInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::CALL:
-			tmp = ((CallInstruction *) this)->generateAssembly();
-			break;
-
-		case Type::PROGRAMINIT:
-			tmp = ((SubProgramInitInstruction *) this)->generateAssembly();
+			((CallInstruction *) this)->generateAssembly(code);
 			break;
 
 		case Type::RETURN:
-			tmp = ((ReturnInstruction *) this)->generateAssembly();
+			((ReturnInstruction *) this)->generateAssembly(code);
 			break;
+
+		case Type::ASSEMBLY:
+			((AssemblyInstruction *) this)->generateAssembly(code);
 
 		default:
 			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";
 	}
-
-	return tmp;
 }
 
 /**

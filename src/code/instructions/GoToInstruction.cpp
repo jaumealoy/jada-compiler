@@ -1,4 +1,5 @@
 #include "GoToInstruction.h"
+#include "../CodeGeneration.h"
 
 GoToInstruction::GoToInstruction(Label label) : Instruction(Instruction::Type::GOTO) {
 	this->label = label;
@@ -14,6 +15,6 @@ std::string GoToInstruction::toString(){
 	return "goto e" + std::to_string(this->label.getId());
 }
 
-std::string GoToInstruction::generateAssembly(){
-	return "jmp\te" + std::to_string(this->label.getId());
+void GoToInstruction::generateAssembly(CodeGeneration *code){
+	code->output << "jmp\te" << std::to_string(this->label.getId());
 }

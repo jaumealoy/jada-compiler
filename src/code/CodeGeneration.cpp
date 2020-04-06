@@ -4,7 +4,7 @@
 #include "instructions/CondJumpInstruction.h"
 #include <iostream>
 
-CodeGeneration::CodeGeneration(){
+CodeGeneration::CodeGeneration() : output("codi.asm") {
 	this->first = nullptr;
 	this->last = nullptr;
 
@@ -150,7 +150,7 @@ void CodeGeneration::writeToFile(std::ofstream &file){
  * 1.2) .bss són variables globals sense inicialitzar
  * 1.3) .text és el programa (subprogrames i instruccions)
  */
-void CodeGeneration::generateAssembly(std::ofstream &file) {
+void CodeGeneration::generateAssembly() {
 	// primer s'han d'actualitzar les taules (amb aquest ordre)
 	this->updateSubProgramTable();
 	this->updateVariableTable();
@@ -159,13 +159,13 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 	// el "subprograma" que s'ha creat artificialment
 	SubProgram *start = this->subprogrames.top();
 
-	file << ".global _start" << std::endl;
+	this->output << ".global _start" << std::endl;
 
 	// secció .data
-	file << ".data" << std::endl;
+	this->output << ".data" << std::endl;
 
 	// secció .bss
-	file << ".bss" << std::endl;
+	this->output << ".bss" << std::endl;
 
 	// variables globals no inicialitzades
 	// TODO: la inicialització de variables sempre es fa en temps d'execució
@@ -173,18 +173,19 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 		Variable *tmp = this->vars.get(i);
 		if(tmp->getSubPrograma() != start) continue;
 		
-		file << "\t" << tmp->getAssemblyTag() + ":";
-		file << "\t.fill\t" << tmp->getOcupacio() << ", 1, 0";
-		file << std::endl;
+		this->output << "\t" << tmp->getAssemblyTag() + ":";
+		this->output << "\t.fill\t" << tmp->getOcupacio() << ", 1, 0";
+		this->output << std::endl;
 	}
 	
-	file << ".text" << std::endl;
-	file << "_start:" << std::endl;
+	this->output << ".text" << std::endl;
+	this->output << "_start:" << std::endl;
 
 	// ara es pot representar cada instrucció
 	Instruction *act = this->first;
 	while(act != nullptr){
-		file << act->generateAssembly() << std::endl;
+		act->generateAssembly(this);
+		this->output << std::endl;
 		act = act->getNext();
 	}
 
@@ -193,16 +194,16 @@ void CodeGeneration::generateAssembly(std::ofstream &file) {
 	movq $0, %rbx
 	int	$0x80*/
 
-	file << "movq\t$1, %rax" << std::endl;
-	file << "movq\t$0, %rbx" << std::endl;
-	file << "int\t$0x80" << std::endl;
+	this->output << "movq\t$1, %rax" << std::endl;
+	this->output << "movq\t$0, %rbx" << std::endl;
+	this->output << "int\t$0x80" << std::endl;
 	
 	// TODO: implementar els subprogrames propis en C3A?
 	// incloure els subprogrames propis
 	std::ifstream printIntCode("programs/printInt.asm");
 	std::string line;
 	while(std::getline(printIntCode, line)){
-		file << line << std::endl;
+		this->output << line << std::endl;
 	}
 
 
@@ -492,4 +493,23 @@ std::string CodeGeneration::getRegister(Register reg, int size){
 
 	tmp = array[reg];
 	return tmp;
+}
+
+
+/**
+ * Macro per carregar una variable a un registre
+ */
+void CodeGeneration::load(Instruction *inst, Variable *var, CodeGeneration::Register reg){
+	this->output << "mov" << CodeGeneration::getSizeTag(true, var->getOcupacio()) << "\t";
+	this->output << inst->getAssemblyVariable(var) << ", %";
+	this->output << CodeGeneration::getRegister(reg, var->getOcupacio()) << std::endl;
+}
+
+/**
+ * Macro per carregar una variable a un registre
+ */
+void CodeGeneration::store(Instruction *inst, CodeGeneration::Register reg, Variable *var){
+	this->output << "mov" << CodeGeneration::getSizeTag(true, var->getOcupacio()) << "\t";
+	this->output << "%" << CodeGeneration::getRegister(reg, var->getOcupacio()) << ", ";
+	this->output << inst->getAssemblyVariable(var) << std::endl;
 }

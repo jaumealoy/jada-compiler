@@ -43,7 +43,7 @@ public:
 	~AssignmentInstruction();
 
 	std::string toString();
-	std::string generateAssembly();
+	void generateAssembly(CodeGeneration *code);
 };
 
 #endif

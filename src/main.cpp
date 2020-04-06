@@ -25,8 +25,7 @@ int main(int argc, char **argv){
 		myDriver.code.writeToFile(codeOutput);
 
 		// representació en assemblador
-		ofstream assemblyOutput("codi.asm");
-		myDriver.code.generateAssembly(assemblyOutput);
+		myDriver.code.generateAssembly();
 		
 		cout << "Compilació exitosa" << endl;
 	}

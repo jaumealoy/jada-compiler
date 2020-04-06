@@ -21,22 +21,19 @@ std::string ReturnInstruction::toString(){
  * Alliberar espai ocupat per les variables locals, recuperar BP
  * i cridar a ret
  */
-std::string ReturnInstruction::generateAssembly(){
-	std::string tmp;
-
+void ReturnInstruction::generateAssembly(CodeGeneration *code){
 	// primer alliberar l'espai per les variables locals
-	tmp += "add" + CodeGeneration::getSizeTag(true, 8) + "\t$";
-	tmp += std::to_string(this->programa->getOcupacioVariables()) + ", %";
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + "\n";
+	code->output << "add" << CodeGeneration::getSizeTag(true, 8) << "\t$";
+	code->output << std::to_string(this->programa->getOcupacioVariables()) << ", %";
+	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) << std::endl;
 
 	// recuperar el base pointer
 	/*tmp += "mov" + CodeGeneration::getSizeTag(true, 8) + "\t";
 	tmp += "(%" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + "), %";
 	tmp += CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) + ")\n";*/
-	tmp += "pop\t%" + CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) + "\n";
+	code->output << "pop\t%" + CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) << std::endl;
 	
 	// retornar al subprograma invocador
-	tmp += "ret";
+	code->output << "ret";
 
-	return tmp;
 }
