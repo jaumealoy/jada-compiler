@@ -107,6 +107,10 @@ void Instruction::generateAssembly(CodeGeneration *code){
 			((GoToInstruction *) this)->generateAssembly(code);
 			break;
 
+		case Type::CONDJUMP:
+			((CondJumpInstruction *) this)->generateAssembly(code);
+			break;
+
 		case Type::ASSIGNMENT:
 			((AssignmentInstruction *) this)->generateAssembly(code);
 			break;

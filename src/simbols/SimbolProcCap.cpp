@@ -78,7 +78,7 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 		// obtenció del TSB de la variable
 		DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(da->getNomTipusArgument());
 		Variable *var = driver->code.addVariable(dt->getTSB(), it.getId(), true);
-		//ocupacioParametres += var->getOcupacio();
+
 		dp->getSubPrograma()->addParameter(var);
 		da->setVariable(var);
 
@@ -93,11 +93,6 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
         driver->ts.posar(it.getId(), d);
         it.next();
     }
-
-	// l'ocupació final dels paràmetres serà el múltiple de 8 més pròxim
-	//int mod = ocupacioParametres % 8;
-	//ocupacioParametres = (mod == 0) ? ocupacioParametres : (ocupacioParametres + mod);
-	//dp->getSubPrograma()->setOcupacioParametres(ocupacioParametres);
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );

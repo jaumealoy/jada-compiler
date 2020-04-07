@@ -1,4 +1,5 @@
 #include "CondJumpInstruction.h"
+#include "../CodeGeneration.h"
 
 CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label l) 
 	: Instruction(Instruction::Type::CONDJUMP) 
@@ -45,4 +46,18 @@ std::string CondJumpInstruction::toString() {
 
 void CondJumpInstruction::setLabel(Label l){
 	this->l = l;
+}
+
+void CondJumpInstruction::generateAssembly(CodeGeneration *code){
+	// carregar variables als registres
+	code->load(this, this->e1, CodeGeneration::Register::A);
+	code->load(this, this->e2, CodeGeneration::Register::B);
+
+	std::string inst[] = {"je", "jne", "und", "und1", "und2", "und3", "und4"};
+
+	code->output << "cmp" << CodeGeneration::getSizeTag(true, this->e1->getOcupacio()) << "\t";
+	code->output << "%" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->e1->getOcupacio());
+	code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::B, this->e2->getOcupacio()) << std::endl;
+
+	code->output << inst[this->op] << "\t" << this->l.toString();
 }

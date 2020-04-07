@@ -1,5 +1,7 @@
 #include "SimbolFuncCap.h"
 #include "../Driver.h"
+#include "../code/instructions/PreAmbleInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 
 SimbolFuncCap::SimbolFuncCap() : Simbol("FuncCap") {}
 SimbolFuncCap::~SimbolFuncCap() {}
@@ -27,6 +29,7 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
     std::string nomTipus = tipus;
 
     // Comprovar que no es retorna un array i que el tipus existeix
+	DescripcioTipus *dtt;
     try {
         Descripcio *dt = driver->ts.consulta(nomTipus);
         
@@ -35,7 +38,7 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
             return;
         }
 
-        DescripcioTipus *dtt = (DescripcioTipus *) dt;
+        dtt = (DescripcioTipus *) dt;
         if(dtt->getTSB() == TipusSubjacentBasic::ARRAY){
             // error, no es poden retornar arrays
             driver->error( error_retorn_array() );
@@ -47,8 +50,16 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
         return;
     }
 
+	// crear el procedure a la generació de codi
+	Label start = driver->code.addLabel(nom);
+	SubProgram *subprogram = driver->code.addSubProgram(nom, start);
+	subprogram->setTipusRetorn(dtt->getTSB());
+
+	// indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(start));
+
     // Crear una funció sense paràmetres
-    DescripcioFuncio *d = new DescripcioFuncio();
+    DescripcioFuncio *d = new DescripcioFuncio(subprogram);
     d->setTipusRetorn(tipus);
     
     // inserir la funció
@@ -58,6 +69,10 @@ void SimbolFuncCap::make(Driver *driver, std::string nom, SimbolTipus tipus){
     driver->ts.entrarBloc();
 
     this->nom = nom;
+
+	// entrar al subprograma (generació de codi)
+	driver->code.enterSubProgram(subprogram);
+	driver->code.addInstruction(new PreAmbleInstruction(subprogram));
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, nom + "() : ") );
@@ -73,14 +88,24 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipu
     // de retorn
 
     Descripcio *d = driver->ts.consulta(cap.getNomFuncio());
-
+	DescripcioFuncio *df;
     if(d->getTipus() == Descripcio::Tipus::FUNCIO){
-        DescripcioFuncio *df = (DescripcioFuncio *) d;
+        df = (DescripcioFuncio *) d;
         df->setTipusRetorn(tipus);
 
         // actualitzar l'entrada de la taula de símbols
         // hem modificat el contingut d'un punter, no importa
         // actualitzar res més
+
+		// i indicar el tipus de retorn a la generació de codi
+		DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(tipus);
+		if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
+            // error, no es poden retornar arrays
+            driver->error( error_retorn_array() );
+            return;
+        }
+
+		df->getSubPrograma()->setTipusRetorn(dt->getTSB());
     }
 
     this->nom = cap.getNomFuncio();
@@ -88,12 +113,23 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipu
     // entrar bloc i definir variables locals
     driver->ts.entrarBloc();
 
+	// entrar al subprograma (generació de codi)
+	driver->code.enterSubProgram(df->getSubPrograma());
+	driver->code.addInstruction(new PreAmbleInstruction(df->getSubPrograma()));
+
     TaulaSimbols::Iterator it = driver->ts.getParametres();
     it.first(this->nom);
 
     while(it.valid()){
         DescripcioArgument *da = (DescripcioArgument *) it.get();
         Descripcio *d = nullptr;
+
+		// obtenció del TSB de la variable
+		DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(da->getNomTipusArgument());
+		Variable *var = driver->code.addVariable(dt->getTSB(), it.getId(), true);
+
+		df->getSubPrograma()->addParameter(var);
+		da->setVariable(var);
 
         if(da->getTipusArgument() == DescripcioArgument::Tipus::IN){
             DescripcioConstant *dv = new DescripcioConstant(da->getNomTipusArgument());

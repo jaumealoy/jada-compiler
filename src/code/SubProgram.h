@@ -2,6 +2,7 @@
 #define _H_SUBPROGRAM
 
 #include "Label.h"
+#include "../taulasimbols/TipusSubjacentBasic.h"
 #include <string>
 
 class Variable;
@@ -21,6 +22,9 @@ private:
 	int currentOffsetVariables;
 	int currentOffsetParametres;
 
+	// tipus de retorn
+	TipusSubjacentBasic returnTSB;
+
 public:
     SubProgram(int np, Label start, std::string id);
     ~SubProgram();
@@ -30,15 +34,16 @@ public:
 
 	void addVariable(Variable *var);
 	int getOcupacioVariables();
-	//void setOcupacioVariables(int);
 
 	void addParameter(Variable *param);
-	//void setOcupacioParametres(int);
 	int getOcupacioParametres();
 
 	void resetOffsets();
 
 	std::string getNom();
+
+	void setTipusRetorn(TipusSubjacentBasic tsb);
+	int getOffsetRetorn();
 };
 
 #endif

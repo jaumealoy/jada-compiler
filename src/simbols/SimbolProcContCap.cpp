@@ -86,9 +86,6 @@ void SimbolProcContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
     this->fills.push_back( std::to_string(tipus.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, nomParametre) );
     Simbol::toDotFile(driver);
-
-    // generació de codi
-    driver->code.addLabel();
 }
 
 /**

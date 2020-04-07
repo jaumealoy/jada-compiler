@@ -1,7 +1,7 @@
 #include "DescripcioFuncio.h"
 
-DescripcioFuncio::DescripcioFuncio() : Descripcio(Descripcio::Tipus::FUNCIO) {
-    this->subprograma = nullptr;
+DescripcioFuncio::DescripcioFuncio(SubProgram *programa) : Descripcio(Descripcio::Tipus::FUNCIO) {
+    this->subprograma = programa;
 }
 
 DescripcioFuncio::~DescripcioFuncio() {}

@@ -205,6 +205,10 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolMarcador m, 
 			// les etiquetes de cert han de tenir un possible valor
 			this->efals = b.getFals();
 
+			this->ecert = a.getCert();
+			for(int i = 0; i < b.getCert().size(); i++){
+				this->ecert.push_back(b.getCert()[i]);
+			}
 			
 			break;
 

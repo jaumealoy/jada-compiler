@@ -3,6 +3,12 @@
 
 CallInstruction::CallInstruction(SubProgram *program) : Instruction(Instruction::Type::CALL){
     this->program = program;
+	this->var = nullptr;
+}
+
+CallInstruction::CallInstruction(SubProgram *program, Variable *var) : Instruction(Instruction::Type::CALL){
+	this->program = program;
+	this->var = var;
 }
 
 CallInstruction::~CallInstruction() {}
@@ -20,6 +26,14 @@ void CallInstruction::generateAssembly(CodeGeneration *code) {
 
 	// invocar el subprograma
 	code->output << "call \t" << this->program->getNom() << std::endl;
+
+	// guardar la variable de retorn si és una funció
+	if(var != nullptr){
+		code->output << "mov" << CodeGeneration::getSizeTag(true, var->getOcupacio()) << "\t";
+		code->output << std::to_string(program->getOffsetRetorn() - 8) << "(%rsp), %";
+		code->output << CodeGeneration::getRegister(CodeGeneration::Register::A, var->getOcupacio()) << std::endl;
+		code->store(this, CodeGeneration::Register::A, var);
+	}
 
 	// eliminar paràmetres
 	code->output << "add" + CodeGeneration::getSizeTag(true, 8);

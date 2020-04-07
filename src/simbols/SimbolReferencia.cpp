@@ -106,6 +106,9 @@ void SimbolReferencia::make(Driver *driver, SimbolSubProgramCall call){
     this->tipus = call.getTipus();
     this->mode = SimbolReferencia::ModeMVP::CRIDA_COMPLETA;
 
+	this->r = call.getBase();
+	this->d = call.getOffset();
+
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(call.getNodeId()) );
     Simbol::toDotFile(driver);

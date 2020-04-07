@@ -55,10 +55,10 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
         this->tipus = df->getTipusRetorn();
 
         // i el tipus subjacent bàsic
-        d = driver->ts.consulta(this->tipus);
+        Descripcio *dd = driver->ts.consulta(this->tipus);
         
         // segur que és un tipus, sinó s'hauria produït un error a l'hora d'inserir la funció
-        DescripcioTipus *dt = (DescripcioTipus *) d;
+        DescripcioTipus *dt = (DescripcioTipus *) dd;
         this->tsb = dt->getTSB();
 
 		program = df->getSubPrograma();
@@ -77,7 +77,40 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     Simbol::toDotFile(driver);
 
     // generacio de codi
-    driver->code.addInstruction(new CallInstruction(program));
+	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
+		// no té paràmetres, però el valor de retorn és com un paràmetre més
+		int espai = program->getOcupacioParametres();
+		driver->code.addInstruction(new AssemblyInstruction(
+			"subq\t$" + std::to_string(espai) + ", %" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8)
+		));
+	}
+	
+	// si és una funció, té un tipus de retorn
+	this->r = nullptr;
+	this->d = nullptr;
+	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
+		this->r = driver->code.addVariable(this->tsb);
+	}
+
+    driver->code.addInstruction(new CallInstruction(program, this->r));
+
+	
+	/*if(d->getTipus() == Descripcio::Tipus::FUNCIO){
+
+		std::cout << "Moure variable" << std::endl;
+
+		// guardar el valor de retorn dins la variable creada
+		driver->code.addInstruction(new AssemblyInstruction(
+			"mov" + CodeGeneration::getSizeTag(true, TSB::sizeOf(this->tsb)) + "\t(%rsp), %" + 
+			CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(this->tsb))
+		));
+
+		driver->code.addInstruction(new AssemblyInstruction(
+			"mov" + CodeGeneration::getSizeTag(true, TSB::sizeOf(this->tsb)) + "\t%"
+			+ CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(this->tsb)) + ", " 
+			+ std::to_string(this->r->getOffset()) + "(%rbp)"
+		));
+	}*/
 }
 
 /**

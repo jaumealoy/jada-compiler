@@ -31,7 +31,13 @@ private:
 
 	// inicialització de les funcions pròpies del llenguatge
 	void initPrintInt();
+	void initReadInt();
+
 	void initPrintChar();
+	void initReadChar();
+
+	void initPrint();
+	void initRead();
 
 public:
     class Error : public std::exception {};

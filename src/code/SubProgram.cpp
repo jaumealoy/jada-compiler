@@ -15,6 +15,9 @@ SubProgram::SubProgram(int np, Label start, std::string id) {
 
 	// les variables locals es troben a posicions de memòria inferiors
 	this->currentOffsetVariables = -8; // pel base pointer anterior
+
+	// inicialment els subprogrames no són funcions
+	this->returnTSB = TipusSubjacentBasic::NUL;
 }
 
 SubProgram::~SubProgram() {};
@@ -31,10 +34,6 @@ int SubProgram::getOcupacioVariables() {
 	int mod = (this->ocupacioVariables / 8 + 1) * 8 - this->ocupacioVariables;
 	return this->ocupacioVariables + mod;
 }
-
-/*void SubProgram::setOcupacioVariables(int ocupacio) {
-	this->ocupacioVariables = ocupacio;
-}*/
 
 /**
  * Afegeix una variable com a paràmetre del subprograma
@@ -75,14 +74,20 @@ void SubProgram::addVariable(Variable *var) {
 	}
 }
 
-
-/*void SubProgram::setOcupacioParametres(int ocupacio){
-	this->ocupacioParametres = ocupacio;
-}*/
-
+/**
+ * Retorna l'ocupació dels paràmetres d'un subprograma
+ * L'ocupació ha de ser un múltiple de 8 per mantenir la pila alineada
+ */
 int SubProgram::getOcupacioParametres(){
-	int mod = (this->ocupacioParametres / 8 + 1) * 8 - this->ocupacioParametres;
-	return this->ocupacioParametres + mod;
+	int ocupacio = this->ocupacioParametres;
+	
+	// si és una funció s'ha d'incloure el tipus de retorn
+	if (this->returnTSB != TipusSubjacentBasic::NUL) {
+		ocupacio += TSB::sizeOf(this->returnTSB);
+	}
+
+	int mod = (ocupacio / 8 + 1) * 8 - ocupacio;
+	return ocupacio + mod;
 }
 
 /**
@@ -96,4 +101,18 @@ void SubProgram::resetOffsets(){
 
 std::string SubProgram::getNom() {
 	return this->start.toString();
+}
+
+/**
+ * Indica que és una funció i actualitza els offsets dels paràmetres
+ */
+void SubProgram::setTipusRetorn(TipusSubjacentBasic tsb){
+	this->returnTSB = tsb;
+}
+
+/**
+ * Una funció té un tipus retorn, que s'ha simulat com un paràmetre més
+ */
+int SubProgram::getOffsetRetorn(){
+	return this->currentOffsetParametres;
 }

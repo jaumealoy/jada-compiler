@@ -14,7 +14,7 @@ private:
     std::string tipusRetorn;
 
 public:   
-    DescripcioFuncio();
+    DescripcioFuncio(SubProgram *programa);
     ~DescripcioFuncio();
 
     void setTipusRetorn(std::string tipus);

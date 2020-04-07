@@ -64,23 +64,20 @@ Driver::Driver(char *filename)
     this->ts.posarDimensio("string", new DescripcioDimensio(256));
 
     // funcions pròpies
-    DescripcioFuncio *readChar = new DescripcioFuncio();
-    readChar->setTipusRetorn("char");
-    //this->ts.posar("readChar", readChar);
-
+	this->initReadChar();
 	this->initPrintChar();   
 
     DescripcioProc *print = new DescripcioProc(nullptr);
     this->ts.posar("print", print);
     //this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
 
-    DescripcioFuncio *read = new DescripcioFuncio();
-    read->setTipusRetorn("int");
-    this->ts.posar("read", read);
+    //DescripcioFuncio *read = new DescripcioFuncio();
+    //read->setTipusRetorn("int");
+    //this->ts.posar("read", read);
     //this->ts.posarParam("read", "msg", new DescripcioArgument("string", DescripcioArgument::IN_OUT));
 
-    DescripcioFuncio *readInt = new DescripcioFuncio();
-    readInt->setTipusRetorn("int");
+    //DescripcioFuncio *readInt = new DescripcioFuncio();
+    //readInt->setTipusRetorn("int");
     //this->ts.posar("readInt", readInt);
 
 	SubProgram *writeIntProgram = this->code.addSubProgram("printInt", this->code.addLabel("printInt"));
@@ -223,7 +220,7 @@ void Driver::initPrintChar(){
 
 	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rax")); // sys_write
 	this->code.addInstruction(new AssemblyInstruction("lea\t"+ std::to_string(arg1->getOffset()) +"(%rbp), %rsi")); // file descriptor: stdout
-	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rdi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdi")); // file descriptor: stdout
 	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdx")); // buffer size
 	this->code.addInstruction(new AssemblyInstruction("syscall"));
 
@@ -232,4 +229,44 @@ void Driver::initPrintChar(){
 	this->code.leaveSubProgram();
 
 	this->code.addInstruction(new SkipInstruction(end));
+}
+
+/**
+ * Crea el codi associat a la funció readChar
+ * 
+ * readChar() : char
+ */
+void Driver::initReadChar(){
+	// crear el subprograma
+	Label start = this->code.addLabel("readChar");
+	Label end = this->code.addLabel();
+	SubProgram *readCharPrograma = this->code.addSubProgram("readChar", start);
+	readCharPrograma->setTipusRetorn(TipusSubjacentBasic::CHAR);
+
+	// inserir funció a la TS
+	DescripcioFuncio *readChar = new DescripcioFuncio(readCharPrograma);
+    readChar->setTipusRetorn("char");
+    this->ts.posar("readChar", readChar);
+
+	this->code.enterSubProgram(readCharPrograma);
+
+	// variables locals
+	Variable *var1 = this->code.addVariable(TipusSubjacentBasic::CHAR);
+
+	// codi de la funció
+	this->code.addInstruction(new GoToInstruction(end));
+	this->code.addInstruction(new SkipInstruction(start));
+	this->code.addInstruction(new PreAmbleInstruction(readCharPrograma));
+	
+	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rax")); // sys_read
+	this->code.addInstruction(new AssemblyInstruction("lea\t-9(%rbp), %rsi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rdi")); // file descriptor: stdin
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdx")); // buffer size
+	this->code.addInstruction(new AssemblyInstruction("syscall"));
+
+	this->code.addInstruction(new ReturnInstruction(readCharPrograma, var1));
+	
+	this->code.addInstruction(new SkipInstruction(end));
+
+	this->code.leaveSubProgram();
 }

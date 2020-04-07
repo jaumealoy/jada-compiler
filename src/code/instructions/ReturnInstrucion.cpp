@@ -5,6 +5,14 @@ ReturnInstruction::ReturnInstruction(SubProgram *program)
 	: Instruction(Instruction::Type::RETURN)
 {
 	this->programa = program;
+	this->var = nullptr;
+}
+
+ReturnInstruction::ReturnInstruction(SubProgram *program, Variable *var)
+	: Instruction(Instruction::Type::RETURN)
+{
+	this->programa = program;
+	this->var = var;
 }
 
 ReturnInstruction::~ReturnInstruction(){}
@@ -22,6 +30,15 @@ std::string ReturnInstruction::toString(){
  * i cridar a ret
  */
 void ReturnInstruction::generateAssembly(CodeGeneration *code){
+	// si és el return d'una funció actualitzar la variable de retorn
+	if(this->var != nullptr){
+		code->load(this, this->var, CodeGeneration::Register::A);
+
+		code->output << "mov" << CodeGeneration::getSizeTag(true, this->var->getOcupacio()) << "\t%";
+		code->output << CodeGeneration::getRegister(CodeGeneration::Register::A, this->var->getOcupacio());
+		code->output << ", " << std::to_string(this->programa->getOffsetRetorn()) << "(%rbp)" << std::endl;
+	}
+
 	// primer alliberar l'espai per les variables locals
 	code->output << "add" << CodeGeneration::getSizeTag(true, 8) << "\t$";
 	code->output << std::to_string(this->programa->getOcupacioVariables()) << ", %";

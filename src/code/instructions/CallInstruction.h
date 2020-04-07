@@ -7,9 +7,13 @@
 class CallInstruction : public Instruction {
 private:
 	SubProgram *program;
+
+	// on s'ha de guardar la variable de retorn, si és una funció
+	Variable *var;
 	
 public:
     CallInstruction(SubProgram *);
+    CallInstruction(SubProgram *programa, Variable *retorn);
     ~CallInstruction();
 
     std::string toString();
