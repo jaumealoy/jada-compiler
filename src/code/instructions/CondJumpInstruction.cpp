@@ -32,7 +32,7 @@ std::string CondJumpInstruction::toString() {
 			opString = "<";
 			break;
 		case GTE:
-			opString = "<=";
+			opString = ">=";
 			break;
 		case GT:
 			opString = ">";
@@ -49,15 +49,23 @@ void CondJumpInstruction::setLabel(Label l){
 }
 
 void CondJumpInstruction::generateAssembly(CodeGeneration *code){
+	// e1 OP e2	
 	// carregar variables als registres
 	code->load(this, this->e1, CodeGeneration::Register::A);
-	code->load(this, this->e2, CodeGeneration::Register::B);
+	code->load(this, this->e2, CodeGeneration::Register::D);
 
-	std::string inst[] = {"je", "jne", "und", "und1", "und2", "und3", "und4"};
+	// je = jump if equal (=)
+	// jne = jump if not equal (!=)
+	// jg = jump if greater (<)
+	// jge = jump if greater or equal (<=)
+	// jl = jump if less (<)
+	// jle = jump if less or equal (>=)
+	std::string inst[] = {"je", "jne", "jg", "jge", "jl", "jle"};
 
+	// cmp e1, e2 === cmp %rax, %rdx
 	code->output << "cmp" << CodeGeneration::getSizeTag(true, this->e1->getOcupacio()) << "\t";
 	code->output << "%" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->e1->getOcupacio());
-	code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::B, this->e2->getOcupacio()) << std::endl;
+	code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::D, this->e2->getOcupacio()) << std::endl;
 
 	code->output << inst[this->op] << "\t" << this->l.toString();
 }

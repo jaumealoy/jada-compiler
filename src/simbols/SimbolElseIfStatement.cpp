@@ -7,28 +7,6 @@ SimbolElseIfStatement::SimbolElseIfStatement() : SimbolStatement() {
 
 SimbolElseIfStatement::~SimbolElseIfStatement(){}
 
-/**
- * elseIfStatement -> else if exprSimple do bloc end elseIfStatement
- */
-/*void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIf){
-    // comprovar que l'expressió és un boolean
-    if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-        driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
-    }
-
-    // propagar els possibles returns i breaks que benguin de bloc i elseIfStatement
-    this->propaga(bloc, elseIf);
-
-    // pintar a l'arbre
-    this->fills.push_back( driver->addTreeChild(this, "else if") );
-    this->fills.push_back( std::to_string(exp.getNodeId()) );
-    this->fills.push_back( driver->addTreeChild(this, "do") );
-    this->fills.push_back( std::to_string(bloc.getNodeId()) );
-    this->fills.push_back( driver->addTreeChild(this, "end") );
-    this->fills.push_back( std::to_string(elseIf.getNodeId()) );
-    Simbol::toDotFile(driver);
-}*/
-
 //ElseIfStatement -> IF exprSimple DO M0 bloc 
 void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarcador ebloc, SimbolBloc bloc){
     // comprovar que l'expressió és un boolean
@@ -57,7 +35,6 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarc
 	// aquesta instrucció és la del final del bloc, no s'ha d'executar cap bloc més
     Instruction *inst = driver->code.addInstruction(new GoToInstruction(Label()));
 	this->finals.push_back(inst);
-
 }
 
 /**

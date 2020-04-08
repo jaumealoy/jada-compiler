@@ -26,6 +26,7 @@ public:
 	~ArithmeticInstruction();
 
 	std::string toString();
+	void generateAssembly(CodeGeneration * code);
 };
 
 #endif

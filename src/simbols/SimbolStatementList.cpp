@@ -20,7 +20,6 @@ void SimbolStatementList::make(Driver *driver, SimbolStatement stmt, SimbolMarca
 
     // generacio de codi intermedi
     driver->code.backpatch(m.getLabel(), stmt.getSeg());
-    this->seg = stmt.getSeg();
 }
 
 

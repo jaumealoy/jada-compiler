@@ -6,6 +6,7 @@
 #include "../code/instructions/CondJumpInstruction.h"
 #include "../code/instructions/GoToInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/ArithmeticInstruction.h"
 
 /**
  * L'operació de dues expressions constants dona lloc a una expressió constant
@@ -38,10 +39,72 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     Simbol::toDotFile(driver);
 
 	//generació de codi
-	this->r = driver->code.addVariable(literal.getTSB());
-	this->d = nullptr;
+	if(literal.getTSB() == TipusSubjacentBasic::ARRAY){
+		if(literal.getTipus() == "string"){
+			this->r = driver->code.addVariable(literal.getTSB());
+			this->d = nullptr;
+
+			// indicar l'ocupació de la variable
+			DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(literal.getTipus());
+			this->r->setOcupacioExtra(((DescripcioTipusArray *) dt)->getOcupacio());
+
+			// inicialitzar l'string amb el valor adequat
+			// valors constants
+			Variable *unitat = driver->code.addVariable(TipusSubjacentBasic::INT);
+			int valor = 1;
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				unitat,
+				std::make_shared<ValueContainer>((const char*) &valor, sizeof(int))
+			));
+
+			// desplaçament sobre l'string
+			Variable *offset = driver->code.addVariable(TipusSubjacentBasic::INT);
+			valor = 0;
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				offset,
+				std::make_shared<ValueContainer>((const char*) &valor, sizeof(int))
+			));
+
+			// valor actual
+			Variable *valorCaracter = driver->code.addVariable(TipusSubjacentBasic::CHAR);
+			std::shared_ptr<ValueContainer> valorString = literal.getValue();
+			char *str = valorString->get();
+					
+			for(int i = 0; i < valorString->getSize(); i++){
+				// guardar el caràcter actual dins valor
+				driver->code.addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::CHAR,
+					valorCaracter,
+					std::make_shared<ValueContainer>(&str[i], sizeof(char))
+				));
+
+				// i guardar dins l'array (string)
+				driver->code.addInstruction(new AssignmentInstruction(
+					AssignmentInstruction::Type::TARGET_OFF,
+					this->r,
+					valorCaracter,
+					offset
+				));
+
+				// incrementar l'offset
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::ADDITION,
+					offset,
+					offset,
+					unitat
+				));
+			}
+		}else{
+			// no pot ser cap altre cas
+		}
+	}else{
+		this->r = driver->code.addVariable(literal.getTSB());
+		this->d = nullptr;
 	
-	driver->code.addInstruction(new AssignmentInstruction(this->tsb, this->r, this->value));
+		driver->code.addInstruction(new AssignmentInstruction(this->tsb, this->r, this->value));
+	}
 }
 
 

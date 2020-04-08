@@ -1,5 +1,6 @@
 #include "SubProgram.h"
 #include "Variable.h"
+#include <iostream>
 
 SubProgram::SubProgram(int np, Label start, std::string id) {
     this->nivellProfunditat = np;
@@ -18,6 +19,8 @@ SubProgram::SubProgram(int np, Label start, std::string id) {
 
 	// inicialment els subprogrames no són funcions
 	this->returnTSB = TipusSubjacentBasic::NUL;
+
+	this->variablesLocals.clear();
 }
 
 SubProgram::~SubProgram() {};
@@ -52,6 +55,8 @@ void SubProgram::addParameter(Variable *var) {
 	this->currentOffsetParametres += var->getOcupacio();
 
 	this->numParametres++;
+
+	std::cout << "Afegint paràmetre a " << this->getNom() << ". Total = " << this->ocupacioParametres << std::endl;
 }
 
 /**
@@ -72,6 +77,13 @@ void SubProgram::addVariable(Variable *var) {
 		// és possible que tengui un espai extra
 		this->currentOffsetVariables -= var->getOcupacioExtra();
 	}
+
+	// afegir la variable a la llista de variables
+	this->variablesLocals.push_back(var);
+}
+
+std::list<Variable *> SubProgram::getVariables() {
+	return this->variablesLocals;
 }
 
 /**
@@ -86,7 +98,11 @@ int SubProgram::getOcupacioParametres(){
 		ocupacio += TSB::sizeOf(this->returnTSB);
 	}
 
-	int mod = (ocupacio / 8 + 1) * 8 - ocupacio;
+	int mod = 0;
+	if(ocupacio % 8 != 0){
+		mod = (ocupacio / 8 + 1) * 8 - ocupacio;
+	}
+	
 	return ocupacio + mod;
 }
 

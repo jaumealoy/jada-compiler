@@ -61,6 +61,8 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
             // existeix un valor numèric, comprovar que és positiu
             int dimensio = *(int *) exp.getValue()->get();
 
+			std::cout << "Valor constant trobat " << dimensio << std::endl;
+
             if(dimensio < 0){
                 driver->error(error_fora_de_rang(dimensio));
                 return;
@@ -281,7 +283,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		// Si tot és constant, numElement representa el número d'índex que 
 		// es vol consultar. En cas contrari, numElement representa la variable
 		// que conté el número de l'element
-		int productori = 1;
+		int productori = 1 * TSB::sizeOf(this->tsb);
 		bool totConstant = true;
 		int numElement = 0;
 		this->refIndex = array.refIndex;
@@ -371,7 +373,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
             // sabem que existeix perquè si no ja no s'hauria arribat fins aquest punt
             DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(array.tipusBasic);
 
-            int ocupacio = dte->getOcupacio();
+            int ocupacio = TSB::sizeOf(dte->getTSB());
 
             // i crear les dimensions, inserint-les en ordre invers
             for(int i = array.dimensions.size() - 1; i >= 0; i--){

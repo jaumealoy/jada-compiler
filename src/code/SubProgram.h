@@ -4,6 +4,7 @@
 #include "Label.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include <string>
+#include <list>
 
 class Variable;
 
@@ -21,6 +22,7 @@ private:
 	// gestió dels offsets de paràmetres i variables
 	int currentOffsetVariables;
 	int currentOffsetParametres;
+	std::list<Variable *> variablesLocals;
 
 	// tipus de retorn
 	TipusSubjacentBasic returnTSB;
@@ -34,6 +36,7 @@ public:
 
 	void addVariable(Variable *var);
 	int getOcupacioVariables();
+	std::list<Variable *> getVariables();
 
 	void addParameter(Variable *param);
 	int getOcupacioParametres();

@@ -5,6 +5,9 @@
 #include "code/instructions/ReturnInstruction.h"
 #include "code/instructions/AssemblyInstruction.h"
 #include "code/instructions/PreAmbleInstruction.h"
+#include "code/instructions/CondJumpInstruction.h"
+#include "code/instructions/ArithmeticInstruction.h"
+#include "code/instructions/MemoryInstruction.h"
 
 #include <exception>
 
@@ -60,6 +63,7 @@ Driver::Driver(char *filename)
     this->ts.posar("int", integer, true);
 
     DescripcioTipusArray *string = new DescripcioTipusArray("char");
+	string->setOcupacio(256);
     this->ts.posar("string", string, true);
     this->ts.posarDimensio("string", new DescripcioDimensio(256));
 
@@ -67,9 +71,7 @@ Driver::Driver(char *filename)
 	this->initReadChar();
 	this->initPrintChar();   
 
-    DescripcioProc *print = new DescripcioProc(nullptr);
-    this->ts.posar("print", print);
-    //this->ts.posarParam("print", "msg", new DescripcioArgument("string", DescripcioArgument::IN));
+	this->initPrint();
 
     //DescripcioFuncio *read = new DescripcioFuncio();
     //read->setTipusRetorn("int");
@@ -268,5 +270,123 @@ void Driver::initReadChar(){
 	
 	this->code.addInstruction(new SkipInstruction(end));
 
+	this->code.leaveSubProgram();
+}
+
+/**
+ * Crea la funció per mostrar una cadena de text
+ * 
+ * print(string str)
+ */
+void Driver::initPrint(){
+	// creació del subprograma
+	Label start = this->code.addLabel("print");
+	Label end = this->code.addLabel();
+	SubProgram *printProgram = this->code.addSubProgram("print", start);
+
+	this->code.enterSubProgram(printProgram);
+
+	// crear el subprograma a la TS
+	DescripcioProc *print = new DescripcioProc(printProgram);
+    this->ts.posar("print", print);
+	DescripcioArgument *darg1 = new DescripcioArgument("string", DescripcioArgument::IN);
+    this->ts.posarParam("print", "msg", darg1);
+
+	// associar el paràmetre a una variable
+	Variable *arg1 = this->code.addVariable(TipusSubjacentBasic::ARRAY, true);
+	printProgram->addParameter(arg1);
+	darg1->setVariable(arg1);
+
+	// etiquetes del bucle
+	Label inici = this->code.addLabel();
+	Label efinal = this->code.addLabel();
+
+	// codi del programa
+	this->code.addInstruction(new GoToInstruction(end));
+	this->code.addInstruction(new SkipInstruction(start));
+	this->code.addInstruction(new PreAmbleInstruction(printProgram));
+
+	// variables locals
+	Variable *i = this->code.addVariable(TipusSubjacentBasic::INT);
+	int valor = 0;
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		i,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	Variable *max = this->code.addVariable(TipusSubjacentBasic::INT);
+	DescripcioTipusArray *dta = (DescripcioTipusArray *) this->ts.consulta("string");
+	valor = dta->getOcupacio();
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		max,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	Variable *zero = this->code.addVariable(TipusSubjacentBasic::CHAR);
+	valor = 0;
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		zero,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(char))
+	));
+
+	Variable *one = this->code.addVariable(TipusSubjacentBasic::INT);
+	valor = 1;
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		one,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	Variable *t1 = this->code.addVariable(TipusSubjacentBasic::CHAR);
+
+	this->code.addInstruction(new SkipInstruction(inici));
+
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::GTE,
+		i,
+		max,
+		efinal
+	)); // if i >= max goto efinal
+
+	this->code.addInstruction(new AssignmentInstruction(
+		AssignmentInstruction::Type::SOURCE_OFF,
+		t1,
+		arg1,
+		i
+	)); // t1 = msg[i]
+
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::EQ,
+		t1,
+		zero,
+		efinal
+	)); // if t1 = 0 goto efinal
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::ADDITION,
+		i,
+		i,
+		one
+	)); // i = i + 1
+
+	Instruction *instref = new GoToInstruction(inici);
+	this->code.addInstruction(instref); // goto inici
+
+	this->code.addInstruction(new SkipInstruction(efinal));
+	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rdx")); // buffer size
+
+	this->code.addInstruction(new MemoryInstruction(false, i, CodeGeneration::Register::D));
+	this->code.addInstruction(new MemoryInstruction(false, arg1, CodeGeneration::Register::SI));
+
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rax")); // sys_write
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdi")); // file descriptor: stdout	
+	this->code.addInstruction(new AssemblyInstruction("syscall"));
+
+	this->code.addInstruction(new ReturnInstruction(printProgram));
+
+	this->code.addInstruction(new SkipInstruction(end));
 	this->code.leaveSubProgram();
 }

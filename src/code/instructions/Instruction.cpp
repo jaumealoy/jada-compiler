@@ -1,6 +1,5 @@
+#include "../CodeGeneration.h"
 #include "Instruction.h"
-#include <fstream>
-
 #include "GoToInstruction.h"
 #include "SkipInstruction.h"
 #include "CondJumpInstruction.h"
@@ -11,7 +10,9 @@
 #include "PutParamInstruction.h"
 #include "ReturnInstruction.h"
 #include "AssemblyInstruction.h"
-#include "../CodeGeneration.h"
+#include "MemoryInstruction.h"
+
+#include <fstream>
 
 Instruction::Instruction(){
 	this->next = nullptr;
@@ -115,6 +116,10 @@ void Instruction::generateAssembly(CodeGeneration *code){
 			((AssignmentInstruction *) this)->generateAssembly(code);
 			break;
 
+		case Type::ARITHMETIC:
+			((ArithmeticInstruction *) this)->generateAssembly(code);
+			break;
+
 		case Type::PREAMBLE:
 			((PreAmbleInstruction *) this)->generateAssembly(code);
 			break;
@@ -133,6 +138,11 @@ void Instruction::generateAssembly(CodeGeneration *code){
 
 		case Type::ASSEMBLY:
 			((AssemblyInstruction *) this)->generateAssembly(code);
+			break;
+
+		case Type::MEMORY:
+			((MemoryInstruction *) this)->generateAssembly(code);
+			break;
 
 		default:
 			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";

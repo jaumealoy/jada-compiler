@@ -60,6 +60,11 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
 	Variable *var = driver->code.addVariable(this->tsb, id);
 
+	// si és un array, indicar que té un espai addicional
+	if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
+		var->setOcupacioExtra(dt->getOcupacio());
+	}
+
     Descripcio *desc = nullptr;
     if (constant){
         // És necessari inicialitzar les constants quan es declaren

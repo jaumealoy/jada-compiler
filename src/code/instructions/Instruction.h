@@ -20,7 +20,8 @@ public:
 		PUTPARAM,
 		PREAMBLE,
 		RETURN,
-		ASSEMBLY
+		ASSEMBLY,
+		MEMORY
 	};
 private:
 	Instruction::Type opcode;

@@ -40,7 +40,7 @@ void SimbolLiteral::make(Driver *driver, std::string valor){
     this->tsb = TipusSubjacentBasic::ARRAY;
     this->tipus = "string";
 
-	this->value = std::make_shared<ValueContainer>(valor.c_str(), valor.length());
+	this->value = std::make_shared<ValueContainer>(valor.c_str(), valor.length() + 1);
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "\\\""+valor+"\\\"") );

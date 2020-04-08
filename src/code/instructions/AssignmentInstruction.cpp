@@ -107,6 +107,9 @@ std::string AssignmentInstruction::toString(){
 	return tmp;
 }
 
+/**
+ * Genera el codi assemblador d'una assignació
+ */
 void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 	std::string tmp;
 
@@ -146,6 +149,33 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 
 			break;
 
+		case AssignmentInstruction::Type::SOURCE_OFF: // a = b[c]
+			// carregar b i c dins registres, sumar-los i accedir al seu contingut
+			code->load(this, this->origen, CodeGeneration::Register::A);
+			code->output << "movq\t$0, %rbx" << std::endl;
+			code->load(this, this->offset, CodeGeneration::Register::B);
+
+			code->output << "mov" << CodeGeneration::getSizeTag(true, this->desti->getOcupacio()) << "\t";
+			code->output << "(%rax, %rbx), %" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->desti->getOcupacio()) << std::endl;
+
+			code->store(this, CodeGeneration::Register::A, this->desti);
+			break;
+
+		case AssignmentInstruction::Type::TARGET_OFF:  // a[c] = b
+			// carregar el valor a guardar dins un registre
+			code->load(this, this->origen, CodeGeneration::Register::C);
+
+			// carregar a i c dins registres
+			code->load(this, this->desti, CodeGeneration::Register::A);
+			code->output << "movq\t$0, %rbx" << std::endl;
+			code->load(this, this->offset, CodeGeneration::Register::B);
+
+			// mov %rcx, (%rax, %rbp)
+			code->output << "mov" << CodeGeneration::getSizeTag(true, this->origen->getOcupacio()) << "\t%";
+			code->output << CodeGeneration::getRegister(CodeGeneration::Register::C, this->origen->getOcupacio()) << ", ";
+			code->output << "(%rax, %rbx)";
+
+			break;
 		default:
 			tmp = "";
 	}

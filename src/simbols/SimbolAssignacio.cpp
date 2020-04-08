@@ -3,6 +3,7 @@
 
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
+#include "../code/instructions/ArithmeticInstruction.h"
 
 SimbolAssignacio::SimbolAssignacio() : Simbol("Assignació"){}
 SimbolAssignacio::~SimbolAssignacio(){}
@@ -50,20 +51,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 		case 0: // ref = exprSimple
 			Variable *tmp = exp.dereference(driver, exp.getTSB());
 
-			if(exp.getTSB() != TipusSubjacentBasic::BOOLEAN){
-				if(ref.getOffset() == nullptr){
-					// no existeix desplaçament en temps de compilació
-					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
-				}else{
-					// és una assignació de l'estil a[c] = b
-					driver->code.addInstruction(new AssignmentInstruction(
-						AssignmentInstruction::Type::TARGET_OFF,
-						ref.getBase(),
-						tmp,
-						ref.getOffset()
-					));
-				}
-			}else{
+			if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 				// és un boolean, s'haurà fet qualque salt condicional
 				Label ec = driver->code.addLabel();
                 Label ef = driver->code.addLabel();
@@ -81,7 +69,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
                         ref.getBase(),
                         c->getVariable(),
                         ref.getOffset()                        
-                        ));
+                    ));
                 }
                 driver->code.addInstruction(new GoToInstruction(efi));
                 driver->code.addInstruction(new SkipInstruction(ef));
@@ -97,6 +85,19 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
                     ));
                 }
                 driver->code.addInstruction(new SkipInstruction(efi));
+			}else{
+				if(ref.getOffset() == nullptr){
+					// no existeix desplaçament en temps de compilació
+					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
+				}else{
+					// és una assignació de l'estil a[c] = b
+					driver->code.addInstruction(new AssignmentInstruction(
+						AssignmentInstruction::Type::TARGET_OFF,
+						ref.getBase(),
+						tmp,
+						ref.getOffset()
+					));
+				}
             }
 			break;
 		
