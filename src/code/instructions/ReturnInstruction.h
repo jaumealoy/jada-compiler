@@ -19,6 +19,7 @@ public:
 	~ReturnInstruction();
 
 	SubProgram *getPrograma();
+	void setPrograma(SubProgram *program);
 	
 	std::string toString();
 	void generateAssembly(CodeGeneration *);

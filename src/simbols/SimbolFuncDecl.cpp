@@ -1,12 +1,14 @@
 #include "SimbolFuncDecl.h"
 #include "../Driver.h"
+#include "../code/instructions/ReturnInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 
 #include <string>
 
 SimbolFuncDecl::SimbolFuncDecl() : Simbol("FuncDecl") {}
 SimbolFuncDecl::~SimbolFuncDecl() {}
 
-void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, std::string nom){
+void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, std::string nom, SimbolMarcador m1){
     // Comprovar que els noms de la capçalera i l'end coincideixen
     if(cap.getNomFuncio() != nom){
         // error (no crític)
@@ -48,6 +50,9 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
                     driver->error( error_tipus_no_compatibles(ret.tipus, df->getTipusRetorn() ), ret.loc, false );
                 }
             }
+
+			std::cout << "Canviant programa a " << df->getSubPrograma() << std::endl;
+			((ReturnInstruction *) ret.returnInst)->setPrograma(df->getSubPrograma());
         }
     }else{
         // error (crític)
@@ -56,7 +61,7 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
 
     // variables locals de la funció
     driver->ts.surtirBloc();
-
+	driver->code.leaveSubProgram();
 
     // representar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "func") );
@@ -64,4 +69,11 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
     this->fills.push_back(std::to_string(bloc.getNodeId()));
     this->fills.push_back( driver->addTreeChild(this, "end " + nom + ";") );
     Simbol::toDotFile(driver);
+
+	// backpatch al final de l'instrucció
+	Label finalPrograma = driver->code.addLabel();
+	driver->code.addInstruction(new SkipInstruction(finalPrograma));
+	driver->code.backpatch(finalPrograma, m1.getSeg());
+
+	std::cout << "Funció final" << std::endl;
 }

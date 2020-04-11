@@ -1,0 +1,57 @@
+/*func factorial(int n) : int begin
+	switch(n) begin
+		case 0 do
+			return 1;
+			break;
+
+		default do
+			return n * factorial(n - 1);
+	end;
+end factorial;*/
+
+func factorial(int n) : int begin
+	printInt(n);
+	printChar('\n');
+	if n == 0 do
+		print("n=0\n");
+		return 1;
+	else if n >= 1 do
+		print("n >= 1\n");
+		return n * factorial(n - 1);
+	else do
+		print("else\n");
+		// cas no definit
+		return 0;
+	end;
+end factorial;
+
+func factorialIteratiu(int n) : int begin
+	int tmp = 1;
+
+	int i = n;
+	while (i > 1) do
+		tmp = tmp * i;
+		i = i - 1;
+	end;
+
+	return tmp;
+end factorialIteratiu;
+
+
+proc main() begin
+	int n = 10;
+
+	int a = factorial(n);
+	int b = factorialIteratiu(n);
+
+	if (a != b) do
+		print("recursiu = ");
+		printInt(a);
+		print("\niteratiu = ");
+		printInt(b);
+		print("\nError lògic");
+	else do
+		print("Tot vàlid");
+	end;
+	print("\n");
+end main;

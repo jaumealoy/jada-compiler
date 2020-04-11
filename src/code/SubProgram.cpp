@@ -34,7 +34,12 @@ int SubProgram::getNivellProfunditat() {
 }
 
 int SubProgram::getOcupacioVariables() {
-	int mod = (this->ocupacioVariables / 8 + 1) * 8 - this->ocupacioVariables;
+	
+	int mod = 0;
+	if(this->ocupacioVariables % 8 != 0){
+		mod = (this->ocupacioVariables / 8 + 1) * 8 - this->ocupacioVariables;
+	}
+
 	return this->ocupacioVariables + mod;
 }
 
@@ -76,6 +81,7 @@ void SubProgram::addVariable(Variable *var) {
 	if(var->getTSB() == TipusSubjacentBasic::ARRAY){
 		// és possible que tengui un espai extra
 		this->currentOffsetVariables -= var->getOcupacioExtra();
+		this->ocupacioVariables += var->getOcupacioExtra();
 	}
 
 	// afegir la variable a la llista de variables

@@ -19,8 +19,8 @@ public:
 
         // incloure altre informació sobre el return
         yy::location loc;
-        // línia
-        // columna
+
+		Instruction *returnInst;
     };
 
 protected:

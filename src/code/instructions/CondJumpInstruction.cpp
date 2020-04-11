@@ -56,11 +56,11 @@ void CondJumpInstruction::generateAssembly(CodeGeneration *code){
 
 	// je = jump if equal (=)
 	// jne = jump if not equal (!=)
-	// jg = jump if greater (<)
-	// jge = jump if greater or equal (<=)
-	// jl = jump if less (<)
-	// jle = jump if less or equal (>=)
-	std::string inst[] = {"je", "jne", "jg", "jge", "jl", "jle"};
+	// jge = jump if greater or equal (<)
+	// jg = jump if greater (<=)
+	// jle = jump if less or equal (<)
+	// jl = jump if less (>=)
+	std::string inst[] = {"je", "jne", "jge", "jg", "jle", "jl"};
 
 	// cmp e1, e2 === cmp %rax, %rdx
 	code->output << "cmp" << CodeGeneration::getSizeTag(true, this->e1->getOcupacio()) << "\t";

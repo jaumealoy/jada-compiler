@@ -83,6 +83,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 	this->r = cont.getVariable();
 	this->fi = cont.getFi();
 	this->teDefault = cont.hasDefault();
+	this->propaga(cont);
 
 	// és possible que el case anterior tengui un salt incondicional 
 	// a un etiqueta no definida

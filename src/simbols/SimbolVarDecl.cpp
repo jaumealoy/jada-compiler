@@ -60,9 +60,18 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 
 	Variable *var = driver->code.addVariable(this->tsb, id);
 
-	// si és un array, indicar que té un espai addicional
-	if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
-		var->setOcupacioExtra(dt->getOcupacio());
+	if(this->tsb == TipusSubjacentBasic::ARRAY){
+		// si és un array, indicar que té un espai addicional
+		if(init.isEmpty()){
+			// no hi ha inicialització, no hi ha espai reservat
+			var->setOcupacioExtra(dt->getOcupacio());
+		}else{
+			// assignar l'adreça de la variable temporal
+			driver->code.addInstruction(new AssignmentInstruction(
+				var,
+				init.getBase()
+			));
+		}
 	}
 
     Descripcio *desc = nullptr;
@@ -165,6 +174,21 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
     this->esConst = varDecl.esConst;
 
 	Variable *var = driver->code.addVariable(this->tsb, id);
+	
+	if(this->tsb == TipusSubjacentBasic::ARRAY){
+		// si és un array, indicar que té un espai addicional
+		if(init.isEmpty()){
+			// no hi ha inicialització, no hi ha espai reservat
+			DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(this->tipus);
+			var->setOcupacioExtra(dt->getOcupacio());
+		}else{
+			// assignar l'adreça de la variable temporal
+			driver->code.addInstruction(new AssignmentInstruction(
+				var,
+				init.getBase()
+			));
+		}
+	}
 
     Descripcio *desc = nullptr;
 

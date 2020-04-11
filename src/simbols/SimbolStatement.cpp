@@ -4,6 +4,7 @@
 #include "SimbolSwitchStatement.h"
 #include "../Driver.h"
 #include "../code/instructions/GoToInstruction.h"
+#include "../code/instructions/ReturnInstruction.h"
 #include "../code/Label.h"
 #include <iostream>
 
@@ -63,6 +64,8 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
     tmp.tipus = exp.getTipus();
     tmp.tsb = exp.getTSB();
     tmp.loc = driver->getLocation();
+	tmp.returnInst = new ReturnInstruction(nullptr, exp.dereference(driver, exp.getTSB()));
+	driver->code.addInstruction(tmp.returnInst);
 
     this->_returns.push_back(tmp);
 

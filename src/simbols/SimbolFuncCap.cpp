@@ -134,9 +134,11 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipu
         if(da->getTipusArgument() == DescripcioArgument::Tipus::IN){
             DescripcioConstant *dv = new DescripcioConstant(da->getNomTipusArgument());
             d = (Descripcio *) dv;
+			dv->setVariable(var);
         }else if(da->getTipusArgument() == DescripcioArgument::Tipus::IN_OUT || da->getTipusArgument() == DescripcioArgument::Tipus::VALOR){
             DescripcioVariable *dv = new DescripcioVariable(da->getNomTipusArgument());
             d = (Descripcio *) dv;
+			dv->setVariable(var);
         }
 
         driver->ts.posar(it.getId(), d);

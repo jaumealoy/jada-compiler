@@ -61,6 +61,8 @@ void SimbolVarInit::make(Driver *driver, SimbolArrayInit exp){
 
 	// el valor és un punter a una seqüència d'elements del mateix tipus
 	this->value = exp.getValue();
+	this->r = exp.getBase();
+	this->d = exp.getOffset();
 
     // pintar a l'arbre
     this->fills.push_back( driver->addTreeChild(this, "=") );

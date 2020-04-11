@@ -21,6 +21,10 @@ SubProgram *ReturnInstruction::getPrograma(){
 	return this->programa;
 }
 
+void ReturnInstruction::setPrograma(SubProgram *program){
+	this->programa = program;
+}
+
 std::string ReturnInstruction::toString(){
 	return "return";
 }

@@ -93,12 +93,8 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 	}
 
     driver->code.addInstruction(new CallInstruction(program, this->r));
-
 	
 	/*if(d->getTipus() == Descripcio::Tipus::FUNCIO){
-
-		std::cout << "Moure variable" << std::endl;
-
 		// guardar el valor de retorn dins la variable creada
 		driver->code.addInstruction(new AssemblyInstruction(
 			"mov" + CodeGeneration::getSizeTag(true, TSB::sizeOf(this->tsb)) + "\t(%rsp), %" + 
@@ -195,8 +191,12 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 		tmp.next();
 	}
 
+	this->r = nullptr;
+	this->d = nullptr;
+	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
+		this->r = driver->code.addVariable(this->tsb);
+	}
 
 	// invocar el subprograma
-	driver->code.addInstruction(new CallInstruction(programa));
-
+	driver->code.addInstruction(new CallInstruction(programa, this->r));
 }

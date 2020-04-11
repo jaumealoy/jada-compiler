@@ -71,7 +71,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp){
 }
 
 /**
- * contSwitch -> default do M0 bloc
+ * contSwitch -> contSwitch default do M0 bloc
  */
 void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolBloc bloc, SimbolMarcador m){
 	if(cont.teDefault){
@@ -91,7 +91,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolBloc bl
 
 	// els possibles breaks del bloc han d'anar al final
 	// i no s'han de propagar, però sí els returns
-	this->propaga(bloc);
+	this->propaga(cont, bloc);
 	
 	driver->code.backpatch(this->fi, this->_breakList);
 	this->_breakList.clear();
@@ -115,9 +115,11 @@ void SimbolContSwitch::make(Driver *driver, SimbolContSwitch cont, SimbolBloc bl
  */
 void SimbolContSwitch::make(Driver *driver, SimbolSwitchCaseCont cont, SimbolBloc bloc){
 	// gestionar els breaks
-	this->propaga(bloc);
+	this->propaga(bloc, cont); // returns
+
+	driver->code.backpatch(cont.getFi(), this->_breakList); // breaks
+	this->_breakList.clear();
 	this->_conteBreak = false;
-	driver->code.backpatch(cont.getFi(), this->_breakList);
 
 	// si el bloc no té cap break, ha de continuar al següent case
 	// no es coneix quina és l'etiqueta on s'ha d'anar

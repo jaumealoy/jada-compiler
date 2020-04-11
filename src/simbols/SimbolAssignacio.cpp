@@ -153,6 +153,14 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolArrayIni
         return;
     }
 
+	// per construcció del llenguatge no importa tenir en compte
+	// els possibles offsets sobre les bases perquè no es permeten 
+	// assignacions parcials d'arrays
+	driver->code.addInstruction(new AssignmentInstruction(
+		ref.getBase(),
+		arrayInit.getBase()
+	));
+
     // i pintar a l'arbre
     this->fills.push_back( std::to_string(ref.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "=") );

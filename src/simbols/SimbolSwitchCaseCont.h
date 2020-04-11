@@ -13,7 +13,7 @@
 class Driver;
 class SimbolContSwitch;
 
-class SimbolSwitchCaseCont : public Simbol {
+class SimbolSwitchCaseCont : public Simbol, public ControlInstruccions {
 private:
 	bool teDefault;
     std::list<std::shared_ptr<ValueContainer>> valors;

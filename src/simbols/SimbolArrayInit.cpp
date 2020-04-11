@@ -1,5 +1,6 @@
 #include "SimbolArrayInit.h"
 #include "../Driver.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 #include <iostream>
 #include <cstring>
@@ -80,14 +81,36 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
     this->fills.push_back( driver->addTreeChild(this, "}") );
     Simbol::toDotFile(driver);
 
+	// generació de codi
+	this->r = driver->code.addVariable(TipusSubjacentBasic::ARRAY);
+	this->r->setOcupacioExtra(dt->getOcupacio());
+	this->d = nullptr;
+
 	// guardar els elements (copiar només els valors)
 	int mida = dt->getOcupacio();
 	char *buffer = new char[mida * list.getElements().size()];
 
+	Variable *varOffset = driver->code.addVariable(TipusSubjacentBasic::INT);
+
 	unsigned int offset = 0;
-	for(int i = 0; i < list.getElements().size(); i++){
-		ValueContainer *valor = list.getElements()[i].getValue().get();
+	for(int i = 0; i < elements.size(); i++){
+		ValueContainer *valor = elements[i].getValue().get();
 		memcpy(buffer + offset, valor->get(), valor->getSize());
+
+		// inicialitzar l'array
+		driver->code.addInstruction(new AssignmentInstruction(
+			TipusSubjacentBasic::INT,
+			varOffset,
+			std::make_shared<ValueContainer>((const char *) &offset, sizeof(int))
+		));
+
+		driver->code.addInstruction(new AssignmentInstruction(
+			AssignmentInstruction::Type::TARGET_OFF,
+			this->r, // base
+			elements[i].dereference(driver, elements[i].getTSB()),
+			varOffset
+		));
+
 		offset += valor->getSize();
 	}
 
