@@ -1,6 +1,8 @@
 #include "SimbolRelExpr.h"
 #include "../Driver.h"
 
+#include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/CondJumpInstruction.h"
 
 SimbolRelExpr::SimbolRelExpr() : SimbolExpressio() {}
@@ -16,7 +18,7 @@ SimbolRelExpr::~SimbolRelExpr() {}
  *         4 (LT)
  *         5 (LTE)
  */
-void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus){
+void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, int tipus, SimbolMarcador m){
     if (a.isNull() || b.isNull()) {
         //Ignorar
         this->makeNull();
@@ -147,13 +149,84 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
         case 5 : o = CondJumpInstruction::Operator::LTE ; break;
     }
 
+	Variable *varA;
+	Variable *varB;
+
+	if(a.getTSB() == TipusSubjacentBasic::BOOLEAN){
+		// a i b són booleans, no tenen una variable assignada
+		// per simplificar la gestió, es crearà una variable temporal que 
+		// guardi el valor d'a i b
+
+		Instruction *endB = driver->code.addInstruction(new SkipInstruction(Label()));	
+
+		// cas A
+		Label aCert = driver->code.addLabel();
+		Label aFals = driver->code.addLabel();
+		Label aFinal = driver->code.addLabel();
+		varA = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
+
+		driver->code.addInstruction(new SkipInstruction(aCert));
+		driver->code.backpatch(aCert, a.getCert());
+		driver->code.addInstruction(new AssignmentInstruction(
+			varA,
+			((DescripcioConstant *) driver->ts.consulta("true"))->getVariable()
+		));
+		driver->code.addInstruction(new GoToInstruction(aFinal));
+
+		driver->code.addInstruction(new SkipInstruction(aFals));
+		driver->code.backpatch(aFals, a.getFals());
+		driver->code.addInstruction(new AssignmentInstruction(
+			varA,
+			((DescripcioConstant *) driver->ts.consulta("false"))->getVariable()
+		));
+
+		Instruction *endA = driver->code.addInstruction(new SkipInstruction(aFinal));
+
+		// per no haver d'implementar totes les possibles combinacions entre a i b
+		// i per així com es genera el codi, es mourà el codi
+		driver->code.move(m.getInstruction(), endB, endA);
+
+		// eliminar instruccions
+		driver->code.remove(m.getInstruction());
+		driver->code.remove(endB);
+
+		// cas B
+		Label bCert = driver->code.addLabel();
+		Label bFals = driver->code.addLabel();
+		Label bFinal = driver->code.addLabel();
+		varB = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
+
+		driver->code.addInstruction(new SkipInstruction(bCert));
+		driver->code.backpatch(bCert, b.getCert());
+		driver->code.addInstruction(new AssignmentInstruction(
+			varB,
+			((DescripcioConstant *) driver->ts.consulta("true"))->getVariable()
+		));
+		driver->code.addInstruction(new GoToInstruction(bFinal));
+
+		driver->code.addInstruction(new SkipInstruction(bFals));
+		driver->code.backpatch(bFals, b.getFals());
+		driver->code.addInstruction(new AssignmentInstruction(
+			varB,
+			((DescripcioConstant *) driver->ts.consulta("false"))->getVariable()
+		));
+
+		driver->code.addInstruction(new SkipInstruction(bFinal));
+	}else{
+		varA = a.dereference(driver, a.getTSB());
+		varB = b.dereference(driver, b.getTSB());
+
+		// eliminar instrucció falsa
+		driver->code.remove(m.getInstruction());
+	}
+
     Label lab1;
     Label lab2;
 
     CondJumpInstruction* cji = new CondJumpInstruction(
         o,
-        a.dereference(driver, a.getTSB()),
-        b.dereference(driver, b.getTSB()),
+        varA,
+        varB,
         lab1
     );
 
