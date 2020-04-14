@@ -45,7 +45,7 @@ void SimbolProcDecl::make(Driver *driver, SimbolProcCap cap,
 	driver->code.addInstruction(new ReturnInstruction(programa));
 
 	// backpatch al final de l'instrucció
-	Label finalPrograma = driver->code.addLabel();
+	Label *finalPrograma = driver->code.addLabel();
 	driver->code.addInstruction(new SkipInstruction(finalPrograma));
 	driver->code.backpatch(finalPrograma, salt.getSeg());
 }

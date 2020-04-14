@@ -6,13 +6,13 @@
 
 class GoToInstruction : public Instruction {
 private:
-	Label label;
+	Label *label;
 
 public:
-	GoToInstruction(Label label);
+	GoToInstruction(Label *label);
 	~GoToInstruction();
 
-	void setLabel(Label l);
+	void setLabel(Label *l);
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *);

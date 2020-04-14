@@ -7,7 +7,7 @@
 
 class SimbolMarcador : public Simbol {
 private:
-	Label et;
+	Label *et;
 	std::vector<Instruction *> seg;
 	Instruction *inst;
 
@@ -17,7 +17,7 @@ public:
 	
 	void make(Driver *driver, int tipus);
 
-	Label getLabel();
+	Label *getLabel();
 	std::vector<Instruction * > getSeg();
 
 	Instruction *getInstruction();

@@ -1,7 +1,7 @@
 #include "CondJumpInstruction.h"
 #include "../CodeGeneration.h"
 
-CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label l) 
+CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l) 
 	: Instruction(Instruction::Type::CONDJUMP) 
 {
 	// e1 op e2
@@ -41,10 +41,10 @@ std::string CondJumpInstruction::toString() {
 			break;
 	}
 
-	return "if " + this->e1->getNom() + " " + opString + " " + this->e2->getNom() +" then goto " + this->l.toString();
+	return "if " + this->e1->getNom() + " " + opString + " " + this->e2->getNom() +" then goto " + this->l->toString();
 }
 
-void CondJumpInstruction::setLabel(Label l){
+void CondJumpInstruction::setLabel(Label *l){
 	this->l = l;
 }
 
@@ -67,5 +67,5 @@ void CondJumpInstruction::generateAssembly(CodeGeneration *code){
 	code->output << "%" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->e1->getOcupacio());
 	code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::D, this->e2->getOcupacio()) << std::endl;
 
-	code->output << inst[this->op] << "\t" << this->l.toString();
+	code->output << inst[this->op] << "\t" << this->l->toString();
 }

@@ -9,7 +9,7 @@ SimbolRelExpr::SimbolRelExpr() : SimbolExpressio() {}
 SimbolRelExpr::~SimbolRelExpr() {}
 
 /**
- *  RelExpr -> ExprSimple [OP_NEQ/OP_EQ/OP_GT...] ExprSimple
+ *  RelExpr -> ExprSimple [OP_NEQ/OP_EQ/OP_GT...] M2 ExprSimple
  * 
  * tipus = 0 (NEQ)
  *         1 (EQ)
@@ -157,12 +157,12 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 		// per simplificar la gestió, es crearà una variable temporal que 
 		// guardi el valor d'a i b
 
-		Instruction *endB = driver->code.addInstruction(new SkipInstruction(Label()));	
+		Instruction *endB = driver->code.addInstruction(new SkipInstruction(nullptr));	
 
 		// cas A
-		Label aCert = driver->code.addLabel();
-		Label aFals = driver->code.addLabel();
-		Label aFinal = driver->code.addLabel();
+		Label *aCert = driver->code.addLabel();
+		Label *aFals = driver->code.addLabel();
+		Label *aFinal = driver->code.addLabel();
 		varA = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
 
 		driver->code.addInstruction(new SkipInstruction(aCert));
@@ -191,9 +191,9 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 		driver->code.remove(endB);
 
 		// cas B
-		Label bCert = driver->code.addLabel();
-		Label bFals = driver->code.addLabel();
-		Label bFinal = driver->code.addLabel();
+		Label *bCert = driver->code.addLabel();
+		Label *bFals = driver->code.addLabel();
+		Label *bFinal = driver->code.addLabel();
 		varB = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
 
 		driver->code.addInstruction(new SkipInstruction(bCert));
@@ -220,17 +220,14 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 		driver->code.remove(m.getInstruction());
 	}
 
-    Label lab1;
-    Label lab2;
-
     CondJumpInstruction* cji = new CondJumpInstruction(
         o,
         varA,
         varB,
-        lab1
+        nullptr
     );
 
-    GoToInstruction* gti = new GoToInstruction(lab2);
+    GoToInstruction* gti = new GoToInstruction(nullptr);
 
     driver->code.addInstruction(cji);
     driver->code.addInstruction(gti);

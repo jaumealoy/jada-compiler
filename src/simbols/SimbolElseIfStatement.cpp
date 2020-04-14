@@ -33,7 +33,7 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolExpressio exp, SimbolMarc
 	this->finals = bloc.getSeg();
 
 	// aquesta instrucció és la del final del bloc, no s'ha d'executar cap bloc més
-    Instruction *inst = driver->code.addInstruction(new GoToInstruction(Label()));
+    Instruction *inst = driver->code.addInstruction(new GoToInstruction(nullptr));
 	this->finals.push_back(inst);
 }
 
@@ -69,7 +69,7 @@ void SimbolElseIfStatement::make(Driver *driver, SimbolElseIfStatement elseif, S
 	// el final és deconegut i no és el mateix punt que l'inici del següent
 	// else if / else
     this->finals = elseif.getFinals();
-    Instruction *inst = driver->code.addInstruction( new GoToInstruction(Label()) );
+    Instruction *inst = driver->code.addInstruction( new GoToInstruction(nullptr) );
 	this->finals.push_back(inst);
 }
 

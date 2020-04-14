@@ -16,7 +16,7 @@ CodeGeneration::CodeGeneration() : output("codi.asm") {
 	// però es permeten variables globals, per simplificar el control
 	// es crearà un subprograma que representa tot el subprograma
 	this->nivellProfunditat = 0;
-	Label mStart = this->addLabel();
+	Label *mStart = this->addLabel();
 	SubProgram *global = new SubProgram(this->nivellProfunditat, mStart, "_start");
 	this->subprogrames.push(global);
 }
@@ -57,12 +57,12 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
 /**
  * Crea i retorna una nova etiqueta
  */
-Label CodeGeneration::addLabel(){
-	return Label(++this->labelCounter);
+Label *CodeGeneration::addLabel(){
+	return new Label(++this->labelCounter);
 }
 
-Label CodeGeneration::addLabel(std::string name){
-	return Label(++this->labelCounter, name);
+Label *CodeGeneration::addLabel(std::string name){
+	return new Label(++this->labelCounter, name);
 }
 
 /**
@@ -107,7 +107,7 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name,
 /**
  * Crea un subprograma a la generació de codi
  */
-SubProgram *CodeGeneration::addSubProgram(std::string id, Label label) {
+SubProgram *CodeGeneration::addSubProgram(std::string id, Label *label) {
 	// el nivell d'aquest subprograma és l'actual
 	SubProgram *programa = new SubProgram(this->nivellProfunditat + 1, label, id);
 	this->programs.add(programa);
@@ -214,7 +214,7 @@ void CodeGeneration::generateAssembly() {
  * Substitueix l'etiqueta dels salts (condicionals o no) per l'etiqueta
  * passada per paràmetre
  */
-void CodeGeneration::backpatch(Label e, Instruction *v) {
+void CodeGeneration::backpatch(Label *e, Instruction *v) {
 	switch (v->getType()) {
 		case Instruction::Type::GOTO: 
 			((GoToInstruction *) v)->setLabel(e); 
@@ -226,13 +226,13 @@ void CodeGeneration::backpatch(Label e, Instruction *v) {
 	}
 }
 
-void CodeGeneration::backpatch(Label e, std::vector<Instruction *> v) {
+void CodeGeneration::backpatch(Label *e, std::vector<Instruction *> v) {
 	for(int i = 0; i < v.size(); i++) {
 		this->backpatch(e, v[i]);
 	}
 }
 
-void CodeGeneration::backpatch(Label e, std::list<Instruction *> v) {
+void CodeGeneration::backpatch(Label *e, std::list<Instruction *> v) {
 	std::list<Instruction *>::iterator it = v.begin();
 	while(it != v.end()){
 		this->backpatch(e, *it);

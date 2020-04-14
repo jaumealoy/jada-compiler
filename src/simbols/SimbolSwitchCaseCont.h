@@ -24,7 +24,7 @@ private:
 	Variable *r;
 
 	// etiquetes per la generació de codi
-	Label fi;
+	Label *fi;
 
 	std::list<Instruction *> previousGoTo; // goto incondicional (si no hi ha break)
 	std::list<Instruction *> previousCondJump; // salt condicional d'avaluar la condició
@@ -37,7 +37,7 @@ public:
 
 	std::list<Instruction *> getPreviousGoTo();
 	std::list<Instruction *> getPreviousCondJump();
-	Label getFi();
+	Label *getFi();
 
 	Variable *getVariable();
 	TipusSubjacentBasic getTSB();

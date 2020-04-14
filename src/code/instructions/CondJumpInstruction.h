@@ -20,11 +20,11 @@ private:
 	Operator op;
 	Variable *e1;
 	Variable *e2;
-	Label l;
+	Label *l;
 public:
-	CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label l);
+	CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l);
 	~CondJumpInstruction();
-	void setLabel(Label l);
+	void setLabel(Label *l);
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *code);

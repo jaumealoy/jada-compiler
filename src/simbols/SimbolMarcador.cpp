@@ -24,7 +24,7 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 		
 		case 1:
 			// goto incondicional sense destí
-			this->inst = driver->code.addInstruction(new GoToInstruction(Label()));
+			this->inst = driver->code.addInstruction(new GoToInstruction(nullptr));
 			this->seg.push_back(this->inst);
 			break;
 
@@ -33,12 +33,12 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 			// que serveix per marcar blocs de codi
 			// Aquesta instrucció s'eliminarà en qualque moment
 			// No importa que l'etiqueta no existeixi
-			this->inst = driver->code.addInstruction(new SkipInstruction(this->et));
+			this->inst = driver->code.addInstruction(new SkipInstruction(nullptr));
 			break;
 	}
 }
 
-Label SimbolMarcador::getLabel() {
+Label *SimbolMarcador::getLabel() {
 	return this->et;
 }
 

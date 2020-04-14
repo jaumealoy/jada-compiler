@@ -196,12 +196,12 @@ bool Driver::exitosa(){
  * printChar(char caracter)
  */
 void Driver::initPrintChar(){
-	Label end = this->code.addLabel();
+	Label *end = this->code.addLabel();
 
 	this->code.addInstruction(new GoToInstruction(end));
 
 	// generació de codi
-	Label start = this->code.addLabel("printChar");
+	Label *start = this->code.addLabel("printChar");
 	this->code.addInstruction(new SkipInstruction(start));
 	SubProgram *printCharProgram = this->code.addSubProgram("printChar", start);
 	this->code.addInstruction(new PreAmbleInstruction(printCharProgram));
@@ -240,8 +240,8 @@ void Driver::initPrintChar(){
  */
 void Driver::initReadChar(){
 	// crear el subprograma
-	Label start = this->code.addLabel("readChar");
-	Label end = this->code.addLabel();
+	Label *start = this->code.addLabel("readChar");
+	Label *end = this->code.addLabel();
 	SubProgram *readCharPrograma = this->code.addSubProgram("readChar", start);
 	readCharPrograma->setTipusRetorn(TipusSubjacentBasic::CHAR);
 
@@ -280,8 +280,8 @@ void Driver::initReadChar(){
  */
 void Driver::initPrint(){
 	// creació del subprograma
-	Label start = this->code.addLabel("print");
-	Label end = this->code.addLabel();
+	Label *start = this->code.addLabel("print");
+	Label *end = this->code.addLabel();
 	SubProgram *printProgram = this->code.addSubProgram("print", start);
 
 	this->code.enterSubProgram(printProgram);
@@ -298,8 +298,8 @@ void Driver::initPrint(){
 	darg1->setVariable(arg1);
 
 	// etiquetes del bucle
-	Label inici = this->code.addLabel();
-	Label efinal = this->code.addLabel();
+	Label *inici = this->code.addLabel();
+	Label *efinal = this->code.addLabel();
 
 	// codi del programa
 	this->code.addInstruction(new GoToInstruction(end));

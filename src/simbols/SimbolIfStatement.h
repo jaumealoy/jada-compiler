@@ -9,12 +9,10 @@
 
 class SimbolIfStatement : public SimbolStatement {
 private:
-    Label final;
 public:
     SimbolIfStatement();
     ~SimbolIfStatement();
 
-    //void make(Driver *driver, SimbolExpressio exp, SimbolMarcador marc, SimbolBloc bloc, SimbolElseIfStatement elseIfStmt);
     void make(Driver *driver, SimbolElseStatement elseS);
 };
 

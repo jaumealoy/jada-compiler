@@ -341,21 +341,18 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 		// desreferenciar el valor (si és necessari)
 		Variable *tmp = this->dereference(driver, this->tsb);
 		
-		Label l;
-
 		// afegir salts condicionals
 		CondJumpInstruction *trueJump = new CondJumpInstruction(
 			CondJumpInstruction::Operator::EQ,
 			dtrue->getVariable(),
 			tmp,
-			l
+			nullptr // ja es definirà més tard
 		);
 		
 		driver->code.addInstruction(trueJump);
 		this->ecert.push_back(trueJump);
 
-		Label lfalse;
-		GoToInstruction *falseJump = new GoToInstruction(lfalse);
+		GoToInstruction *falseJump = new GoToInstruction(nullptr);
 		driver->code.addInstruction(falseJump);
 		this->efals.push_back(falseJump);
 	}

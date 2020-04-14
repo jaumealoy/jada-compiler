@@ -33,9 +33,9 @@ void SimbolContSwitch::make(Driver *driver, SimbolExpressio exp){
 
 	if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 		// afegir etiquetes per gestionar els casos cert i fals
-		Label boolEnd = driver->code.addLabel();
-		Label trueCase = driver->code.addLabel();
-		Label falseCase = driver->code.addLabel();
+		Label *boolEnd = driver->code.addLabel();
+		Label *trueCase = driver->code.addLabel();
+		Label *falseCase = driver->code.addLabel();
 		this->r = driver->code.addVariable(exp.getTSB());
 
 		// exp = true
@@ -123,7 +123,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolSwitchCaseCont cont, SimbolBlo
 
 	// si el bloc no té cap break, ha de continuar al següent case
 	// no es coneix quina és l'etiqueta on s'ha d'anar
-	GoToInstruction *inst = new GoToInstruction(Label());
+	GoToInstruction *inst = new GoToInstruction(nullptr);
 	driver->code.addInstruction(inst);
 
 	// el pròxim case ja s'encarregarà de canviar aquesta instrucció
@@ -145,7 +145,7 @@ void SimbolContSwitch::make(Driver *driver, SimbolSwitchCaseCont cont, SimbolBlo
 
 std::list<Instruction *> SimbolContSwitch::getPreviousGoTo(){ return this->previousGoTo; }
 std::list<Instruction *> SimbolContSwitch::getPreviousCondJump(){ return this->previousCondJump; }
-Label SimbolContSwitch::getFi(){ return this->fi; }
+Label *SimbolContSwitch::getFi(){ return this->fi; }
 
 Variable *SimbolContSwitch::getVariable(){ return this->r; }
 TipusSubjacentBasic SimbolContSwitch::getTSB(){ return this->tsb; }

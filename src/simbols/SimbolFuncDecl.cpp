@@ -71,7 +71,7 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
     Simbol::toDotFile(driver);
 
 	// backpatch al final de l'instrucció
-	Label finalPrograma = driver->code.addLabel();
+	Label *finalPrograma = driver->code.addLabel();
 	driver->code.addInstruction(new SkipInstruction(finalPrograma));
 	driver->code.backpatch(finalPrograma, m1.getSeg());
 

@@ -56,7 +56,7 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
     }
 
 	// crear el procedure a la generació de codi
-	Label start = driver->code.addLabel();
+	Label *start = driver->code.addLabel();
 	SubProgram *subprogram = driver->code.addSubProgram(nomFuncio, start);
 
 	// indicar l'etiqueta d'inici del subprograma

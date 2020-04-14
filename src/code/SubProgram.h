@@ -14,7 +14,7 @@ private:
 	std::string nom;
 
 	// dades del subprograma
-	Label start;
+	Label *start;
 	int numParametres; // total de paràmetres
 	int ocupacioParametres; // "ocupació" dels paràmetres
 	int ocupacioVariables; // espai ocupat per variables locals
@@ -28,7 +28,7 @@ private:
 	TipusSubjacentBasic returnTSB;
 
 public:
-    SubProgram(int np, Label start, std::string id);
+    SubProgram(int np, Label *start, std::string id);
     ~SubProgram();
 
 	int getNivellProfunditat();

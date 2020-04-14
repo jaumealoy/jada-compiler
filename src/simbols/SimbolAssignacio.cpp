@@ -53,9 +53,9 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 
 			if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 				// és un boolean, s'haurà fet qualque salt condicional
-				Label ec = driver->code.addLabel();
-                Label ef = driver->code.addLabel();
-                Label efi = driver->code.addLabel();
+				Label *ec = driver->code.addLabel();
+                Label *ef = driver->code.addLabel();
+                Label *efi = driver->code.addLabel();
 
                 driver->code.addInstruction(new SkipInstruction(ec));
                 driver->code.backpatch(ec, exp.getCert());

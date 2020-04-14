@@ -91,13 +91,13 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 		driver->code.backpatch(m1.getLabel(), cont.getPreviousCondJump());
 	}
 
-	Label lstart = driver->code.addLabel(); // etiqueta d'inici del bloc
+	Label *lstart = driver->code.addLabel(); // etiqueta d'inici del bloc
 
 	if(this->tsb == TipusSubjacentBasic::BOOLEAN){
 		// Afegir etiquetes de final d'avaluació condicionada
-		Label boolEnd = driver->code.addLabel();
-		Label trueCase = driver->code.addLabel();
-		Label falseCase = driver->code.addLabel();
+		Label *boolEnd = driver->code.addLabel();
+		Label *trueCase = driver->code.addLabel();
+		Label *falseCase = driver->code.addLabel();
 		Variable *tmp = driver->code.addVariable(this->tsb);
 
 		// exp = true
@@ -125,7 +125,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 			CondJumpInstruction::Operator::NEQ,
 			tmp,
 			this->r,
-			Label() // la definirem posteriorment
+			nullptr // la definirem posteriorment
 		);
 
 		driver->code.addInstruction(inst);
@@ -136,7 +136,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 			CondJumpInstruction::Operator::NEQ,
 			exp.dereference(driver, exp.getTSB()),
 			this->r,
-			Label() // la definirem posteriorment
+			nullptr // la definirem posteriorment
 		);
 
 		driver->code.addInstruction(inst);
@@ -154,7 +154,7 @@ void SimbolSwitchCaseCont::make(Driver *driver, SimbolContSwitch cont, SimbolExp
 
 std::list<Instruction *> SimbolSwitchCaseCont::getPreviousGoTo(){ return this->previousGoTo; }
 std::list<Instruction *> SimbolSwitchCaseCont::getPreviousCondJump(){ return this->previousCondJump; }
-Label SimbolSwitchCaseCont::getFi(){ return this->fi; }
+Label *SimbolSwitchCaseCont::getFi(){ return this->fi; }
 
 Variable *SimbolSwitchCaseCont::getVariable(){ return this->r; }
 TipusSubjacentBasic SimbolSwitchCaseCont::getTSB(){ return this->tsb; }

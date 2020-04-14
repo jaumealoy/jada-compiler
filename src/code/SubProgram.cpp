@@ -2,7 +2,7 @@
 #include "Variable.h"
 #include <iostream>
 
-SubProgram::SubProgram(int np, Label start, std::string id) {
+SubProgram::SubProgram(int np, Label *start, std::string id) {
     this->nivellProfunditat = np;
     this->nom = id;
 	this->start = start;
@@ -122,7 +122,7 @@ void SubProgram::resetOffsets(){
 }
 
 std::string SubProgram::getNom() {
-	return this->start.toString();
+	return this->start->toString();
 }
 
 /**

@@ -37,10 +37,10 @@ void SimbolVarInit::make(Driver *driver, SimbolExpressio exp){
 	// el final de l'etiquetes de cert i fals
 	if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 		// generar les etiquetes
-		Label eCert = driver->code.addLabel();
+		Label *eCert = driver->code.addLabel();
 		driver->code.backpatch(eCert, exp.getCert());
 
-		Label eFals = driver->code.addLabel();
+		Label *eFals = driver->code.addLabel();
 		driver->code.backpatch(eFals, exp.getFals());
 
 		// guardar dins la variable el valor de l'expressió boolean

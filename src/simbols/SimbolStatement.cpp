@@ -83,7 +83,7 @@ void SimbolStatement::make(Driver *driver, SimbolStatement::Tipus tipus){
         this->_conteBreak = true;
 
 		// generar un goto incondicial
-		GoToInstruction *inst = new GoToInstruction(Label());
+		GoToInstruction *inst = new GoToInstruction(nullptr);
 		driver->code.addInstruction(inst);
 		this->_breakList.push_back(inst);
     }

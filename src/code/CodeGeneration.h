@@ -43,8 +43,8 @@ public:
 	CodeGeneration();
 	~CodeGeneration();
 
-	Label addLabel();
-	Label addLabel(std::string name);
+	Label *addLabel();
+	Label *addLabel(std::string name);
 	
 	// gestió de les variables
 	Variable *addVariable(TipusSubjacentBasic tsb);
@@ -53,14 +53,14 @@ public:
 	Variable *addVariable(TipusSubjacentBasic tsb, std::string name, bool);
 	
 	// gestió dels subprogrames
-	SubProgram *addSubProgram(std::string id, Label label);
+	SubProgram *addSubProgram(std::string id, Label *label);
 	void enterSubProgram(SubProgram *subprogram);
 	void leaveSubProgram();
 
 	// funcions de backpatch
-	void backpatch(Label e, Instruction *i);
-	void backpatch(Label e, std::vector<Instruction*> i);
-	void backpatch(Label e, std::list<Instruction*> i);
+	void backpatch(Label *e, Instruction *i);
+	void backpatch(Label *e, std::vector<Instruction*> i);
+	void backpatch(Label *e, std::list<Instruction*> i);
 
 	// gestió de conjunts
 	static std::vector<Instruction *> concat(std::vector<Instruction *> list1, std::vector<Instruction *> list2);

@@ -27,7 +27,7 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
     }
 
 	// crear el procedure a la generació de codi
-	Label start = driver->code.addLabel(nom);
+	Label *start = driver->code.addLabel(nom);
 	SubProgram *subprogram = driver->code.addSubProgram(nom, start);
 
 	// indicar l'etiqueta d'inici del subprograma
