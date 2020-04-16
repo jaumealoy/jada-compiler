@@ -3,7 +3,9 @@
 
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "SubProgram.h"
+#include "../utils/ValueContainer.h"
 #include <string>
+#include <memory>
 
 class Variable {
 private:
@@ -12,7 +14,7 @@ private:
 
 	// interessa poder tenir "variables" nul·les, cosa que pot ser
 	// servir al desplaçament per indicar que no n'hi ha
-	bool null;
+	//bool null;
 
 	// indica si una variable és o no un paràmetre d'un subprograma
 	bool parameter;
@@ -23,8 +25,15 @@ private:
 	int ocupacioExtra;
 	int offset;
 
-	// indica de quin subprograma és
+	// indica de quin subprograma és (en quin subprograma s'ha declarat)
 	SubProgram *subprograma;
+
+	// una variable constant és aquella en què només es fa una assignació
+	// de l'estil variable = <constant>
+	bool constant;
+	bool locked;
+	bool firstTime;
+	std::shared_ptr<ValueContainer> valor;
 
 public:
 	Variable();
@@ -32,8 +41,8 @@ public:
 	Variable(SubProgram *, int id, std::string name, bool parameter);
 	~Variable();
 
-	bool isNull();
-	void makeNull();
+	//bool isNull();
+	//void makeNull();
 
 	std::string getNom();
 	std::string getAssemblyTag();
@@ -54,6 +63,14 @@ public:
 	TipusSubjacentBasic getTSB();
 
 	SubProgram *getSubPrograma();
+
+	// gestió de si és o no constant
+	bool isConstant();
+	void resetConstant();
+	void setConstant(std::shared_ptr<ValueContainer> valor);
+	void setConstant(bool constant);
+	void lockConstant();
+	std::shared_ptr<ValueContainer> getValor();
 };
 
 #endif

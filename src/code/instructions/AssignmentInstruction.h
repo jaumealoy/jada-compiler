@@ -44,6 +44,12 @@ public:
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *code);
+
+	// optimització
+	bool optimize(CodeGeneration * code);
+
+	// actualitza la informació sobre valors constants
+	void updateConstants();
 };
 
 #endif

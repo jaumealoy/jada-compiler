@@ -27,7 +27,11 @@ void PutParamInstruction::generateAssembly(CodeGeneration *code){
 	std::string tmp;
 
 	// carregar el valor al registre corresponent
-	code->load(this, this->valor, CodeGeneration::Register::A);
+	if(this->valor->isConstant()){
+		code->load(this->valor->getValor(), CodeGeneration::Register::A, this->valor->getTSB());
+	}else{
+		code->load(this, this->valor, CodeGeneration::Register::A);
+	}
 
 	code->output << "mov" + CodeGeneration::getSizeTag(true, this->valor->getOcupacio());
 	code->output << "\t%" + CodeGeneration::getRegister(CodeGeneration::Register::A, this->valor->getOcupacio()) + ", ";

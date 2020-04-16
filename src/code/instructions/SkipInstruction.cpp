@@ -3,6 +3,9 @@
 
 SkipInstruction::SkipInstruction(Label *label) : Instruction(Instruction::Type::SKIP){
 	this->label = label;
+
+	// indicar que l'etiqueta és a aquesta instrucció
+	this->label->setTargetInstruction(this);
 }
 
 SkipInstruction::~SkipInstruction(){}

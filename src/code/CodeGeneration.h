@@ -39,6 +39,9 @@ private:
 	void updateVariableTable();
 	void updateSubProgramTable();
 
+	// optimitzacions
+	void updateConstants();
+
 public:
 	CodeGeneration();
 	~CodeGeneration();
@@ -85,7 +88,12 @@ public:
 
 	// macros
 	void load(Instruction *caller, Variable *var, Register reg);
+	void load(std::shared_ptr<ValueContainer> valor, Register reg, TipusSubjacentBasic tsb);
 	void store(Instruction *caller, Register reg, Variable *var);
+
+	// optimitzacions
+	void optimize();
+	Label *getTargetLabel(Label *inici);
 
 	// arxiu de sortida en assemblador
 	std::ofstream output;

@@ -118,15 +118,15 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			if (origen == nullptr) {
 				// es tracta d'un valor constant variable = constant
 				int mida = this->desti->getOcupacio();
-				int valorConstant = 0;
-
+				long valorConstant = 0;
+				
 				switch (mida) {
 					case 1:
-						valorConstant = (int) *this->value->get();
+						valorConstant = (long) *this->value->get();
 						break;
 
 					case 4:
-						valorConstant = *(int *) this->value->get();
+						valorConstant = (long) *(int *) this->value->get();
 						break;
 
 					case 8:
@@ -181,3 +181,39 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 	}
 
 };
+
+void AssignmentInstruction::updateConstants(){
+	if(this->type == AssignmentInstruction::Type::SIMPLE && (this->origen == nullptr || this->origen->isConstant())){
+		// és una assignació de l'estil variable = <constant>
+		if(this->origen != nullptr && this->origen->isConstant()){
+			this->desti->setConstant(this->origen->getValor());
+		}else{
+			this->desti->setConstant(this->value);
+		}
+	}else{
+		this->desti->setConstant(false);
+	}
+}
+
+/**
+ * Optimització de les instruccions d'assignació
+ * - Les instruccions de l'estil variable = <constant> es poden eliminar
+ */
+bool AssignmentInstruction::optimize(CodeGeneration *code){
+	bool canvis = false;
+
+	if(this->desti->isConstant()){
+		std::cout << "Borrant AssignmentInstruction" << std::endl;
+		code->remove(this);
+		return true;
+	}
+
+	if(this->type == AssignmentInstruction::Type::SIMPLE && this->origen != nullptr && this->origen->isConstant()){
+		this->value = this->origen->getValor();
+		this->tsb = this->origen->getTSB();
+		this->origen = nullptr;
+		canvis = true;
+	}
+
+	return canvis;
+}

@@ -11,8 +11,8 @@
 
 #include <exception>
 
-Driver::Driver(char *filename) 
-	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out)
+Driver::Driver(char *filename, bool debugMode) 
+	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode)
 {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);

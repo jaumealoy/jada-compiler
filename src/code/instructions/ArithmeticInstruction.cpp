@@ -1,4 +1,5 @@
 #include "ArithmeticInstruction.h"
+#include "AssignmentInstruction.h"
 #include "../CodeGeneration.h"
 
 ArithmeticInstruction::ArithmeticInstruction(ArithmeticInstruction::Type type, Variable *desti, Variable *v1, Variable *v2) 
@@ -8,6 +9,8 @@ ArithmeticInstruction::ArithmeticInstruction(ArithmeticInstruction::Type type, V
 	this->desti = desti;
 	this->v1 = v1;
 	this->v2 = v2;
+	this->constant1 = false;
+	this->constant2 = false;
 }
 
 ArithmeticInstruction::~ArithmeticInstruction(){}
@@ -44,8 +47,17 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 		case ArithmeticInstruction::Type::ADDITION:
 		case ArithmeticInstruction::Type::SUBTRACTION: {
 			// carregar els operands
-			code->load(this, this->v1, CodeGeneration::Register::A);
-			code->load(this, this->v2, CodeGeneration::Register::D);
+			if(this->v1->isConstant()){
+				code->load(this->valor1, CodeGeneration::Register::A, this->v1->getTSB());
+			}else{
+				code->load(this, this->v1, CodeGeneration::Register::A);
+			}
+
+			if(this->v2->isConstant()){
+				code->load(this->valor2, CodeGeneration::Register::D, this->v2->getTSB());
+			}else{
+				code->load(this, this->v2, CodeGeneration::Register::D);
+			}
 
 			std::string opcode = "add";
 			if(this->type == ArithmeticInstruction::Type::SUBTRACTION){
@@ -67,8 +79,17 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 			code->output << "movq\t$0, %" << CodeGeneration::getRegister(CodeGeneration::Register::D, 8) << std::endl;
 
 			// carregar els operands
-			code->load(this, this->v1, CodeGeneration::Register::A);
-			code->load(this, this->v2, CodeGeneration::Register::D);
+			if(this->v1->isConstant()){
+				code->load(this->valor1, CodeGeneration::Register::A, this->v1->getTSB());
+			}else{
+				code->load(this, this->v1, CodeGeneration::Register::A);
+			}
+
+			if(this->v2->isConstant()){
+				code->load(this->valor2, CodeGeneration::Register::D, this->v2->getTSB());
+			}else{
+				code->load(this, this->v2, CodeGeneration::Register::D);
+			}
 
 			// realitzar l'operació, a = a * d
 			code->output << "imul\t%" << CodeGeneration::getRegister(CodeGeneration::Register::D, 8) << ", ";
@@ -78,4 +99,94 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 			break;
 	}
 
+}
+
+void ArithmeticInstruction::updateConstants(){
+	// la variable destí podrà ser una constant si els dos
+	// operands són constants
+	
+	if(this->v1->isConstant() && this->v2->isConstant()){
+		this->desti->setConstant(false);
+	}
+
+}
+
+/**
+ * Optimitza la instrucció aritmètica.
+ * Si els dos operands són constants, es pot simplificar a una instrucció
+ * d'assignació de l'estil desti = <constant>
+ * 
+ * És necessari haver executat prèvicament updateConstants()
+ */
+bool ArithmeticInstruction::optimize(CodeGeneration *code){
+	bool canvis = false;
+
+	// comprovar si les variables són constants
+	if(this->v1->isConstant() && !this->constant1){
+		this->valor1 = this->v1->getValor();
+		constant1 = true;
+		canvis = true;
+
+		std::cout << "Canviant V1 a true" << std::endl;
+
+	}
+
+	if(this->v2->isConstant() && !this->constant2){
+		this->valor2 = this->v2->getValor();
+		constant2 = true;
+		canvis = true;
+
+		std::cout << "Canviant V2 a true" << std::endl;
+	}
+
+	// si les dues variables són constants, es converteix en una instrucció
+	// d'assignació perquè el valor de l'operació es pot conèixer en temps de
+	// compilació
+	if(this->v1->isConstant() && this->v2->isConstant()){
+		// calcular el valor de l'operació
+		
+		long resultat, a, b;
+
+		switch (this->valor1->getSize()){
+			case 1:
+				a = (long) *this->valor1->get();
+				b = (long) *this->valor2->get();
+				break;
+
+			case 4:
+				a = (long) (*(int *) this->valor1->get());
+				b = (long) (*(int *) this->valor2->get());
+				break;
+
+			case 8:
+				a = *(long *) this->valor1->get();
+				b = *(long *) this->valor2->get();
+				break;
+		}
+
+		switch (this->type){
+			case ArithmeticInstruction::ADDITION: resultat = a + b; break;
+			case ArithmeticInstruction::SUBTRACTION: resultat = a - b; break;
+			case ArithmeticInstruction::MULTIPLICATION: resultat = a * b; break;
+			case ArithmeticInstruction::DIVISION: resultat = a / b; break;
+			case ArithmeticInstruction::MOD: resultat = a % b; break;
+		}
+
+		Instruction *assi = code->addInstruction(new AssignmentInstruction(
+			this->desti->getTSB(),
+			this->desti,
+			std::make_shared<ValueContainer>((const char *) &resultat, TSB::sizeOf(this->desti->getTSB()))
+		));
+		
+		std::cout << "generant Assigment Bàsic" << std::endl;
+
+		code->move(assi, assi, this);
+
+		std::cout << "eliminant instrucció" << std::endl;
+
+		code->remove(this);
+		return true;
+	}
+
+	return canvis;
 }

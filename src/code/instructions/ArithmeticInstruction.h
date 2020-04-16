@@ -15,8 +15,17 @@ public:
 	};
 
 private:
+	// operand 1
 	Variable *v1;
+	std::shared_ptr<ValueContainer> valor1;
+	bool constant1;
+
+	// operand 2
 	Variable *v2;
+	std::shared_ptr<ValueContainer> valor2;
+	bool constant2;
+
+	// destí
 	Variable *desti;
 
 	ArithmeticInstruction::Type type;
@@ -27,6 +36,12 @@ public:
 
 	std::string toString();
 	void generateAssembly(CodeGeneration * code);
+
+	// optimització
+	bool optimize(CodeGeneration * code);
+
+	// actualitza la informació sobre valors constants
+	void updateConstants();
 };
 
 #endif

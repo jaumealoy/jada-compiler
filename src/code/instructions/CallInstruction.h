@@ -1,5 +1,5 @@
 #ifndef _H_CALL_INSTRUCTION
-#define _H_CALL INSTRUCTION
+#define _H_CALL_INSTRUCTION
 
 #include "Instruction.h"
 #include "../SubProgram.h"

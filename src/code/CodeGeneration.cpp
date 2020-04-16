@@ -2,6 +2,9 @@
 #include "Label.h"
 #include "instructions/GoToInstruction.h"
 #include "instructions/CondJumpInstruction.h"
+#include "instructions/AssignmentInstruction.h"
+#include "instructions/ArithmeticInstruction.h"
+#include "instructions/SkipInstruction.h"
 #include <iostream>
 
 CodeGeneration::CodeGeneration() : output("codi.asm") {
@@ -184,16 +187,13 @@ void CodeGeneration::generateAssembly() {
 	// ara es pot representar cada instrucció
 	Instruction *act = this->first;
 	while(act != nullptr){
+		this->output << "/* " << act->toString() << " */" << std::endl;
 		act->generateAssembly(this);
 		this->output << std::endl;
 		act = act->getNext();
 	}
 
 	// indicar fi del programa
-	/* movq $1, %rax
-	movq $0, %rbx
-	int	$0x80*/
-
 	this->output << "movq\t$1, %rax" << std::endl;
 	this->output << "movq\t$0, %rbx" << std::endl;
 	this->output << "int\t$0x80" << std::endl;
@@ -276,6 +276,7 @@ void CodeGeneration::move(Instruction *inst, Instruction *after){
 	}
 
 	inst->setPrevious(after);
+	inst->setNext(after->getNext());
 	after->setNext(inst);
 }
 
@@ -375,6 +376,11 @@ void CodeGeneration::updateVariableTable() {
 
 		if(subprograma == nullptr) {
 			std::cerr << "Variable " << actual->getNom() << " no té subprograma" << std::endl;
+			continue;
+		}
+
+		if(actual->isConstant()){
+			// els valors constants no tenen memòria reservada
 			continue;
 		}
 
@@ -506,10 +512,155 @@ void CodeGeneration::load(Instruction *inst, Variable *var, CodeGeneration::Regi
 }
 
 /**
+ * Carregar un valor constant a un registre
+ */
+void CodeGeneration::load(std::shared_ptr<ValueContainer> valor, 
+	CodeGeneration::Register reg, TipusSubjacentBasic tsb)
+{
+
+	int mida = valor->getSize();
+	long valorConstant = 0;
+
+	switch (mida) {
+		case 1:
+			valorConstant = (long) *valor->get();
+			break;
+
+		case 4:
+			valorConstant = (long) *(int *) valor->get();
+			break;
+
+		case 8:
+			valorConstant = *(long *) valor->get();
+			break;
+	}
+
+	this->output << "mov" << CodeGeneration::getSizeTag(true, TSB::sizeOf(tsb)) << "\t";
+	this->output << "$" << valorConstant << ", %";
+	this->output << CodeGeneration::getRegister(reg, TSB::sizeOf(tsb)) << std::endl;
+}
+
+/**
  * Macro per carregar una variable a un registre
  */
 void CodeGeneration::store(Instruction *inst, CodeGeneration::Register reg, Variable *var){
 	this->output << "mov" << CodeGeneration::getSizeTag(true, var->getOcupacio()) << "\t";
 	this->output << "%" << CodeGeneration::getRegister(reg, var->getOcupacio()) << ", ";
 	this->output << inst->getAssemblyVariable(var) << std::endl;
+}
+
+/**
+ * Aplica les optimitzacions sobre el codi intermedi
+ */
+void CodeGeneration::optimize(){
+	bool canvis = true;
+	while(canvis){
+		canvis = false;
+
+		// identificar constants
+		this->updateConstants();
+
+		// eliminar instruccions d'assignació de constants
+		// TODO
+
+		Instruction *tmp = this->first;
+		while(tmp != nullptr){
+			Instruction *next = tmp->getNext();
+
+			switch (tmp->getType()) {
+				case Instruction::Type::ASSIGNMENT:
+					canvis = ((AssignmentInstruction *) tmp)->optimize(this) || canvis;
+					break;
+
+				case Instruction::Type::ARITHMETIC:
+					canvis = ((ArithmeticInstruction *) tmp)->optimize(this) || canvis;
+					break;
+
+				case Instruction::Type::GOTO:
+					canvis = ((GoToInstruction *) tmp)->optimize(this) || canvis;
+					break;
+
+				case Instruction::Type::CONDJUMP: {
+					// l'optimització d'un salt condicional pot provocar l'eliminació de
+					// la següent instrucció si és un salt incondicional
+					bool nextGoTo = false;
+					Instruction *safeNext = nullptr;
+					if(next != nullptr && next->getType() == Instruction::Type::GOTO){
+						std::cout << "Següent instrucció a salt condicional és GOTO" << std::endl;
+						nextGoTo = true;
+						safeNext = next->getNext();
+					}
+	
+					bool canvisLocals = ((CondJumpInstruction *) tmp)->optimize(this);
+
+					if(canvisLocals && nextGoTo){
+						// és possible que s'hagi eliminat el next
+						next = safeNext;
+						std::cout << "Salt condicional canviant futures instruccions" << std::endl;
+					}
+
+					canvis = canvisLocals || canvis;
+				}
+				break;
+
+				default:
+					canvis = canvis || false;
+			}
+			tmp = next;
+		}
+
+
+		for(int i = 0; i < this->vars.size(); i++){
+			if(this->vars.get(i)->isConstant()){
+				std::cout << "Bloquejant constant " << i << std::endl;
+				this->vars.get(i)->lockConstant();
+			}
+		}
+
+		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
+	}
+}
+
+/**
+ * Determina quines variables són constants
+ * - Indica el valor de la variable
+ * - Indica la instrucció en què s'inicialitza la constant
+ */
+void CodeGeneration::updateConstants(){
+	// indicar que totes les variables són possibles constants
+	for(int i = 0; i < this->vars.size(); i++){
+		this->vars.get(i)->resetConstant();
+	}
+
+	// les instruccions que poden determinar si una variable
+	// és una constant o no són les aritmètiques i les d'assignació
+
+	Instruction *inst = this->first;
+	while(inst != nullptr){
+		switch (inst->getType()) {
+			case Instruction::Type::ASSIGNMENT:
+				((AssignmentInstruction *) inst)->updateConstants();
+				break;
+
+			case Instruction::Type::ARITHMETIC:
+				((ArithmeticInstruction *) inst)->updateConstants();
+				break;
+		}
+		inst = inst->getNext();
+	}
+
+}
+
+/**
+ * Obté l'etiqueta final d'una sèrie de sals incondicionals
+ */
+Label *CodeGeneration::getTargetLabel(Label *label){
+	Instruction *inst = label->getTargetInstruction()->getNext();
+	
+	while(inst != nullptr && inst->getType() == Instruction::Type::GOTO){
+		label = ((GoToInstruction *) inst)->getTarget();
+		inst = label->getTargetInstruction()->getNext();
+	}
+
+	return label;
 }

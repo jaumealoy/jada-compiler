@@ -28,6 +28,9 @@ public:
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *code);
+
+	// optimització
+	bool optimize(CodeGeneration *code);
 };
 
 #endif

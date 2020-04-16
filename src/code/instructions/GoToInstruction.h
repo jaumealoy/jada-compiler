@@ -13,9 +13,13 @@ public:
 	~GoToInstruction();
 
 	void setLabel(Label *l);
+	Label *getTarget();
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *);
+
+	// optimitzacions
+	bool optimize(CodeGeneration *);
 };
 
 #endif
