@@ -8,6 +8,7 @@ Variable::Variable(){
 	this->subprograma = nullptr;
 	this->constant = false;
 	this->locked = false;
+	this->firstTime = true;
 }
 
 Variable::Variable(SubProgram *program, int id, bool parameter){
@@ -18,6 +19,7 @@ Variable::Variable(SubProgram *program, int id, bool parameter){
 	this->parameter = parameter;
 	this->constant = false;
 	this->locked = false;
+	this->firstTime = true;
 }
 
 Variable::Variable(SubProgram *program, int id, std::string name, bool parameter){
@@ -27,6 +29,7 @@ Variable::Variable(SubProgram *program, int id, std::string name, bool parameter
 	this->parameter = parameter;
 	this->constant = false;
 	this->locked = false;
+	this->firstTime = true;
 }
 
 Variable::~Variable(){};
@@ -131,6 +134,7 @@ void Variable::resetConstant(){
 /**
  * Actualitza si la variable és una constant o no
  */
+#include <iostream>
 void Variable::setConstant(std::shared_ptr<ValueContainer> valor){
 	if(this->locked) return;
 
@@ -139,6 +143,9 @@ void Variable::setConstant(std::shared_ptr<ValueContainer> valor){
 		this->firstTime = false;
 		this->constant = true;
 		this->valor = valor;
+
+		std::cout << "Intentant posar valor a " << this->name << std::endl;
+
 	}else{
 		// s'ha assignat un valor constant però ja s'havia fet una assignació
 		// anteriorment

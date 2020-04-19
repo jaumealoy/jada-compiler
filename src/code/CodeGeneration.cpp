@@ -649,6 +649,12 @@ void CodeGeneration::updateConstants(){
 		inst = inst->getNext();
 	}
 
+	for(int i = 0; i < this->vars.size(); i++){
+		if(this->vars.get(i)->isConstant()){
+			std::cout << "Variable " << i << " value = " << this->vars.get(i)->getNom() << " és una constant" <<std::endl;
+		}
+	}
+
 }
 
 /**

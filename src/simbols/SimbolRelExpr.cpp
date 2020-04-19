@@ -157,7 +157,9 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
 		// per simplificar la gestió, es crearà una variable temporal que 
 		// guardi el valor d'a i b
 
-		Instruction *endB = driver->code.addInstruction(new SkipInstruction(nullptr));	
+		// és una instrucció que només s'utilitza per moure el codi de
+		// l'expressió B
+		Instruction *endB = driver->code.addInstruction(new Instruction());	
 
 		// cas A
 		Label *aCert = driver->code.addLabel();
