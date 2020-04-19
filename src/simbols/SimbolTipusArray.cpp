@@ -106,14 +106,20 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         // inserit automàticament en definir una variable d'aquest tipus)
         dt = (DescripcioTipus *) driver->ts.consulta(tipus);
 
-        if(dt->getTSB() != TipusSubjacentBasic::ARRAY){
-            // no és un array! error
-            this->makeNull();
-            driver->error(error_tipus_esperat(TipusSubjacentBasic::ARRAY));
-            return;
-        }
-
-        this->tipusBasic = ((DescripcioTipusArray *) dt)->getTipusElement();
+		if(dt->getTSB() == TipusSubjacentBasic::POINTER){
+			// és un punter, també un tipus elemental
+			this->esPunter = true;
+			this->tipusBasic = ((DescripcioTipusPunter *) dt)->getTipusElement();
+		}else if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
+			this->esPunter = false;
+        	this->tipusBasic = ((DescripcioTipusArray *) dt)->getTipusElement();
+		}else{
+			// no és un tipus sobre el qual es pugui aplicar un desplaçament 
+			// en temps d'execució
+			this->makeNull();
+			driver->error(error_tipus_esperat(TipusSubjacentBasic::ARRAY));
+			return;
+		}
 
         // comprovar que l'expressió correspon a un valor numèric
         if(exp.getTSB() != TipusSubjacentBasic::INT){
@@ -122,31 +128,51 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
             return;
         }
 
-        // Consultar que té una dimensió (que la tendrà)
-        this->it = driver->ts.getDimensions();
-        this->it.first(tipus);
+		if(this->esPunter){
+			// comprovar si el valor és vàlid, només si és constant			
+			if(exp.getMode() == SimbolExpressio::Mode::CONST){
+				int tmpValue = *(int *) exp.getValue()->get();
+				if(tmpValue < 0){ // no s'accepten valors negatius
+					driver->error( error_fora_de_rang(tmpValue) );
+					this->makeNull();
+					return;
+				}
+			}
 
-        DescripcioDimensio *ddim = (DescripcioDimensio *) this->it.get();
+			struct SimbolTipusArray::ArrayIndex tmp;
+			tmp.index = exp;
+			this->refIndex.push_back(tmp);
 
-        // i si és una constant comprovar que el seu valor és dins el rang permès per les dimensions
-        if(exp.getMode() == SimbolExpressio::Mode::CONST){
-			int tmpValue = *(int *) exp.getValue()->get();
-            if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
-                driver->error( error_fora_de_rang(tmpValue) );
-                this->makeNull();
-                return;
-            }
-        }
+			this->tsb = TipusSubjacentBasic::POINTER;
+			this->pointerCount = 1;
+		}else{
+			// Consultar que té una dimensió (que la tendrà)
+			this->it = driver->ts.getDimensions();
+			this->it.first(tipus);
 
+			DescripcioDimensio *ddim = (DescripcioDimensio *) this->it.get();
+
+			// i si és una constant comprovar que el seu valor és dins el rang permès per les dimensions
+			if(exp.getMode() == SimbolExpressio::Mode::CONST){
+				int tmpValue = *(int *) exp.getValue()->get();
+				if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
+					driver->error( error_fora_de_rang(tmpValue) );
+					this->makeNull();
+					return;
+				}
+			}
+
+			// tot ha anat bé, s'ha de guardar informació per consultar el número d'element
+			struct SimbolTipusArray::ArrayIndex tmp;
+			tmp.index = exp;
+			tmp.dimensio = ddim;
+			this->refIndex.push_back(tmp);
+
+			this->tsb = TipusSubjacentBasic::ARRAY;	
+		}
+		
         this->id = id;
         this->tipus = tipus;
-        this->tsb = TipusSubjacentBasic::ARRAY;
-
-		// tot ha anat bé, s'ha de guardar informació per consultar el número d'element
-		struct SimbolTipusArray::ArrayIndex tmp;
-		tmp.index = exp;
-		tmp.dimensio = ddim;
-		this->refIndex.push_back(tmp);
     }
 
     // pintar a l'arbre
@@ -257,19 +283,33 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
             return;
         }
 
+		this->esPunter = array.esPunter;
+		std::cout << "esPunter = " << this->esPunter << std::endl;
+
+		if(this->esPunter){
+			// comprovar que s'han proporcionat totes les dimensions
+			DescripcioTipusPunter *dtp = (DescripcioTipusPunter *) driver->ts.consulta(array.tipus);
+			if(array.pointerCount != dtp->getDimensions()){
+				// s'esperen més dimensions però no s'han proporcionat
+				this->makeNull();
+				driver->error( error_falten_dimensions() );
+				return;
+			}
+		}else{ // accés a array
+			// comprovar que no s'esperen més dimensions
+			this->it = array.it;
+			this->it.next();
+
+			if(this->it.valid()){
+				// s'esperen més dimensions però no s'han proporcionat
+				this->makeNull();
+				driver->error( error_falten_dimensions() );
+				return;
+			}
+		}
+
         this->tipusBasic = array.tipusBasic;
-        this->it = array.it;
         this->id = array.id;
-
-        // comprovar que no s'esperen més dimensions
-        this->it.next();
-
-        if(this->it.valid()){
-            // s'esperen més dimensions però no s'han proporcionat
-            this->makeNull();
-            driver->error( error_falten_dimensions() );
-            return;
-        }
 
         // obtenir el tipus elemental de l'array
         DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(this->tipusBasic);
@@ -279,10 +319,6 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
         this->mode = array.mode;
         this->esReferencia = true;
 
-		// TODO: generació de codi si no és tot constant
-		// Si tot és constant, numElement representa el número d'índex que 
-		// es vol consultar. En cas contrari, numElement representa la variable
-		// que conté el número de l'element
 		int productori = 1 * TSB::sizeOf(this->tsb);
 		bool totConstant = true;
 		int numElement = 0;
@@ -290,46 +326,110 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 
 		// calcular el desplaçament en temps d'execució
 		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
-		int intValue = 0; // TODO: falta determinar si es vol indicar el començament 
-						  // de l'element o el final (ara mateix indicaria el final)
+		int intValue = 0;
 		driver->code.addInstruction(new AssignmentInstruction(
 			TipusSubjacentBasic::INT,
 			this->d,
 			std::make_shared<ValueContainer>((const char *) &intValue, sizeof(int))
 		));
 
-		for(int i = this->refIndex.size() - 1; i >= 0; i--){
-			Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
-			Variable *paux = driver->code.addVariable(TipusSubjacentBasic::INT);
+		if(!this->esPunter){
+			for(int i = this->refIndex.size() - 1; i >= 0; i--){
+				Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
+				Variable *paux = driver->code.addVariable(TipusSubjacentBasic::INT);
 
-			// carregar productori dins variable temporal
-			driver->code.addInstruction(new AssignmentInstruction(
-				TipusSubjacentBasic::INT,
-				paux,
-				std::make_shared<ValueContainer>((const char *) &productori, sizeof(int))
-			));
+				// carregar productori dins variable temporal
+				driver->code.addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					paux,
+					std::make_shared<ValueContainer>((const char *) &productori, sizeof(int))
+				));
 
-			// multiplicar productori per valor de l'índex
-			driver->code.addInstruction(new ArithmeticInstruction(
-				ArithmeticInstruction::Type::MULTIPLICATION,
-				paux,
-				paux,
-				tmp
-			));
+				// multiplicar productori per valor de l'índex
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::MULTIPLICATION,
+					paux,
+					paux,
+					tmp
+				));
 
-			// sumar el desplaçament
-			driver->code.addInstruction(new ArithmeticInstruction(
-				ArithmeticInstruction::Type::ADDITION,
-				this->d,
-				this->d,
-				paux
-			));
+				// sumar el desplaçament
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::ADDITION,
+					this->d,
+					this->d,
+					paux
+				));
 
-			productori *= this->refIndex[i].dimensio->getDimensio();
+				productori *= this->refIndex[i].dimensio->getDimensio();
+			}
 		}
 
 		this->r = array.r;
 
+		if(this->esPunter){
+			intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				this->d,
+				std::make_shared<ValueContainer>((const char *) &intValue, sizeof(int))
+			));
+
+
+			Variable *tmpProductori = driver->code.addVariable(TipusSubjacentBasic::INT);
+			
+			// carregar productori dins variable temporal
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				tmpProductori,
+				std::make_shared<ValueContainer>((const char *) &productori, sizeof(int))
+			));
+
+			// desplaçament auxiliar per calcular el productori dinàmicament
+			int dauxValue = 0;
+			Variable *daux = driver->code.addVariable(TipusSubjacentBasic::INT);
+
+
+			for(int i = array.pointerCount - 1; i >= 0; i--){
+				std::cout << "Aplicant càlculs punters" << std::endl;
+
+
+				dauxValue = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
+				driver->code.addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					daux,
+					std::make_shared<ValueContainer>((const char *) &dauxValue, sizeof(int))
+				));
+
+				driver->code.addInstruction(new AssignmentInstruction(
+					AssignmentInstruction::Type::SOURCE_OFF,
+					daux, 
+					this->r,
+					daux
+				));
+
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::MULTIPLICATION,
+					tmpProductori,
+					daux,
+					tmpProductori
+				));
+
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::MULTIPLICATION,
+					daux,
+					tmpProductori,
+					this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB())
+				));
+
+				driver->code.addInstruction(new ArithmeticInstruction(
+					ArithmeticInstruction::Type::ADDITION,
+					this->d,
+					this->d,
+					daux
+				));
+			}
+		}
 
 		/*for(int i = this->refIndex.size() - 1; i >= 0; i--){
 			totConstant = totConstant && this->refIndex[i].index.getMode() == SimbolExpressio::Mode::CONST;

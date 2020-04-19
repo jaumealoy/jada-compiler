@@ -25,13 +25,9 @@ void SimbolRelExpr::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, i
         return;
     }
 
-    if ((a.getTSB() != INT) && (a.getTSB() != CHAR) && (a.getTSB() != BOOLEAN)) {     
-        driver->error( error_tipus_no_comparable() );
-    }
-
-    if ((b.getTSB() != INT) && (b.getTSB() != CHAR) && (b.getTSB() != BOOLEAN)) {     
-        driver->error( error_tipus_no_comparable() );
-    }    
+	if(a.getTSB() == ARRAY || b.getTSB() == ARRAY){
+		driver->error( error_tipus_no_comparable() );
+	}
 
     if (a.getTSB() != b.getTSB()) {
         driver->error( error_tipus_no_comparable(a.getTSB(), b.getTSB()) );

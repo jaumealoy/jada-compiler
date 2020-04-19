@@ -153,7 +153,12 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			// carregar b i c dins registres, sumar-los i accedir al seu contingut
 			code->load(this, this->origen, CodeGeneration::Register::A);
 			code->output << "movq\t$0, %rbx" << std::endl;
-			code->load(this, this->offset, CodeGeneration::Register::B);
+
+			if(this->offset->isConstant()){
+				code->load(this->offset->getValor(), CodeGeneration::Register::B, TipusSubjacentBasic::INT);				
+			}else{
+				code->load(this, this->offset, CodeGeneration::Register::B);
+			}
 
 			code->output << "mov" << CodeGeneration::getSizeTag(true, this->desti->getOcupacio()) << "\t";
 			code->output << "(%rax, %rbx), %" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->desti->getOcupacio()) << std::endl;
@@ -168,7 +173,12 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			// carregar a i c dins registres
 			code->load(this, this->desti, CodeGeneration::Register::A);
 			code->output << "movq\t$0, %rbx" << std::endl;
-			code->load(this, this->offset, CodeGeneration::Register::B);
+			
+			if(this->offset->isConstant()){
+				code->load(this->offset->getValor(), CodeGeneration::Register::B, TipusSubjacentBasic::INT);				
+			}else{
+				code->load(this, this->offset, CodeGeneration::Register::B);
+			}
 
 			// mov %rcx, (%rax, %rbp)
 			code->output << "mov" << CodeGeneration::getSizeTag(true, this->origen->getOcupacio()) << "\t%";

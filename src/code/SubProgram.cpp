@@ -78,7 +78,7 @@ void SubProgram::addVariable(Variable *var) {
 	this->currentOffsetVariables -= var->getOcupacio();
 	var->setOffset(this->currentOffsetVariables);
 
-	if(var->getTSB() == TipusSubjacentBasic::ARRAY){
+	if(var->getTSB() == TipusSubjacentBasic::ARRAY || var->getTSB() == TipusSubjacentBasic::POINTER){
 		// és possible que tengui un espai extra
 		this->currentOffsetVariables -= var->getOcupacioExtra();
 		this->ocupacioVariables += var->getOcupacioExtra();

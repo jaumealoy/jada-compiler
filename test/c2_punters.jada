@@ -1,0 +1,35 @@
+func strLength(string s) : int begin
+	int i = 0;
+
+	while (s[i] != '\0') do
+		i = i + 1;
+	end;
+
+	return i - 1;
+end strLength;
+
+proc main() begin
+	int a = 5;
+	int b;
+
+	// int[] és el tipus punter a int
+	// int[a] reserva espai per A enters
+	// int[] nums = int[a]{1, 2, 3};
+
+	// matrix és un punter a un punter d'integers
+	// int[a][b] reserva un espai d'A punters a B enters ?
+	// int[a][b] reserva un espai d'A*B enters ?
+	//	- En aquest cas, s'hauria de guardar informació addicional per saber com fer
+	// 	  l'accés als elements. Per exemple, el punter podria apuntar a un bloc que estaria
+	// 	  format per una capçalera: NUM DIMENSIONS - d1 .... dN - valors
+	//  - Es garanteix la compatibilitat amb els arrays estàtics
+	//int[][] matrix = int[a][a];
+
+	string txt = "Hooooooooooooooooooooooooooolaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Jaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaviiieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr i Toooooooooooooooooooooooooniiiiiiiiiiiiiiiiiiiiiiiiiiiiii";
+	a = strLength(txt);
+	print(txt);
+	print("\nHi ha ");
+	printInt(a);
+	print(" caràcters.\n");
+
+end main;

@@ -44,8 +44,8 @@ void PreAmbleInstruction::generateAssembly(CodeGeneration *code) {
 	while(it != variables.end()){
 		Variable *var = *it;
 
-		if(var->getTSB() == TipusSubjacentBasic::ARRAY){
-			// inicialitzar punter
+		if(var->getTSB() == TipusSubjacentBasic::ARRAY || var->getTSB() == TipusSubjacentBasic::POINTER){
+			// inicialitzar punter (tant arrays com punters estàtics)
 			int offsetArray = var->getOffset() - var->getOcupacioExtra();
 			code->output << std::endl << "lea\t" << std::to_string(offsetArray) << "(%rbp), %" << CodeGeneration::getRegister(CodeGeneration::Register::A, var->getOcupacio()) << std::endl;
 			code->store(this, CodeGeneration::Register::A, var);

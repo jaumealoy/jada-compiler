@@ -37,7 +37,7 @@ void SimbolLiteral::make(Driver *driver, char valor){
  * literal -> STR_LITERAL
  */
 void SimbolLiteral::make(Driver *driver, std::string valor){
-    this->tsb = TipusSubjacentBasic::ARRAY;
+    this->tsb = TipusSubjacentBasic::POINTER;
     this->tipus = "string";
 
 	this->value = std::make_shared<ValueContainer>(valor.c_str(), valor.length() + 1);

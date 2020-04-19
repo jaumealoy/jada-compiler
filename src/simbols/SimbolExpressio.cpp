@@ -39,14 +39,18 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
     Simbol::toDotFile(driver);
 
 	//generació de codi
-	if(literal.getTSB() == TipusSubjacentBasic::ARRAY){
+	if(literal.getTSB() == TipusSubjacentBasic::POINTER){
 		if(literal.getTipus() == "string"){
 			this->r = driver->code.addVariable(literal.getTSB());
 			this->d = nullptr;
 
 			// indicar l'ocupació de la variable
 			DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(literal.getTipus());
-			this->r->setOcupacioExtra(((DescripcioTipusArray *) dt)->getOcupacio());
+
+			int espaiExtra = literal.getValue()->getSize() + TSB::sizeOf(TipusSubjacentBasic::INT);
+			this->r->setOcupacioExtra(espaiExtra);
+			std::cout << "Punter amb espai reservat de " << this->r->getOcupacioExtra() << std::endl;
+
 
 			// inicialitzar l'string amb el valor adequat
 			// valors constants
@@ -58,9 +62,25 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 				std::make_shared<ValueContainer>((const char*) &valor, sizeof(int))
 			));
 
+			// inicialitzar estructura punter
+			valor = 0;
+			Variable *daux = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				daux,
+				std::make_shared<ValueContainer>((const char *)&valor, sizeof(int))
+			));
+
+			driver->code.addInstruction(new AssignmentInstruction(
+				AssignmentInstruction::Type::TARGET_OFF,
+				this->r,
+				unitat,
+				daux
+			));
+
 			// desplaçament sobre l'string
 			Variable *offset = driver->code.addVariable(TipusSubjacentBasic::INT);
-			valor = 0;
+			valor = TSB::sizeOf(TipusSubjacentBasic::INT) * ((DescripcioTipusPunter *) dt)->getDimensions();
 			driver->code.addInstruction(new AssignmentInstruction(
 				TipusSubjacentBasic::INT,
 				offset,

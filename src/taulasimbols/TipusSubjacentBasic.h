@@ -6,6 +6,7 @@ enum TipusSubjacentBasic {
     CHAR,
     INT,
     ARRAY,
+	POINTER,
     NUL
 };
 
