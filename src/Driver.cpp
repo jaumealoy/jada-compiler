@@ -12,7 +12,7 @@
 #include <exception>
 
 Driver::Driver(char *filename, bool debugMode) 
-	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode)
+	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode), code()
 {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
@@ -31,7 +31,7 @@ Driver::Driver(char *filename, bool debugMode)
 	std::shared_ptr<ValueContainer> trueValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(trueValue);
 	
-	Variable *tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, "trueConst");
+	Variable *tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, (std::string) "trueConst");
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::BOOLEAN,
 		tmpV,
@@ -46,7 +46,7 @@ Driver::Driver(char *filename, bool debugMode)
 	std::shared_ptr<ValueContainer> falseValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(falseValue);
 
-	tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, "falseConst");
+	tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, (std::string) "falseConst");
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::BOOLEAN,
 		tmpV,

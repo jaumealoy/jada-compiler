@@ -49,8 +49,6 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 
 			int espaiExtra = literal.getValue()->getSize() + TSB::sizeOf(TipusSubjacentBasic::INT);
 			this->r->setOcupacioExtra(espaiExtra);
-			std::cout << "Punter amb espai reservat de " << this->r->getOcupacioExtra() << std::endl;
-
 
 			// inicialitzar l'string amb el valor adequat
 			// valors constants

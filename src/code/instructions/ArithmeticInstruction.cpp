@@ -103,9 +103,17 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 
 void ArithmeticInstruction::updateConstants(){
 	// la variable destí podrà ser una constant si els dos
-	// operands són constants
+	// operands són constant i no és cap de les variables
+	// dels operands
 	
-	if(this->v1->isConstant() && this->v2->isConstant()){
+	/*if(this->v1 != this->desti && this->v2 != this->desti){
+		if(this->v1->isConstant() && this->v2->isConstant()){
+			std::cout << "Variable " << this->desti->getNom() << " no és constant (2)" << std::endl;
+			this->desti->setConstant(false);
+		}
+	}*/
+
+	if(this->v1 == this->desti || this->v2 == this->desti){
 		this->desti->setConstant(false);
 	}
 

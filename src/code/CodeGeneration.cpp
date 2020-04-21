@@ -90,6 +90,7 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, bool parameter){
 }
 
 Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name){
+	std::cout << "Afegint variable (o no) amb nom " << name << std::endl;
 	return this->addVariable(tsb, name, false);
 }
 

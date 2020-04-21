@@ -80,6 +80,8 @@ void SubProgram::addVariable(Variable *var) {
 
 	if(var->getTSB() == TipusSubjacentBasic::ARRAY || var->getTSB() == TipusSubjacentBasic::POINTER){
 		// és possible que tengui un espai extra
+		std::cout << "Ocupació (var = "<< var->getNom() <<") extra TSB " << var->getTSB() << " és = " << var->getOcupacioExtra() << std::endl;
+
 		this->currentOffsetVariables -= var->getOcupacioExtra();
 		this->ocupacioVariables += var->getOcupacioExtra();
 	}
