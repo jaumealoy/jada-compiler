@@ -205,13 +205,14 @@ begin_comment "/*"
 	this->LexerError("Error! final de línia sobtat.");
 }
 
-<CHAR_LITERAL_MODE>[^\\'\n\t] {
+<CHAR_LITERAL_MODE>[^\\'\n\t\0] {
 	location->step();
-	charLen++ ; 
+	charLen++; 
 	foundCh = this->YYText()[0]; 
 }
 <CHAR_LITERAL_MODE>\\n { charLen++; foundCh = '\n'; location->step(); }
 <CHAR_LITERAL_MODE>\\t { charLen++; foundCh = '\t'; location->step(); }
+<CHAR_LITERAL_MODE>\\0 { charLen++; foundCh = (char) 0; location->step(); }
 <CHAR_LITERAL_MODE>\\\' { foundCh = '\''; charLen++ ; location->step(); }
 <CHAR_LITERAL_MODE>' {
 	BEGIN(INITIAL);

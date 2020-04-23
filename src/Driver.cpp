@@ -12,7 +12,7 @@
 #include <exception>
 
 Driver::Driver(char *filename, bool debugMode) 
-	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode)
+	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode), code()
 {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);
@@ -31,7 +31,7 @@ Driver::Driver(char *filename, bool debugMode)
 	std::shared_ptr<ValueContainer> trueValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(trueValue);
 	
-	Variable *tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, "trueConst");
+	Variable *tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, (std::string) "trueConst");
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::BOOLEAN,
 		tmpV,
@@ -46,7 +46,7 @@ Driver::Driver(char *filename, bool debugMode)
 	std::shared_ptr<ValueContainer> falseValue = std::make_shared<ValueContainer>((const char *) &tmp, sizeof(bool));
 	dc->setValue(falseValue);
 
-	tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, "falseConst");
+	tmpV = this->code.addVariable(TipusSubjacentBasic::BOOLEAN, (std::string) "falseConst");
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::BOOLEAN,
 		tmpV,
@@ -62,10 +62,8 @@ Driver::Driver(char *filename, bool debugMode)
     DescripcioTipusBasic *integer = new DescripcioTipusBasic(TipusSubjacentBasic::INT, (long) 0, ~((long)0), sizeof(int));
     this->ts.posar("int", integer, true);
 
-    DescripcioTipusArray *string = new DescripcioTipusArray("char");
-	string->setOcupacio(256);
+    DescripcioTipusPunter *string = new DescripcioTipusPunter("char", 1);
     this->ts.posar("string", string, true);
-    this->ts.posarDimensio("string", new DescripcioDimensio(256));
 
     // funcions pròpies
 	this->initReadChar();
@@ -307,21 +305,21 @@ void Driver::initPrint(){
 
 	// variables locals
 	Variable *i = this->code.addVariable(TipusSubjacentBasic::INT);
-	int valor = 0;
+	int valor = TSB::sizeOf(TipusSubjacentBasic::INT);
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::INT,
 		i,
 		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
 	));
 
-	Variable *max = this->code.addVariable(TipusSubjacentBasic::INT);
+	/*Variable *max = this->code.addVariable(TipusSubjacentBasic::INT);
 	DescripcioTipusArray *dta = (DescripcioTipusArray *) this->ts.consulta("string");
 	valor = dta->getOcupacio();
 	this->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::INT,
 		max,
 		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
-	));
+	));*/
 
 	Variable *zero = this->code.addVariable(TipusSubjacentBasic::CHAR);
 	valor = 0;
@@ -343,12 +341,12 @@ void Driver::initPrint(){
 
 	this->code.addInstruction(new SkipInstruction(inici));
 
-	this->code.addInstruction(new CondJumpInstruction(
+	/*this->code.addInstruction(new CondJumpInstruction(
 		CondJumpInstruction::Operator::GTE,
 		i,
 		max,
 		efinal
-	)); // if i >= max goto efinal
+	));*/ // if i >= max goto efinal
 
 	this->code.addInstruction(new AssignmentInstruction(
 		AssignmentInstruction::Type::SOURCE_OFF,
@@ -375,6 +373,40 @@ void Driver::initPrint(){
 	this->code.addInstruction(instref); // goto inici
 
 	this->code.addInstruction(new SkipInstruction(efinal));
+
+	// Ajustar el valor del punter i comptador caràcters
+	int tmpAux = 4;
+	
+	Variable *tmp1 = this->code.addVariable(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		tmp1,
+		std::make_shared<ValueContainer>((const char *) &tmpAux, sizeof(int))
+	));
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION,
+		i,
+		i,
+		tmp1
+	)); // i = i - 4
+
+	Variable *tmp2 = this->code.addVariable(TipusSubjacentBasic::POINTER);
+	long tmpAux2 = TSB::sizeOf(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		tmp2,
+		std::make_shared<ValueContainer>((const char *) &tmpAux2, sizeof(long))
+	));
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::ADDITION,
+		arg1,
+		arg1,
+		tmp2
+	)); // arg1 = arg1 + 4
+
+
 	this->code.addInstruction(new AssemblyInstruction("movq\t$0, %rdx")); // buffer size
 
 	this->code.addInstruction(new MemoryInstruction(false, i, CodeGeneration::Register::D));

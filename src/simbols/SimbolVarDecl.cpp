@@ -72,6 +72,9 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
 				init.getBase()
 			));
 		}
+	}else if(this->tsb == TipusSubjacentBasic::POINTER){
+		// no es reserva espai pel punter
+		var->setOcupacioExtra(0);
 	}
 
     Descripcio *desc = nullptr;
@@ -188,6 +191,9 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
 				init.getBase()
 			));
 		}
+	}else if(this->tsb == TipusSubjacentBasic::POINTER){
+		// no es reserva espai pel punter
+		var->setOcupacioExtra(0);
 	}
 
     Descripcio *desc = nullptr;

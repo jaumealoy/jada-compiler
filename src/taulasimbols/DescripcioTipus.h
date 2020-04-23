@@ -9,7 +9,8 @@ class DescripcioTipus : public Descripcio {
 public:
     enum Tipus {
         BASIC,
-        ARRAY
+        ARRAY, 
+		POINTER
     };
 
 private:
@@ -48,6 +49,21 @@ public:
     }
 
     std::string getTipusElement() { return this->tipusElement; }
+};
+
+class DescripcioTipusPunter : public DescripcioTipus {
+private:
+	std::string tipusElement;
+	int dimensions;
+public:
+	DescripcioTipusPunter(std::string tipus, int dimensions) 
+		: DescripcioTipus(TipusSubjacentBasic::POINTER, DescripcioTipus::Tipus::POINTER, 0){
+		this->tipusElement = tipus;
+		this->dimensions = dimensions;
+	};
+
+    std::string getTipusElement() { return this->tipusElement; };
+	int getDimensions(){ return this->dimensions; };
 };
 
 #endif

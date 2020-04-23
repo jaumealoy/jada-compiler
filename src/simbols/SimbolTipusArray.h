@@ -30,6 +30,10 @@ private:
 
     bool esReferencia;
 
+	// per controlar els accessos a puner
+	bool esPunter;
+	int pointerCount;
+
 public:
     SimbolTipusArray();
 

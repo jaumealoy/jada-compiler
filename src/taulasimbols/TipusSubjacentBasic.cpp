@@ -19,6 +19,7 @@ int TSB::sizeOf(TipusSubjacentBasic tsb){
 			size = sizeof(char);
 			break;
 
+		case TipusSubjacentBasic::POINTER:
 		case TipusSubjacentBasic::ARRAY:
 			size = 8; // mida d'una adreça
 			break;

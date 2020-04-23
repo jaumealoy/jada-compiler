@@ -1,6 +1,5 @@
 #include "Variable.h"
-
-int tmpCounter = 0;
+#include <iostream>
 
 Variable::Variable(){
 	this->id = -1;
@@ -61,14 +60,6 @@ std::string Variable::getNom() {
 std::string Variable::getAssemblyTag() {
 	return "var" + std::to_string(this->id);	
 }
-
-/*bool Variable::isNull(){
-	return this->null;
-}
-
-void Variable::makeNull(){
-	this->null = true;
-}*/
 
 int Variable::getOffset() {
 	return this->offset;
@@ -134,7 +125,6 @@ void Variable::resetConstant(){
 /**
  * Actualitza si la variable és una constant o no
  */
-#include <iostream>
 void Variable::setConstant(std::shared_ptr<ValueContainer> valor){
 	if(this->locked) return;
 
@@ -143,14 +133,13 @@ void Variable::setConstant(std::shared_ptr<ValueContainer> valor){
 		this->firstTime = false;
 		this->constant = true;
 		this->valor = valor;
-
-		std::cout << "Intentant posar valor a " << this->name << std::endl;
-
 	}else{
 		// s'ha assignat un valor constant però ja s'havia fet una assignació
 		// anteriorment
 		this->constant = false;
 	}
+
+	std::cout << "Variable final " << this->name << " amb valors locked=" << this->locked << ", constant=" << this->constant << ", firstTime="<< this->firstTime << std::endl;
 }
 
 void Variable::setConstant(bool constant){
@@ -171,5 +160,7 @@ std::shared_ptr<ValueContainer> Variable::getValor(){
  * a quan s'aplica resetConstant entre iteracions
  */
 void Variable::lockConstant(){
+	std::cout << "Bloquejant " << this->name << " amb valors locked=" << this->locked << ", constant=" << this->constant << ", firstTime="<< this->firstTime << std::endl;
+
 	this->locked = true;
 }
