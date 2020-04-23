@@ -56,12 +56,27 @@ public:
 		return this->data[idx];
 	}
 
+	T& operator[](std::size_t i) { 
+		return this->data[i];
+	}
+
+	const T& operator[](std::size_t i) const { 
+		return this->data[i]; 
+	}
+
 	/**
 	 * Retorna el número d'elements ocupats a la taula
 	 */
 	int size() { 
 		// lastIndex simbolitza el darrer element ocupat
 		return this->lastIndex + 1;
+	}
+
+	/**
+	 * Elimina lògicament totes les dades de la taula
+	 */
+	void clear() {
+		this->lastIndex = -1;
 	}
 };
 

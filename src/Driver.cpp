@@ -82,7 +82,7 @@ Driver::Driver(char *filename, bool debugMode)
     //readInt->setTipusRetorn("int");
     //this->ts.posar("readInt", readInt);
 
-	SubProgram *writeIntProgram = this->code.addSubProgram("printInt", this->code.addLabel("printInt"));
+	/*SubProgram *writeIntProgram = this->code.addSubProgram("printInt", this->code.addLabel("printInt"));
 	DescripcioArgument *daIntParam = new DescripcioArgument("int", DescripcioArgument::IN);
 	this->code.enterSubProgram(writeIntProgram);
 	Variable *var = this->code.addVariable(TipusSubjacentBasic::INT, true);
@@ -91,7 +91,7 @@ Driver::Driver(char *filename, bool debugMode)
 	this->code.leaveSubProgram();
     DescripcioProc *writeInt = new DescripcioProc(writeIntProgram);
     this->ts.posar("printInt", writeInt);
-    this->ts.posarParam("printInt", "num", daIntParam);
+    this->ts.posarParam("printInt", "num", daIntParam);*/
 
 
     // inicialitzar fitxer de l'arbre
@@ -268,9 +268,8 @@ void Driver::initReadChar(){
 
 	this->code.addInstruction(new ReturnInstruction(readCharPrograma, var1));
 	
-	this->code.addInstruction(new SkipInstruction(end));
-
 	this->code.leaveSubProgram();
+	this->code.addInstruction(new SkipInstruction(end)); // no és pròpia del subprograma
 }
 
 /**
@@ -387,6 +386,6 @@ void Driver::initPrint(){
 
 	this->code.addInstruction(new ReturnInstruction(printProgram));
 
-	this->code.addInstruction(new SkipInstruction(end));
 	this->code.leaveSubProgram();
+	this->code.addInstruction(new SkipInstruction(end)); // aquesta etiqueta no forma part del subprograma
 }

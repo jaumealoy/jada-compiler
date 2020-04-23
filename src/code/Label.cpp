@@ -1,19 +1,20 @@
 #include "Label.h"
 #include "instructions/SkipInstruction.h"
+#include "BasicBlock.h"
 
 int Label::counter = 0;
 
-Label::Label() : target(nullptr) {
+Label::Label() : target(nullptr), block(nullptr) {
 	this->labelId = -1;
 	this->name = "mal ús de Label: no pots construir etiquetes directament";
 }
 
-Label::Label(int id) : target(nullptr) {
+Label::Label(int id) : target(nullptr),  block(nullptr) {
 	this->labelId = id;
 	this->name = "e" + std::to_string(this->labelId);
 }
 
-Label::Label(int id, std::string name) : target(nullptr) {
+Label::Label(int id, std::string name) : target(nullptr), block(nullptr) {
 	this->labelId = id;
 	this->name = name;
 }
@@ -42,4 +43,12 @@ void Label::setTargetInstruction(SkipInstruction *inst){
 
 SkipInstruction *Label::getTargetInstruction(){
 	return this->target;
+}
+
+void Label::setBlock(BasicBlock *block){
+	this->block = block;
+}
+
+BasicBlock *Label::getBlock(){
+	return this->block;
 }

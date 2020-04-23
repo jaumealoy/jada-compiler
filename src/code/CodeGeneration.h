@@ -3,12 +3,14 @@
 
 #define MAX_VAR 10000
 #define MAX_PROC 10000
+#define MAX_BLOCKS 5000
 
 #include "Table.hpp"
 #include "instructions/Instruction.h"
 #include "SubProgram.h"
 #include "Variable.h"
 #include "Label.h"
+#include "BasicBlock.h"
 #include <list>
 #include <vector>
 #include <stack>
@@ -41,6 +43,10 @@ private:
 
 	// optimitzacions
 	void updateConstants();
+
+	// blocs bàsics i optimització local
+	Table<BasicBlock *, MAX_BLOCKS> basicBlocks;
+	void updateBasicBlocks();
 
 public:
 	CodeGeneration();

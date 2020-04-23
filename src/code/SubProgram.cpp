@@ -1,8 +1,15 @@
 #include "SubProgram.h"
 #include "Variable.h"
+#include "instructions/Instruction.h"
+#include "instructions/SkipInstruction.h"
+#include "instructions/GoToInstruction.h"
+#include "instructions/CondJumpInstruction.h"
+#include "BasicBlock.h"
 #include <iostream>
 
-SubProgram::SubProgram(int np, Label *start, std::string id) {
+SubProgram::SubProgram(int np, Label *start, std::string id) 
+	: basicBlocks(nullptr)
+{
     this->nivellProfunditat = np;
     this->nom = id;
 	this->start = start;
@@ -137,4 +144,158 @@ void SubProgram::setTipusRetorn(TipusSubjacentBasic tsb){
  */
 int SubProgram::getOffsetRetorn(){
 	return this->currentOffsetParametres;
+}
+
+/**
+ * Elimina una instrucció d'un subprograma, gestionant si és o no 
+ * la darrera instrucció
+ */
+void SubProgram::removeInstruction(Instruction *instruction){
+	if(instruction->getInvokingSubProgram() != this){
+		// s'intenta eliminar una instrucció que no és d'aquest subprograma
+		return;
+	}
+
+	if(instruction == this->lastInstruction){
+		// s'intenta eliminar la darrera instrucció d'un subprograma
+		// sempre hi haurà, com a mínim, la instrucció skip de l'etiqueta
+		this->lastInstruction = this->lastInstruction->getPrevious();
+	}
+}
+
+Instruction *SubProgram::getFirstInstruction(){
+	// la primera instrucció del subprograma és la seva instrucció
+	// de skip
+	return (Instruction *) this->start->getTargetInstruction();
+}
+
+Instruction *SubProgram::getLastInstruction(){
+	return this->lastInstruction;
+}
+
+void SubProgram::setLastInstruction(Instruction *instruction){
+	this->lastInstruction = instruction;
+}
+
+/**
+ * Calcula quins són els blocs bàsics d'aquest subprograma
+ */
+void SubProgram::updateBasicBlocks(){
+	Instruction *actual = this->getFirstInstruction();
+	Instruction *end = this->lastInstruction;
+
+	// creant blocs d'inici i final
+	BasicBlock *entry = new BasicBlock(nullptr);
+	BasicBlock *exit = new BasicBlock(nullptr);
+
+	BasicBlock *last = entry;
+
+	// detectar els inicis dels diferents blocs
+	while(actual != end->getNext()){
+		if(actual->getType() == Instruction::Type::SKIP){
+			// comença un nou bloc bàsic
+			BasicBlock *block = new BasicBlock(actual);
+
+			// actualitzar la taula d'etiquetes
+			((SkipInstruction *) actual)->getLabel()->setBlock(block);
+
+			block->setPrevious(last);
+			last->setNext(block);
+			last = block;
+		}else if(actual->getType() == Instruction::Type::CONDJUMP){
+			Instruction *next = actual->getNext();
+
+			// segur que hi haurà qualque instrucció a continuació
+			// com a mínim un return per indicar el final del 
+			// subprograma
+				
+			switch (next->getType()){
+				case Instruction::Type::RETURN:
+				case Instruction::Type::SKIP:
+				case Instruction::Type::CONDJUMP:
+				case Instruction::Type::GOTO:
+				case Instruction::Type::ASSEMBLY: // no és pròpiament una instrucció C3@
+				case Instruction::Type::MEMORY: // a efectes de blocs bàsics, no ha de fer res
+					break;
+
+				default: // qualsevol altre instrucció
+					// la següent línia és un nou bloc
+					BasicBlock *block = new BasicBlock(next);
+
+					block->setPrevious(last);
+					last->setNext(block);
+					last = block;
+					
+			}
+		}
+
+		actual = actual->getNext();
+	}
+
+	exit->setPrevious(last);
+	last->setNext(exit);
+	last = exit;
+
+	// detectar el final dels blocs
+	entry->addEdge(entry->getNext(), false);
+
+	BasicBlock *bloc = entry->getNext();
+	while(bloc != nullptr && bloc != exit){
+		Instruction *inst =  bloc->getStart();
+
+		// cercar la primera instrucció que pugui ser el final de bloc
+		while(inst->getType() != Instruction::Type::GOTO
+				&& inst->getType() != Instruction::Type::CONDJUMP
+				&& inst->getType() != Instruction::Type::RETURN
+				&& (inst->getType() == Instruction::SKIP 
+						&& ((SkipInstruction *) inst)->getLabel()->getBlock() != bloc))
+		{
+			inst = inst->getNext();
+		}
+
+		// els blocs condicionals formen part del mateix bloc
+		while(inst->getType() == Instruction::Type::CONDJUMP){
+			/*if(inst->getType() == Instruction::Type::MEMORY 
+				|| inst->getType() == Instruction::Type::ASSEMBLY)
+			{
+				// no s'han de tenir en compte
+				inst = inst->getNext();
+				continue;
+			}*/
+
+			// actualitzar la llista de successors i predecessors
+			CondJumpInstruction *tmp = (CondJumpInstruction *) inst;
+			bloc->addEdge(tmp->getTarget()->getBlock(), false);
+
+			inst = inst->getNext();
+		}
+
+		// determinar com acaba el bloc
+		if(inst->getType() == Instruction::Type::GOTO){
+			bloc->setEnd(inst);
+			
+			Label *target = ((GoToInstruction *) inst)->getTarget();
+			bloc->addEdge(target->getBlock(), false);
+		}else if(inst->getType() == Instruction::Type::RETURN){
+			bloc->setEnd(inst);
+			bloc->addEdge(exit, false);
+		}else{
+			// el bloc que el segueix és un bloc bàsic adjacent
+			bloc->setEnd(inst->getPrevious());
+			bloc->addEdge(bloc->getNext(), true);
+		}
+
+		bloc = bloc->getNext();
+	}
+
+
+	// comptar número de blocs
+	bloc = entry;
+	int i = 0;
+	while(bloc != nullptr){
+		i++;
+		bloc = bloc->getNext();
+	}
+
+	std::cout << "S'han trobat " << i << " blocs" << std::endl;
 }

@@ -2,7 +2,9 @@
 #define _H_CODE_LABEL
 
 #include <string>
+
 class SkipInstruction;
+class BasicBlock;
 
 class Label{
 private:
@@ -12,6 +14,10 @@ private:
 
 	// instrucció que indica on és l'etiqueta
 	SkipInstruction *target;
+
+	// quin bloc bàsic indica
+	BasicBlock *block;
+
 public:
 	Label();
 	Label(int id);
@@ -24,6 +30,9 @@ public:
 
 	void setTargetInstruction(SkipInstruction *inst);
 	SkipInstruction *getTargetInstruction();
+
+	void setBlock(BasicBlock *block);
+	BasicBlock *getBlock();
 };
 
 #endif

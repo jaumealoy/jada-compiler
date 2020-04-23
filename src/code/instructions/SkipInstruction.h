@@ -14,6 +14,8 @@ public:
 
 	std::string toString();
 	void generateAssembly(CodeGeneration *);
+
+	Label *getLabel();
 };
 
 #endif

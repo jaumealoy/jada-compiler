@@ -24,10 +24,12 @@ void GoToInstruction::generateAssembly(CodeGeneration *code){
 }
 
 /**
- * Un salt incondicional que va a una etiqueta que té com a primera
+ * - Un salt incondicional que va a una etiqueta que té com a primera
  * instrucció un altre salt incondicional, pot anar directament a l'etiqueta
  * del segon salt incondicional
+ * - Tot el codi entre un salt condicional i la següent etiqueta és inaccessible
  */
+#include <cassert>
 bool GoToInstruction::optimize(CodeGeneration *code){
 	Label *old = this->label;
 	this->label = code->getTargetLabel(old);
@@ -41,5 +43,15 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 		return true;
 	}
 
+	Instruction *next = this->getNext();
+	Instruction *originalNext = this->getNext();
+	while(next != nullptr && next->getType() != Instruction::Type::SKIP){
+		Instruction *tmp = next->getNext();
+		code->remove(next);
+		next = tmp;
+	}
+
+	canvis = canvis || originalNext != this->getNext();
+	
 	return canvis;
 }

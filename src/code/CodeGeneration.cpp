@@ -131,6 +131,9 @@ void CodeGeneration::enterSubProgram(SubProgram *subprogram) {
  * En cas de no tenir cap subprograma es produirà un error
  */
 void CodeGeneration::leaveSubProgram() {
+	// indicar quina és la darrera instrucció
+	this->subprogrames.top()->setLastInstruction(this->last);
+
 	this->subprogrames.pop();
 	this->nivellProfunditat = this->subprogrames.top()->getNivellProfunditat();
 }
@@ -273,6 +276,8 @@ void CodeGeneration::move(Instruction *inst, Instruction *after){
 	if(after == this->last){
 		this->last = inst;
 		inst->setNext(nullptr);
+	}else{
+		after->getNext()->setPrevious(inst);
 	}
 
 	inst->setPrevious(after);
@@ -285,7 +290,7 @@ void CodeGeneration::move(Instruction *inst, Instruction *after){
  * Elimina una instrucció de la llista d'instruccions
  */
 void CodeGeneration::remove(Instruction *inst){
-	if(inst == this->first){
+/*	if(inst == this->first){
 		// eliminar la primera instrucció de la llista
 		this->first = inst->getNext();
 		
@@ -300,12 +305,31 @@ void CodeGeneration::remove(Instruction *inst){
 		if(inst->getNext() != nullptr){
 			inst->getNext()->setPrevious(inst->getPrevious());
 		}
+	}*/
+
+	if(inst == this->first){
+		this->first = this->first->getNext();
+	}
+
+	if(inst->getNext() != nullptr){
+		inst->getNext()->setPrevious(inst->getPrevious());
+	}
+
+	if(inst->getPrevious() != nullptr){
+		std::cout << "Canviant seguent d'anterior => " << inst->getPrevious() << " posant " << inst->getNext() << std::endl;
+		inst->getPrevious()->setNext(inst->getNext());
 	}
 
 	if(inst == this->last){
 		// és el darrer element
 		this->last = inst->getPrevious();
 	}
+
+	// eliminar instrucció del subprograma
+	inst->getInvokingSubProgram()->removeInstruction(inst);
+
+	inst->setNext(nullptr);
+	inst->setPrevious(nullptr);
 
 	//delete inst;
 }
@@ -371,7 +395,7 @@ std::list<Instruction *> CodeGeneration::convert(std::vector<Instruction *> list
 void CodeGeneration::updateVariableTable() {
 	// totes les variables tenen un subprograma vàlid associat
 	for(int i = 0; i < this->vars.size(); i++){
-		Variable *actual = this->vars.get(i);
+		Variable *actual = this->vars[i];
 		SubProgram *subprograma = actual->getSubPrograma();
 
 		if(subprograma == nullptr) {
@@ -403,7 +427,7 @@ void CodeGeneration::updateVariableTable() {
 void CodeGeneration::updateSubProgramTable() {
 	for(int i = 0; i < this->programs.size(); i++) {
 		// reiniciar el comptador de l'ocupació de variables
-		this->programs.get(i)->resetOffsets();
+		this->programs[i]->resetOffsets();
 	}
 }
 
@@ -576,9 +600,25 @@ void CodeGeneration::optimize(){
 					canvis = ((ArithmeticInstruction *) tmp)->optimize(this) || canvis;
 					break;
 
-				case Instruction::Type::GOTO:
-					canvis = ((GoToInstruction *) tmp)->optimize(this) || canvis;
-					break;
+				case Instruction::Type::GOTO: {
+					// l'optimització d'aquesta instrucció pot provocar que s'eliminin
+					// un nombre indeterminat d'instruccions
+					// la propera instrucció segura és un skip
+					Instruction *safeNext = next;
+					while(safeNext != nullptr && safeNext->getType() != Instruction::Type::SKIP){
+						safeNext = next->getNext();
+					}
+
+					bool canvisLocals = ((GoToInstruction *) tmp)->optimize(this);
+
+					canvis = canvisLocals || canvis;
+
+					if(canvisLocals){
+						next = safeNext;
+					}
+				}
+				break;
+
 
 				case Instruction::Type::CONDJUMP: {
 					// l'optimització d'un salt condicional pot provocar l'eliminació de
@@ -616,6 +656,8 @@ void CodeGeneration::optimize(){
 				this->vars.get(i)->lockConstant();
 			}
 		}
+
+		this->updateBasicBlocks();
 
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
@@ -669,4 +711,25 @@ Label *CodeGeneration::getTargetLabel(Label *label){
 	}
 
 	return label;
+}
+
+/**
+ * Els blocs bàsics formen part de les optimitzacions locals,
+ * per tant, només s'han de mirar les instruccions dels procediments
+ */
+void CodeGeneration::updateBasicBlocks(){
+	this->basicBlocks.clear();
+
+	// per cada un dels procediments calcular els seus blocs bàsics
+	for(int i = 0; i < this->programs.size(); i++){
+		if(this->programs[i]->getNivellProfunditat() == 0){
+			// procediment global
+			continue;
+		}
+
+		std::cout << "Analitzant " << this->programs[i]->getNom() << std::endl;
+		this->programs[i]->updateBasicBlocks();
+	}
+
+	std::cout << "S'han detectat " << this->basicBlocks.size() << " blocs bàsics" << std::endl;
 }

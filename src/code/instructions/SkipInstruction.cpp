@@ -24,3 +24,5 @@ std::string SkipInstruction::toString(){
 void SkipInstruction::generateAssembly(CodeGeneration *code) {
 	code->output << this->label->toString() + ":";
 }
+
+Label *SkipInstruction::getLabel(){ return this->label; }

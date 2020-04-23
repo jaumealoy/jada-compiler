@@ -49,6 +49,10 @@ void CondJumpInstruction::setLabel(Label *l){
 	this->l = l;
 }
 
+Label *CondJumpInstruction::getTarget(){
+	return this->l;
+}
+
 void CondJumpInstruction::generateAssembly(CodeGeneration *code){
 	// e1 OP e2	
 	// carregar variables als registres

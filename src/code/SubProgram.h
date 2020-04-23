@@ -7,6 +7,8 @@
 #include <list>
 
 class Variable;
+class Instruction;
+class BasicBlock;
 
 class SubProgram {
 private:
@@ -15,6 +17,8 @@ private:
 
 	// dades del subprograma
 	Label *start;
+	Instruction *lastInstruction;
+
 	int numParametres; // total de paràmetres
 	int ocupacioParametres; // "ocupació" dels paràmetres
 	int ocupacioVariables; // espai ocupat per variables locals
@@ -26,6 +30,9 @@ private:
 
 	// tipus de retorn
 	TipusSubjacentBasic returnTSB;
+
+	// blocs bàsics d'entrada i sortida
+	BasicBlock *basicBlocks;
 
 public:
     SubProgram(int np, Label *start, std::string id);
@@ -47,6 +54,21 @@ public:
 
 	void setTipusRetorn(TipusSubjacentBasic tsb);
 	int getOffsetRetorn();
+
+	// gestió d'inici i final d'instruccions
+	void removeInstruction(Instruction *instruction);
+	Instruction *getFirstInstruction();
+	Instruction *getLastInstruction();
+	void setLastInstruction(Instruction *instruction);
+
+	// gestió dels blocs bàsics
+	void updateBasicBlocks();
+	
+	void setEntryBlock(BasicBlock *block);
+	BasicBlock *getEntryBlock();
+
+	void setExitBlock(BasicBlock *block);
+	BasicBlock *getExitBlock();
 };
 
 #endif

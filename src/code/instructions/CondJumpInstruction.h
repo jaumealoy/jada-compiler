@@ -24,8 +24,10 @@ private:
 public:
 	CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l);
 	~CondJumpInstruction();
-	void setLabel(Label *l);
 
+	void setLabel(Label *l);
+	Label *getTarget();
+	
 	std::string toString();
 	void generateAssembly(CodeGeneration *code);
 
