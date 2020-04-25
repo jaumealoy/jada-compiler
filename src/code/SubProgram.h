@@ -62,6 +62,8 @@ public:
 	Instruction *getLastInstruction();
 	void setLastInstruction(Instruction *instruction);
 
+	void markUsage();
+
 	// gestió dels blocs bàsics
 	void updateBasicBlocks();
 	bool optimize(CodeGeneration *code);

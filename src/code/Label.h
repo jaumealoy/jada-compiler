@@ -15,6 +15,9 @@ private:
 	// instrucció que indica on és l'etiqueta
 	SkipInstruction *target;
 
+	// indica si existeix alguna instrucció de salt que en faci ús
+	bool used;
+
 	// quin bloc bàsic indica
 	BasicBlock *block;
 
@@ -33,6 +36,11 @@ public:
 
 	void setBlock(BasicBlock *block);
 	BasicBlock *getBlock();
+
+	// per determinar si una etiqueta s'utilitza
+	bool isUsed();
+	void resetUsage();
+	void markUsage();
 };
 
 #endif

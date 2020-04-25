@@ -5,6 +5,7 @@
 #include "instructions/AssignmentInstruction.h"
 #include "instructions/ArithmeticInstruction.h"
 #include "instructions/SkipInstruction.h"
+#include "instructions/CallInstruction.h"
 #include <iostream>
 
 CodeGeneration::CodeGeneration() : output("codi.asm") {
@@ -61,11 +62,13 @@ Instruction * CodeGeneration::addInstruction(Instruction *inst){
  * Crea i retorna una nova etiqueta
  */
 Label *CodeGeneration::addLabel(){
-	return new Label(++this->labelCounter);
+	Label *tmp = this->labels.add(new Label(++this->labelCounter));
+	return tmp;
 }
 
 Label *CodeGeneration::addLabel(std::string name){
-	return new Label(++this->labelCounter, name);
+	Label *tmp = this->labels.add(new Label(++this->labelCounter, name));
+	return tmp;
 }
 
 /**
@@ -586,10 +589,11 @@ void CodeGeneration::optimize(){
 		this->updateConstants();
 
 		// eliminar instruccions d'assignació de constants
-		// TODO
+		std::cout << "Comença instruccions" << std::endl;
 
 		Instruction *tmp = this->first;
 		while(tmp != nullptr){
+			std::cout << "Analitzant instrucció " << tmp->getType() << std::endl;
 			Instruction *next = tmp->getNext();
 
 			switch (tmp->getType()) {
@@ -607,7 +611,7 @@ void CodeGeneration::optimize(){
 					// la propera instrucció segura és un skip
 					Instruction *safeNext = next;
 					while(safeNext != nullptr && safeNext->getType() != Instruction::Type::SKIP){
-						safeNext = next->getNext();
+						safeNext = safeNext->getNext();
 					}
 
 					bool canvisLocals = ((GoToInstruction *) tmp)->optimize(this);
@@ -619,7 +623,6 @@ void CodeGeneration::optimize(){
 					}
 				}
 				break;
-
 
 				case Instruction::Type::CONDJUMP: {
 					// l'optimització d'un salt condicional pot provocar l'eliminació de
@@ -644,6 +647,18 @@ void CodeGeneration::optimize(){
 				}
 				break;
 
+				case Instruction::Type::SKIP: {
+					// és possible que es borri aquesta instrucció skip si l'etiqueta
+					// no s'utilitza a cap salt
+					bool canvisLocals = ((SkipInstruction *) tmp)->optimize(this);
+					canvis = canvisLocals || canvis;
+
+					if(canvisLocals){
+						std::cout << "Eliminat instrucció skip" << std::endl;
+					}
+				}
+				break;
+
 				default:
 					canvis = canvis || false;
 			}
@@ -662,7 +677,7 @@ void CodeGeneration::optimize(){
 
 		// TODO: reordenar un poc
 		for(int i = 0; i < this->programs.size(); i++){
-			//canvis = this->programs[i]->optimize(this) || canvis;
+			canvis = this->programs[i]->optimize(this) || canvis;
 			this->programs[i]->draw();
 		}
 
@@ -674,11 +689,16 @@ void CodeGeneration::optimize(){
  * Determina quines variables són constants
  * - Indica el valor de la variable
  * - Indica la instrucció en què s'inicialitza la constant
+ * - 
  */
 void CodeGeneration::updateConstants(){
 	// indicar que totes les variables són possibles constants
 	for(int i = 0; i < this->vars.size(); i++){
 		this->vars.get(i)->resetConstant();
+	}
+
+	for(int i = 0; i < this->labels.size(); i++){
+		this->labels[i]->resetUsage();
 	}
 
 	// les instruccions que poden determinar si una variable
@@ -694,6 +714,17 @@ void CodeGeneration::updateConstants(){
 			case Instruction::Type::ARITHMETIC:
 				((ArithmeticInstruction *) inst)->updateConstants();
 				break;
+
+			case Instruction::Type::GOTO:
+				((GoToInstruction *) inst)->getTarget()->markUsage();
+				break;
+
+			case Instruction::Type::CONDJUMP:
+				((CondJumpInstruction *) inst)->getTarget()->markUsage();
+				break;
+
+			case Instruction::Type::CALL:
+				((CallInstruction *) inst)->getSubProgram()->markUsage();
 		}
 		inst = inst->getNext();
 	}

@@ -52,3 +52,15 @@ void Label::setBlock(BasicBlock *block){
 BasicBlock *Label::getBlock(){
 	return this->block;
 }
+
+bool Label::isUsed(){
+	return this->used;
+}
+
+void Label::resetUsage() {
+	this->used = false;
+}
+
+void Label::markUsage(){
+	this->used = true;
+}

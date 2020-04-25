@@ -40,3 +40,7 @@ void CallInstruction::generateAssembly(CodeGeneration *code) {
 	code->output << "\t$" + std::to_string(this->program->getOcupacioParametres()) + ", %";
 	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8);
 }
+
+SubProgram *CallInstruction::getSubProgram(){
+	return this->program;
+}

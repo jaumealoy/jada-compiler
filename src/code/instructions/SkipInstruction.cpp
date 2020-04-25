@@ -26,3 +26,16 @@ void SkipInstruction::generateAssembly(CodeGeneration *code) {
 }
 
 Label *SkipInstruction::getLabel(){ return this->label; }
+
+/**
+ * Si és una etiqueta que no s'utilitza, es pot eliminar aquesta
+ * instrucció
+ */
+bool SkipInstruction::optimize(CodeGeneration *code){
+	if(!this->label->isUsed()){
+		code->remove(this);
+		return true;
+	}
+
+	return false;
+}

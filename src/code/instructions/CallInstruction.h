@@ -16,6 +16,8 @@ public:
     CallInstruction(SubProgram *programa, Variable *retorn);
     ~CallInstruction();
 
+	SubProgram *getSubProgram();
+
     std::string toString();
 	void generateAssembly(CodeGeneration *code);
 };

@@ -4,6 +4,7 @@
 #define MAX_VAR 10000
 #define MAX_PROC 10000
 #define MAX_BLOCKS 5000
+#define MAX_LABELS 5000
 
 #include "Table.hpp"
 #include "instructions/Instruction.h"
@@ -21,6 +22,8 @@ private:
 	// taules de variables i procediments
 	Table<Variable *, MAX_VAR> vars;
 	Table<SubProgram *, MAX_PROC> programs;
+
+	Table<Label *, MAX_LABELS> labels;
 
 	// seqüència del codi
 	Instruction *first;

@@ -16,6 +16,8 @@ public:
 	void generateAssembly(CodeGeneration *);
 
 	Label *getLabel();
+
+	bool optimize(CodeGeneration *code);
 };
 
 #endif

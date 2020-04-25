@@ -184,6 +184,11 @@ void SubProgram::setLastInstruction(Instruction *instruction){
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
 void SubProgram::updateBasicBlocks(){
+	if(!this->start->isUsed()){
+		// el subprograma no s'utilitza!
+		return;
+	}
+
 	Instruction *actual = this->getFirstInstruction();
 	Instruction *end = this->lastInstruction;
 
@@ -316,14 +321,21 @@ void SubProgram::updateBasicBlocks(){
 
 
 bool SubProgram::optimize(CodeGeneration *code){
-	return false;
+	if(this->basicBlocks == nullptr){
+		return false;
+	}
+
+	bool canvis = false;
 
 	// analitzar si els blocs bàsics es poden eliminar
 	BasicBlock *actual = this->basicBlocks->getNext();
 	while(actual != nullptr && actual->getNext() != nullptr){
 		bool eliminat = actual->optimize(code);
+		canvis = canvis || eliminat;
 
 		if(eliminat){
+			std::cout << "Eliminat bloc bàsic" << std::endl;
+
 			if(actual == this->basicBlocks){
 				this->basicBlocks = actual->getNext();
 			}
@@ -339,6 +351,8 @@ bool SubProgram::optimize(CodeGeneration *code){
 
 		actual = actual->getNext();
 	}
+
+	return canvis;
 }
 
 void SubProgram::draw(){
@@ -369,3 +383,7 @@ void SubProgram::setEntryBlock(BasicBlock *block){
 }
 
 BasicBlock *SubProgram::getEntryBlock(){ return this->basicBlocks; }
+
+void SubProgram::markUsage(){
+	this->start->markUsage();
+}
