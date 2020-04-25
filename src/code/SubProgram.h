@@ -8,6 +8,7 @@
 
 class Variable;
 class Instruction;
+class CodeGeneration;
 class BasicBlock;
 
 class SubProgram {
@@ -63,6 +64,8 @@ public:
 
 	// gestió dels blocs bàsics
 	void updateBasicBlocks();
+	bool optimize(CodeGeneration *code);
+	void draw();
 	
 	void setEntryBlock(BasicBlock *block);
 	BasicBlock *getEntryBlock();

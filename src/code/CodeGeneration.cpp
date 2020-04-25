@@ -660,6 +660,12 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
+		// TODO: reordenar un poc
+		for(int i = 0; i < this->programs.size(); i++){
+			//canvis = this->programs[i]->optimize(this) || canvis;
+			this->programs[i]->draw();
+		}
+
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
 }

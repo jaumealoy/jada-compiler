@@ -5,6 +5,7 @@
 #include "instructions/GoToInstruction.h"
 #include "instructions/CondJumpInstruction.h"
 #include "BasicBlock.h"
+#include "CodeGeneration.h"
 #include <iostream>
 
 SubProgram::SubProgram(int np, Label *start, std::string id) 
@@ -250,20 +251,20 @@ void SubProgram::updateBasicBlocks(){
 				&& inst->getType() != Instruction::Type::CONDJUMP
 				&& inst->getType() != Instruction::Type::RETURN
 				&& (inst->getType() == Instruction::SKIP 
-						&& ((SkipInstruction *) inst)->getLabel()->getBlock() != bloc))
+						&& ((SkipInstruction *) inst)->getLabel()->getBlock() == bloc))
 		{
 			inst = inst->getNext();
 		}
 
 		// els blocs condicionals formen part del mateix bloc
 		while(inst->getType() == Instruction::Type::CONDJUMP){
-			/*if(inst->getType() == Instruction::Type::MEMORY 
+			if(inst->getType() == Instruction::Type::MEMORY 
 				|| inst->getType() == Instruction::Type::ASSEMBLY)
 			{
 				// no s'han de tenir en compte
 				inst = inst->getNext();
 				continue;
-			}*/
+			}
 
 			// actualitzar la llista de successors i predecessors
 			CondJumpInstruction *tmp = (CondJumpInstruction *) inst;
@@ -272,10 +273,14 @@ void SubProgram::updateBasicBlocks(){
 			inst = inst->getNext();
 		}
 
+		std::cout << "Instrucció final de bloc és " << inst->getType() << std::endl;
+
 		// determinar com acaba el bloc
 		if(inst->getType() == Instruction::Type::GOTO){
 			bloc->setEnd(inst);
 			
+			std::cout << "====> Afegint Aresta GOTO " << std::endl;
+
 			Label *target = ((GoToInstruction *) inst)->getTarget();
 			bloc->addEdge(target->getBlock(), false);
 		}else if(inst->getType() == Instruction::Type::RETURN){
@@ -287,17 +292,80 @@ void SubProgram::updateBasicBlocks(){
 			bloc->addEdge(bloc->getNext(), true);
 		}
 
+		std::cout << "Aresta final afegida" << std::endl;
+
 		bloc = bloc->getNext();
 	}
 
+	std::cout << "S'ha acabat detecció" << std::endl;
+
+	// indicar els blocs al subprograma
+	this->basicBlocks = entry;
 
 	// comptar número de blocs
 	bloc = entry;
 	int i = 0;
 	while(bloc != nullptr){
+		std::cout << "I = " << i << std::endl;
 		i++;
 		bloc = bloc->getNext();
 	}
 
 	std::cout << "S'han trobat " << i << " blocs" << std::endl;
 }
+
+
+bool SubProgram::optimize(CodeGeneration *code){
+	return false;
+
+	// analitzar si els blocs bàsics es poden eliminar
+	BasicBlock *actual = this->basicBlocks->getNext();
+	while(actual != nullptr && actual->getNext() != nullptr){
+		bool eliminat = actual->optimize(code);
+
+		if(eliminat){
+			if(actual == this->basicBlocks){
+				this->basicBlocks = actual->getNext();
+			}
+
+			if(actual->getPrevious() != nullptr){
+				actual->getPrevious()->setNext(actual->getNext());
+			}
+
+			if(actual->getNext() != nullptr){
+				actual->getNext()->setPrevious(actual->getPrevious());
+			}
+		}
+
+		actual = actual->getNext();
+	}
+}
+
+void SubProgram::draw(){
+	std::ofstream f(this->getNom() + "_blocs.dot");
+
+	f << "digraph {" << std::endl;
+
+	BasicBlock *b = this->basicBlocks;
+	while(b != nullptr){
+		std::list<BasicBlock *> succ = b->getSuccessors();
+		std::list<BasicBlock *>::iterator it = succ.begin();
+
+		while(it != succ.end()){
+			f << b->mId << " -> " << (*it)->mId << std::endl;
+			it++;
+		}
+
+		b = b->getNext();
+	}
+
+	f << "}" << std::endl;
+	f.close();
+}
+
+
+void SubProgram::setEntryBlock(BasicBlock *block){
+	this->basicBlocks = block;
+}
+
+BasicBlock *SubProgram::getEntryBlock(){ return this->basicBlocks; }

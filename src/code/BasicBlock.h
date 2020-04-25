@@ -20,6 +20,8 @@ private:
 	BasicBlock *next;
 
 public:
+	int mId;
+
 	BasicBlock(Instruction *start);
 	~BasicBlock();
 
@@ -38,6 +40,10 @@ public:
 
 	void setPrevious(BasicBlock *block);
 	BasicBlock *getPrevious();
+
+	std::list<BasicBlock *> getSuccessors();
+
+	bool optimize(CodeGeneration *code);
 };
 
 #endif
