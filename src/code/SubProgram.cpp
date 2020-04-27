@@ -183,6 +183,7 @@ void SubProgram::setLastInstruction(Instruction *instruction){
 /**
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
+#include <cassert>
 void SubProgram::updateBasicBlocks(){
 	if(!this->start->isUsed()){
 		// el subprograma no s'utilitza!
@@ -222,8 +223,6 @@ void SubProgram::updateBasicBlocks(){
 				case Instruction::Type::SKIP:
 				case Instruction::Type::CONDJUMP:
 				case Instruction::Type::GOTO:
-				case Instruction::Type::ASSEMBLY: // no és pròpiament una instrucció C3@
-				case Instruction::Type::MEMORY: // a efectes de blocs bàsics, no ha de fer res
 					break;
 
 				default: // qualsevol altre instrucció
@@ -255,22 +254,14 @@ void SubProgram::updateBasicBlocks(){
 		while(inst->getType() != Instruction::Type::GOTO
 				&& inst->getType() != Instruction::Type::CONDJUMP
 				&& inst->getType() != Instruction::Type::RETURN
-				&& (inst->getType() == Instruction::SKIP 
-						&& ((SkipInstruction *) inst)->getLabel()->getBlock() == bloc))
+				&& ((inst->getType() != Instruction::Type::SKIP)  || ((inst->getType() == Instruction::Type::SKIP) 
+						&& ((SkipInstruction *) inst)->getLabel()->getBlock() == bloc)))
 		{
 			inst = inst->getNext();
 		}
 
 		// els blocs condicionals formen part del mateix bloc
 		while(inst->getType() == Instruction::Type::CONDJUMP){
-			if(inst->getType() == Instruction::Type::MEMORY 
-				|| inst->getType() == Instruction::Type::ASSEMBLY)
-			{
-				// no s'han de tenir en compte
-				inst = inst->getNext();
-				continue;
-			}
-
 			// actualitzar la llista de successors i predecessors
 			CondJumpInstruction *tmp = (CondJumpInstruction *) inst;
 			bloc->addEdge(tmp->getTarget()->getBlock(), false);
