@@ -17,7 +17,7 @@ ValueContainer::ValueContainer(const char *value, unsigned int valueSize){
 }
 
 ValueContainer::~ValueContainer(){
-	if(this->value){
+	if(this->value != nullptr){
 		delete []this->value;
 		this->value = nullptr;
 	}

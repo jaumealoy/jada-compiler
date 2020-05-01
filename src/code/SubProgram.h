@@ -3,6 +3,7 @@
 
 #include "Label.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
+#include "../utils/Set.hpp"
 #include <string>
 #include <list>
 
@@ -34,6 +35,8 @@ private:
 
 	// blocs bàsics d'entrada i sortida
 	BasicBlock *basicBlocks;
+
+	void updateDominadors();
 
 public:
     SubProgram(int np, Label *start, std::string id);

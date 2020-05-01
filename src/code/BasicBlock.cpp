@@ -4,7 +4,7 @@
 int counter = 0;
 
 BasicBlock::BasicBlock(Instruction *inst) 
-	: start(inst), mId(++counter), next(nullptr), prev(nullptr)
+	: start(inst), mId(++counter), next(nullptr), prev(nullptr), dominadorImmediat(nullptr)
 {
 
 }
@@ -38,14 +38,14 @@ Instruction *BasicBlock::getStart(){ return this->start; }
  */
 void BasicBlock::addEdge(BasicBlock *block, bool adjacent){
 	// afegir aquest bloc com a successor, si no existeix
-	/*std::list<BasicBlock *>::iterator it = this->successors.begin();
+	std::list<BasicBlock *>::iterator it = this->successors.begin();
 	bool trobat = false;
 	while(!trobat && it != this->successors.end()){
 		trobat = block == *it;
 		it++;
 	}
 
-	if(trobat) return; // ja està afegit*/
+	if(trobat) return; // ja està afegit
 
 	// afegir al prinicipi o al final en funció de si és un bloc bàsic adjacent
 	if(adjacent){
@@ -77,6 +77,61 @@ bool BasicBlock::optimize(CodeGeneration *code){
 }
 
 
-std::list<BasicBlock *> BasicBlock::getSuccessors(){
+std::list<BasicBlock *>& BasicBlock::getSuccessors(){
 	return this->successors;
+}
+
+std::list<BasicBlock *>& BasicBlock::getPredecessors(){
+	return this->predecessors;
+}
+
+Set<BasicBlock>& BasicBlock::getDominadors(){
+	return this->dominadors;
+}
+
+void BasicBlock::setDominadors(Set<BasicBlock> dominadors){
+	this->dominadors = dominadors;
+}
+
+void BasicBlock::setDominadorImmediat(BasicBlock *dominadorImmediat){
+	this->dominadorImmediat = dominadorImmediat;
+}
+
+/**
+ * Actualitza el dominador immediat d'aquest bloc bàsic
+ */
+void BasicBlock::updateDominadorImmediat(){
+	// preparar el conjunt de dominadors, que és tots els elements
+	// excepte el propi bloc
+	Set<BasicBlock> tmpDominadors(this->dominadors);
+	tmpDominadors.remove(this);
+
+	// s'agafa un element i se suposa que és el dominador
+	Set<BasicBlock>::iterator dominadorsIt = tmpDominadors.begin();
+	while(dominadorsIt < tmpDominadors.end()){
+		bool valid = true;
+
+		// comprovar si aquest element seleccionat es troba al conjunt
+		// de dominadors de la resta d'elements del conjunt
+		Set<BasicBlock> altres(tmpDominadors);
+		altres.remove(*dominadorsIt);
+
+		Set<BasicBlock>::iterator it = altres.begin();
+		while(valid && it < altres.end()){
+			valid = !(*it)->getDominadors().contains(*dominadorsIt);
+			it++;
+		}
+
+		if(valid){
+			// s'ha trobat dominador immediat
+			this->dominadorImmediat = *dominadorsIt;
+			break;
+		}
+
+		dominadorsIt++;
+	}
+}
+
+BasicBlock *BasicBlock::getDominadorImmediat(){
+	return this->dominadorImmediat;
 }

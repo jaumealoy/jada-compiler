@@ -34,6 +34,7 @@ private:
 	int variableCounter;
 	int subprogramCounter;
 
+	void remove(Instruction *inst, bool free);
 	void move(Instruction *inst, Instruction *after);
 
 	// per controlar a quin subprograma es troba actualment

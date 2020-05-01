@@ -6,6 +6,8 @@
 #include "instructions/CondJumpInstruction.h"
 #include "BasicBlock.h"
 #include "CodeGeneration.h"
+#include "../utils/Domain.hpp"
+#include "../utils/Set.hpp"
 #include <iostream>
 
 SubProgram::SubProgram(int np, Label *start, std::string id) 
@@ -183,11 +185,19 @@ void SubProgram::setLastInstruction(Instruction *instruction){
 /**
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
-#include <cassert>
 void SubProgram::updateBasicBlocks(){
 	if(!this->start->isUsed()){
 		// el subprograma no s'utilitza!
 		return;
+	}
+
+	// borrar els possibles blocs bàsics
+	if(this->basicBlocks != nullptr){
+		while(this->basicBlocks != nullptr){
+			BasicBlock *tmp = this->basicBlocks->getNext();
+			delete this->basicBlocks;
+			this->basicBlocks = tmp;
+		}
 	}
 
 	Instruction *actual = this->getFirstInstruction();
@@ -269,14 +279,10 @@ void SubProgram::updateBasicBlocks(){
 			inst = inst->getNext();
 		}
 
-		std::cout << "Instrucció final de bloc és " << inst->getType() << std::endl;
-
 		// determinar com acaba el bloc
 		if(inst->getType() == Instruction::Type::GOTO){
 			bloc->setEnd(inst);
 			
-			std::cout << "====> Afegint Aresta GOTO " << std::endl;
-
 			Label *target = ((GoToInstruction *) inst)->getTarget();
 			bloc->addEdge(target->getBlock(), false);
 		}else if(inst->getType() == Instruction::Type::RETURN){
@@ -288,29 +294,113 @@ void SubProgram::updateBasicBlocks(){
 			bloc->addEdge(bloc->getNext(), true);
 		}
 
-		std::cout << "Aresta final afegida" << std::endl;
-
 		bloc = bloc->getNext();
 	}
-
-	std::cout << "S'ha acabat detecció" << std::endl;
 
 	// indicar els blocs al subprograma
 	this->basicBlocks = entry;
 
-	// comptar número de blocs
-	bloc = entry;
-	int i = 0;
-	while(bloc != nullptr){
-		std::cout << "I = " << i << std::endl;
-		i++;
-		bloc = bloc->getNext();
+	// actualitzar els dominadors
+	this->updateDominadors();
+}
+
+/**
+ * Calcula el conjunt de dominadors i dominadors
+ * immediat de cada un dels blocs bàsics
+ */
+void SubProgram::updateDominadors(){
+	// el bloc bàsic d'entrada és el primer de la llista
+	BasicBlock *entry = this->basicBlocks;
+
+	// calcular el conjunt de dominadors de cada un dels elements
+	// crear el domini del conjunt (que són tots els blocs bàsics)
+	std::list<BasicBlock *> list;
+	BasicBlock *tmp = this->basicBlocks;
+	while(tmp != nullptr){
+		list.push_back(tmp);
+		tmp = tmp->getNext();
 	}
 
-	std::cout << "S'han trobat " << i << " blocs" << std::endl;
+	std::shared_ptr<Domain<BasicBlock>> domini = std::make_shared<Domain<BasicBlock>>(list);
+	Set<BasicBlock> bb(domini);
+	bb.putAll();
+
+	// inicilitzant dominadors: inicialment tots els blocs bàsics
+	// tenen com a dominadors tots els blocs
+	tmp = this->basicBlocks;
+	while(tmp != nullptr){
+		Set<BasicBlock> tmpSet = Set<BasicBlock>(domini);
+		tmpSet.putAll();
+		tmp->setDominadors(tmpSet);
+		tmp = tmp->getNext();
+	}
+
+	Set<BasicBlock> entrySet = Set<BasicBlock>(domini);
+	entrySet.removeAll();
+	entrySet.put(entry);
+	entry->setDominadors(entrySet);
+
+	// inicialment tots els elements són pendents
+	std::list<BasicBlock *> pendents = list;
+
+	// excepte el bloc bàsic d'entrada, que és el primer
+	pendents.pop_front();
+
+	Set<BasicBlock> pendentsReals(domini);
+	pendentsReals.putAll();
+	pendentsReals.remove(entry);
+
+	// mentre quedin blocs per analitzar
+	while(pendents.size() > 0){
+		BasicBlock *actual = pendents.front();
+		pendents.pop_front();
+		pendentsReals.remove(actual);
+
+		// el conjunt de dominadors és la intersecció entre BB i tots els conjunts
+		// de dominadors dels predecessors
+		Set<BasicBlock> d(domini);
+		d.putAll();
+
+		// recòrrer els predecessors
+		std::list<BasicBlock *> predecessors = actual->getPredecessors();
+		std::list<BasicBlock *>::iterator it = predecessors.begin();
+		while(it != predecessors.end()){
+			Set<BasicBlock> &aux = (*it)->getDominadors();
+			d.intersection(aux);
+			it++;
+		}
+		d.put(actual);
+
+		if(d != actual->getDominadors()){
+			// s'han detectat canvis
+			std::list<BasicBlock *> successors = actual->getSuccessors();
+			std::list<BasicBlock *>::iterator aux = successors.begin();
+			while(aux != successors.end()){
+				if(!pendentsReals.contains(*aux)){
+					pendents.push_back(*aux);
+				}
+				aux++;
+			}
+			actual->setDominadors(d);
+		}
+	}
+
+	// calcular el dominador immediat de cada bloc bàsic
+	BasicBlock *aux = this->basicBlocks->getNext(); // segur que hi ha l'entry
+	entry->setDominadorImmediat(entry);
+	while(aux != nullptr){
+		aux->updateDominadorImmediat();
+
+		
+
+		aux = aux->getNext();
+	}
 }
 
 
+/**
+ * Aplica els mètodes d'optimització locals al subprograma
+ */
 bool SubProgram::optimize(CodeGeneration *code){
 	if(this->basicBlocks == nullptr){
 		return false;
@@ -355,6 +445,21 @@ void SubProgram::draw(){
 	while(b != nullptr){
 		std::list<BasicBlock *> succ = b->getSuccessors();
 		std::list<BasicBlock *>::iterator it = succ.begin();
+
+		std::string auxStr = "";
+		BasicBlock *aux = this->basicBlocks;
+		while(aux != nullptr){
+			if(b->getDominadors().contains(aux)){
+				auxStr += std::to_string(aux->mId) + ", ";
+			}
+			aux = aux->getNext();
+		}
+		
+		if(b->getDominadorImmediat() != nullptr){
+			auxStr += " => DI = " + std::to_string(b->getDominadorImmediat()->mId);
+		}
+
+		f << b->mId << "[label=\""<< b->mId << "\", xlabel=\""<< auxStr <<"\"]" << std::endl;
 
 		while(it != succ.end()){
 			f << b->mId << " -> " << (*it)->mId << std::endl;

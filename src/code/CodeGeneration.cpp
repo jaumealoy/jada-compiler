@@ -33,6 +33,19 @@ CodeGeneration::~CodeGeneration(){
 		this->first = this->last;
 	}
 
+	// eliminar totes les taules
+	for(int i = 0; i < this->vars.size(); i++){
+		delete this->vars[i];
+	}
+
+	for(int i = 0; i < this->labels.size(); i++){
+		delete this->labels[i];
+	}
+
+	for(int i = 0; i < this->programs.size(); i++){
+		delete this->programs[i];
+	}
+
 	this->first = nullptr;
 	this->last = nullptr;
 }
@@ -274,7 +287,7 @@ void CodeGeneration::move(Instruction *start, Instruction *end, Instruction *aft
  */
 void CodeGeneration::move(Instruction *inst, Instruction *after){
 	// elimina la instrucció
-	this->remove(inst);
+	this->remove(inst, false);
 
 	// afegir-la després d'after
 	if(after == this->last){
@@ -293,24 +306,7 @@ void CodeGeneration::move(Instruction *inst, Instruction *after){
 /**
  * Elimina una instrucció de la llista d'instruccions
  */
-void CodeGeneration::remove(Instruction *inst){
-/*	if(inst == this->first){
-		// eliminar la primera instrucció de la llista
-		this->first = inst->getNext();
-		
-		if(this->first != nullptr){
-			this->first->setPrevious(nullptr);
-		}
-	}else{
-		// no és el primer element
-		// inst.prev != null
-		inst->getPrevious()->setNext(inst->getNext());
-
-		if(inst->getNext() != nullptr){
-			inst->getNext()->setPrevious(inst->getPrevious());
-		}
-	}*/
-
+void CodeGeneration::remove(Instruction *inst, bool remove){
 	if(inst == this->first){
 		this->first = this->first->getNext();
 	}
@@ -335,7 +331,13 @@ void CodeGeneration::remove(Instruction *inst){
 	inst->setNext(nullptr);
 	inst->setPrevious(nullptr);
 
-	//delete inst;
+	if(remove){
+		delete inst;
+	}
+}
+
+void CodeGeneration::remove(Instruction *inst){
+	this->remove(inst, true);
 }
 
 /**

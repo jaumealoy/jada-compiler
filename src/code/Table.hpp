@@ -20,14 +20,7 @@ public:
 	}
 
 	~Table(){
-		for(int i = 0; i <= this->lastIndex; i++){
-			if(this->data[i] != nullptr) {
-				delete this->data[i];
-				this->data[i] = nullptr;
-			}
-		}
-
-		//delete this->data;
+		delete[] this->data;
 	}
 
 	/**
