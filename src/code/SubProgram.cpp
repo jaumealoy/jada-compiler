@@ -302,6 +302,25 @@ void SubProgram::updateBasicBlocks(){
 
 	// actualitzar els dominadors
 	this->updateDominadors();
+
+	// detectar els bucles
+	bloc = this->basicBlocks;
+	while(bloc != nullptr){
+		// s'han d'analitzar les arestes x -> d tal que d dom x
+		// és a dir, d és dins el conjunt de dominadors de x
+		std::list<BasicBlock *> successors = bloc->getSuccessors();
+		std::list<BasicBlock *>::iterator it = successors.begin();
+		while(it != successors.end()){
+			if(bloc->getDominadors().contains(*it)){
+				// *it és la capçalera del bucle
+				std::cout << "Bucle entre " << (*it)->mId << " i " << bloc->mId << std::endl;
+			}
+
+			it++;
+		}
+
+		bloc = bloc->getNext();
+	}
 }
 
 /**
@@ -335,19 +354,17 @@ void SubProgram::updateDominadors(){
 		tmp = tmp->getNext();
 	}
 
-	Set<BasicBlock> entrySet = Set<BasicBlock>(domini);
+	Set<BasicBlock> entrySet(domini);
 	entrySet.removeAll();
 	entrySet.put(entry);
 	entry->setDominadors(entrySet);
 
 	// inicialment tots els elements són pendents
 	std::list<BasicBlock *> pendents = list;
+	Set<BasicBlock> pendentsReals(domini);
 
 	// excepte el bloc bàsic d'entrada, que és el primer
 	pendents.pop_front();
-
-	Set<BasicBlock> pendentsReals(domini);
-	pendentsReals.putAll();
 	pendentsReals.remove(entry);
 
 	// mentre quedin blocs per analitzar
@@ -390,9 +407,6 @@ void SubProgram::updateDominadors(){
 	entry->setDominadorImmediat(entry);
 	while(aux != nullptr){
 		aux->updateDominadorImmediat();
-
-		
-
 		aux = aux->getNext();
 	}
 }

@@ -204,6 +204,8 @@ public:
 			return iterator(conjunt.getNextElementId(this->currentElement), conjunt);
 		}
 
+		void reset(){ this->currentElement = conjunt.getNextElementId(0); }
+
 		bool operator<(const self_type& rhs) { return this->currentElement < rhs.currentElement; }
 		bool operator==(const self_type& rhs) { return this->currentElement == rhs.currentElement; }
         bool operator!=(const self_type& rhs) { return this->currentElement != rhs.currentElement; }

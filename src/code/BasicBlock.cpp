@@ -108,7 +108,7 @@ void BasicBlock::updateDominadorImmediat(){
 
 	// s'agafa un element i se suposa que és el dominador
 	Set<BasicBlock>::iterator dominadorsIt = tmpDominadors.begin();
-	while(dominadorsIt < tmpDominadors.end()){
+	while(dominadorsIt != tmpDominadors.end()){
 		bool valid = true;
 
 		// comprovar si aquest element seleccionat es troba al conjunt
@@ -117,7 +117,7 @@ void BasicBlock::updateDominadorImmediat(){
 		altres.remove(*dominadorsIt);
 
 		Set<BasicBlock>::iterator it = altres.begin();
-		while(valid && it < altres.end()){
+		while(valid && it != altres.end()){
 			valid = !(*it)->getDominadors().contains(*dominadorsIt);
 			it++;
 		}
