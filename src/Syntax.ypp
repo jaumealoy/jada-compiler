@@ -146,6 +146,7 @@
 %type <SimbolMarcador> M0
 %type <SimbolMarcador> M1
 %type <SimbolMarcador> M2
+%type <SimbolMarcador> M3
 
 %left OP_ADD OP_MINUS OR
 %left OP_TIMES OP_DIV OP_MOD AND NOT
@@ -265,7 +266,7 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | LEFTPARAN exprSimple RIGHTPARAN { $$.make(this->driver, $2, 1); }
     | exprSimple AND M0 exprSimple { $$.make(this->driver, $1, $3, $4, 0); }
     | exprSimple OR M0 exprSimple { $$.make(this->driver, $1, $3, $4, 1); }
-    | exprSimple IF exprSimple ELSE exprSimple { $$.make(this->driver, $1, $3, $5); }
+    | IF exprSimple DO M0 exprSimple ELSE M3 exprSimple { $$.make(this->driver, $2, $4, $5, $7, $8); }
     | referencia { $$.make(this->driver, $1); }
 	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
 	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); }
@@ -324,6 +325,7 @@ expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
 M0 : { $$.make(this->driver, 0); };
 M1 : { $$.make(this->driver, 1); };
 M2 : { $$.make(this->driver, 2); };
+M3 : { $$.make(this->driver, 3); };
 
 %%
 

@@ -1,0 +1,16 @@
+proc main() begin
+
+int aux;
+int[100] v;
+
+int i = 1;
+int j = 100;
+while (i < j) do
+   aux  = v[i];
+   v[i] = v[j];
+   v[j] = aux;
+   i = i + 1;
+   j = j – 1;
+end;
+
+end main;
