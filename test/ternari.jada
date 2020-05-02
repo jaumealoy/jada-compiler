@@ -1,0 +1,5 @@
+proc main() begin
+	char a;
+	a = 't' if true else 'f';
+end main;
+

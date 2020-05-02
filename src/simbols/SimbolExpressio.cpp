@@ -7,6 +7,7 @@
 #include "../code/instructions/GoToInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/ArithmeticInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 
 /**
  * L'operació de dues expressions constants dona lloc a una expressió constant
@@ -377,35 +378,36 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 }
 
 /**
- * exprSimple -> exprSimple if exprSimple else exprSimple
+ * exprSimple -> IF exprSimple DO M0 exprSimple ELSE M3 exprSimple
  */
-void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c){
+void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolMarcador m0, SimbolExpressio b,
+    SimbolMarcador m3, SimbolExpressio c){
     if(a.isNull() || b.isNull() || c.isNull()){
         this->makeNull();
         return;
     }
 
-    if(b.getTSB() != TipusSubjacentBasic::BOOLEAN){
+    if(a.getTSB() != TipusSubjacentBasic::BOOLEAN){
         this->makeNull();
         driver->error( error_tipus_esperat(TipusSubjacentBasic::BOOLEAN) );
         return;
     }
 
-    if(a.getTSB() != c.getTSB()){
+    if(b.getTSB() != c.getTSB()){
         this->makeNull();
-        driver->error( error_tipus_no_compatibles(a.getTSB(), c.getTSB()) );
+        driver->error( error_tipus_no_compatibles(b.getTSB(), c.getTSB()) );
         return;
     }
 
     // Calcular el valor si tot són constants
-    if(a.getMode() == SimbolExpressio::Mode::CONST && a.getMode() == b.getMode() && b.getMode() == c.getMode()){
-		bool bValue = *(bool *) b.getValue()->get();
+    if(b.getMode() == SimbolExpressio::Mode::CONST && b.getMode() == a.getMode() && a.getMode() == c.getMode()){
+		bool bValue = *(bool *) a.getValue()->get();
         if(bValue){
             // assignar el valor d'a
-            this->value = a.getValue();
+            this->value = b.getValue();
         }else{
             // assignar el valor de b
-            this->value = b.getValue();
+            this->value = a.getValue();
         }
 
         this->mode = SimbolExpressio::Mode::CONST;
@@ -413,16 +415,47 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolExpressio b,
         this->mode = SimbolExpressio::Mode::RESULTAT;
     }
 
-    this->tsb = a.getTSB();
-    this->tipus = a.getTipus();
+    this->tsb = b.getTSB();
+    this->tipus = b.getTipus();
 
     // i pintar a l'arbre
-    this->fills.push_back( std::to_string(a.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "if") );
+    this->fills.push_back( std::to_string(a.getNodeId()) );
+    this->fills.push_back( driver->addTreeChild(this, "do") );
     this->fills.push_back( std::to_string(b.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, "else") );
     this->fills.push_back( std::to_string(c.getNodeId()) );
     Simbol::toDotFile(driver);
+
+    //generació de codi intermedi
+
+    if(a.getTSB() == TipusSubjacentBasic::BOOLEAN) {
+
+    } else {
+        Label* casFalse = driver->code.addLabel();
+        Label* casTrue = driver->code.addLabel();
+        Label* fi = driver->code.addLabel();
+        driver->code.backpatch(m0.getLabel(), a.ecert);
+        driver->code.backpatch(m3.getLabel(), a.efals);
+        this->r = driver->code.addVariable(this->tsb);
+        this->d = nullptr;
+        ((GoToInstruction *) m3.getInstruction())->setLabel(casTrue);
+
+        driver->code.addInstruction(new GoToInstruction(casFalse));
+
+        driver->code.addInstruction(new SkipInstruction(casTrue));
+        Variable *vb = b.dereference(driver, this->tsb);
+        driver->code.addInstruction(new AssignmentInstruction(this->r, vb));
+        driver->code.addInstruction(new GoToInstruction(fi));
+
+        driver->code.addInstruction(new SkipInstruction(casFalse));
+        Variable *vc = c.dereference(driver, this->tsb);
+        driver->code.addInstruction(new AssignmentInstruction(this->r, vc));
+
+        driver->code.addInstruction(new SkipInstruction(fi));
+    }
+
+    
 }
 
 /**

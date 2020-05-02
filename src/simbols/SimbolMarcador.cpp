@@ -35,6 +35,13 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 			// No importa que l'etiqueta no existeixi
 			this->inst = driver->code.addInstruction(new Instruction());
 			break;
+		case 3:
+			// es un marcador que crea un salto a una etiqueta
+			// y una etiqueta diferente. Sirve para código del
+			// condicional ternario
+			this->inst = driver->code.addInstruction(new GoToInstruction(nullptr));
+			this->et = driver->code.addLabel();
+			driver->code.addInstruction(new SkipInstruction(this->et));
 	}
 }
 

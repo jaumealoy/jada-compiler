@@ -47,7 +47,8 @@ public:
     void make(Driver *driver, SimbolExpressio a, SimbolMarcador m, SimbolExpressio b, int tipus);
     void make(Driver *driver, SimbolReferencia ref);
     void make(Driver *driver, SimbolLiteral literal);
-    void make(Driver *driver, SimbolExpressio a, SimbolExpressio b, SimbolExpressio c);
+    void make(Driver *driver, SimbolExpressio a, SimbolMarcador m0, SimbolExpressio b,
+    SimbolMarcador m1, SimbolExpressio c);
     void make(Driver *driver, SimbolRelExpr exp);
     void make(Driver *driver, SimbolArithmeticExpression exp);
 	void make(Driver *driver, SimbolReferencia ref, int tipus);

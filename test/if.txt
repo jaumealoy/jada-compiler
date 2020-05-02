@@ -1,9 +1,6 @@
 proc main() begin
-	int a;
-    int b;
-
-	
-	while (a > 2) do
-		b = 5;
-	end;
+	int b = 3;
+	int c = 5;
+	int[6] array;
+	int a = if true do array[0] else array[1];
 end main;
