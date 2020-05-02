@@ -38,6 +38,8 @@ private:
 
 	void updateDominadors();
 
+	void deleteBasicBlock(BasicBlock *block);
+
 public:
     SubProgram(int np, Label *start, std::string id);
     ~SubProgram();

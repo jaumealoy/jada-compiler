@@ -97,6 +97,46 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 
 			code->store(this, CodeGeneration::Register::A, this->desti);
 			break;
+
+		case ArithmeticInstruction::Type::DIVISION:
+		case ArithmeticInstruction::Type::MOD:
+			// borrar els registres
+			code->output << "movq\t$0, %" << CodeGeneration::getRegister(CodeGeneration::Register::A, 8) << std::endl;
+			code->output << "movq\t$0, %" << CodeGeneration::getRegister(CodeGeneration::Register::D, 8) << std::endl;
+			code->output << "movq\t$0, %" << CodeGeneration::getRegister(CodeGeneration::Register::R8, 8) << std::endl;
+
+			// carregar els operands
+			if(this->v1->isConstant()){
+				code->load(this->valor1, CodeGeneration::Register::A, this->v1->getTSB());
+			}else{
+				code->load(this, this->v1, CodeGeneration::Register::A);
+			}
+
+			if(this->v2->isConstant()){
+				code->load(this->valor2, CodeGeneration::Register::R8, this->v2->getTSB());
+			}else{
+				code->load(this, this->v2, CodeGeneration::Register::R8);
+			}
+
+			code->output << "idiv\t%" << CodeGeneration::getRegister(CodeGeneration::Register::R8, 8) << std::endl;
+
+			// es guardarà el contingut del registre A o D en funció de
+			// si es tracta d'una operació de divisó o de mòdul
+			if(this->type == ArithmeticInstruction::Type::DIVISION){
+				code->store(
+					this,
+					CodeGeneration::Register::A,
+					this->desti
+				);
+			}else{ // és una operació de mòdul
+				code->store(
+					this,
+					CodeGeneration::Register::D,
+					this->desti
+				);
+			}
+
+			break;
 	}
 
 }

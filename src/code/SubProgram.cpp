@@ -300,6 +300,18 @@ void SubProgram::updateBasicBlocks(){
 	// indicar els blocs al subprograma
 	this->basicBlocks = entry;
 
+	// eliminar aquells blocs que no tenguin predecessors
+	BasicBlock *aux = entry->getNext();
+	while(aux != nullptr){
+		BasicBlock *next = aux->getNext();
+		
+		if(aux->getPredecessors().size() == 0){
+			this->deleteBasicBlock(aux);
+		}
+
+		aux = next;
+	}
+
 	// actualitzar els dominadors
 	this->updateDominadors();
 
@@ -348,7 +360,7 @@ void SubProgram::updateDominadors(){
 	// tenen com a dominadors tots els blocs
 	tmp = this->basicBlocks;
 	while(tmp != nullptr){
-		Set<BasicBlock> tmpSet = Set<BasicBlock>(domini);
+		Set<BasicBlock> tmpSet = bb;
 		tmpSet.putAll();
 		tmp->setDominadors(tmpSet);
 		tmp = tmp->getNext();
@@ -398,6 +410,7 @@ void SubProgram::updateDominadors(){
 				}
 				aux++;
 			}
+
 			actual->setDominadors(d);
 		}
 	}
@@ -423,7 +436,7 @@ bool SubProgram::optimize(CodeGeneration *code){
 	bool canvis = false;
 
 	// analitzar si els blocs bàsics es poden eliminar
-	BasicBlock *actual = this->basicBlocks->getNext();
+	/*BasicBlock *actual = this->basicBlocks->getNext();
 	while(actual != nullptr && actual->getNext() != nullptr){
 		bool eliminat = actual->optimize(code);
 		canvis = canvis || eliminat;
@@ -445,17 +458,48 @@ bool SubProgram::optimize(CodeGeneration *code){
 		}
 
 		actual = actual->getNext();
-	}
+	}*/
 
 	return canvis;
 }
 
+/**
+ * Elimina un bloc bàsics de la llista de blocs bàsics
+ */
+void SubProgram::deleteBasicBlock(BasicBlock *block){
+	if(block == this->basicBlocks){
+		this->basicBlocks = block->getNext();
+	}
+
+	if(block->getPrevious() != nullptr){
+		block->getPrevious()->setNext(block->getNext());
+	}
+
+	if(block->getNext() != nullptr){
+		block->getNext()->setPrevious(block->getPrevious());
+	}
+
+	// eliminar-lo de predecessor a tots els successors
+	std::list<BasicBlock *> successors = block->getSuccessors();
+	std::list<BasicBlock *>::iterator it = successors.begin();
+	while(it != successors.end()){
+		(*it)->getPredecessors().remove(block);
+		it++;
+	}
+
+}
+
 void SubProgram::draw(){
+	if(!this->start->isUsed()){
+		return;
+	}
+
 	std::ofstream f(this->getNom() + "_blocs.dot");
 
 	f << "digraph {" << std::endl;
 
 	BasicBlock *b = this->basicBlocks;
+
 	while(b != nullptr){
 		std::list<BasicBlock *> succ = b->getSuccessors();
 		std::list<BasicBlock *>::iterator it = succ.begin();

@@ -9,7 +9,7 @@ BasicBlock::BasicBlock(Instruction *inst)
 
 }
 
-BasicBlock::~BasicBlock(){}
+BasicBlock::~BasicBlock() {}
 
 /**
  * Elimina les instruccions d'un bloc bàsic
@@ -103,7 +103,7 @@ void BasicBlock::setDominadorImmediat(BasicBlock *dominadorImmediat){
 void BasicBlock::updateDominadorImmediat(){
 	// preparar el conjunt de dominadors, que és tots els elements
 	// excepte el propi bloc
-	Set<BasicBlock> tmpDominadors(this->dominadors);
+	Set<BasicBlock> tmpDominadors = this->dominadors;
 	tmpDominadors.remove(this);
 
 	// s'agafa un element i se suposa que és el dominador
@@ -113,7 +113,7 @@ void BasicBlock::updateDominadorImmediat(){
 
 		// comprovar si aquest element seleccionat es troba al conjunt
 		// de dominadors de la resta d'elements del conjunt
-		Set<BasicBlock> altres(tmpDominadors);
+		Set<BasicBlock> altres = tmpDominadors;
 		altres.remove(*dominadorsIt);
 
 		Set<BasicBlock>::iterator it = altres.begin();

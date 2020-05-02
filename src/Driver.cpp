@@ -71,6 +71,8 @@ Driver::Driver(char *filename, bool debugMode)
 
 	this->initPrint();
 
+	this->initPrintInt();
+
     //DescripcioFuncio *read = new DescripcioFuncio();
     //read->setTipusRetorn("int");
     //this->ts.posar("read", read);
@@ -420,4 +422,234 @@ void Driver::initPrint(){
 
 	this->code.leaveSubProgram();
 	this->code.addInstruction(new SkipInstruction(end)); // aquesta etiqueta no forma part del subprograma
+}
+
+void Driver::initPrintInt(){
+	Label *start = this->code.addLabel("printInt");
+	Label *end = this->code.addLabel();
+
+	SubProgram *printInt = this->code.addSubProgram("printInt", start);
+	DescripcioProc *dPrintInt = new DescripcioProc(printInt);
+	DescripcioArgument *dArg = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
+	this->ts.posar("printInt", dPrintInt);
+	this->ts.posarParam("printInt", "numero", dArg);
+
+	// indica que s'ha entrat a un nou subprograma
+	this->code.enterSubProgram(printInt);
+
+	// crear variables dels paràemtes
+	Variable *arg1 = this->code.addVariable(TipusSubjacentBasic::INT, "numero", true);
+	dArg->setVariable(arg1);
+
+	// indicar l'inici del subprograma
+	this->code.addInstruction(new GoToInstruction(end));
+	this->code.addInstruction(new SkipInstruction(start));
+	this->code.addInstruction(new PreAmbleInstruction(printInt));
+
+	// variables locals i temporals del programa
+	Variable *tmp = this->code.addVariable(TipusSubjacentBasic::ARRAY);
+	tmp->setOcupacioExtra(32); // array de caràcters de 32 bytes
+
+	Variable *negatiu = this->code.addVariable(TipusSubjacentBasic::BOOLEAN);
+	this->code.addInstruction(new AssignmentInstruction(
+		negatiu,
+		((DescripcioConstant *) this->ts.consulta("false"))->getVariable()
+	)); // originalment el número no és negatiu
+
+	Variable *t2 = this->code.addVariable(TipusSubjacentBasic::INT); // variable temporal
+	Variable *mod = this->code.addVariable(TipusSubjacentBasic::INT); // variable temporal
+
+	int valor = 0;
+	Variable *zero = this->code.addVariable(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		zero,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(char))
+	));
+
+	valor = 10;
+	Variable *deu = this->code.addVariable(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		deu,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	valor = 1;
+	Variable *unitat = this->code.addVariable(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		unitat,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	valor = 31; // darrera posició de l'array
+	Variable *i = this->code.addVariable(TipusSubjacentBasic::INT);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		i,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	// codi del programa
+
+	Label *e1 = this->code.addLabel();
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::EQ,
+		arg1,
+		zero,
+		e1
+	)); // if numero == 0 goto e1
+
+	char valorChar = '0';	
+	Variable *charTmp = this->code.addVariable(TipusSubjacentBasic::CHAR);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::CHAR,
+		charTmp,
+		std::make_shared<ValueContainer>(&valorChar, sizeof(char))
+	));
+
+	this->code.addInstruction(new AssignmentInstruction(
+		AssignmentInstruction::Type::TARGET_OFF,
+		tmp,
+		charTmp,
+		i
+	)); // tmp[i] = '0'
+
+	this->code.addInstruction(new SkipInstruction(e1)); // e1: skip
+	
+	Label *e2 = this->code.addLabel();
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::GTE,
+		arg1,
+		zero,
+		e2
+	)); // if numero >= 0 goto e2
+
+	this->code.addInstruction(new AssignmentInstruction(
+		negatiu,
+		((DescripcioConstant *) this->ts.consulta("true"))->getVariable()
+	)); // negatiu = true
+
+	this->code.addInstruction(new SkipInstruction(e2)); // e2: skip
+	
+	Label *e3 = this->code.addLabel();
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::LTE,
+		arg1,
+		zero,
+		e3
+	)); // if numero <= 0 goto e3
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::MOD,
+		mod,
+		arg1,
+		deu
+	)); // mod = numero % 10
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION,
+		t2,
+		arg1,
+		mod
+	)); // t2 = numero - mod
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::DIVISION,
+		arg1,
+		t2,
+		deu
+	)); // numero = t2 / 10
+
+	valorChar = '0';
+	Variable *quarantaIVuit = this->code.addVariable(TipusSubjacentBasic::CHAR);
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::CHAR,
+		quarantaIVuit,
+		std::make_shared<ValueContainer>(&valorChar, sizeof(char))
+	));
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::ADDITION,
+		charTmp,
+		quarantaIVuit,
+		mod
+	)); // caracter = '0' + mod
+
+	this->code.addInstruction(new AssignmentInstruction(
+		AssignmentInstruction::Type::TARGET_OFF,
+		tmp,
+		charTmp,
+		i
+	)); // tmp[i] = caracter
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION, 
+		i,
+		i,
+		unitat
+	)); // i = i - 1
+
+	this->code.addInstruction(new GoToInstruction(e2)); // goto e2
+
+	this->code.addInstruction(new SkipInstruction(e3)); // e3: skip
+
+	Label *e4 = this->code.addLabel();
+	this->code.addInstruction(new CondJumpInstruction(
+		CondJumpInstruction::Operator::EQ,
+		negatiu,
+		((DescripcioConstant *) this->ts.consulta("false"))->getVariable(),
+		e4
+	)); // if negatiu == false goto e4
+
+	valorChar = '-';
+	this->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::CHAR,
+		charTmp,
+		std::make_shared<ValueContainer>(&valorChar, sizeof(char))
+	));
+
+	this->code.addInstruction(new AssignmentInstruction(
+		AssignmentInstruction::Type::TARGET_OFF,
+		tmp,
+		charTmp,
+		i
+	)); // tmp[i] = '-'
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION, 
+		i,
+		i,
+		unitat
+	)); // i = i - 1
+	
+	this->code.addInstruction(new SkipInstruction(e4)); // e4: skip
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION, 
+		i,
+		i,
+		unitat
+	)); // i = i + 1
+
+	this->code.addInstruction(new AssemblyInstruction("movq\t$0,%r8"));
+	this->code.addInstruction(new MemoryInstruction(
+		false,
+		i,
+		CodeGeneration::Register::R8
+	));
+
+	this->code.addInstruction(new AssemblyInstruction("movq\t$32,%rdx"));
+	this->code.addInstruction(new AssemblyInstruction("subq\t%r8,%rdx")); // buffer size
+
+	// fer la crida al sistema
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rax")); // sys_write
+	this->code.addInstruction(new AssemblyInstruction("lea\t"+ std::to_string(tmp->getOffset()) +"(%rbp, %r8), %rsi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdi")); // file descriptor: stdout
+	this->code.addInstruction(new AssemblyInstruction("syscall"));
+
+	// indicar el final del programa
+	this->code.leaveSubProgram();
+	this->code.addInstruction(new SkipInstruction(end));
 }

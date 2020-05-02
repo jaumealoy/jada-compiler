@@ -218,15 +218,6 @@ void CodeGeneration::generateAssembly() {
 	this->output << "movq\t$0, %rbx" << std::endl;
 	this->output << "int\t$0x80" << std::endl;
 	
-	// TODO: implementar els subprogrames propis en C3A?
-	// incloure els subprogrames propis
-	std::ifstream printIntCode("programs/printInt.asm");
-	std::string line;
-	while(std::getline(printIntCode, line)){
-		this->output << line << std::endl;
-	}
-
-
 	std::cout << "Final assembly" << std::endl;
 }
 

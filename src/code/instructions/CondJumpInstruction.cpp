@@ -190,11 +190,6 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		// canviar l'operador
 		this->op = invers[this->op];
 		
-		// invertir l'ordre dels operands
-		tmp = this->e1;
-		this->e1 = this->e2;
-		this->e2 = tmp;
-
 		// eliminar la següent instrucció
 		code->remove(this->getNext());
 

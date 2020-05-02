@@ -54,7 +54,6 @@ public:
 		int nbit = elementId % (sizeof(unsigned char) * 8);
 
 		unsigned char mask = 1 << (7 - nbit);
-//		std::cout << "byte " << (int)this->data[nbytes] << " mask is " << (int) mask << std::endl;
 
 		return (this->data[nbytes] & mask) > 0;
 	};

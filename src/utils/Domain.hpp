@@ -16,7 +16,7 @@ private:
 public: 
 	Domain() : numElements(0) {}
 
-	Domain(std::list<E*> &elements) {
+	Domain(std::list<E*> elements) {
 		this->numElements = 0;
 
 		typename std::list<E*>::iterator it = elements.begin();
