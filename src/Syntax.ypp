@@ -270,6 +270,8 @@ exprSimple : NOT exprSimple { $$.make(this->driver, $2, 0); }
     | referencia { $$.make(this->driver, $1); }
 	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
 	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); }
+	| OP_DADD referencia { $$.make(this->driver, 0, $2); }
+	| OP_DMINUS referencia { $$.make(this->driver, 1, $2); }
     | literal { $$.make(this->driver, $1); };
     | relExpr { $$.make(this->driver, $1); }
     | aritExpr { $$.make(this->driver, $1); };
@@ -321,6 +323,8 @@ expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | referencia OP_MINUS EQ exprSimple { $$.make(this->driver, $1, $4, 4); }
 	| referencia OP_DADD { $$.make(this->driver, $1, 0); }
 	| referencia OP_DMINUS { $$.make(this->driver, $1, 1); };
+	| OP_DADD referencia { $$.make(this->driver, $2, 0); }
+	| OP_DMINUS referencia { $$.make(this->driver, $2, 1); };
 
 M0 : { $$.make(this->driver, 0); };
 M1 : { $$.make(this->driver, 1); };

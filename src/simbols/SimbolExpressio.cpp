@@ -531,19 +531,170 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref, int tipus){
 	this->tsb = TipusSubjacentBasic::INT;
 	this->mode = SimbolExpressio::Mode::RESULTAT;
 
+	ArithmeticInstruction::Type operador;
+
 	// i pintar a l'arbre
     this->fills.push_back( std::to_string(ref.getNodeId()) );
 	switch(tipus){
 		case 0: // referencia++
         	this->fills.push_back( driver->addTreeChild(this, "++") );
+			operador = ArithmeticInstruction::Type::ADDITION;
 			break;
 
 		case 1: // referencia--;
         	this->fills.push_back( driver->addTreeChild(this, "--") );
+			operador = ArithmeticInstruction::Type::SUBTRACTION;
 			break;
 	}
+
     Simbol::toDotFile(driver);
 
+	// generació de codi
+	// el post de/increment crea una variable temporal que és la que es retorna
+	// però modifica el valor de la referència
+
+	// crear una variable temporal
+	this->r = driver->code.addVariable(ref.getTSB());
+	this->d = nullptr;
+
+	// es podria gestionar directament si la referència té desplaçament
+	// o no, però per simplificar el codi es desreferencia
+	Variable *valorExp = ref.dereference(driver, ref.getTSB());
+	driver->code.addInstruction(new AssignmentInstruction(
+		this->r,
+		valorExp
+	));
+
+	// incrementar el valor de la referència
+	Variable *unitat = driver->code.addVariable(TipusSubjacentBasic::INT);
+	int valor = 1;
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		unitat,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	// distingir entre si la referència té desplaçament
+	if(ref.getOffset() == nullptr){
+		// a++ => t1 = a; a = a + 1;
+		driver->code.addInstruction(new ArithmeticInstruction(
+			ArithmeticInstruction::Type::ADDITION,
+			ref.getBase(),
+			ref.getBase(),
+			unitat
+		));
+	}else{
+		// a[i]++ => t1 = a[i]; t2 = a[i]; t2 = t2 + 1; a[i] = t2;
+		Variable *tmp = ref.dereference(driver, ref.getTSB());
+		driver->code.addInstruction(new ArithmeticInstruction(
+			ArithmeticInstruction::Type::ADDITION,
+			tmp,
+			tmp,
+			unitat
+		));
+
+		driver->code.addInstruction(new AssignmentInstruction(
+			AssignmentInstruction::Type::TARGET_OFF,
+			ref.getBase(),
+			tmp,
+			ref.getOffset()
+		));
+	}
+}
+
+
+/**
+ * exprSimple -> ++referencia (tipus 0)
+ * exprSimple -> --referencia (tipus 1)
+ */
+void SimbolExpressio::make(Driver *driver, int tipus, SimbolReferencia ref){
+	if(ref.isNull()){
+		this->makeNull();
+		return;
+	}
+
+	// La referència ha de ser un enter
+	if(ref.getTSB() != TipusSubjacentBasic::INT){
+		this->makeNull();
+		this->driver->error( error_tipus_no_compatibles_operador(ref.getTSB()) );
+		return;
+	}
+
+	// I no pot ser una referència constant
+	if(ref.getMode() == SimbolReferencia::ModeMVP::CONST){
+		this->makeNull();
+		this->driver->error( error_es_constant(ref.getId()) );
+		return;
+	}
+
+	// el resultat serà un valor enter
+	this->tsb = TipusSubjacentBasic::INT;
+	this->mode = SimbolExpressio::Mode::RESULTAT;
+
+	ArithmeticInstruction::Type operador;
+
+	// i pintar a l'arbre
+	switch(tipus){
+		case 0: // ++referencia
+        	this->fills.push_back( driver->addTreeChild(this, "++") );
+			operador = ArithmeticInstruction::Type::ADDITION;
+			break;
+
+		case 1: // --referencia;
+        	this->fills.push_back( driver->addTreeChild(this, "--") );
+			operador = ArithmeticInstruction::Type::SUBTRACTION;
+			break;
+	}
+    this->fills.push_back( std::to_string(ref.getNodeId()) );
+
+    Simbol::toDotFile(driver);
+
+	// generació de codi
+	// el pre de/increment primer realitza l'operació de resta/suma
+	// i retorna aquest valor nou
+
+	Variable *unitat = driver->code.addVariable(TipusSubjacentBasic::INT);
+	int valor = 1;
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		unitat,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(valor))
+	));
+
+	// distingir entre si l'assignació es fa a una variable amb desplaçament
+	Variable *resultat;
+	if(ref.getOffset() == nullptr){
+		driver->code.addInstruction(new ArithmeticInstruction(
+			operador,
+			ref.getBase(),
+			ref.getBase(),
+			unitat
+		));
+
+		resultat = ref.getBase();
+	}else{
+		// t1 = a[d]; t1 = t1 +/- 1; a[d] = t1
+		Variable *tmp = ref.dereference(driver, ref.getTSB());
+		driver->code.addInstruction(new ArithmeticInstruction(
+			operador,
+			ref.getBase(),
+			ref.getBase(),
+			unitat
+		));
+
+		driver->code.addInstruction(new AssignmentInstruction(
+			AssignmentInstruction::Type::TARGET_OFF,
+			ref.getBase(),
+			tmp,
+			ref.getOffset()
+		));
+
+		resultat = tmp;
+	}
+
+	// el valor resultant serà
+	this->r = resultat;
+	this->d = nullptr;
 }
 
 std::string SimbolExpressio::getTipus(){

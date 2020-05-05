@@ -107,6 +107,8 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 /**
  * expression -> referencia-- (tipus 1)
  * expression -> referencia++ (tipus 0)
+ * expression -> --referencia
+ * expression -> ++referencia
  */
 void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, int tipus){
     if(ref.isNull()){
@@ -130,6 +132,46 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, int tipus){
     this->fills.push_back( std::to_string(ref.getNodeId()) );
     this->fills.push_back( driver->addTreeChild(this, operadors[tipus]) );
     Simbol::toDotFile(driver);
+
+	// aquests produccions no tenen un valor de retorn, només
+	// modifiquen el valor de la referència
+	Variable *unitat = driver->code.addVariable(TipusSubjacentBasic::INT);
+	int valor = 1;
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		unitat,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	ArithmeticInstruction::Type operador;
+	switch(tipus){
+		case 0: operador = ArithmeticInstruction::Type::ADDITION; break;
+		case 1: operador = ArithmeticInstruction::Type::SUBTRACTION; break;
+	}
+
+	if(ref.getOffset() == nullptr){
+		driver->code.addInstruction(new ArithmeticInstruction(
+			operador,
+			ref.getBase(),
+			ref.getBase(),
+			unitat
+		));
+	}else{
+		Variable *tmp = ref.dereference(driver, ref.getTSB());
+		driver->code.addInstruction(new ArithmeticInstruction(
+			operador,
+			tmp,
+			tmp,
+			unitat
+		));
+		
+		driver->code.addInstruction(new AssignmentInstruction(
+			AssignmentInstruction::Type::TARGET_OFF,
+			ref.getBase(),
+			tmp,
+			ref.getOffset()
+		));
+	}
 }
 
 /**
