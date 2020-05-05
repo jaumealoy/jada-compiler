@@ -1,0 +1,23 @@
+proc main() begin
+	int a = 7;
+	a += 3;
+
+	if a == 10 do
+		print("OK 1\n");
+	end;
+
+	a -= 3;
+	if a == 7 do
+		print("OK 2\n");
+	end;
+
+	a *= 3;
+	if a == 21 do
+		print("OK 3\n");
+	end;
+
+	a /= 7;
+	if a == 3 do
+		print("OK 4\n");
+	end;
+end main;

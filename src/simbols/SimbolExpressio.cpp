@@ -677,8 +677,8 @@ void SimbolExpressio::make(Driver *driver, int tipus, SimbolReferencia ref){
 		Variable *tmp = ref.dereference(driver, ref.getTSB());
 		driver->code.addInstruction(new ArithmeticInstruction(
 			operador,
-			ref.getBase(),
-			ref.getBase(),
+			tmp,
+			tmp,
 			unitat
 		));
 

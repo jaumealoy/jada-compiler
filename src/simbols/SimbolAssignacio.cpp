@@ -11,11 +11,11 @@ SimbolAssignacio::~SimbolAssignacio(){}
 /**
  * Les següents expressions no tenen un valor de tornada
  * 
- * expression -> referencia = exprSimple
- * expression -> referencia += exprSimple
- * expression -> referencia /= exprSimple
- * expression -> referencia *= exprSimple
- * expression -> referencia -= exprSimple
+ * expression -> referencia = exprSimple (tipus = 0)
+ * expression -> referencia += exprSimple (tipus = 1)
+ * expression -> referencia /= exprSimple (tipus = 2)
+ * expression -> referencia *= exprSimple (tipus = 3)
+ * expression -> referencia -= exprSimple (tipus = 4)
  */
 void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressio exp, int tipus){
     if(ref.isNull() || exp.isNull()){
@@ -49,6 +49,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 	// generació de codi intermedi
 	switch(tipus){
 		case 0: // ref = exprSimple
+		{
 			Variable *tmp = exp.dereference(driver, exp.getTSB());
 
 			if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
@@ -100,7 +101,49 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 				}
             }
 			break;
-		
+		}
+
+		case 1: // suma
+		case 2: // divisio
+		case 3: // multiplicacio
+		case 4: // resta
+		{
+			ArithmeticInstruction::Type operador[] = {
+				ArithmeticInstruction::Type::ADDITION,
+				ArithmeticInstruction::Type::DIVISION,
+				ArithmeticInstruction::Type::MULTIPLICATION,
+				ArithmeticInstruction::Type::SUBTRACTION
+			};
+
+			Variable *valor = exp.dereference(driver, exp.getTSB());
+
+			if(ref.getOffset() == nullptr){
+				// es pot realitzar una operació aritmètica directament
+				driver->code.addInstruction(new ArithmeticInstruction(
+					operador[tipus - 1],
+					ref.getBase(),
+					ref.getBase(),
+					valor
+				));
+			}else{
+				// és necessari calcular el valor resultant en una variable temporal
+				Variable *tmp = ref.dereference(driver, ref.getTSB());
+				driver->code.addInstruction(new ArithmeticInstruction(
+					operador[tipus - 1],
+					tmp,
+					tmp,
+					valor
+				));
+
+				// ara es pot guardar tmp a la posició original
+				driver->code.addInstruction(new AssignmentInstruction(
+					AssignmentInstruction::TARGET_OFF,
+					ref.getBase(),
+					tmp,
+					ref.getOffset()
+				));
+			}
+		}
 	}
 }
 

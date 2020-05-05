@@ -1,0 +1,79 @@
+proc main() begin
+	int a = 5;
+	
+	if a++ != 5 do
+		print("Error 1");
+		print("Valor real: ");
+		printInt(a++);
+		printChar('\n');
+	else do
+		printInt(a);
+		printChar('\n');
+		print("OK 1\n");
+	end;
+
+	a = 5;
+	if a-- != 5 do
+		print("Error 2");
+		print("Valor real: ");
+		printInt(a--);
+		printChar('\n');
+	else do
+		printInt(a);
+		printChar('\n');
+		print("OK 2\n");
+	end;
+
+	a = 5;
+
+	if --a == 4 do
+		print("OK 3\n");
+		printInt(a);
+		printChar('\n');
+	else do
+		print("Error 3\n");
+	end;
+
+	if ++a == 5 do
+		print("OK 4\n");
+		printInt(a);
+		printChar('\n');
+	else do
+		print("Error 4\n");
+	end;
+
+	for(int i = 0; i < 3; i++) do
+		print("1. Provant a FOR i++\n");
+	end;
+
+	for(int i = 0; i < 3; ++i) do
+		print("2. Provant a FOR ++i\n");
+	end;
+
+	for(int i = 2; i >= 0; --i) do
+		print("3. Provant a FOR --i\n");
+	end;
+
+	for(int i = 2; i >= 0; i--) do
+		print("4. Provant a FOR i--\n");
+	end;
+
+	int[5] b;
+	b[3] = 7;
+	b[3]++;
+	
+	if b[3] == 8 do
+		print("Array postincrement OK\n");
+		int c = --b[3];
+
+		if c == 7 do
+			print("Array predecrement OK\n");
+		else do
+			print("Array predecrement error\n");
+			print("Valor és");
+			printInt(c);
+			printChar('\n');
+		end;
+	end;
+
+end main;
