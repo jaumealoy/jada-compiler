@@ -440,6 +440,7 @@ void Driver::initPrintInt(){
 	// crear variables dels paràemtes
 	Variable *arg1 = this->code.addVariable(TipusSubjacentBasic::INT, "numero", true);
 	dArg->setVariable(arg1);
+	printInt->addParameter(arg1);
 
 	// indicar l'inici del subprograma
 	this->code.addInstruction(new GoToInstruction(end));
@@ -495,11 +496,11 @@ void Driver::initPrintInt(){
 
 	Label *e1 = this->code.addLabel();
 	this->code.addInstruction(new CondJumpInstruction(
-		CondJumpInstruction::Operator::EQ,
+		CondJumpInstruction::Operator::NEQ,
 		arg1,
 		zero,
 		e1
-	)); // if numero == 0 goto e1
+	)); // if numero != 0 goto e1
 
 	char valorChar = '0';	
 	Variable *charTmp = this->code.addVariable(TipusSubjacentBasic::CHAR);
@@ -516,6 +517,9 @@ void Driver::initPrintInt(){
 		i
 	)); // tmp[i] = '0'
 
+	Label *e5 = this->code.addLabel();
+	this->code.addInstruction(new GoToInstruction(e5)); // goto e5
+
 	this->code.addInstruction(new SkipInstruction(e1)); // e1: skip
 	
 	Label *e2 = this->code.addLabel();
@@ -530,6 +534,13 @@ void Driver::initPrintInt(){
 		negatiu,
 		((DescripcioConstant *) this->ts.consulta("true"))->getVariable()
 	)); // negatiu = true
+
+	this->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION,
+		arg1,
+		zero,
+		arg1
+	));
 
 	this->code.addInstruction(new SkipInstruction(e2)); // e2: skip
 	
@@ -633,6 +644,8 @@ void Driver::initPrintInt(){
 		unitat
 	)); // i = i + 1
 
+	this->code.addInstruction(new SkipInstruction(e5)); // e5: skip
+
 	this->code.addInstruction(new AssemblyInstruction("movq\t$0,%r8"));
 	this->code.addInstruction(new MemoryInstruction(
 		false,
@@ -645,9 +658,18 @@ void Driver::initPrintInt(){
 
 	// fer la crida al sistema
 	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rax")); // sys_write
-	this->code.addInstruction(new AssemblyInstruction("lea\t"+ std::to_string(tmp->getOffset()) +"(%rbp, %r8), %rsi")); // file descriptor: stdout
+	
+	this->code.addInstruction(new MemoryInstruction(
+		false,
+		tmp,
+		CodeGeneration::Register::SI
+	));
+	this->code.addInstruction(new AssemblyInstruction("addq\t%r8, %rsi"));
+
 	this->code.addInstruction(new AssemblyInstruction("movq\t$1, %rdi")); // file descriptor: stdout
 	this->code.addInstruction(new AssemblyInstruction("syscall"));
+
+	this->code.addInstruction(new ReturnInstruction(printInt));
 
 	// indicar el final del programa
 	this->code.leaveSubProgram();

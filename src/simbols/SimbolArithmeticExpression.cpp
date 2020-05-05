@@ -2,6 +2,7 @@
 #include "../Driver.h"
 
 #include "../code/instructions/ArithmeticInstruction.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 SimbolArithmeticExpression::SimbolArithmeticExpression() : SimbolExpressio() {
     this->nomNode = "ArithmeticExpression";
@@ -39,6 +40,30 @@ void SimbolArithmeticExpression::make(Driver *driver, SimbolExpressio exp){
     this->fills.push_back( driver->addTreeChild(this, "-") );
     this->fills.push_back( std::to_string(exp.getNodeId()) );
     Simbol::toDotFile(driver);
+
+	// generació de codi
+	// obtenir el valor de l'expressió
+	Variable *expValor = exp.dereference(driver, TipusSubjacentBasic::INT);
+
+	this->r = driver->code.addVariable(TipusSubjacentBasic::INT);
+	this->d = nullptr;
+
+	int valor = 0;
+	Variable *tmp = driver->code.addVariable(TipusSubjacentBasic::INT);
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::INT,
+		tmp,
+		std::make_shared<ValueContainer>((const char *) &valor, sizeof(int))
+	));
+
+	// es podria fer d'altres maneres però seran les optimitzacions les
+	// encarregades de convertir aquesta operació en un canvi de signe
+	driver->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::SUBTRACTION,
+		this->r,
+		tmp,
+		expValor
+	));
 }
 
 /**
