@@ -3,7 +3,7 @@
 #include "../CodeGeneration.h"
 
 CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l) 
-	: Instruction(Instruction::Type::CONDJUMP) 
+	: Instruction(Instruction::Type::CONDJUMP), invertit(false)
 {
 	// e1 op e2
 	this->op = op;
@@ -148,6 +148,7 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		return true;
 	}
 
+
 	if(!this->e1->isConstant() && !this->e2->isConstant() && this->e1 == this->e2){
 		if(this->op == CondJumpInstruction::Operator::EQ){
 			// és una comparació d'igualtat i els dos operadors són la mateixa variable
@@ -172,19 +173,24 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 
 	// comprovar canvi de condició: només és aplicable si la següent és un salt
 	// incondicional
-	if(this->getNext() != nullptr && this->getNext()->getType() == Instruction::GOTO){
+	// no s'ha de detectar el cas en què el goto va a la següent línia
+	if(!invertit && this->getNext() != nullptr && this->getNext()->getType() == Instruction::GOTO
+		&& (Instruction *)((GoToInstruction *) this->getNext())->getTarget()->getTargetInstruction() != this->getNext()->getNext()){
+
+		invertit = true;
+
 		this->l = ((GoToInstruction *) this->getNext())->getTarget();
 
 		// invertir la condició
 		Variable *tmp;
 
 		CondJumpInstruction::Operator invers[] = {
-			Operator::NEQ,	// EQ => !(a = b) === (b != a)
-			Operator::EQ,	// NEQ => !(a != b) === (b = a)
-			Operator::GT,	// LTE => !(a <= b) === (b > a)
-			Operator::GTE,	// LT => !(a < b) === (b >= a)
-			Operator::LT,	// GTE => !(a >= b) === (b < a)
-			Operator::LTE	// GT => !(a > b) === (b <= a)
+			Operator::NEQ,	// EQ => !(a = b) === (a != b)
+			Operator::EQ,	// NEQ => !(a != b) === (a = b)
+			Operator::GT,	// LTE => !(a <= b) === (a > b)
+			Operator::GTE,	// LT => !(a < b) === (a >= b)
+			Operator::LT,	// GTE => !(a >= b) === (a < b)
+			Operator::LTE	// GT => !(a > b) === (a <= b)
 		};
 
 		// canviar l'operador

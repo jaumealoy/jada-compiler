@@ -28,6 +28,7 @@ void GoToInstruction::generateAssembly(CodeGeneration *code){
  * instrucció un altre salt incondicional, pot anar directament a l'etiqueta
  * del segon salt incondicional
  * - Tot el codi entre un salt condicional i la següent etiqueta és inaccessible
+ * - Un salt a la següent línia es pot eliminar
  */
 #include <cassert>
 bool GoToInstruction::optimize(CodeGeneration *code){

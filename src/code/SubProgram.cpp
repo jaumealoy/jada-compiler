@@ -505,12 +505,10 @@ void SubProgram::draw(){
 		std::list<BasicBlock *>::iterator it = succ.begin();
 
 		std::string auxStr = "";
-		BasicBlock *aux = this->basicBlocks;
-		while(aux != nullptr){
-			if(b->getDominadors().contains(aux)){
-				auxStr += std::to_string(aux->mId) + ", ";
-			}
-			aux = aux->getNext();
+		Set<BasicBlock>::iterator auxIt = b->getDominadors().begin();
+		while(auxIt != b->getDominadors().end()){
+			auxStr += std::to_string((*auxIt)->mId) + ", ";
+			auxIt++;
 		}
 		
 		if(b->getDominadorImmediat() != nullptr){

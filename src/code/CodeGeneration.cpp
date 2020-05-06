@@ -682,7 +682,7 @@ void CodeGeneration::optimize(){
  * Determina quines variables són constants
  * - Indica el valor de la variable
  * - Indica la instrucció en què s'inicialitza la constant
- * - 
+ * - Marca les etiquetes que s'utilitzen
  */
 void CodeGeneration::updateConstants(){
 	// indicar que totes les variables són possibles constants

@@ -16,11 +16,16 @@ public:
 		GTE,
 		GT
 	};
+	
 private:
 	Operator op;
 	Variable *e1;
 	Variable *e2;
 	Label *l;
+
+	// indica si ja s'ha invertit la condició
+	bool invertit;
+
 public:
 	CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l);
 	~CondJumpInstruction();
