@@ -4,6 +4,8 @@
 #include "../code/instructions/PutParamInstruction.h"
 #include "../code/instructions/PreAmbleInstruction.h"
 #include "../code/instructions/AssemblyInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
+#include "../code/instructions/AssignmentInstruction.h"
 
 #include "../Driver.h"
 
@@ -164,28 +166,75 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 
 	// generació de codi
 	// posar els paràmetres a la pila
-	std::list<SimbolExpressio> params = cont.getCallParams();
+	std::list<struct SimbolSubProgramContCall::ParametreReal> params = cont.getCallParams();
 	int size = params.size();
 
 	// reservar espai per tots els paràmetres
+	// és la primera instrucció que s'ha d'executar
 	int espai = programa->getOcupacioParametres();
-	driver->code.addInstruction(new AssemblyInstruction(
+	Instruction *aux = driver->code.addInstruction(new AssemblyInstruction(
 		"subq\t$" + std::to_string(espai) + ", %" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8)
 	));
+
+	driver->code.move(aux, aux, cont.getInici().getInstruction());
+	driver->code.remove(cont.getInici().getInstruction());
 
 	tmp = driver->ts.getParametres();
 	tmp.first(this->id);
 
 	for(int i = 0; i < size; i++) {
 		DescripcioArgument *da = (DescripcioArgument *) tmp.get();
-		SimbolExpressio valor = params.back();
-		params.pop_back();
+		struct SimbolSubProgramContCall::ParametreReal parametre = params.front();
+		SimbolExpressio valor = parametre.exp;
+		params.pop_front();
 
 		if (valor.getTSB() == TipusSubjacentBasic::BOOLEAN) {
-			// TODO: empilar valors true o false segons correspongui
+			// empilar valors true o false segons correspongui
+			Label *caseTrue = driver->code.addLabel();
+			Label *caseFalse = driver->code.addLabel();
+			Label *end = driver->code.addLabel();
+
+			// variable que conté el valor que es passa per paràmetre
+			Variable *resultat = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
+
+			// cas true
+			Instruction *startI = driver->code.addInstruction(new SkipInstruction(caseTrue));
+			driver->code.backpatch(caseTrue, valor.getCert());
+			driver->code.addInstruction(new AssignmentInstruction(
+				resultat,
+				((DescripcioConstant *) driver->ts.consulta("true"))->getVariable()
+			));
+			driver->code.addInstruction(new GoToInstruction(end));
+
+			// cas false
+			driver->code.addInstruction(new SkipInstruction(caseFalse));
+			driver->code.backpatch(caseFalse, valor.getFals());
+			driver->code.addInstruction(new AssignmentInstruction(
+				resultat,
+				((DescripcioConstant *) driver->ts.consulta("false"))->getVariable()
+			));
+
+			// final d'aquest cas
+			driver->code.addInstruction(new SkipInstruction(end));
+			Instruction *endI = driver->code.addInstruction(new PutParamInstruction(
+				resultat, 
+				da->getVariable(), 
+				programa
+			));
+
+			// moure aquest codi de manera que quedi just abans del pròxim paràmetre
+			driver->code.move(
+				startI,
+				endI,
+				parametre.m.getInstruction()
+			);
+
+			// i eliminar les instruccions aritificials
+			driver->code.remove(parametre.m.getInstruction());
 		} else {
 			Variable *var = valor.dereference(driver, valor.getTSB());
 			driver->code.addInstruction(new PutParamInstruction(var, da->getVariable(), programa));
+			driver->code.remove(parametre.m.getInstruction());
 		}
 
 		tmp.next();

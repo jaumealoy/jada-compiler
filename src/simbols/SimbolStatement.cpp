@@ -5,6 +5,8 @@
 #include "../Driver.h"
 #include "../code/instructions/GoToInstruction.h"
 #include "../code/instructions/ReturnInstruction.h"
+#include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/SkipInstruction.h"
 #include "../code/Label.h"
 #include <iostream>
 
@@ -64,7 +66,40 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
     tmp.tipus = exp.getTipus();
     tmp.tsb = exp.getTSB();
     tmp.loc = driver->getLocation();
-	tmp.returnInst = new ReturnInstruction(nullptr, exp.dereference(driver, exp.getTSB()));
+
+	if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
+		// per simplificar un poc la gestió, s'assignarà el valor boolean
+		// a una variable temporal
+		Label *caseTrue = driver->code.addLabel();
+		Label *caseFalse = driver->code.addLabel();
+		Label *end = driver->code.addLabel();
+
+		Variable *valor = driver->code.addVariable(TipusSubjacentBasic::BOOLEAN);
+
+		// cas true
+		driver->code.addInstruction(new SkipInstruction(caseTrue));
+		driver->code.backpatch(caseTrue, exp.getCert());
+		driver->code.addInstruction(new AssignmentInstruction(
+			valor,
+			((DescripcioConstant *) driver->ts.consulta("true"))->getVariable()
+		));
+		driver->code.addInstruction(new GoToInstruction(end));
+
+		// cas false
+		driver->code.addInstruction(new SkipInstruction(caseFalse));
+		driver->code.backpatch(caseFalse, exp.getFals());
+		driver->code.addInstruction(new AssignmentInstruction(
+			valor,
+			((DescripcioConstant *) driver->ts.consulta("false"))->getVariable()
+		));
+
+		// final i crear la instrucció de retorn
+		driver->code.addInstruction(new SkipInstruction(end));
+		tmp.returnInst = new ReturnInstruction(nullptr, valor);
+	}else{
+		tmp.returnInst = new ReturnInstruction(nullptr, exp.dereference(driver, exp.getTSB()));
+	}
+
 	driver->code.addInstruction(tmp.returnInst);
 
     this->_returns.push_back(tmp);

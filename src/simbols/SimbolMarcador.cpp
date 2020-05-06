@@ -29,12 +29,12 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 			break;
 
 		case 2:
-			// és un marcador que crea una instrucció skip
-			// que serveix per marcar blocs de codi
 			// Aquesta instrucció s'eliminarà en qualque moment
-			// No importa que l'etiqueta no existeixi
+			// És una instrucció que s'utilitza per marcar qualque punt
+			// en el programa
 			this->inst = driver->code.addInstruction(new Instruction());
 			break;
+			
 		case 3:
 			// es un marcador que crea un salto a una etiqueta
 			// y una etiqueta diferente. Sirve para código del

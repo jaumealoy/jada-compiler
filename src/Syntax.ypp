@@ -298,8 +298,8 @@ referencia : ID { $$.make(this->driver, $1); }
 subProgramCall : ID LEFTPARAN RIGHTPARAN { $$.make(this->driver, $1); }
     | subProgramContCall RIGHTPARAN { $$.make(this->driver, $1); };
 
-subProgramContCall : ID LEFTPARAN exprSimple { $$.make(this->driver, $1, $3); }
-    | subProgramContCall COMA exprSimple { $$.make(this->driver, $1, $3); };
+subProgramContCall : ID LEFTPARAN M2 exprSimple M2 { $$.make(this->driver, $1, $4, $5, $3); }
+    | subProgramContCall COMA exprSimple M2 { $$.make(this->driver, $1, $3, $4); };
 
 literal : STR_LITERAL { $$.make(this->driver, $1); }
     | INT_LITERAL { $$.make(this->driver, $1); }

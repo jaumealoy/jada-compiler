@@ -10,7 +10,9 @@ SimbolSubProgramContCall::~SimbolSubProgramContCall() {}
 /**
  * subProgramContCall -> ID ( exprSimple
  */
-void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpressio exp){
+void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpressio exp, 
+		SimbolMarcador m2, SimbolMarcador inici)
+{
     // Comprovar que el subprograma existeix
     Descripcio *d = nullptr;
     try {
@@ -80,13 +82,22 @@ void SimbolSubProgramContCall::make(Driver *driver, std::string id, SimbolExpres
 
 	// incialitzar la llista de paràmetres
 	this->params.clear();
-	this->params.push_back(exp);
+
+	struct SimbolSubProgramContCall::ParametreReal tmp = {
+		exp,
+		m2
+	};
+
+	this->params.push_back(tmp);
+
+	// guardar l'inici de les expressions
+	this->inici = inici;
 }
 
 /**
  * subProgramContCall -> subProgramContCall , exprSimple
  */
-void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall cont, SimbolExpressio exp){
+void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall cont, SimbolExpressio exp, SimbolMarcador m2){
     if(cont.isNull()){
         this->makeNull();
         return;
@@ -147,13 +158,26 @@ void SimbolSubProgramContCall::make(Driver *driver, SimbolSubProgramContCall con
 
 	// continuar la llista de paràmetres
 	this->params = cont.params;
-	this->params.push_back(exp);
+
+	struct SimbolSubProgramContCall::ParametreReal tmp = {
+		exp,
+		m2
+	};
+
+	this->params.push_back(tmp);
+
+	// propagar l'inici
+	this->inici = cont.inici;
 }
 
-std::list<SimbolExpressio> SimbolSubProgramContCall::getCallParams(){
+std::list<struct SimbolSubProgramContCall::ParametreReal> SimbolSubProgramContCall::getCallParams(){
 	return this->params;
 }
 
 TaulaSimbols::Iterator SimbolSubProgramContCall::getParametres(){
     return this->it;
+}
+
+SimbolMarcador SimbolSubProgramContCall::getInici(){
+	return this->inici;
 }
