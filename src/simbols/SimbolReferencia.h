@@ -4,6 +4,7 @@
 #include "Simbol.h"
 class SimbolTipusArray;
 class SimbolSubProgramCall;
+class SimbolExpressio;
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "../code/Reference.h"
 #include <string>
@@ -17,7 +18,6 @@ public:
         CRIDA_COMPLETA
     };
 
-
 protected:
     std::string id;
     std::string tipus;
@@ -28,6 +28,12 @@ protected:
 	// desplaçament constant
 	int dconst;
 	
+private:
+	// per gestionar la creació amb memòria dinàmica
+	bool creacioArray;
+	std::vector<SimbolExpressio> dimensions;
+	std::string tipusBasic;
+
 public:
     SimbolReferencia();
     ~SimbolReferencia();
@@ -48,6 +54,12 @@ public:
 
 	// desplaçament constant
 	int getConstOffset();
+	
+	// arrays dinàmics
+	bool isArrayCreation();
+	std::vector<SimbolExpressio> getArrayDimensions();
+	std::string getTipusBasic();
+	
 };
 
 #endif

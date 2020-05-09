@@ -311,9 +311,9 @@ Tipus : ID { $$.make(this->driver, $1); }
 array : contArray { $$.make(this->driver, $1); };
 
 contArray : ID LEFTBRACKET exprSimple RIGHTBRACKET { $$.make(this->driver, $1, $3);}
-    | contArray LEFTBRACKET exprSimple RIGHTBRACKET {
-    $$.make(this->driver, $1, $3);
-};
+    | contArray LEFTBRACKET exprSimple RIGHTBRACKET { $$.make(this->driver, $1, $3); }
+	| ID LEFTBRACKET RIGHTBRACKET { $$.make(this->driver, $1); }
+	| contArray LEFTBRACKET RIGHTBRACKET { $$.make(this->driver, $1, 0); };
 
 expression : referencia EQ exprSimple { $$.make(this->driver, $1, $3, 0); }
     | referencia EQ arrayInit { $$.make(this->driver, $1, $3); }

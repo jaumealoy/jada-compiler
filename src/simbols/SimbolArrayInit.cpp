@@ -83,7 +83,9 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
 
 	// generació de codi
 	this->r = driver->code.addVariable(TipusSubjacentBasic::ARRAY);
-	this->r->setOcupacioExtra(dt->getOcupacio());
+
+	// reservar espai pels elements
+	this->r->setOcupacioExtra(dt->getOcupacio() * elements.size());
 	this->d = nullptr;
 
 	// guardar els elements (copiar només els valors)

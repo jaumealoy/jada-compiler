@@ -8,6 +8,8 @@
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/ArithmeticInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
+#include "../code/instructions/AssemblyInstruction.h"
+#include "../code/instructions/MemoryInstruction.h"
 
 /**
  * L'operació de dues expressions constants dona lloc a una expressió constant
@@ -308,6 +310,71 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
         this->makeNull();
         return;
     }
+
+	if(ref.isArrayCreation()){
+		// indicar el tipus
+		this->tipus = ref.getTipus();
+		this->tsb = TipusSubjacentBasic::POINTER;
+		this->mode = SimbolExpressio::Mode::VAR;
+
+		// és la creació d'un array amb memòria dinàmica
+		this->r = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+		this->d = nullptr;
+
+		// inicialitzar el bloc de memòria amb les dades necessàries
+		// calcular el total de memòria
+		std::vector<SimbolExpressio> dimensions = ref.getArrayDimensions();
+		Variable *totalBytes = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+		
+		long valor = ((DescripcioTipus *) driver->ts.consulta(ref.getTipusBasic()))->getOcupacio();
+		driver->code.addInstruction(new AssignmentInstruction(
+			TipusSubjacentBasic::POINTER,
+			totalBytes,
+			std::make_shared<ValueContainer>((const char *) &valor, sizeof(long))
+		));		
+
+		for(int i = 0; i < dimensions.size(); i++){
+			SimbolExpressio aux = dimensions[i];
+			Variable *tmp = aux.dereference(driver, aux.getTSB());
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::MULTIPLICATION,
+				totalBytes,
+				totalBytes,
+				tmp
+			));
+		}
+
+		driver->code.addInstruction(new MemoryInstruction(false, totalBytes, CodeGeneration::Register::A));
+		driver->code.addInstruction(new AssemblyInstruction("push\t%rax"));
+		driver->code.addInstruction(new AssemblyInstruction("push\t%rax"));
+		driver->code.addInstruction(new AssemblyInstruction("call\tjada_malloc"));
+		driver->code.addInstruction(new AssemblyInstruction("pop\t%rax"));
+		driver->code.addInstruction(new MemoryInstruction(true, this->r, CodeGeneration::Register::A));
+		driver->code.addInstruction(new AssemblyInstruction("pop\t%rax"));
+
+		// inicialitzar el bloc de dades
+		for(int i = 0; i < dimensions.size(); i++){
+			int constantOffset = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
+			Variable *tmp = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				tmp,
+				std::make_shared<ValueContainer>((const char *) &constantOffset, sizeof(int))
+			));
+
+			SimbolExpressio aux = dimensions[i];
+			Variable *dim = aux.dereference(driver, aux.getTSB());
+			driver->code.addInstruction(new AssignmentInstruction(
+				AssignmentInstruction::Type::TARGET_OFF,
+				this->r,
+				dim,
+				tmp
+			));
+		}
+
+		return;	
+	}
+
 
     this->tsb = ref.getTSB();
     this->tipus = ref.getTipus();

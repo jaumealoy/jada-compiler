@@ -1,9 +1,10 @@
 #include "SimbolReferencia.h"
 #include "SimbolTipusArray.h"
 #include "SimbolSubProgramCall.h"
+#include "SimbolExpressio.h"
 #include "../Driver.h"
 
-SimbolReferencia::SimbolReferencia() : Simbol("Referencia"){}
+SimbolReferencia::SimbolReferencia() : Simbol("Referencia"), creacioArray(false) {}
 SimbolReferencia::~SimbolReferencia(){}
 
 /**
@@ -67,29 +68,46 @@ void SimbolReferencia::make(Driver *driver, std::string nom){
  * referencia -> array
  */
 void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
-    if(!array.isReferencia() || array.isNull()){
+    if((!array.isReferencia() && !array.isArrayCreation()) || array.isNull()){
         this->makeNull();
         driver->error("No referència", true);
         return;
     }
 
     // és una refereǹcia a un array vàlida
-    this->tsb = array.getTSB();
-    this->tipus = array.getTipus();
-    this->id = array.getId();
-    this->mode = array.getMode();
+	// o bé és una estructura vàlida per assignar memòria dinàmica
+	// necessàriament serà una cosa o una altra, mai les dues
+	if(array.isReferencia()){
+		this->tsb = array.getTSB();
+		this->tipus = array.getTipus();
+		this->id = array.getId();
+		this->mode = array.getMode();
 
-    // i pintar a l'arbre
-    this->fills.push_back( std::to_string(array.getNodeId()) );
-    Simbol::toDotFile(driver);
+		// i pintar a l'arbre
+		this->fills.push_back( std::to_string(array.getNodeId()) );
+		Simbol::toDotFile(driver);
 
-	// TODO: el desplaçament representa el número d'element que es vol consultar
-	if(array.isAccessConstant()){
-		this->dconst = array.dconst;
+		// TODO: el desplaçament representa el número d'element que es vol consultar
+		if(array.isAccessConstant()){
+			this->dconst = array.dconst;
+		}
+
+		this->r = array.getBase();
+		this->d = array.getOffset();
+	}else{
+		this->tsb = TipusSubjacentBasic::POINTER;
+		this->tipus = array.toString(true);
+		this->creacioArray = true;
+		this->tipusBasic = array.getTipusUnitari();
+
+		// guardar les dimensions per reservar la memòria quan 
+		// es passi a una expressió
+		std::vector<struct SimbolTipusArray::ArrayIndex> indexos = array.getArrayIndex();
+		for(int i = 0; i < indexos.size(); i++){
+			std::cout << "Afegint dimensions a referència" << std::endl;
+			this->dimensions.push_back(indexos[i].index);
+		}
 	}
-
-	this->r = array.getBase();
-	this->d = array.getOffset();
 }
 
 
@@ -141,4 +159,16 @@ std::string SimbolReferencia::getTipus(){
 
 int SimbolReferencia::getConstOffset(){
 	return this->dconst;
+}
+
+bool SimbolReferencia::isArrayCreation(){
+	return this->creacioArray;
+}
+
+std::vector<SimbolExpressio> SimbolReferencia::getArrayDimensions(){
+	return this->dimensions;
+}
+
+std::string SimbolReferencia::getTipusBasic(){
+	return this->tipusBasic;
 }

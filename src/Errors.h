@@ -58,4 +58,7 @@ std::string error_default_definit();
 std::string error_default_darrer();
 std::string error_case_definit(std::string a);
 
+std::string error_creacio_punter(TipusSubjacentBasic);
+std::string error_tipus_punter();
+
 #endif

@@ -47,11 +47,12 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
         // es vol definir un array
         this->esReferencia = false;
         this->tipusBasic = id;
+		this->esCreacio = true;
 
         DescripcioTipus *dt = (DescripcioTipus *) d;
-        if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
+        if(dt->getTSB() == TipusSubjacentBasic::ARRAY || dt->getTSB() == TipusSubjacentBasic::POINTER){
             this->makeNull();
-            driver->error(error_creacio_array(TipusSubjacentBasic::ARRAY), true);
+            driver->error(error_creacio_array(dt->getTSB()), true);
             return;
         }
 
@@ -70,11 +71,30 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
                 // és un valor vàlid, es pot afegir aquesta dimensió a la llista de 
                 // dimensions
                 this->dimensions.push_back(dimensio);
+
+				struct SimbolTipusArray::ArrayIndex tmp;
+				tmp.dimensio = nullptr;
+				tmp.index = exp;
+				this->refIndex.push_back(tmp);
             }
         }else{
-            driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
-            this->makeNull();
-            return;
+			if(!exp.isNull() && exp.getTSB() == TipusSubjacentBasic::INT){
+				// és potencialment la creació d'un array dinàmic
+				// perquè l'expressió no és constant
+				struct SimbolTipusArray::ArrayIndex tmp;
+				tmp.dimensio = nullptr;
+				tmp.index = exp;
+				this->refIndex.push_back(tmp);
+				this->esReferencia = false;
+
+				std::cout << "És array dinàmic" << std::endl;
+				this->dimensions.push_back(-1);
+			}else{
+				driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
+				this->makeNull();
+				return;
+			}
+            
         }
     }else if(d->getTipus() == Descripcio::Tipus::VARIABLE || d->getTipus() == Descripcio::Tipus::CONSTANT){
         if(exp.isNull()){
@@ -85,6 +105,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         // és una referència
         this->esReferencia = true;
+		this->esCreacio = false;
 
         // comprovar que efectivament id és una constant / variable d'un tipus array
         DescripcioTipus *dt = nullptr;
@@ -110,6 +131,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 			// és un punter, també un tipus elemental
 			this->esPunter = true;
 			this->tipusBasic = ((DescripcioTipusPunter *) dt)->getTipusElement();
+			std::cout << "Accés a punter: referència a punter" << std::endl;
 		}else if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
 			this->esPunter = false;
         	this->tipusBasic = ((DescripcioTipusArray *) dt)->getTipusElement();
@@ -240,10 +262,21 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
 		this->r = contArray.r;
 		this->d = contArray.d;
     }else{
+		// és possible que s'intenti definir un tipus punter mesclat amb dimensions
+		// estàtiques, però no està permès
+		if(contArray.esPunter){
+			this->makeNull();
+			driver->error(error_tipus_punter(), true);
+			return;
+		}
+
+		// contArray representa la definició d'un tipus array constant
+
         // s'està definint un array, el vector dimensions conté la llista de dimensions
         // trobades fins a aquest instant
         this->dimensions = contArray.dimensions;
         this->esReferencia = false;
+		this->esPunter = contArray.esPunter;
         this->tipusBasic = contArray.tipusBasic;
 
         // comprovar que l'expressió és una constant entera positiva
@@ -324,6 +357,9 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		int numElement = 0;
 		this->refIndex = array.refIndex;
 
+		// indicar la base de la variable
+		this->r = array.r;
+
 		// calcular el desplaçament en temps d'execució
 		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
 		int intValue = 0;
@@ -363,11 +399,12 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 
 				productori *= this->refIndex[i].dimensio->getDimensio();
 			}
-		}
-
-		this->r = array.r;
-
-		if(this->esPunter){
+		}else if(this->esPunter){
+			// els punters no són més que una sèrie d'elements contingus
+			// però és possible accedir-hi fent ús de múltiples dimensions
+			// un tipus punter no guarda les dimensions d'aquestes dimensions
+			// però el bloc de memòria conté un valor per cada dimensió
+			
 			intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;
 			driver->code.addInstruction(new AssignmentInstruction(
 				TipusSubjacentBasic::INT,
@@ -447,14 +484,16 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		}*/
 
 		std::cout << "Es vol accedir a l'element " << numElement << std::endl;
-    }else{
+    }else if(!this->esReferencia && !this->esCreacio){
         if(array.isNull()){
             this->makeNull();
             return;
         }
 
         // afegir aquest tipus array a la taula de símbols si no existeix
+		std::cout << "Creació de tipus array o punter acabada" << std::endl;
         std::string nomTipus = array.toString();
+		std::cout << "Creació de tipus array o punter acabada amb tipus " << nomTipus << std::endl;
         this->esReferencia = false;
 
         // és possible que aquest array ja estigui definit
@@ -465,30 +504,51 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
             // el nomTipus comença amb un caràcter especial, per tant,
             // si existeix, segur que serà una descripció de tipus
         } catch(TaulaSimbols::NomNoExistent ex) {
-            // el nom no existeix, s'ha d'inserir el tipus
-            DescripcioTipusArray *dt = new DescripcioTipusArray(array.tipusBasic);
-            driver->ts.posar(nomTipus, dt);
+			if(array.esPunter){
+				// és la definició d'un punter o un array amb almenys una dimensió 
+				// que no és una constant
+				DescripcioTipusPunter *dt = new DescripcioTipusPunter(array.tipusBasic, array.pointerCount);
+				driver->ts.posar(nomTipus, dt);
 
-            // obtenir la mida del tipus unitari
-            // sabem que existeix perquè si no ja no s'hauria arribat fins aquest punt
-            DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(array.tipusBasic);
+				this->pointerCount = array.pointerCount;
+			}else{
+				// és la definició d'un array amb totes les dimensions conegudes en temps
+				// de compilació
+				// el nom no existeix, s'ha d'inserir el tipus
+				DescripcioTipusArray *dt = new DescripcioTipusArray(array.tipusBasic);
+				driver->ts.posar(nomTipus, dt);
 
-            int ocupacio = TSB::sizeOf(dte->getTSB());
+				// obtenir la mida del tipus unitari
+				// sabem que existeix perquè si no ja no s'hauria arribat fins aquest punt
+				DescripcioTipus *dte = (DescripcioTipus *) driver->ts.consulta(array.tipusBasic);
 
-            // i crear les dimensions, inserint-les en ordre invers
-            for(int i = array.dimensions.size() - 1; i >= 0; i--){
-                ocupacio *= array.dimensions[i];
-                driver->ts.posarDimensio(nomTipus, new DescripcioDimensio(array.dimensions[i]));
-            }
+				int ocupacio = TSB::sizeOf(dte->getTSB());
 
-            // actualitzar l'entrada de la taula de símbols
-            dt->setOcupacio(ocupacio);
+				// i crear les dimensions, inserint-les en ordre invers
+				for(int i = array.dimensions.size() - 1; i >= 0; i--){
+					ocupacio *= array.dimensions[i];
+					driver->ts.posarDimensio(nomTipus, new DescripcioDimensio(array.dimensions[i]));
+				}
+
+				// actualitzar l'entrada de la taula de símbols
+				dt->setOcupacio(ocupacio);
+
+		        this->dimensions = array.dimensions;
+			}
         }
 
         this->tipusBasic = array.tipusBasic;
-        this->dimensions = array.dimensions;
         this->tipus = nomTipus;
+		this->esPunter = array.esPunter;
     }
+	
+	if(array.esCreacio){
+		this->esCreacio = true;
+		this->refIndex = array.refIndex;
+		std::cout << "Possible creació d'array dinàmic" << std::endl;
+	}
+
+	std::cout << "Acabat inserció tipus o referència" << std::endl;
 
     // pintar a l'arbre
     this->nomNode = "Array";
@@ -500,7 +560,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
  * Obté el nom que representa un array.
  * Per exemple, int[50][75] és _int_50_75
  **/
-std::string SimbolTipusArray::toString(){
+std::string SimbolTipusArray::toString(bool punter){
     if(this->esReferencia || this->isNull()){
         // no es pot utilitzar quan s'utilitza com a 
         // definició de tipus
@@ -509,14 +569,30 @@ std::string SimbolTipusArray::toString(){
 
     std::string tmp = "_" + this->tipusBasic + "_";
 
-    int mida = (int) dimensions.size();
-    for(int i = 0; i < mida - 1; i++){
-        tmp += std::to_string(dimensions[i]) + "_";
-    }
+	std::cout << "esPunter=" << this->esPunter << " creacio=" << this->esCreacio << " referencia=" << this->esReferencia<<std::endl;
 
-    tmp += std::to_string(dimensions[mida - 1]);
+	if(this->esPunter || (this->esCreacio && punter)){
+		// el tipus és de la forma _tipusBàsic_*_*..._*
+		for(int i = 0; i < this->pointerCount - 1; i++){
+			tmp += "*_";
+		}
 
+		tmp += "*";
+	}else if(!this->esReferencia){
+		// el tipus és de la forma _tipusBàsic_dim1_dim2..._dimN
+		int mida = (int) dimensions.size();
+		for(int i = 0; i < mida - 1; i++){
+			tmp += std::to_string(dimensions[i]) + "_";
+		}
+
+		tmp += std::to_string(dimensions[mida - 1]);
+	}
+    
     return tmp;
+}
+
+std::string SimbolTipusArray::toString(){
+	return this->toString(false);
 }
 
 bool SimbolTipusArray::isReferencia(){
@@ -525,4 +601,82 @@ bool SimbolTipusArray::isReferencia(){
 
 bool SimbolTipusArray::isAccessConstant(){
 	return this->accessConstant;
+}
+
+/**
+ * És la producció que defineix l'inici d'un tipus punter
+ * contArray -> id []
+ */
+void SimbolTipusArray::make(Driver *driver, std::string id){
+	// comprovar que id correspon amb un tipus bàsic
+	Descripcio *d = nullptr;
+	try {
+		d = driver->ts.consulta(id);
+	} catch (TaulaSimbols::NomNoExistent ex) {
+		driver->error(error_no_tipus(id), true);
+		return;
+	}
+	
+	// existeix una entrada amb aquest nom, és necessari
+	// comprovar que correspon a una descripció de tipus
+	if(d->getTipus() != Descripcio::Tipus::TIPUS){
+		// no és un tipus
+		driver->error(error_no_tipus(id), true);
+		return;
+	}
+
+	// no es poden crear punters de punters ni d'arrays estàtics
+	DescripcioTipus *dt = (DescripcioTipus *) d;
+	if(dt->getTSB() == TipusSubjacentBasic::ARRAY || dt->getTSB() == TipusSubjacentBasic::POINTER){
+		driver->error(error_creacio_punter(dt->getTSB()), true);
+		return;
+	}
+
+	// és la definició d'un tipus punter
+	this->esPunter = true;
+	this->esReferencia = false;
+	this->tipusBasic = id;
+	this->pointerCount = 1; // quantes dimensions té el punter
+
+	std::cout << "Iniciant creació Tipus Punter" << std::endl;
+}
+
+
+/**
+ * contArray -> contArray [] (tipus 0)
+ */
+void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array, int tipus){
+	if(tipus == 0){
+		if(this->esReferencia){
+			// és una referència invàlida
+			this->makeNull();
+			return;
+		}
+
+		// és la continuació de la creació d'un tipus punter
+		// no es poden mesclar dimensions, o bé és tot conegut o bé no es coneix res
+		if(!array.esPunter){
+			// s'estan mesclant dimensions
+			driver->error(error_tipus_punter(), true);
+			this->makeNull();
+			return;
+		}
+
+		this->tipusBasic = array.tipusBasic;
+		this->esReferencia = array.esReferencia;
+		this->esPunter = array.esPunter;
+		this->pointerCount = array.pointerCount + 1; // s'ha afegit una dimensió més
+	}
+}
+
+bool SimbolTipusArray::isArrayCreation(){
+	return this->esCreacio;
+}
+
+std::vector<struct SimbolTipusArray::ArrayIndex> SimbolTipusArray::getArrayIndex(){
+	return this->refIndex;
+}
+
+std::string SimbolTipusArray::getTipusUnitari(){
+	return this->tipusBasic;
 }

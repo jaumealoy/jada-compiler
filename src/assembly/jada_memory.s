@@ -12,8 +12,13 @@
  * - https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
  */
 
+.global jada_init
+.global jada_free
+.global jada_malloc
+
 .equ BLOCK_HEADER, 29
 .equ BLOCK_STATE_OFFSET, 0
+.equ BLOCK_COUNTER_OFFSET, BLOCK_STATE_OFFSET + 1
 .equ BLOCK_PREV_OFFSET, 5
 .equ BLOCK_NEXT_OFFSET, BLOCK_PREV_OFFSET + 8
 .equ BLOCK_SIZE_OFFSET, 21
@@ -29,7 +34,7 @@ jada_memory_free:	.quad	0		/* indica quin és el primer bloc lliure */
 
 .text
 
-call	jada_init
+/*call	jada_init
 
 push	$8
 push	$0
@@ -60,7 +65,7 @@ addq	$8, %rsp
 
 movq $1, %rax
 movq $0, %rbx
-int	$0x80
+int	$0x80*/
 
 
 jada_init:
@@ -198,6 +203,11 @@ jada_free:
 	movq	8+free_local(%rsp), %rbp
 	subq	$BLOCK_HEADER, %rbp
 
+	/* només es pot alliberar el bloc si el seu comptador és 0 */
+	cmpw	$0, BLOCK_COUNTER_OFFSET(%rbp)
+	je		1f		/* el bloc està referenciat per algú */
+
+.free_block:
 	/* marcar el bloc com a lliure */
 	movb	$0, BLOCK_STATE_OFFSET(%rbp)
 	
@@ -207,6 +217,44 @@ jada_free:
 	movq	%r8, BLOCK_NEXT_OFFSET(%rbp)
 	movq	%rbp, jada_memory_free
 
+1:
 	pop		%r8
+	pop		%rbp
+	ret
+
+/**
+ * Incrementa el valor del comptador
+ * Paràmetres:
+ * 1) Adreça del bloc, retornada pel jada_malloc
+ */
+jada_reference_add:
+.equ reference_add_local, 8
+	push	%rbp
+
+	/* recuperar l'adreça passada per paràmetre */
+	movq	8+reference_add_local(%rsp), %rbp
+	subq	$BLOCK_HEADER, %rbp		/* inici del bloc de memòria */
+
+	incw	BLOCK_COUNTER_OFFSET(%rbp)
+
+	pop		%rbp
+	ret
+
+
+/**
+ * Decrementa el valor del comptador
+ * Paràmetres:
+ * 1) Adreça del bloc, retornada pel jada_malloc
+ */
+jada_reference_decrement:
+.equ reference_decrement_local, 8
+	push	%rbp
+
+	/* recuperar l'adreça passada per paràmetre */
+	movq	8+reference_add_local(%rsp), %rbp
+	subq	$BLOCK_HEADER, %rbp		/* inici del bloc de memòria */
+
+	decw	BLOCK_COUNTER_OFFSET(%rbp)
+
 	pop		%rbp
 	ret

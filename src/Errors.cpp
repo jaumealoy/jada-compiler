@@ -17,6 +17,10 @@ std::string getNomTSB(TipusSubjacentBasic a){
         case ARRAY:
             return "array";
             break;
+
+		case POINTER:
+            return "punter";
+            break;
     }
     return "";
 }
@@ -246,4 +250,12 @@ std::string error_noms_cap(std::string real, std::string esperat){
 
 std::string error_nom_parametre_nom_funcio(){
     return "no pots declarar una variable com el nom d'una funció";
+}
+
+std::string error_creacio_punter(TipusSubjacentBasic tsb){
+	return "no es poden declarar punters de " + getNomTSB(tsb);
+}
+
+std::string error_tipus_punter(){
+	return "no descriu un tipus punter vàlid";
 }

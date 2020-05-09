@@ -1,0 +1,40 @@
+func sumatori(int[] vector, int n) : int begin
+	int s = 0;
+
+	for(int i = 0; i < n; i++) do
+		s = s + vector[i];
+	end;
+
+	return s;
+end sumatori;
+
+proc main() begin
+	print("Introdueix (a / b): ");
+	char c = readChar();
+	printChar('\n');
+
+	int[] vDinamic;
+	int j;
+	if c == 'a' do
+		j = 3;
+		vDinamic = int[j];
+		for (int i = 0; i < j; i++) do
+			vDinamic[i] = i;
+		end;
+
+		// resultat esperat sumatori = 3
+	else if c == 'b' do
+		j = 5;
+		vDinamic = int[j];
+		for (int i = 0; i < j; i++) do
+			vDinamic[i] = i;
+		end;
+
+		// resultat esperat sumatori = 10
+	end;
+	
+	int s = sumatori(vDinamic, j);
+	print("Sumatori de vector: ");
+	printInt(s);
+	printChar('\n');
+end main;

@@ -17,6 +17,7 @@ SimbolAssignacio::~SimbolAssignacio(){}
  * expression -> referencia *= exprSimple (tipus = 3)
  * expression -> referencia -= exprSimple (tipus = 4)
  */
+#include <cassert>
 void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressio exp, int tipus){
     if(ref.isNull() || exp.isNull()){
         return;
@@ -50,7 +51,9 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 	switch(tipus){
 		case 0: // ref = exprSimple
 		{
+			std::cout << "desreferenciant variable" << std::endl;
 			Variable *tmp = exp.dereference(driver, exp.getTSB());
+			std::cout << "desreferenciat variable" << std::endl;
 
 			if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 				// és un boolean, s'haurà fet qualque salt condicional
@@ -90,6 +93,8 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 				if(ref.getOffset() == nullptr){
 					// no existeix desplaçament en temps de compilació
 					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
+					assert(tmp != nullptr && ref.getBase() != nullptr);
+					std::cout << "Assignació a referència vàlida" << std::endl;
 				}else{
 					// és una assignació de l'estil a[c] = b
 					driver->code.addInstruction(new AssignmentInstruction(

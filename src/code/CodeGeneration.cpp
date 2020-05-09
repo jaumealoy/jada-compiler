@@ -204,6 +204,9 @@ void CodeGeneration::generateAssembly() {
 	this->output << ".text" << std::endl;
 	this->output << "_start:" << std::endl;
 
+	// inicialització de la memòria dinàmica
+	this->output << "call\tjada_init" << std::endl;
+
 	// ara es pot representar cada instrucció
 	Instruction *act = this->first;
 	while(act != nullptr){
