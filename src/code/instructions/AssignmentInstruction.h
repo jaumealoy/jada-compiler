@@ -50,6 +50,10 @@ public:
 
 	// actualitza la informació sobre valors constants
 	void updateConstants();
+
+	// informació sobre la pròpia instrucció
+	AssignmentInstruction::Type getType();
+	Variable *getDesti();
 };
 
 #endif

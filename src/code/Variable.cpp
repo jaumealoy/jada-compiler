@@ -164,3 +164,26 @@ void Variable::lockConstant(){
 
 	this->locked = true;
 }
+
+int Variable::getId(){
+	return this->id;
+}
+
+std::list<std::string>& Variable::getExpressionList(){
+	return this->expressionList;	
+}
+
+/**
+ * Reinicia la llista d'expressions que fan ús d'aquesta variable
+ */
+void Variable::resetExpressionList(){
+	this->expressionList.clear();
+}
+
+/**
+ * Indica que l'expressió identificada per exp inclou aquesta variable
+ */
+void Variable::addExpression(std::string exp){
+	// TODO: comprovar que no hi és
+	this->expressionList.push_back(exp);
+}

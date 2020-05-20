@@ -21,7 +21,7 @@ CodeGeneration::CodeGeneration() : output("codi.asm") {
 	// es crearà un subprograma que representa tot el subprograma
 	this->nivellProfunditat = 0;
 	Label *mStart = this->addLabel();
-	SubProgram *global = new SubProgram(this->nivellProfunditat, mStart, "_start");
+	SubProgram *global = new SubProgram(this->nivellProfunditat, mStart, "_start", true);
 	this->subprogrames.push(global);
 }
 
@@ -127,11 +127,15 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name,
 /**
  * Crea un subprograma a la generació de codi
  */
-SubProgram *CodeGeneration::addSubProgram(std::string id, Label *label) {
+SubProgram *CodeGeneration::addSubProgram(std::string id, Label *label, bool esExtern) {
 	// el nivell d'aquest subprograma és l'actual
-	SubProgram *programa = new SubProgram(this->nivellProfunditat + 1, label, id);
+	SubProgram *programa = new SubProgram(this->nivellProfunditat + 1, label, id, esExtern);
 	this->programs.add(programa);
 	return programa;
+}
+
+SubProgram *CodeGeneration::addSubProgram(std::string id, Label *label) {
+	return this->addSubProgram(id, label, false);
 }
 
 /**
@@ -407,6 +411,9 @@ void CodeGeneration::updateVariableTable() {
 			// els valors constants no tenen memòria reservada
 			continue;
 		}
+
+		// reiniciar la llista d'expressions
+		actual->resetExpressionList();
 
 		// els paràmetres ja tenen els offsets calculats quan es defineix el subprograma
 		if(!actual->isParameter()){
@@ -752,8 +759,6 @@ Label *CodeGeneration::getTargetLabel(Label *label){
  * per tant, només s'han de mirar les instruccions dels procediments
  */
 void CodeGeneration::updateBasicBlocks(){
-	this->basicBlocks.clear();
-
 	// per cada un dels procediments calcular els seus blocs bàsics
 	for(int i = 0; i < this->programs.size(); i++){
 		if(this->programs[i]->getNivellProfunditat() == 0){
@@ -764,6 +769,4 @@ void CodeGeneration::updateBasicBlocks(){
 		std::cout << "Analitzant " << this->programs[i]->getNom() << std::endl;
 		this->programs[i]->updateBasicBlocks();
 	}
-
-	std::cout << "S'han detectat " << this->basicBlocks.size() << " blocs bàsics" << std::endl;
 }

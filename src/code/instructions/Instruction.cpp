@@ -17,12 +17,14 @@
 Instruction::Instruction(){
 	this->next = nullptr;
 	this->prev = nullptr;
+	this->addedOptimization = false;
 }
 
 Instruction::Instruction(Instruction::Type opcode){
 	this->opcode = opcode;
 	this->next = nullptr;
 	this->prev = nullptr;
+	this->addedOptimization = false;
 }
 
 Instruction::~Instruction(){}
@@ -185,4 +187,12 @@ std::string Instruction::getAssemblyVariable(Variable *var){
 
 Instruction::Type Instruction::getType(){
 	return this->opcode;
+}
+
+bool Instruction::isAddedAtOptimization(){
+	return this->addedOptimization;
+}
+
+void Instruction::markAtOptimization(){
+	this->addedOptimization = true;
 }

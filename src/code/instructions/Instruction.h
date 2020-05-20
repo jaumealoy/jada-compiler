@@ -30,6 +30,10 @@ private:
 	Instruction *next;
 	Instruction *prev;
 
+	// indica si aquesta instrucció s'ha afegit durant
+	// l'optimització
+	bool addedOptimization;
+
 protected:
 	// Tota instrucció està dins un determinat subprograma,
 	// per controlar els accessos a variables
@@ -57,6 +61,9 @@ public:
 	std::string toString();
 	std::string getAssemblyVariable(Variable *var);
 	void generateAssembly(CodeGeneration *code);
+
+	bool isAddedAtOptimization();
+	void markAtOptimization();
 };
 
 #endif

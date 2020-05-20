@@ -238,3 +238,12 @@ bool AssignmentInstruction::optimize(CodeGeneration *code){
 
 	return canvis;
 }
+
+
+AssignmentInstruction::Type AssignmentInstruction::getType(){
+	return this->type;
+}
+
+Variable * AssignmentInstruction::getDesti(){
+	return this->desti;
+}

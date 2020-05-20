@@ -35,13 +35,16 @@ private:
 
 	// blocs bàsics d'entrada i sortida
 	BasicBlock *basicBlocks;
+	BasicBlock *exitBlock;
 
 	void updateDominadors();
-
 	void deleteBasicBlock(BasicBlock *block);
 
+	// indica si es tracta d'un subprograma del llenguatge
+	bool codiExtern;
+
 public:
-    SubProgram(int np, Label *start, std::string id);
+    SubProgram(int np, Label *start, std::string id, bool esExtern);
     ~SubProgram();
 
 	int getNivellProfunditat();
@@ -68,6 +71,7 @@ public:
 	void setLastInstruction(Instruction *instruction);
 
 	void markUsage();
+	bool isExtern();
 
 	// gestió dels blocs bàsics
 	void updateBasicBlocks();
@@ -79,6 +83,7 @@ public:
 
 	void setExitBlock(BasicBlock *block);
 	BasicBlock *getExitBlock();
+
 };
 
 #endif

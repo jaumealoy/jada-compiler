@@ -8,10 +8,11 @@
 #include "CodeGeneration.h"
 #include "../utils/Domain.hpp"
 #include "../utils/Set.hpp"
+#include "optimizations/AvailableExpressions.h"
 #include <iostream>
 
-SubProgram::SubProgram(int np, Label *start, std::string id) 
-	: basicBlocks(nullptr)
+SubProgram::SubProgram(int np, Label *start, std::string id, bool esExtern) 
+	: basicBlocks(nullptr), codiExtern(esExtern)
 {
     this->nivellProfunditat = np;
     this->nom = id;
@@ -186,8 +187,9 @@ void SubProgram::setLastInstruction(Instruction *instruction){
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
 void SubProgram::updateBasicBlocks(){
-	if(!this->start->isUsed()){
+	if(!this->start->isUsed() || this->codiExtern){
 		// el subprograma no s'utilitza!
+		// o no s'ha creat mitjançat generació de codi
 		return;
 	}
 
@@ -299,6 +301,7 @@ void SubProgram::updateBasicBlocks(){
 
 	// indicar els blocs al subprograma
 	this->basicBlocks = entry;
+	this->exitBlock = exit;
 
 	// eliminar aquells blocs que no tenguin predecessors
 	BasicBlock *aux = entry->getNext();
@@ -429,36 +432,20 @@ void SubProgram::updateDominadors(){
  * Aplica els mètodes d'optimització locals al subprograma
  */
 bool SubProgram::optimize(CodeGeneration *code){
+	std::cout << "Optimització local de " << this->nom << std::endl;
+
 	if(this->basicBlocks == nullptr){
 		return false;
 	}
 
+	std::cout << "Optimització local de " << this->nom << " comença" << std::endl;
+
+
 	bool canvis = false;
 
-	// analitzar si els blocs bàsics es poden eliminar
-	/*BasicBlock *actual = this->basicBlocks->getNext();
-	while(actual != nullptr && actual->getNext() != nullptr){
-		bool eliminat = actual->optimize(code);
-		canvis = canvis || eliminat;
 
-		if(eliminat){
-			std::cout << "Eliminat bloc bàsic" << std::endl;
-
-			if(actual == this->basicBlocks){
-				this->basicBlocks = actual->getNext();
-			}
-
-			if(actual->getPrevious() != nullptr){
-				actual->getPrevious()->setNext(actual->getNext());
-			}
-
-			if(actual->getNext() != nullptr){
-				actual->getNext()->setPrevious(actual->getPrevious());
-			}
-		}
-
-		actual = actual->getNext();
-	}*/
+	AvailableExpressions availableExpressions = AvailableExpressions(this);
+	availableExpressions.optimize(code);
 
 	return canvis;
 }
@@ -535,7 +522,13 @@ void SubProgram::setEntryBlock(BasicBlock *block){
 }
 
 BasicBlock *SubProgram::getEntryBlock(){ return this->basicBlocks; }
+BasicBlock *SubProgram::getExitBlock(){ return this->exitBlock; }
 
 void SubProgram::markUsage(){
 	this->start->markUsage();
 }
+
+bool SubProgram::isExtern(){
+	return this->codiExtern;
+}
+

@@ -39,9 +39,15 @@ public:
 
 	// optimització
 	bool optimize(CodeGeneration * code);
+	std::string getExpressionId();
 
 	// actualitza la informació sobre valors constants
 	void updateConstants();
+
+	Variable *getDesti();
+	Variable *getFirstOperand();
+	Variable *getSecondOperand();
+	ArithmeticInstruction::Type getOperator();
 };
 
 #endif

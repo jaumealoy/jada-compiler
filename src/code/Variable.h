@@ -35,14 +35,16 @@ private:
 	bool firstTime;
 	std::shared_ptr<ValueContainer> valor;
 
+	// identificadors d'expressions on apareix aquesta variable
+	std::list<std::string> expressionList;
+
 public:
 	Variable();
 	Variable(SubProgram *, int id, bool);
 	Variable(SubProgram *, int id, std::string name, bool parameter);
 	~Variable();
 
-	//bool isNull();
-	//void makeNull();
+	int getId();
 
 	std::string getNom();
 	std::string getAssemblyTag();
@@ -71,6 +73,11 @@ public:
 	void setConstant(bool constant);
 	void lockConstant();
 	std::shared_ptr<ValueContainer> getValor();
+
+	// gestió de les expressions
+	std::list<std::string> &getExpressionList();
+	void resetExpressionList();
+	void addExpression(std::string exp);
 };
 
 #endif

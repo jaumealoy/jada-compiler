@@ -67,6 +67,7 @@ public:
 	
 	// gestió dels subprogrames
 	SubProgram *addSubProgram(std::string id, Label *label);
+	SubProgram *addSubProgram(std::string id, Label *label, bool esExtern);
 	void enterSubProgram(SubProgram *subprogram);
 	void leaveSubProgram();
 

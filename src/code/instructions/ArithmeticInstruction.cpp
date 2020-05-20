@@ -238,3 +238,30 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 
 	return canvis;
 }
+
+/**
+ * Retorna l'identificador de l'expressió
+ */
+std::string ArithmeticInstruction::getExpressionId(){
+	// totes les expressions són de la forma
+	// v1 op v2
+	return "v" + std::to_string(this->v1->getId()) + "_" + this->v1->getNom() 
+			+ "op" + std::to_string(this->type)
+			+ "v" + std::to_string(this->v2->getId()) + "_" + this->v2->getNom();
+}
+
+Variable * ArithmeticInstruction::getDesti(){
+	return this->desti;
+}
+
+Variable *ArithmeticInstruction::getFirstOperand(){
+	return this->v1;
+}
+
+Variable *ArithmeticInstruction::getSecondOperand(){
+	return this->v2;
+}
+
+ArithmeticInstruction::Type ArithmeticInstruction::getOperator(){
+	return this->type;
+}
