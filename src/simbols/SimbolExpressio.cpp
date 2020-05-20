@@ -494,35 +494,51 @@ void SimbolExpressio::make(Driver *driver, SimbolExpressio a, SimbolMarcador m0,
     this->fills.push_back( std::to_string(c.getNodeId()) );
     Simbol::toDotFile(driver);
 
-    //generació de codi intermedi
-
-    if(a.getTSB() == TipusSubjacentBasic::BOOLEAN) {
-
-    } else {
-        Label* casFalse = driver->code.addLabel();
-        Label* casTrue = driver->code.addLabel();
-        Label* fi = driver->code.addLabel();
-        driver->code.backpatch(m0.getLabel(), a.ecert);
-        driver->code.backpatch(m3.getLabel(), a.efals);
-        this->r = driver->code.addVariable(this->tsb);
-        this->d = nullptr;
-        ((GoToInstruction *) m3.getInstruction())->setLabel(casTrue);
-
-        driver->code.addInstruction(new GoToInstruction(casFalse));
-
-        driver->code.addInstruction(new SkipInstruction(casTrue));
-        Variable *vb = b.dereference(driver, this->tsb);
-        driver->code.addInstruction(new AssignmentInstruction(this->r, vb));
-        driver->code.addInstruction(new GoToInstruction(fi));
-
-        driver->code.addInstruction(new SkipInstruction(casFalse));
-        Variable *vc = c.dereference(driver, this->tsb);
-        driver->code.addInstruction(new AssignmentInstruction(this->r, vc));
-
-        driver->code.addInstruction(new SkipInstruction(fi));
-    }
-
+    // generació de codi intermedi
+	// en qualsevol cas s'ha d'executar el codi de cada una de les instruccions
+	// l'expressió A sempre és un boolean perquè és una condició
+	driver->code.backpatch(m0.getLabel(), a.ecert);
+	driver->code.backpatch(m3.getLabel(), a.efals);
     
+	if(this->tsb == TipusSubjacentBasic::BOOLEAN){
+		// l'expressió final és un boolean i per tant no té una variable
+		// associada: s'han de gestionar les coes d'ecert i efals
+		this->ecert = driver->code.concat(b.ecert, c.ecert);
+		this->efals = driver->code.concat(b.efals, c.efals);
+
+		// el goto introduït pel marcador mai s'hauria d'executar
+		// es pot eliminar
+		driver->code.remove(m3.getInstruction());
+	}else{
+		// és una expressió amb una variable associada
+		this->r = driver->code.addVariable(this->tsb);
+		this->d = nullptr;
+
+		// assignar el valor de cada una de les expressions
+		// a la nova variable
+		Label *fi = driver->code.addLabel();
+
+		// aquestes instruccions han d'anar després de l'expressió B
+		// però abans de l'expressió C
+		Instruction *tmpA = driver->code.addInstruction(new AssignmentInstruction(
+			this->r,
+			b.dereference(driver, b.getTSB())
+		));
+
+		GoToInstruction *gotoFi = (GoToInstruction *) m3.getInstruction();
+		gotoFi->setLabel(fi);
+
+		// segur que abans del goto hi haurà una altra instrucció
+		driver->code.move(tmpA, tmpA, gotoFi->getPrevious());
+
+		// aquesta instrucció s'afegirà després de l'expressió C
+		driver->code.addInstruction(new AssignmentInstruction(
+			this->r,
+			c.dereference(driver, c.getTSB())
+		));
+
+		driver->code.addInstruction(new SkipInstruction(fi));
+	}    
 }
 
 /**
