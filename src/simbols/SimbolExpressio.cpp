@@ -79,26 +79,27 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 				daux
 			));
 
-			// desplaçament sobre l'string
-			Variable *offset = driver->code.addVariable(TipusSubjacentBasic::INT);
-			valor = TSB::sizeOf(TipusSubjacentBasic::INT) * ((DescripcioTipusPunter *) dt)->getDimensions();
-			driver->code.addInstruction(new AssignmentInstruction(
-				TipusSubjacentBasic::INT,
-				offset,
-				std::make_shared<ValueContainer>((const char*) &valor, sizeof(int))
-			));
-
 			// valor actual
-			Variable *valorCaracter = driver->code.addVariable(TipusSubjacentBasic::CHAR);
 			std::shared_ptr<ValueContainer> valorString = literal.getValue();
 			char *str = valorString->get();
 					
 			for(int i = 0; i < valorString->getSize(); i++){
+				Variable *valorCaracter = driver->code.addVariable(TipusSubjacentBasic::CHAR);
+
 				// guardar el caràcter actual dins valor
 				driver->code.addInstruction(new AssignmentInstruction(
 					TipusSubjacentBasic::CHAR,
 					valorCaracter,
 					std::make_shared<ValueContainer>(&str[i], sizeof(char))
+				));
+
+				// l'offset sera 4 + posició caràcter sobre l'string
+				Variable *offset = driver->code.addVariable(TipusSubjacentBasic::INT);
+				valor = TSB::sizeOf(TipusSubjacentBasic::INT) * ((DescripcioTipusPunter *) dt)->getDimensions() + i;
+					driver->code.addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					offset,
+					std::make_shared<ValueContainer>((const char*) &valor, sizeof(int))
 				));
 
 				// i guardar dins l'array (string)
@@ -107,14 +108,6 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 					this->r,
 					valorCaracter,
 					offset
-				));
-
-				// incrementar l'offset
-				driver->code.addInstruction(new ArithmeticInstruction(
-					ArithmeticInstruction::Type::ADDITION,
-					offset,
-					offset,
-					unitat
 				));
 			}
 		}else{
