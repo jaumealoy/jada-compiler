@@ -156,6 +156,7 @@ void AvailableExpressions::calculateGK(struct AvailableExpressions::GK &gk, Inst
 				auto exp = this->hashExpressions.find(*it);
 				if(exp != this->hashExpressions.end()){
 					// és una expressió que existeix en aquest domini
+					gk.gains.remove(exp->second);
 					gk.kills.put(exp->second);
 				}
 
@@ -252,7 +253,7 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 				ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
 				struct Expression *setElement = this->hashExpressions.find(aInst->getExpressionId())->second;
 
-				if(ed.gains.contains(setElement)){				
+				if(ed.gains.contains(setElement)){
 					// es pot substituir directament per la instrucció x = t
 					Instruction *initA = code->addInstruction(new AssignmentInstruction(
 						aInst->getDesti(),
@@ -263,6 +264,8 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 
 					code->move(initA, initA, aInst);
 					code->remove(aInst);
+
+					this->calculateGK(ed, initA);
 				}else{
 					// no està disponible, és la primera vegada que es troba l'expressió
 					// substituir la instrucció de
@@ -275,6 +278,8 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 						if(setElement->exp == nullptr){
 							setElement->exp = aInst->getDesti();
 						}
+
+						this->calculateGK(ed, aInst);
 					}else{
 						Variable *t = setElement->exp;
 						if(t == nullptr){
@@ -304,10 +309,11 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 
 						code->move(assignmentT, initA, aInst);
 						code->remove(aInst);
+
+						this->calculateGK(ed, assignmentT);
+						this->calculateGK(ed, initA);
 					}
 				}
-
-				this->calculateGK(ed, aux);
 			}else if(aux->getType() == Instruction::Type::ASSIGNMENT){
 				this->calculateGK(ed, aux);
 			}

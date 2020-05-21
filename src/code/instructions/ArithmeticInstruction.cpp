@@ -245,9 +245,19 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 std::string ArithmeticInstruction::getExpressionId(){
 	// totes les expressions són de la forma
 	// v1 op v2
-	return "v" + std::to_string(this->v1->getId()) + "_" + this->v1->getNom() 
-			+ "op" + std::to_string(this->type)
-			+ "v" + std::to_string(this->v2->getId()) + "_" + this->v2->getNom();
+
+	// si les variables són constants, no s'ha de retornar l'id de la variable
+	std::string var1 = this->v1->getNom();
+	if(!this->v1->isConstant()){
+		var1 += "_v" + std::to_string(this->v1->getId());
+	}
+
+	std::string var2 = this->v1->getNom();
+	if(!this->v2->isConstant()){
+		var2 += "_v" + std::to_string(this->v2->getId());
+	}
+
+	return var1 + "op" + std::to_string(this->type) + var2;
 }
 
 Variable * ArithmeticInstruction::getDesti(){
