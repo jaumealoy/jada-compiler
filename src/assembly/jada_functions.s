@@ -2,6 +2,7 @@
 .global readInt
 .global readChar
 .global print
+.global printInt
 .global printChar
 .global memcpy
 
@@ -323,3 +324,83 @@ readChar:
 	pop		%rax
 	ret
 
+/**
+ * Procediment que pinta un enter per consola
+ * 
+ * Paràmetres:
+ * 1) int number
+ */
+printInt:
+	push	%rax
+	push	%rdx	/* comptador de caràcters */
+	push	%rsi	/* punter al buffer */
+	push	%rdi
+	push	%r8		/* index del caràcter actual */
+
+	/* obtenir el número que es vol mostrar */
+	xorq	%rax, %rax
+	movl	5*8+8(%rsp), %eax
+	cdqe	/* extensió de signe a 64 bits */
+
+	/* reservar espai per un array de caràcters */
+	subq	$32, %rsp
+	movq	%rsp, %rsi
+	movq	$31, %r8
+
+	testq	%rax, %rax
+	jne		2f		/* if number > 0 goto 2f */
+
+	/* guardar un zero al vector de caràcters */
+	movb	$'0', (%rsi, %r8)
+	decq	%r8
+	jmp		1f
+
+2:	/* comprovar si és un valor negatiu */
+	movb	$0, (%rsi)
+	testq	%rax, %rax
+	jns		5f		/* if number >= 0 goto 3f */
+
+	/* guardar que es tracta d'un valor negatiu */
+	movb	$0xFF, (%rsi)
+	negq	%rax
+
+5:	movq	$10, %rdi
+	xorq	%rdx, %rdx
+3:	/* successives divisions entre 10 */
+	testq	%rax, %rax
+	je		4f
+
+	idiv	%rdi
+	addb	$'0', %dl
+	movb	%dl, (%rsi, %r8)
+	decq	%r8
+	xorq	%rdx, %rdx
+
+	jmp		3b
+
+4:	/* afegir el signe negatiu si correspon */
+	movb	(%rsi), %al
+	testb	%al, %al
+	je		1f
+
+	/* és un valor negatiu */
+	movb	$'-', (%rsi, %r8)
+	decq	%r8
+
+1:	/* fer la crida al sistema */
+	lea		1(%rsi, %r8), %rsi		/* buffer */
+	movq	$1, %rax				/* sys_write */
+	movq	$0, %rdi				/* stdout */
+	movq	$31, %rdx
+	subq	%r8, %rdx
+	syscall
+
+	/* alliberar l'espai del buffer */
+	addq	$32, %rsp
+
+	pop		%r8
+	pop		%rdi
+	pop		%rsi
+	pop		%rdx
+	pop		%rax
+	ret
