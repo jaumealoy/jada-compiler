@@ -9,6 +9,7 @@
 #include "../utils/Domain.hpp"
 #include "../utils/Set.hpp"
 #include "optimizations/AvailableExpressions.h"
+#include "optimizations/LoopOptimization.h"
 #include <iostream>
 
 SubProgram::SubProgram(int np, Label *start, std::string id, bool esExtern) 
@@ -317,25 +318,6 @@ void SubProgram::updateBasicBlocks(){
 
 	// actualitzar els dominadors
 	this->updateDominadors();
-
-	// detectar els bucles
-	bloc = this->basicBlocks;
-	while(bloc != nullptr){
-		// s'han d'analitzar les arestes x -> d tal que d dom x
-		// és a dir, d és dins el conjunt de dominadors de x
-		std::list<BasicBlock *> successors = bloc->getSuccessors();
-		std::list<BasicBlock *>::iterator it = successors.begin();
-		while(it != successors.end()){
-			if(bloc->getDominadors().contains(*it)){
-				// *it és la capçalera del bucle
-				std::cout << "Bucle entre " << (*it)->mId << " i " << bloc->mId << std::endl;
-			}
-
-			it++;
-		}
-
-		bloc = bloc->getNext();
-	}
 }
 
 /**
@@ -446,6 +428,9 @@ bool SubProgram::optimize(CodeGeneration *code){
 
 	AvailableExpressions availableExpressions = AvailableExpressions(this);
 	availableExpressions.optimize(code);
+
+	LoopOptimization loopOptimization = LoopOptimization(this);
+	loopOptimization.optimize(code);
 
 	return canvis;
 }

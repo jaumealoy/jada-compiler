@@ -172,7 +172,14 @@ void AvailableExpressions::calculateGK(struct AvailableExpressions::GK &gk, Inst
 void AvailableExpressions::calculateInOut()
 {
 	std::list<BasicBlock *> pendents;
-	pendents.push_back(this->subprograma->getEntryBlock()->getNext());
+
+	// afegir tots els successors del primer bloc
+	std::list<BasicBlock *> &successors = this->subprograma->getEntryBlock()->getSuccessors();
+	std::list<BasicBlock *>::iterator myIt = successors.begin();
+	while(myIt != successors.end()){
+		pendents.push_back(*myIt);
+		myIt++;
+	}
 
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();

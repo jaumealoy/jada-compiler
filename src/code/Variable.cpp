@@ -187,3 +187,28 @@ void Variable::addExpression(std::string exp){
 	// TODO: comprovar que no hi és
 	this->expressionList.push_back(exp);
 }
+
+std::list<Instruction *>& Variable::getUseList(){
+	return this->useList;
+}
+
+/**
+ * Indica que aquesta variable s'utilitza a la instrucció
+ */
+void Variable::addUseList(Instruction *inst){
+	bool trobat = false;
+
+	std::list<Instruction *>::iterator it = this->useList.begin();
+	while(!trobat && it != this->useList.end()){
+		it++;
+	}
+	
+	this->useList.push_back(inst);
+}
+
+/**
+ * Reinicia la llista d'úsos d'aquesta variable
+ */
+void Variable::resetUseList(){
+	this->useList.clear();
+}

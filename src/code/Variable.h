@@ -38,6 +38,9 @@ private:
 	// identificadors d'expressions on apareix aquesta variable
 	std::list<std::string> expressionList;
 
+	// llista de les instruccions que fan ús d'aquesta expressió
+	std::list<Instruction *> useList;
+
 public:
 	Variable();
 	Variable(SubProgram *, int id, bool);
@@ -78,6 +81,11 @@ public:
 	std::list<std::string> &getExpressionList();
 	void resetExpressionList();
 	void addExpression(std::string exp);
+
+	// a quines instruccions apareix aquesta variable
+	std::list<Instruction *> &getUseList();
+	void resetUseList();
+	void addUseList(Instruction *inst);
 };
 
 #endif

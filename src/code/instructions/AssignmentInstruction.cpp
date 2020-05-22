@@ -219,6 +219,7 @@ void AssignmentInstruction::updateConstants(){
 /**
  * Optimització de les instruccions d'assignació
  * - Les instruccions de l'estil variable = <constant> es poden eliminar
+ * - Assignació simple
  */
 bool AssignmentInstruction::optimize(CodeGeneration *code){
 	bool canvis = false;
@@ -236,6 +237,20 @@ bool AssignmentInstruction::optimize(CodeGeneration *code){
 		canvis = true;
 	}
 
+	// si la variable 
+	if(this->type == AssignmentInstruction::Type::SIMPLE){
+		// és de la forma a = b
+		std::list<Instruction *> &list = this->desti->getUseList();
+		Instruction *inst = list.front();
+		if(list.size() == 1 && inst->getType() == Instruction::Type::ASSIGNMENT){
+			// si l'única instrucció que utilitza la variable "a" és una altra assignació 
+			// simple c = a, es pot convertir amb c = b i elimiar a = b
+			AssignmentInstruction *aInst = (AssignmentInstruction *) inst;
+			aInst->setOrigen(this->desti);
+			return true;
+		}
+	} 
+
 	return canvis;
 }
 
@@ -246,4 +261,11 @@ AssignmentInstruction::Type AssignmentInstruction::getType(){
 
 Variable * AssignmentInstruction::getDesti(){
 	return this->desti;
+}
+
+/**
+ * Canvia l'origen d'una instrucció d'assignació
+ */
+void AssignmentInstruction::setOrigen(Variable *origen){
+	this->origen = origen;
 }
