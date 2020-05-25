@@ -38,7 +38,7 @@ private:
 	BasicBlock *exitBlock;
 
 	void updateDominadors();
-	void deleteBasicBlock(BasicBlock *block);
+	void deleteBasicBlock(CodeGeneration *code, BasicBlock *block);
 
 	// indica si es tracta d'un subprograma del llenguatge
 	bool codiExtern;
@@ -74,7 +74,7 @@ public:
 	bool isExtern();
 
 	// gestió dels blocs bàsics
-	void updateBasicBlocks();
+	void updateBasicBlocks(CodeGeneration *code);
 	bool optimize(CodeGeneration *code);
 	void draw();
 	

@@ -226,6 +226,8 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 			std::make_shared<ValueContainer>((const char *) &resultat, TSB::sizeOf(this->desti->getTSB()))
 		));
 		
+		assi->setInvokingSubProgram(this->getInvokingSubProgram());
+
 		std::cout << "generant Assigment Bàsic" << std::endl;
 
 		code->move(assi, assi, this);

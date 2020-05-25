@@ -5,6 +5,8 @@
 
 LoopOptimization::LoopOptimization(SubProgram *programa)
 {
+	this->programa = programa;
+
 	// identificar els diferents bucles
 	// això és identificar aquelles arestes x -> d tals que 
 	// d domina a x
@@ -14,7 +16,7 @@ LoopOptimization::LoopOptimization(SubProgram *programa)
 		std::list<BasicBlock *>::iterator it = successors.begin();
 		while(it != successors.end()){
 			if(block->getDominadors().contains(*it)){
-				std::cout << "Detectat bucle entre block " << block->mId << " i " << (*it)->mId << std::endl;
+				//std::cout << "Detectat bucle entre block " << block->mId << " i " << (*it)->mId << std::endl;
 			}
 			it++;
 		}
@@ -27,6 +29,19 @@ LoopOptimization::LoopOptimization(SubProgram *programa)
 	std::map<BasicBlock *, bool> visited;
 	std::vector<BasicBlock *> nodes;
 	otb(nodes, visited, this->programa->getEntryBlock());
+
+	// els bucles més interns es troben abans que els bucles més externs
+	for(int i = 0; i < nodes.size(); i++){
+		// detectar els bucles
+		std::list<BasicBlock *> &successors = nodes[i]->getSuccessors();
+		std::list<BasicBlock *>::iterator it = successors.begin();
+		while(it != successors.end()){
+			if(nodes[i]->getDominadors().contains(*it)){
+				std::cout << "Detectat bucle entre block " << nodes[i]->mId << " i " << (*it)->mId << std::endl;
+			}
+			it++;
+		}
+	}
 }
 
 LoopOptimization::~LoopOptimization()
@@ -42,11 +57,11 @@ bool LoopOptimization::optimize(CodeGeneration *code){
  * Ordenació topològica dels blocs
  * És un recorregut sobre el graf: visita successors i afegeix node actual
  */
-void LoopOptimization::otb(std::vector<BasicBlock *> nodes, std::map<BasicBlock *, bool> visitats, BasicBlock *actual)
+void LoopOptimization::otb(std::vector<BasicBlock *> &nodes, std::map<BasicBlock *, bool> &visitats, BasicBlock *actual)
 {
 	// comprovar si el node actual ja ha estat visitat
 	auto nodeActual = visitats.find(actual);
-	if(nodeActual == visitats.end()){
+	if(nodeActual != visitats.end()){
 		// ja ha estat visitat
 		return;
 	}
@@ -63,5 +78,6 @@ void LoopOptimization::otb(std::vector<BasicBlock *> nodes, std::map<BasicBlock 
 	}
 
 	// afegir a la llista visitats
+	std::cout << "OTB: visitant " << actual->mId << std::endl;
 	nodes.push_back(actual);
 }

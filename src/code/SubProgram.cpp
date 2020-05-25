@@ -160,6 +160,7 @@ int SubProgram::getOffsetRetorn(){
 void SubProgram::removeInstruction(Instruction *instruction){
 	if(instruction->getInvokingSubProgram() != this){
 		// s'intenta eliminar una instrucció que no és d'aquest subprograma
+		std::cerr << "Intentat eliminar instrucció de programa equivocat" << std::endl;
 		return;
 	}
 
@@ -187,7 +188,7 @@ void SubProgram::setLastInstruction(Instruction *instruction){
 /**
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
-void SubProgram::updateBasicBlocks(){
+void SubProgram::updateBasicBlocks(CodeGeneration *code){
 	if(!this->start->isUsed() || this->codiExtern){
 		// el subprograma no s'utilitza!
 		// o no s'ha creat mitjançat generació de codi
@@ -304,13 +305,39 @@ void SubProgram::updateBasicBlocks(){
 	this->basicBlocks = entry;
 	this->exitBlock = exit;
 
-	// eliminar aquells blocs que no tenguin predecessors
-	BasicBlock *aux = entry->getNext();
+	// eliminar aquells blocs que no són accessibles
+	std::list<BasicBlock *> pendents;
+	std::map<BasicBlock *, bool> visitats;
+	visitats.emplace(entry, true);
+	pendents.push_back(entry);
+	while(pendents.size() > 0){
+		BasicBlock *aux = pendents.front();
+		pendents.pop_front();
+
+		// afegir tots els successors no visitats
+		std::list<BasicBlock *> &successors = aux->getSuccessors();
+		std::list<BasicBlock *>::iterator it = successors.begin();
+		while(it != successors.end()){
+			auto visitat = visitats.find(*it);
+			if(visitat == visitats.end()){
+				// no s'ha visitat
+				visitats.emplace(*it, true);
+				pendents.push_back(*it);
+			}
+			it++;
+		}
+	}
+
+	// recòrrer i eliminar tots aquells blocs que no estiguin dins visitats
+	BasicBlock *aux = this->getEntryBlock();
 	while(aux != nullptr){
 		BasicBlock *next = aux->getNext();
-		
-		if(aux->getPredecessors().size() == 0){
-			this->deleteBasicBlock(aux);
+		auto visitat = visitats.find(aux);
+
+		if(visitat == visitats.end()){
+			// no s'ha visitat
+			// per tant es pot eliminar el bloc bàsic
+			this->deleteBasicBlock(code, aux);
 		}
 
 		aux = next;
@@ -331,6 +358,8 @@ void SubProgram::updateDominadors(){
 	// calcular el conjunt de dominadors de cada un dels elements
 	// crear el domini del conjunt (que són tots els blocs bàsics)
 	std::list<BasicBlock *> list;
+	list.clear();
+
 	BasicBlock *tmp = this->basicBlocks;
 	while(tmp != nullptr){
 		list.push_back(tmp);
@@ -400,6 +429,8 @@ void SubProgram::updateDominadors(){
 		}
 	}
 
+	this->draw();
+
 	// calcular el dominador immediat de cada bloc bàsic
 	BasicBlock *aux = this->basicBlocks->getNext(); // segur que hi ha l'entry
 	entry->setDominadorImmediat(entry);
@@ -438,7 +469,7 @@ bool SubProgram::optimize(CodeGeneration *code){
 /**
  * Elimina un bloc bàsics de la llista de blocs bàsics
  */
-void SubProgram::deleteBasicBlock(BasicBlock *block){
+void SubProgram::deleteBasicBlock(CodeGeneration *code, BasicBlock *block){
 	if(block == this->basicBlocks){
 		this->basicBlocks = block->getNext();
 	}
@@ -451,14 +482,20 @@ void SubProgram::deleteBasicBlock(BasicBlock *block){
 		block->getNext()->setPrevious(block->getPrevious());
 	}
 
+	if(this->exitBlock == block){
+		this->exitBlock = block->getPrevious();
+	}
+
 	// eliminar-lo de predecessor a tots els successors
-	std::list<BasicBlock *> successors = block->getSuccessors();
+	std::list<BasicBlock *> &successors = block->getSuccessors();
 	std::list<BasicBlock *>::iterator it = successors.begin();
 	while(it != successors.end()){
 		(*it)->getPredecessors().remove(block);
 		it++;
 	}
 
+	// eliminar totes les instruccions del bloc bàsic
+	block->remove(code);
 }
 
 void SubProgram::draw(){
@@ -478,7 +515,7 @@ void SubProgram::draw(){
 
 		std::string auxStr = "";
 		Set<BasicBlock>::iterator auxIt = b->getDominadors().begin();
-		while(auxIt != b->getDominadors().end()){
+		while(auxIt < b->getDominadors().end()){
 			auxStr += std::to_string((*auxIt)->mId) + ", ";
 			auxIt++;
 		}

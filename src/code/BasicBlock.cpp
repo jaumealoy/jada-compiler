@@ -1,6 +1,9 @@
 #include "BasicBlock.h"
 #include "CodeGeneration.h"
 
+#include <cassert>
+
+
 int counter = 0;
 
 BasicBlock::BasicBlock(Instruction *inst) 
@@ -15,6 +18,14 @@ BasicBlock::~BasicBlock() {}
  * Elimina les instruccions d'un bloc bàsic
  */
 void BasicBlock::remove(CodeGeneration *code){
+	if(this->start == nullptr){
+		// no s'eliminarà cap instrucció
+		// es tracta del bloc d'entrada o sortida
+		return;
+	}
+	
+	assert(this->end != nullptr);
+
 	Instruction *inst = this->start;
 
 	while(inst != this->end){
@@ -101,6 +112,12 @@ void BasicBlock::setDominadorImmediat(BasicBlock *dominadorImmediat){
  * Actualitza el dominador immediat d'aquest bloc bàsic
  */
 void BasicBlock::updateDominadorImmediat(){
+	std::cout << "Analitzant bloc " << this->mId << " amb next = " << this->next << std::endl;
+	if(this->next == nullptr){
+		// és el bloc de sortida
+		return;
+	}
+
 	// preparar el conjunt de dominadors, que és tots els elements
 	// excepte el propi bloc
 	Set<BasicBlock> tmpDominadors = this->dominadors;
@@ -114,6 +131,8 @@ void BasicBlock::updateDominadorImmediat(){
 		// comprovar si aquest element seleccionat es troba al conjunt
 		// de dominadors de la resta d'elements del conjunt
 		Set<BasicBlock> altres = tmpDominadors;
+		assert(*dominadorsIt != nullptr);
+		std::cout << "===> Eliminant BB " << (*dominadorsIt)->mId << std::endl;
 		altres.remove(*dominadorsIt);
 
 		Set<BasicBlock>::iterator it = altres.begin();

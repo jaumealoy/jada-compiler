@@ -295,6 +295,12 @@ void CodeGeneration::move(Instruction *inst, Instruction *after){
 		after->getNext()->setPrevious(inst);
 	}
 
+	if(inst->getInvokingSubProgram() != nullptr 
+			&& after->getInvokingSubProgram() == inst->getInvokingSubProgram() 
+			&& after->getInvokingSubProgram()->getLastInstruction() == after){
+		after->getInvokingSubProgram()->setLastInstruction(inst);
+	}
+
 	inst->setPrevious(after);
 	inst->setNext(after->getNext());
 	after->setNext(inst);
@@ -767,6 +773,6 @@ void CodeGeneration::updateBasicBlocks(){
 		}
 
 		std::cout << "Analitzant " << this->programs[i]->getNom() << std::endl;
-		this->programs[i]->updateBasicBlocks();
+		this->programs[i]->updateBasicBlocks(this);
 	}
 }

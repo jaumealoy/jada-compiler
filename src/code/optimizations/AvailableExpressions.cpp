@@ -241,7 +241,7 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 
 	// anar bloc a bloc a veure si es poden substituir expressions disponibles
 	BasicBlock *actual = this->subprograma->getEntryBlock();
-	while(actual != this->subprograma->getExitBlock()){
+	while(actual != nullptr && actual != this->subprograma->getExitBlock()){
 		// obtenir el conjunt d'expressions disponibles a l'entrada del bloc
 		auto tmp = this->inOut.find(actual);
 		assert(tmp != this->inOut.end());
@@ -254,7 +254,12 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 
 		Instruction *aux = actual->getStart();
 		Instruction *end = actual->getEnd();
+
 		while(aux != nullptr && aux != end){
+			// la següent instrucció és la següent de la instrucció actual
+			// ignorant que es puguin afegir instruccions en aquesta iteració
+			Instruction *next = aux->getNext();
+
 			if(aux->getType() == Instruction::Type::ARITHMETIC){
 				// comprovar que l'expressió està disponible
 				ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;

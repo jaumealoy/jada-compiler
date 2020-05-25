@@ -140,6 +140,7 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		if(resultat){
 			// s'ha de fer el salt
 			Instruction *inst = code->addInstruction(new GoToInstruction(this->l));
+			inst->setInvokingSubProgram(this->getInvokingSubProgram());
 			code->move(inst, inst, this);
 		}
 
@@ -156,6 +157,7 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 			// es farà sempre el salt, es converteix en un incondicional
 
 			Instruction *tmp = code->addInstruction(new GoToInstruction(this->l));
+			tmp->setInvokingSubProgram(this->getInvokingSubProgram());
 			code->move(tmp, tmp, this);
 			code->remove(this);
 
