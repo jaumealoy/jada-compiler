@@ -330,7 +330,7 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 				this->calculateGK(ed, aux);
 			}
 
-			aux = aux->getNext();
+			aux = next;
 		}
 
 		actual = actual->getNext();

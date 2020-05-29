@@ -7,8 +7,15 @@ GoToInstruction::GoToInstruction(Label *label) : Instruction(Instruction::Type::
 
 GoToInstruction::~GoToInstruction(){}
 
+/**
+ * Indica quina és l'etiqueta del salt i la marca com utilitzada
+ */
 void GoToInstruction::setLabel(Label *l){
 	this->label = l;
+
+	if(this->label != nullptr){
+		this->label->markUsage();
+	}
 }
 
 Label *GoToInstruction::getTarget(){

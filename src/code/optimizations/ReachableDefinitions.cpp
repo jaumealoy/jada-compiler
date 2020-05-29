@@ -28,6 +28,10 @@ ReachableDefinitions::ReachableDefinitions(SubProgram *programa)
 	this->dominiInstruccions = elements;
 }
 
+ReachableDefinitions::~ReachableDefinitions()
+{
+	
+}
 
 /**	
  * Actualitza el valor dels conjunts de guanys i eliminacions 
@@ -159,6 +163,18 @@ void ReachableDefinitions::calculateInOut(){
 	}
 }
 
-Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst){
+/**
+ * Calcula el conjunt de definicions que poden donar valor a la variable x
+ * en una determinada instrucció
+ * Això és les definicions accessibles que de la forma x = a [op b].
+ */
+Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Variable *x){
 	
+}
+
+/**
+ * Calcula les instruccions que fan ús d'una definició
+ */
+Set<Instruction> ReachableDefinitions::definitionUsage(Instruction *def){
+
 }

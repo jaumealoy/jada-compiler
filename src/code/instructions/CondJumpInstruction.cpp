@@ -45,8 +45,15 @@ std::string CondJumpInstruction::toString() {
 	return "if " + this->e1->getNom() + " " + opString + " " + this->e2->getNom() +" then goto " + this->l->toString();
 }
 
+/**
+ * Indica quina és l'etiqueta del salt i la marca com utilitzada
+ */
 void CondJumpInstruction::setLabel(Label *l){
 	this->l = l;
+
+	if(this->l != nullptr){
+		this->l->markUsage();
+	}
 }
 
 Label *CondJumpInstruction::getTarget(){

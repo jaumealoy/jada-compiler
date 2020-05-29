@@ -1,7 +1,9 @@
 #include "SkipInstruction.h"
 #include "../CodeGeneration.h"
 
-SkipInstruction::SkipInstruction(Label *label) : Instruction(Instruction::Type::SKIP){
+SkipInstruction::SkipInstruction(Label *label) 
+	: Instruction(Instruction::Type::SKIP), preheader(nullptr)
+{
 	this->label = label;
 
 	// indicar que l'etiqueta és a aquesta instrucció
@@ -27,15 +29,27 @@ void SkipInstruction::generateAssembly(CodeGeneration *code) {
 
 Label *SkipInstruction::getLabel(){ return this->label; }
 
+void SkipInstruction::setLabel(Label *label){
+	this->label = label;
+}
+
 /**
  * Si és una etiqueta que no s'utilitza, es pot eliminar aquesta
  * instrucció
  */
 bool SkipInstruction::optimize(CodeGeneration *code){
-	if(!this->label->isUsed()){
+	if(!this->label->isUsed() && !this->isAddedAtOptimization()){
 		code->remove(this);
 		return true;
 	}
 
 	return false;
+}
+
+SkipInstruction *SkipInstruction::getPreHeaderInstruction(){
+	return this->preheader;
+}
+
+void SkipInstruction::setPreHeaderInstruction(SkipInstruction *inst){
+	this->preheader = inst;
 }

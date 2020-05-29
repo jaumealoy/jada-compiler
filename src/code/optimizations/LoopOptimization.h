@@ -4,6 +4,7 @@
 #include "../SubProgram.h"
 #include "../instructions/Instruction.h"
 #include "../instructions/SkipInstruction.h"
+#include "ReachableDefinitions.h"
 #include <map>
 #include <vector>
 
@@ -16,14 +17,35 @@ private:
 	SubProgram *programa;
 
 	struct Loop {
-		SkipInstruction *preheader;
+		// capçaleres
+		BasicBlock *preheader;
+		BasicBlock *header;
 
+		// bloc que retorna al header
+		BasicBlock *jump;
+	};
+
+	// el bucles que s'han identificat amb l'ordre que s'han d'optimitzar
+	std::vector<struct Loop> loops;
+
+	struct Assignment {
+		// instrucció que fa l'assignació, vàlid si counter = 1
+		Instruction *inst;
+
+		// número d'assignacions a la variable
+		int counter;
 	};
 
 	void otb(std::vector<BasicBlock *> &resultat, std::map<BasicBlock *, bool> &visitats, BasicBlock *actual);
+	std::list<BasicBlock *> getBasicBlocksInLoop(struct Loop &loop);
+
+	// extracció d'invariants
+	void checkInvariant(Instruction *inst, std::map<Instruction *, int> &invariants, std::list<BasicBlock *> &blocs);
+
+	ReachableDefinitions definitions;
 
 public:
-	LoopOptimization(SubProgram *programa);
+	LoopOptimization(CodeGeneration *code, SubProgram *programa);
 	~LoopOptimization();
 
 	bool optimize(CodeGeneration *code);

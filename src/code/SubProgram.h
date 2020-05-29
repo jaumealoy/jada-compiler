@@ -43,6 +43,8 @@ private:
 	// indica si es tracta d'un subprograma del llenguatge
 	bool codiExtern;
 
+	bool firstTime;
+
 public:
     SubProgram(int np, Label *start, std::string id, bool esExtern);
     ~SubProgram();
@@ -83,6 +85,8 @@ public:
 
 	void setExitBlock(BasicBlock *block);
 	BasicBlock *getExitBlock();
+
+	Set<BasicBlock> getBasicBlocks();
 
 };
 

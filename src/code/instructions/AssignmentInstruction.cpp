@@ -269,3 +269,7 @@ Variable * AssignmentInstruction::getDesti(){
 void AssignmentInstruction::setOrigen(Variable *origen){
 	this->origen = origen;
 }
+
+Variable *AssignmentInstruction::getOrigen(){
+	return this->origen;
+}

@@ -18,6 +18,7 @@ Instruction::Instruction(){
 	this->next = nullptr;
 	this->prev = nullptr;
 	this->addedOptimization = false;
+	this->block = nullptr;
 }
 
 Instruction::Instruction(Instruction::Type opcode){
@@ -25,6 +26,7 @@ Instruction::Instruction(Instruction::Type opcode){
 	this->next = nullptr;
 	this->prev = nullptr;
 	this->addedOptimization = false;
+	this->block = nullptr;
 }
 
 Instruction::~Instruction(){}
@@ -195,4 +197,84 @@ bool Instruction::isAddedAtOptimization(){
 
 void Instruction::markAtOptimization(){
 	this->addedOptimization = true;
+}
+
+/**
+ * Indica a quin bloc bàsic s'ha definit la instrucció
+ * En cas de tractar-se d'una definició, estableix de quin bloc és
+ */
+void Instruction::setBasicBlock(BasicBlock *block){
+	this->block = block;
+}
+
+BasicBlock *Instruction::getBasicBlock(){
+	return this->block;
+}
+
+/**
+ * Copia una instrucció
+ * Reserva l'espai per la nova instrucció
+ */
+Instruction* Instruction::copy(Instruction *original)
+{
+	std::cout << "Copiant instrucció " << original->getType() << std::endl;
+
+	Instruction *inst = nullptr;
+	switch(original->getType()){
+		case ASSIGNMENT: {
+			AssignmentInstruction *tmp = (AssignmentInstruction *) new char[sizeof(AssignmentInstruction)];
+			*tmp = *(AssignmentInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case ARITHMETIC: {
+			ArithmeticInstruction *tmp = (ArithmeticInstruction *) new char[sizeof(ArithmeticInstruction)];
+			*tmp = *(ArithmeticInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case GOTO: {
+			GoToInstruction *tmp = (GoToInstruction *) new char[sizeof(GoToInstruction)];
+			*tmp = *(GoToInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case CONDJUMP: {
+			CondJumpInstruction *tmp = (CondJumpInstruction *) new char[sizeof(CondJumpInstruction)];
+			*tmp = *(CondJumpInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case CALL: {
+			CallInstruction *tmp = (CallInstruction *) new char[sizeof(CallInstruction)];
+			*tmp = *(CallInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case PUTPARAM: {
+			PutParamInstruction *tmp = (PutParamInstruction *) new char[sizeof(PutParamInstruction)];
+			*tmp = *(PutParamInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case SKIP: {
+			SkipInstruction *tmp = (SkipInstruction *) new char[sizeof(SkipInstruction)];
+			*tmp = *(SkipInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+	}
+
+	inst->setNext(nullptr);
+	inst->setPrevious(nullptr);
+
+	std::cout << "Copiada instrucció " << original->getType() << std::endl;
+
+	return inst;
 }

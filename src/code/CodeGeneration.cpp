@@ -690,6 +690,9 @@ void CodeGeneration::optimize(){
 			this->programs[i]->draw();
 		}
 
+		std::ofstream tmpfile("tmpresultat.txt");
+		this->writeToFile(tmpfile);
+
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
 }

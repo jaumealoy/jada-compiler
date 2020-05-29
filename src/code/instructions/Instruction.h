@@ -4,6 +4,7 @@
 #include "../Label.h"
 #include "../SubProgram.h"
 #include "../Variable.h"
+#include "../BasicBlock.h"
 #include <string>
 
 class CodeGeneration;
@@ -33,6 +34,9 @@ private:
 	// indica si aquesta instrucció s'ha afegit durant
 	// l'optimització
 	bool addedOptimization;
+
+	// indica de quin bloc bàsic és la instrucció
+	BasicBlock *block;
 
 protected:
 	// Tota instrucció està dins un determinat subprograma,
@@ -64,6 +68,11 @@ public:
 
 	bool isAddedAtOptimization();
 	void markAtOptimization();
+
+	void setBasicBlock(BasicBlock *);
+	BasicBlock *getBasicBlock();
+
+	static Instruction *copy(Instruction *);
 };
 
 #endif

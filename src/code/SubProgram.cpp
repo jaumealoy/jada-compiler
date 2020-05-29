@@ -13,7 +13,7 @@
 #include <iostream>
 
 SubProgram::SubProgram(int np, Label *start, std::string id, bool esExtern) 
-	: basicBlocks(nullptr), codiExtern(esExtern)
+	: basicBlocks(nullptr), codiExtern(esExtern), firstTime(true)
 {
     this->nivellProfunditat = np;
     this->nom = id;
@@ -185,6 +185,8 @@ void SubProgram::setLastInstruction(Instruction *instruction){
 	this->lastInstruction = instruction;
 }
 
+#include <cassert>
+
 /**
  * Calcula quins són els blocs bàsics d'aquest subprograma
  */
@@ -225,6 +227,9 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 			block->setPrevious(last);
 			last->setNext(block);
 			last = block;
+
+			// indicar que pertany al block
+			actual->setBasicBlock(block);
 		}else if(actual->getType() == Instruction::Type::CONDJUMP){
 			Instruction *next = actual->getNext();
 
@@ -248,6 +253,15 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 					last = block;
 					
 			}
+
+			assert(actual->getPrevious() != nullptr);
+			actual->setBasicBlock(actual->getPrevious()->getBasicBlock());
+		}else{
+			// el bloc bàsic és el mateix que la instrucció anterior
+			// necessàriament existeix una instrucció anterior
+			// perquè com a mínim hi haurà l'skip del subprograma
+			assert(actual->getPrevious() != nullptr);
+			actual->setBasicBlock(actual->getPrevious()->getBasicBlock());
 		}
 
 		actual = actual->getNext();
@@ -458,10 +472,20 @@ bool SubProgram::optimize(CodeGeneration *code){
 
 
 	AvailableExpressions availableExpressions = AvailableExpressions(this);
+
+	std::cout << "Optimització local de " << this->nom << " comença opti" << std::endl;
 	availableExpressions.optimize(code);
 
-	LoopOptimization loopOptimization = LoopOptimization(this);
-	loopOptimization.optimize(code);
+	std::cout << "Optimització local de " << this->nom << " loops" << std::endl;
+
+	
+	LoopOptimization loopOptimization = LoopOptimization(code, this);
+	
+	if(!firstTime){
+		loopOptimization.optimize(code);
+	}else{
+		firstTime = false;
+	}
 
 	return canvis;
 }
@@ -554,3 +578,23 @@ bool SubProgram::isExtern(){
 	return this->codiExtern;
 }
 
+/**
+ * Retorna una conjunt amb el domini dels blocs bàsics
+ * del subprograma
+ */
+Set<BasicBlock> SubProgram::getBasicBlocks(){
+	// crear el domini
+	std::list<BasicBlock *> list;
+	list.clear();
+
+	BasicBlock *tmp = this->basicBlocks;
+	while(tmp != nullptr){
+		list.push_back(tmp);
+		tmp = tmp->getNext();
+	}
+
+	std::shared_ptr<Domain<BasicBlock>> domini = std::make_shared<Domain<BasicBlock>>(list);
+	Set<BasicBlock> bb(domini);
+	
+	return bb;
+}
