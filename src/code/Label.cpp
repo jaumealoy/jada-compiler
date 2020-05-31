@@ -33,11 +33,6 @@ std::string Label::toString(){
  * Indica quina és la instrucció skip de l'etiqueta
  */
 void Label::setTargetInstruction(SkipInstruction *inst){
-	if(this->target != nullptr){
-		// l'etiqueta ja ha estat ubicada
-		return;
-	}
-
 	this->target = inst;
 }
 

@@ -38,6 +38,7 @@ public:
 
 	// optimització
 	bool optimize(CodeGeneration *code);
+	bool isInvertit();
 };
 
 #endif

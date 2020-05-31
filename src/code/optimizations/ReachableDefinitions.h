@@ -28,6 +28,7 @@ private:
 	std::map<BasicBlock *, struct ReachableDefinitions::GK> inOut;
 
 	void calculateInOut();
+	void calculateRD(struct ReachableDefinitions::GK &rd, Instruction *inst);
 
 public:
 	ReachableDefinitions(SubProgram *program);

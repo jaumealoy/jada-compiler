@@ -218,3 +218,7 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 
 	return canvis;
 }
+
+bool CondJumpInstruction::isInvertit(){
+	return this->invertit;
+}

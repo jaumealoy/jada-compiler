@@ -1,5 +1,6 @@
 #include "SimbolWhileStatement.h"
 #include "../Driver.h"
+#include "../code/instructions/SkipInstruction.h"
 
 SimbolWhileStatement::SimbolWhileStatement() : SimbolStatement() {
     this->nomNode = "WhileStatement";
@@ -35,6 +36,8 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
 	driver->code.backpatch(einici.getLabel(), bloc.getSeg());
 	this->seg = CodeGeneration::convert(exp.getFals());
 
+	((SkipInstruction *) ebloc.getInstruction())->setLoopStart(true);
+
 	// tots els breaks s'han d'afegir seg
 	std::list<Instruction *>::iterator it;
 	for(it = this->_breakList.begin(); it != this->_breakList.end(); it++){
@@ -48,5 +51,7 @@ void SimbolWhileStatement::make(Driver *driver, SimbolExpressio exp, SimbolBloc 
 	// és possible que bloc no contegui cap instrucció amb un goto
 	// a l'inici (com pot ser un break), és important afegir
 	// un goto al final
-	driver->code.addInstruction(new GoToInstruction(einici.getLabel()));
+	GoToInstruction *gotoInst = new GoToInstruction(einici.getLabel());
+	gotoInst->markAtOptimization();
+	driver->code.addInstruction(gotoInst);
 }

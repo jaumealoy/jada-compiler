@@ -40,7 +40,10 @@ void GoToInstruction::generateAssembly(CodeGeneration *code){
 #include <cassert>
 bool GoToInstruction::optimize(CodeGeneration *code){
 	Label *old = this->label;
-	this->label = code->getTargetLabel(old);
+
+	if(!this->isAddedAtOptimization()){
+		this->label = code->getTargetLabel(old);
+	}
 
 	bool canvis = old != this->label;
 

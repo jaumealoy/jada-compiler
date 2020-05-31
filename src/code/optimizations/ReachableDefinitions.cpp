@@ -1,6 +1,9 @@
 #include "ReachableDefinitions.h"
 #include "../instructions/ArithmeticInstruction.h"
 #include "../instructions/AssignmentInstruction.h"
+#include <cassert>
+#include <iostream>
+
 
 ReachableDefinitions::ReachableDefinitions(SubProgram *programa) 
 {
@@ -26,6 +29,8 @@ ReachableDefinitions::ReachableDefinitions(SubProgram *programa)
 
 	this->domini = std::make_shared<Domain<Instruction>>(elements);
 	this->dominiInstruccions = elements;
+
+	this->calculateInOut();
 }
 
 ReachableDefinitions::~ReachableDefinitions()
@@ -43,11 +48,13 @@ void ReachableDefinitions::calculateGK(struct ReachableDefinitions::GK &gk, Inst
 	// la variable de destí "a", també deixen d'estar al conjunt de guanys
 	// la definició creada és la definició [a = b] o [a = b op c]
 
+	assert(actual != nullptr);
+
 	switch(actual->getType()){
 		case Instruction::Type::ARITHMETIC:
 		case Instruction::Type::ASSIGNMENT:
 		{
-			Variable *desti;
+			Variable *desti = nullptr;
 			if(actual->getType() == Instruction::Type::ARITHMETIC){
 				desti = ((ArithmeticInstruction *) actual)->getDesti();
 			}else{ // és d'assignació
@@ -57,13 +64,13 @@ void ReachableDefinitions::calculateGK(struct ReachableDefinitions::GK &gk, Inst
 			Instruction *aux = this->program->getFirstInstruction();
 			while(aux != nullptr && aux != this->program->getLastInstruction()){
 				if(aux->getType() == Instruction::Type::ARITHMETIC){
-					ArithmeticInstruction *aInst = (ArithmeticInstruction *) actual;
+					ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
 					if(aInst->getDesti() == desti){
 						gk.kills.put(aInst);
 						gk.gains.remove(aInst);
 					}
 				}else if(aux->getType() == Instruction::Type::ASSIGNMENT){
-					AssignmentInstruction *aInst = (AssignmentInstruction *) actual;
+					AssignmentInstruction *aInst = (AssignmentInstruction *) aux;
 					if(aInst->getDesti() == desti){
 						gk.kills.put(aInst);
 						gk.gains.remove(aInst);
@@ -85,10 +92,22 @@ void ReachableDefinitions::calculateGK(struct ReachableDefinitions::GK &gk, Inst
 /**
  * Calcula el conjunt G i K per un bloc bàsic
  */
-struct ReachableDefinitions::GK ReachableDefinitions::calculateGK(BasicBlock *actual){
+struct ReachableDefinitions::GK ReachableDefinitions::calculateGK(BasicBlock *actual)
+{
 	struct ReachableDefinitions::GK tmp;
 	tmp.gains = Set<Instruction>(this->domini);
 	tmp.kills = Set<Instruction>(this->domini);
+
+	Instruction *aux = actual->getStart();
+	Instruction *end = nullptr;
+	if(actual->getEnd() != nullptr){
+		end = actual->getEnd()->getNext();
+	}
+
+	while(aux != nullptr && aux != end){
+		this->calculateGK(tmp, aux);
+		aux = aux->getNext();
+	}
 
 	return tmp;
 }
@@ -108,6 +127,7 @@ void ReachableDefinitions::calculateInOut(){
 		tmp.kills = tmp.gains;
 		tmp.kills.removeAll();
 		this->inOut.emplace(aux, tmp);
+		aux = aux->getNext();
 	}
 	
 	// afegir tots els successors del bloc d'entrada
@@ -121,6 +141,7 @@ void ReachableDefinitions::calculateInOut(){
 
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();
+		assert(actual != nullptr);
 		pendents.pop_front();
 
 		// calcular l'in d'aquest bloc, que és la unió de l'out de
@@ -142,26 +163,46 @@ void ReachableDefinitions::calculateInOut(){
 
 		// calcular el nou out
 		struct ReachableDefinitions::GK gkActual = this->calculateGK(actual);
-		Set<Instruction> tmpOut = gkActual.gains;
-		in.difference(gkActual.kills);
-		tmpOut.add(in);
+		Set<Instruction> tmpOut = in;
+		tmpOut.difference(gkActual.kills);
+		tmpOut.add(gkActual.gains);
 
 		// el conjunt out anterior és
 		auto inOutActual = this->inOut.find(actual);
-		if(inOutActual != this->inOut.end() && inOutActual->second.kills != tmpOut){
-			inOutActual->second.kills = tmpOut;
+		if(inOutActual != this->inOut.end()){
 			inOutActual->second.gains = in;
 
-			// afegir tots els successors a pendents
-			std::list<BasicBlock *> &successors = actual->getSuccessors();
-			std::list<BasicBlock *>::iterator it = successors.begin();
-			while(it != successors.end()){
-				pendents.push_back(*it);
-				it++;
+			if(inOutActual->second.kills != tmpOut){
+				inOutActual->second.kills = tmpOut;
+
+				Set<Instruction>::iterator tmpIt = in.begin();
+				while(tmpIt < in.end()){
+					std::cout << (*tmpIt)->toString() << ",";
+					tmpIt++;
+				}
+				std::cout << std::endl;
+
+				// afegir tots els successors a pendents
+				std::list<BasicBlock *> &successors = actual->getSuccessors();
+				std::list<BasicBlock *>::iterator it = successors.begin();
+				while(it != successors.end()){
+					pendents.push_back(*it);
+					it++;
+				}
 			}
 		}
 	}
 }
+
+/**
+ * Calcula les definicions accessibles després de processar la instrucció
+ */
+void ReachableDefinitions::calculateRD(struct ReachableDefinitions::GK &rd, Instruction *inst){
+	// el conjunt rd.gains són les definicions accessibles
+	struct ReachableDefinitions::GK tmp;
+
+}
+
 
 /**
  * Calcula el conjunt de definicions que poden donar valor a la variable x
@@ -169,7 +210,41 @@ void ReachableDefinitions::calculateInOut(){
  * Això és les definicions accessibles que de la forma x = a [op b].
  */
 Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Variable *x){
-	
+	// partir de l'in del bloc per calcular les definicions accessibles a la 
+	// instrucció inst
+	BasicBlock *block = inst->getBasicBlock();
+	struct ReachableDefinitions::GK rd;
+
+	auto inOutBlock = this->inOut.find(block);
+	rd = inOutBlock->second;
+
+	Instruction *aux = block->getStart();
+	if(aux != inst){
+		while(aux != nullptr && aux != inst){
+			this->calculateGK(rd, aux);
+			aux = aux->getNext();
+		}
+	}
+
+	Set<Instruction> ud = rd.gains;
+	Set<Instruction>::iterator it = ud.begin();
+	Instruction *instA = inst;
+	while(it < ud.end()){
+		Instruction *inst = *it;
+		if(inst->getType() == Instruction::Type::ARITHMETIC){
+			if(((ArithmeticInstruction *) inst)->getDesti() != x){
+				ud.remove(inst);
+			}
+		}else if(inst->getType() == Instruction::Type::ASSIGNMENT){
+			if(((AssignmentInstruction *) inst)->getDesti() != x){
+				ud.remove(inst);
+			}
+		}
+
+		it++;
+	}
+
+	return ud;
 }
 
 /**

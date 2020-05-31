@@ -19,7 +19,7 @@ void SimbolMarcador::make(Driver *driver, int tipus){
 	switch (tipus) {
 		case 0:
 			this->et = driver->code.addLabel();
-			driver->code.addInstruction(new SkipInstruction(this->et));
+			this->inst = driver->code.addInstruction(new SkipInstruction(this->et));
 			break;
 		
 		case 1:

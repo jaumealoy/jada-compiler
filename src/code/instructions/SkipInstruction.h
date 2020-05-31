@@ -11,6 +11,9 @@ private:
 	// etiqueta de la precapçalera
 	SkipInstruction *preheader;
 
+	// inici de bloc de bucle
+	bool loopStart;
+
 public:
 	SkipInstruction(Label *lbl);
 	~SkipInstruction();
@@ -25,6 +28,9 @@ public:
 
 	SkipInstruction *getPreHeaderInstruction();
 	void setPreHeaderInstruction(SkipInstruction *instruction);
+
+	bool isLoopStart();
+	void setLoopStart(bool loopStart);
 };
 
 #endif

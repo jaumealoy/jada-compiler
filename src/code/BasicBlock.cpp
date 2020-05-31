@@ -79,6 +79,7 @@ BasicBlock *BasicBlock::getNext(){ return this->next; }
  * Un bloc bàsic es pot eliminar si no està connectat amb la resta
  */
 bool BasicBlock::optimize(CodeGeneration *code){
+	return false;
 	if(this->predecessors.size() == 0){
 		this->remove(code);
 		return true;
@@ -101,6 +102,14 @@ Set<BasicBlock>& BasicBlock::getDominadors(){
 }
 
 void BasicBlock::setDominadors(Set<BasicBlock> dominadors){
+	//dominadors.putAll();
+	std::cout << "Posant dominadors al bloc " << this->mId << std::endl;
+	Set<BasicBlock>::iterator it = dominadors.begin();
+	while(it < dominadors.end()){
+		std::cout << (*it)->mId << ", ";
+		it++;
+	}
+	std::cout  << std::endl;
 	this->dominadors = dominadors;
 }
 
@@ -125,7 +134,7 @@ void BasicBlock::updateDominadorImmediat(){
 
 	// s'agafa un element i se suposa que és el dominador
 	Set<BasicBlock>::iterator dominadorsIt = tmpDominadors.begin();
-	while(dominadorsIt != tmpDominadors.end()){
+	while(dominadorsIt < tmpDominadors.end()){
 		bool valid = true;
 
 		// comprovar si aquest element seleccionat es troba al conjunt

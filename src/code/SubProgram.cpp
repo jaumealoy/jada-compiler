@@ -343,7 +343,7 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 	}
 
 	// recòrrer i eliminar tots aquells blocs que no estiguin dins visitats
-	BasicBlock *aux = this->getEntryBlock();
+	/*BasicBlock *aux = this->getEntryBlock();
 	while(aux != nullptr){
 		BasicBlock *next = aux->getNext();
 		auto visitat = visitats.find(aux);
@@ -355,7 +355,7 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 		}
 
 		aux = next;
-	}
+	}*/
 
 	// actualitzar els dominadors
 	this->updateDominadors();
@@ -435,6 +435,7 @@ void SubProgram::updateDominadors(){
 			while(aux != successors.end()){
 				if(!pendentsReals.contains(*aux)){
 					pendents.push_back(*aux);
+					pendentsReals.put(*aux);
 				}
 				aux++;
 			}
@@ -508,6 +509,9 @@ void SubProgram::deleteBasicBlock(CodeGeneration *code, BasicBlock *block){
 
 	if(this->exitBlock == block){
 		this->exitBlock = block->getPrevious();
+		if(this->exitBlock != nullptr){
+			this->exitBlock->setNext(nullptr);
+		}
 	}
 
 	// eliminar-lo de predecessor a tots els successors
@@ -520,6 +524,9 @@ void SubProgram::deleteBasicBlock(CodeGeneration *code, BasicBlock *block){
 
 	// eliminar totes les instruccions del bloc bàsic
 	block->remove(code);
+
+	// i alliberar la memòria del bloc
+	delete block;
 }
 
 void SubProgram::draw(){

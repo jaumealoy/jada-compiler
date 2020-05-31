@@ -22,7 +22,8 @@ public:
 		PREAMBLE,
 		RETURN,
 		ASSEMBLY,
-		MEMORY
+		MEMORY,
+		NUL
 	};
 private:
 	Instruction::Type opcode;

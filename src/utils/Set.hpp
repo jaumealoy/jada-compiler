@@ -6,6 +6,7 @@
 #include <exception>
 #include <memory>
 #include <vector>
+#include <iostream>
 
 template <class E>
 class Set {
@@ -27,6 +28,7 @@ public:
 		this->domini = domini;
 		int nbytes = (domini->getSize() / (sizeof(unsigned char) * 8)) + 1;
 		this->numBytes = nbytes;
+		this->numElements = domini->getSize();
 
 		for(int i = 0; i < nbytes; i++){
 			this->data.push_back(0);

@@ -2,7 +2,7 @@
 #include "../CodeGeneration.h"
 
 SkipInstruction::SkipInstruction(Label *label) 
-	: Instruction(Instruction::Type::SKIP), preheader(nullptr)
+	: Instruction(Instruction::Type::SKIP), preheader(nullptr), loopStart(false)
 {
 	this->label = label;
 
@@ -38,7 +38,7 @@ void SkipInstruction::setLabel(Label *label){
  * instrucció
  */
 bool SkipInstruction::optimize(CodeGeneration *code){
-	if(!this->label->isUsed() && !this->isAddedAtOptimization()){
+	if(!this->label->isUsed() && !this->isAddedAtOptimization() && !this->loopStart){
 		code->remove(this);
 		return true;
 	}
@@ -52,4 +52,12 @@ SkipInstruction *SkipInstruction::getPreHeaderInstruction(){
 
 void SkipInstruction::setPreHeaderInstruction(SkipInstruction *inst){
 	this->preheader = inst;
+}
+
+bool SkipInstruction::isLoopStart(){
+	return this->loopStart;
+}
+
+void SkipInstruction::setLoopStart(bool loopStart){
+	this->loopStart = loopStart;
 }

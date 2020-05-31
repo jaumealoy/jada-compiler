@@ -43,6 +43,8 @@ void SimbolForStatement::make(Driver *driver, SimbolForInit init, SimbolExpressi
 	driver->code.backpatch(iniciBloc.getLabel(), exp.getCert());
 	this->seg = CodeGeneration::convert(exp.getFals());
 
+	((SkipInstruction *) iniciBloc.getInstruction())->setLoopStart(true);
+
 	// tots els breaks s'han d'afegir seg
 	std::list<Instruction *>::iterator it;
 	for(it = this->_breakList.begin(); it != this->_breakList.end(); it++){

@@ -33,9 +33,12 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				tmp.header = *it;
 				tmp.preheader = nullptr;
 				tmp.jump = nodes[i];
-				this->loops.push_back(tmp);
 
-				std::cout << "Detectat bucle entre block " << nodes[i]->mId << " i " << (*it)->mId << std::endl;
+				if(tmp.jump->getEnd()->getType() == Instruction::Type::GOTO){
+					this->loops.push_back(tmp);
+					std::cout << "Detectat bucle entre block " << nodes[i]->mId << " i " << (*it)->mId << std::endl;
+				}
+
 			}
 			it++;
 		}
@@ -77,70 +80,39 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				aux = aux->getNext();
 			}
 
+			std::ofstream tmpF("tmpfile_loop.txt");
+			code->writeToFile(tmpF);
+
 			std::cout << "Modificat bucle" << std::endl;
 
 			// és la primera vegada que s'optimitza aquest bucle
 			// realitzar la inversió
-
-			// determinar quin és bloc que s'executa quan acaba el bucle
-			// per això: s'agafen els successors del bloc de la capçalera
-			// i es resta el conjunt de dominadors del bloc de tornada
-			Set<BasicBlock> finalBucle = tmp.jump->getDominadors();
-			finalBucle.removeAll();
-			
-			std::list<BasicBlock *> &successors = tmp.header->getSuccessors();
-			std::list<BasicBlock *>::iterator myTmpIt = successors.begin();
-			while(myTmpIt != successors.end()){
-				finalBucle.put(*myTmpIt);
-				myTmpIt++;
-			}
-
-			finalBucle.difference(tmp.jump->getDominadors());
-
-			// és un conjunt amb un únic element
-			Set<BasicBlock>::iterator finalIt = finalBucle.begin();
-			BasicBlock *blocDespresBucle = *finalIt;
-
-			// determinar on comença i acaba l'expressió
-			// s'ha de duplicar condició
-			// la condició acaba quan es troba el primer bloc que no conté el 
-			// bloc després del bucle com a successor
-			BasicBlock *actual = tmp.header;
-			BasicBlock *finalBlock = actual;
+			// per això, s'ha de determinar on acaba l'expressió i copiar-la
+			// al final de bucle
+			Instruction *endExpression = tmp.header->getStart();
 			bool trobat = false;
-			while(!trobat){
-				trobat = true;
-
-				bool trobatFinal = false;
-				std::list<BasicBlock *> &successors = actual->getSuccessors();
-				std::list<BasicBlock *>::iterator tmpIt = successors.begin();
-
-				BasicBlock *next = nullptr;
-				while(tmpIt != successors.end()){
-					if(*tmpIt == blocDespresBucle){
-						trobatFinal = true;
-					}else{
-						next = *tmpIt;
+			while(endExpression != nullptr && !trobat){
+				if(endExpression->getType() == Instruction::Type::SKIP){
+					// és un possible final d'expressió
+					if(((SkipInstruction *) endExpression)->isLoopStart()){
+						std::cout << " TROBAT FI ==> " << endExpression->toString() << std::endl;
+						trobat = true;
+						break;
 					}
-
-					tmpIt++;
 				}
 
-				if(trobatFinal){
-					// encara no s'ha detectat el final de la condició
-					finalBlock = actual;
-					trobat = false;
-					actual = next;
-				}
+				endExpression = endExpression->getNext();
 			}
 
 			// l'expressió es troba entre els blocs bàsics header i finalBlock
+			std::cout << "start is " << start->toString() << std::endl;
+			std::cout << "newSkip is " << newSkip->toString() << std::endl;
+			std::cout << "newSkip->next is " << newSkip->getNext()->toString() << std::endl;
 			Instruction *begin = newSkip->getNext();
-			Instruction *end = finalBlock->getEnd();
+			Instruction *end = endExpression->getPrevious();
 
-			std::cout << "L'expressió es troba entre " << tmp.header->mId << " i " << finalBlock->mId << std::endl;
 			std::cout << "inici = " << begin->toString() << std::endl;
-			std::cout << "final = " << finalBlock->getEnd()->toString() << std::endl;
+			std::cout << "final = " << end->toString() << std::endl;
 			std::cout << "moure abans de  = " << start->toString() << std::endl;
 
 			// moure l'expressió abans de la precapçalera (newSkip)
@@ -154,7 +126,7 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			Instruction *lastCopy = beginCopy;
 
 			code->addInstruction(beginCopy);
-			
+				
 			if(begin != end){
 				std::cout << "Inici: " << begin->toString() << std::endl;
 				std::cout << "Final: " << end->toString() << std::endl;
@@ -174,70 +146,101 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				tmp.jump->getEnd()->getPrevious()
 			);
 
+			std::cout << "MOVE OK" << std::endl;
+
 			// actualitzar les etiquetes dels salts
 			// l'etiqueta final no s'ha d'actualitzar
-			assert(blocDespresBucle->getStart()->getType() == Instruction::Type::SKIP);
-			SkipInstruction *skipFinalBucle = (SkipInstruction *) blocDespresBucle->getStart();
-			Label *finalBucleLabel = skipFinalBucle->getLabel();
+			SkipInstruction *skipFinalBucle = nullptr;
+			Label *finalBucleLabel = nullptr;
+				
+			// hi ha blocs després del bucle
+			skipFinalBucle = (SkipInstruction *) tmp.jump->getEnd()->getNext();
+			finalBucleLabel = skipFinalBucle->getLabel();
 
 			std::map<Label *, Label *> etiquetes;
+			std::map<Label *, std::list<Instruction *>> pendentsCanvi;
+
 			aux = beginCopy;
 			while(aux != nullptr && aux != lastCopy->getNext()){
 				if(aux->getType() == Instruction::GOTO){
 					GoToInstruction *gotoInst = (GoToInstruction *) aux;
-					if(gotoInst->getTarget() != finalBucleLabel){
-						// comprovar que no s'ha assignat anteriorment
-						auto et = etiquetes.find(gotoInst->getTarget());
-						Label *label;
-						if(et == etiquetes.end()){
-							// s'ha de crear una nova etiqueta
-							label = code->addLabel();
-							etiquetes.emplace(gotoInst->getTarget(), label);
+					
+					if(gotoInst->getTarget()->getTargetInstruction() == endExpression){
+						gotoInst->setLabel(newSkip->getLabel());
+					}else{
+						auto canvi = etiquetes.find(gotoInst->getTarget());
+						if(canvi == etiquetes.end()){
+							auto pendentList = pendentsCanvi.find(gotoInst->getTarget());
+							if(pendentList == pendentsCanvi.end()){
+								std::list<Instruction *> tmpList;
+								tmpList.push_back(gotoInst);
+								pendentsCanvi.emplace(gotoInst->getTarget(), tmpList);
+							}else{
+								pendentList->second.push_back(gotoInst);
+							}
 						}else{
-							label = et->second;
+							gotoInst->setLabel(canvi->second);						
 						}
-
-						gotoInst->setLabel(label);
 					}
 				}else if(aux->getType() == Instruction::CONDJUMP){
 					CondJumpInstruction *condJump = (CondJumpInstruction *) aux;
-					if(condJump->getTarget() != finalBucleLabel){
-						// comprovar que no s'ha assignat anteriorment
-						auto et = etiquetes.find(condJump->getTarget());
-						Label *label;
-						if(et == etiquetes.end()){
-							// s'ha de crear una nova etiqueta
-							label = code->addLabel();
-							etiquetes.emplace(condJump->getTarget(), label);
+					
+					if(condJump->getTarget()->getTargetInstruction() == endExpression){
+						condJump->setLabel(newSkip->getLabel());
+					}else{
+						auto canvi = etiquetes.find(condJump->getTarget());
+						if(canvi == etiquetes.end()){
+							auto pendentList = pendentsCanvi.find(condJump->getTarget());
+							if(pendentList == pendentsCanvi.end()){
+								std::list<Instruction *> tmpList;
+								tmpList.push_back(condJump);
+								pendentsCanvi.emplace(condJump->getTarget(), tmpList);
+							}else{
+								pendentList->second.push_back(condJump);
+							}
 						}else{
-							label = et->second;
+							condJump->setLabel(canvi->second);						
 						}
-
-						condJump->setLabel(label);
 					}
+
+					
 				}else if(aux->getType() == Instruction::SKIP){
 					// crear una nova etiqueta
 					SkipInstruction *skipInstruction = (SkipInstruction *) aux;
 					
-					Label *label;
-					auto et = etiquetes.find(skipInstruction->getLabel());
-					if(et == etiquetes.end()){
-						// no existeix l'etiqueta
-						label = code->addLabel();
-						etiquetes.emplace(skipInstruction->getLabel(), label);
-					}else{
-						// l'etiqueta ja s'ha creat anteriorment
-						label = et->second;
+					Label *label = code->addLabel();
+					etiquetes.emplace(skipInstruction->getLabel(), label);
+
+					auto pendents = pendentsCanvi.find(skipInstruction->getLabel());
+					if(pendents != pendentsCanvi.end()){
+						std::list<Instruction *> &canvis = pendents->second;
+						std::list<Instruction *>::iterator it = canvis.begin();
+						while(it != canvis.end()){
+							if((*it)->getType() == Instruction::Type::CONDJUMP){
+								CondJumpInstruction *condJump = (CondJumpInstruction *) *it;
+								condJump->setLabel(label);
+							}else if((*it)->getType() == Instruction::Type::GOTO){
+								GoToInstruction *gotoInst = (GoToInstruction *) *it;
+								gotoInst->setLabel(label);
+							}
+							it++;
+						}
 					}
 
+					label->setTargetInstruction(skipInstruction);
 					skipInstruction->setLabel(label);
 				}
 
 				aux = aux->getNext();
 			}
+			std::cout << "Copy OK" << std::endl;
 		}else{
 			// obtenir la precapçalera ja existent de passades iteracions
-			tmp.header = start->getPreHeaderInstruction()->getBasicBlock();
+			std::cout << "Precapçalera és: "  << start->getPreHeaderInstruction()->toString() << std::endl;
+			//tmp.header = start->getPreHeaderInstruction()->getBasicBlock();
+			std::cout << "Header és: "  << start->toString() << std::endl;
+
+			tmp.preheader = start->getPreHeaderInstruction()->getBasicBlock();
 		}
 
 	}
@@ -255,15 +258,14 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 	// detectar les possibles instruccions invariants, és a dir, variables
 	// que només reben una assignació dins el bucle
 
-	std::map<Variable *, struct Assignment> variables;
-	std::map<Instruction *, int> invariant;
-
 	for(int i = 0; i < this->loops.size(); i++){
+		std::map<Variable *, struct Assignment> variables;
+		std::map<Instruction *, int> invariant;
+
 		std::list<BasicBlock *> blocsLoop = this->getBasicBlocksInLoop(this->loops[i]);
 		std::list<BasicBlock *>::iterator it = blocsLoop.begin();
 
 		std::cout << "Optimitzant bucles" << std::endl;
-
 
 		while(it != blocsLoop.end()){
 			Instruction *aux = (*it)->getStart();
@@ -271,7 +273,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 
 			std::cout << "Optimitzant bucles: bloc" << std::endl;
 
-			while(aux != end){
+			while(aux != nullptr && aux != end){
 				Variable *desti = nullptr;
 				if(aux->getType() == Instruction::Type::ARITHMETIC){
 					ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
@@ -332,8 +334,6 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 							auto inv = invariant.find(variable->second.inst);
 							int original = inv->second;
 							if(inv != invariant.end() && inv->second <= 0){
-								std::cout << "analitzant inst bucle " << aux->toString() << std::endl;
-
 								// analitzar si es tracta realment d'una invariant
 								this->checkInvariant(aux, invariant, blocsLoop);
 
@@ -349,20 +349,38 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 				it++;
 			}	
 		}
-	}
 
-	// una vegada s'han detectat les invariants, aquestes s'han de moure a 
-	// a la precapçalera
-	std::map<Instruction *, int>::iterator invariantsIt = invariant.begin();
-	while(invariantsIt != invariant.end()){
-		if(invariantsIt->second > 0){
-			// és una invariant, és possible que es pugui moure
-			// comprovar que l'única 
+		// una vegada s'han detectat les invariants, aquestes s'han de moure a 
+		// a la precapçalera
+		// per conservar l'ordre de les invariants s'ha d'anar bloc per bloc
+		it = blocsLoop.begin();
+		while(it != blocsLoop.end()){
+			Instruction *aux = (*it)->getStart();
+			Instruction *end = (*it)->getEnd()->getNext();
 
+			while(aux != nullptr && aux != end){
+				auto mode = invariant.find(aux);
+				if(mode != invariant.end() && mode->second > 0){
+					// és una invariant, és possible que es pugui moure
+					// és necessari garantir que el seu bloc bàsic domina 
+					// a la sortida del bucle
+					BasicBlock *invariantBlock = aux->getBasicBlock();
+					if(this->loops[i].jump->getDominadors().contains(invariantBlock)){
+						code->move(
+							aux, 
+							aux,
+							this->loops[i].header->getStart()->getPrevious()	
+						);
+					}
+				}
+
+				aux = aux->getNext();
+			}
+
+			it++;
 		}
-		invariantsIt++;
-	}
 
+	}
 
 	return false;
 }
@@ -410,11 +428,15 @@ std::list<BasicBlock *> LoopOptimization::getBasicBlocksInLoop(struct Loop &loop
 	list.push_back(loop.header);
 	visitats.emplace(loop.header, true);
 
-	list.push_back(loop.jump);
-	visitats.emplace(loop.jump, true);
+	// és possible que el header i el jump siguin el mateix bloc
+	if(loop.jump != loop.header){
+		list.push_back(loop.jump);
+		visitats.emplace(loop.jump, true);
 
-	// anar visitant els predecessors fins arribar a d
-	pendents.push_back(loop.jump);
+		// anar visitant els predecessors fins arribar a d
+		pendents.push_back(loop.jump);
+	}
+
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();
 		pendents.pop_front();
@@ -438,8 +460,6 @@ std::list<BasicBlock *> LoopOptimization::getBasicBlocksInLoop(struct Loop &loop
 	return list;
 }
 
-#include <cassert>
-
 /**
  * Comprova i actualitza la invariància d'una instrucció
  * @param {Instruction *} inst instrucció que s'ha d'analitzar
@@ -459,74 +479,84 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 	bool esquerraInvariant = (invariant->second == 1) || (invariant->second == -1);
 	bool dretaInvariant = (invariant->second == 1) || (invariant->second == -2);
 
-	if(!esquerraInvariant){
-		Variable *operand = nullptr;
-		if(inst->getType() == Instruction::Type::ASSIGNMENT){
-			operand = ((AssignmentInstruction *) inst)->getOrigen();
+	// evitar duplicar el codi entre l'argument esquerra i el dret
+	// obtenir els operands de les instruccions
+	bool* esInvariant[] = {&esquerraInvariant, &dretaInvariant};
+	Variable *operands[] = {nullptr, nullptr};
 
-			// pot ser és una assignació d'una constant
-			AssignmentInstruction *aInst = (AssignmentInstruction *) inst;
-			if(aInst->getType() == AssignmentInstruction::Type::SIMPLE && operand == nullptr){
-				esquerraInvariant = true;
+	if(inst->getType() == Instruction::ASSIGNMENT){
+		AssignmentInstruction *aInst = (AssignmentInstruction *) inst;
+		if(aInst->getType() == AssignmentInstruction::Type::SIMPLE){
+			// és possible que sigui una assignació d'una constant
+			operands[0] = aInst->getOrigen();
+			if(operands[0] == nullptr){
+				// és d'una constant
+				*esInvariant[0] = true;
 			}
-		}else if(inst->getType() == Instruction::Type::ARITHMETIC){
-			operand = ((ArithmeticInstruction *) inst)->getFirstOperand();
+
+			// és una assignació simple, només té un operand
+			*esInvariant[1] = true;
+		}else{
+			// consideram que no és una invariant
+			return;
 		}
+	}else if(inst->getType() == Instruction::ARITHMETIC){
+		ArithmeticInstruction *aInst = (ArithmeticInstruction *) inst;
+		operands[0] = aInst->getFirstOperand();
+		operands[1] = aInst->getSecondOperand();
+	}
 
-		// a) comprovar si es tracta d'una constant
-		esquerraInvariant = esquerraInvariant || operand->isConstant();
+	for(int i = 0; i < 2; i++){
+		if(!*esInvariant[i]){ 
+			// l'operand no és invariant (de moment)
+			Variable *operand = operands[i];
 
-		if(!esquerraInvariant){
-			// b) comprovar que totes les definicions accessibles són
-			// de fora del bloc
-			bool totsFora = true;
+			// a) comprovar si es tracta d'una constant
+			if(operand->isConstant()){
+				*esInvariant[i] = true;
+			}
 
-			Set<Instruction> ud;
-			Set<Instruction>::iterator it = ud.begin();
+			if(!*esInvariant[i]){
+				// b) comprovar que totes les definicions accessibles són
+				// de fora del bloc
+				bool totsFora = true;
 
-			while(totsFora && it < ud.end()){
-				// comprovar si el bloc bàsic forma part o no del conjunt
-				// de blocs bàsics del bucle
-				bool trobat = false;
-				std::list<BasicBlock *>::iterator bIt = blocs.begin();
-				while(!trobat && bIt != blocs.end()){
-					trobat = *bIt == (*it)->getBasicBlock();
-					bIt++;
+				Set<Instruction> ud = this->definitions.useDefinitionChain(inst, operand);
+				Set<Instruction>::iterator it = ud.begin();
+
+				while(totsFora && it < ud.end()){
+					// comprovar si el bloc bàsic forma part o no del conjunt
+					// de blocs bàsics del bucle
+					bool trobat = false;
+					std::list<BasicBlock *>::iterator bIt = blocs.begin();
+					while(!trobat && bIt != blocs.end()){
+						trobat = *bIt == (*it)->getBasicBlock();
+						bIt++;
+					}
+
+					// si s'ha trobat, és perquè la definició és de dins el propi bucle
+					totsFora = !trobat;
+					it++;
 				}
 
-				// si s'ha trobat, és perquè la definició és de dins el propi bucle
-				totsFora = !trobat;
-			}
+				*esInvariant[i] = totsFora;
 
-			esquerraInvariant = totsFora;
-
-			if(!esquerraInvariant){
-				// c) comprovar si té única definició accessible i
-				// és invariant
-				Set<Instruction>::iterator it = ud.begin();
-				Instruction *def = *it;
-				it++;
-				if(!(it < ud.end())){
-					// només n'hi ha una
-					auto mode = invariants.find(def);
-					if(mode != invariants.end() && mode->second > 0){
-						esquerraInvariant = true;
+				if(!*esInvariant[i]){
+					// c) comprovar si té única definició accessible i
+					// és invariant
+					Set<Instruction>::iterator it = ud.begin();
+					Instruction *def = *it;
+					it++;
+					if(!(it < ud.end())){
+						// només n'hi ha una
+						auto mode = invariants.find(def);
+						if(mode != invariants.end() && mode->second > 0){
+							*esInvariant[i] = true;
+						}
 					}
 				}
 			}
 		}
-	}
-
-	// si es tracta d'un assignació a = b, suposarem que no té operand dret
-	// i per tant, dretaInvariant = true
-	if(inst->getType() == Instruction::Type::ASSIGNMENT){
-		if(((AssignmentInstruction *) inst)->getType() == AssignmentInstruction::Type::SIMPLE){
-			dretaInvariant = true;
-		}
-	}
-
-	if(!dretaInvariant){
-
 	}
 
 	// actualitzar el mapping d'invariants segons 

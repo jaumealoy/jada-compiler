@@ -19,6 +19,7 @@ Instruction::Instruction(){
 	this->prev = nullptr;
 	this->addedOptimization = false;
 	this->block = nullptr;
+	this->opcode = Instruction::Type::NUL;
 }
 
 Instruction::Instruction(Instruction::Type opcode){

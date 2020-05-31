@@ -7,6 +7,7 @@
 #include "instructions/SkipInstruction.h"
 #include "instructions/CallInstruction.h"
 #include <iostream>
+#include <cassert>
 
 CodeGeneration::CodeGeneration() : output("codi.asm") {
 	this->first = nullptr;
@@ -267,7 +268,7 @@ void CodeGeneration::backpatch(Label *e, std::list<Instruction *> v) {
  */
 void CodeGeneration::move(Instruction *start, Instruction *end, Instruction *after){
 	Instruction *aux = start;
-	Instruction *tmp;
+	Instruction *tmp = nullptr;
 	while(aux != end){
 		tmp = aux->getNext();
 		this->move(aux, after);
@@ -684,6 +685,9 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
+		std::ofstream tmpfilef("tmpresultat_prev.txt");
+		this->writeToFile(tmpfilef);
+
 		// TODO: reordenar un poc
 		for(int i = 0; i < this->programs.size(); i++){
 			canvis = this->programs[i]->optimize(this) || canvis;
@@ -753,6 +757,8 @@ void CodeGeneration::updateConstants(){
  * Obté l'etiqueta final d'una sèrie de sals incondicionals
  */
 Label *CodeGeneration::getTargetLabel(Label *label){
+	std::cout << "LABEL ==>> " << label->getId() << std::endl;
+	assert(label->getTargetInstruction() != nullptr);
 	Instruction *inst = label->getTargetInstruction()->getNext();
 	
 	while(inst != nullptr && inst->getType() == Instruction::Type::GOTO){
