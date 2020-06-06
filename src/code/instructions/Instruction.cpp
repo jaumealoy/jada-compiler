@@ -13,6 +13,7 @@
 #include "MemoryInstruction.h"
 
 #include <fstream>
+#include <cassert>
 
 Instruction::Instruction(){
 	this->next = nullptr;
@@ -268,6 +269,7 @@ Instruction* Instruction::copy(Instruction *original)
 			SkipInstruction *tmp = (SkipInstruction *) new char[sizeof(SkipInstruction)];
 			*tmp = *(SkipInstruction *) original; 
 			inst = tmp;
+			assert(tmp->getLabel() != nullptr);
 			break;
 		}
 	}

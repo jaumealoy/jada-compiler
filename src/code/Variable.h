@@ -41,6 +41,9 @@ private:
 	// llista de les instruccions que fan ús d'aquesta expressió
 	std::list<Instruction *> useList;
 
+	// insturccions que fan una assignació a la variable (Arithmentic o Assignment)
+	std::list<Instruction *> assignmentList;
+
 public:
 	Variable();
 	Variable(SubProgram *, int id, bool);
@@ -75,6 +78,7 @@ public:
 	void setConstant(std::shared_ptr<ValueContainer> valor);
 	void setConstant(bool constant);
 	void lockConstant();
+	void unlockConstant();
 	std::shared_ptr<ValueContainer> getValor();
 
 	// gestió de les expressions
@@ -86,6 +90,12 @@ public:
 	std::list<Instruction *> &getUseList();
 	void resetUseList();
 	void addUseList(Instruction *inst);
+
+	// quines assignacions ho fan a la variable
+	std::list<Instruction *> &getAssignmentList();
+	void addAssignment(Instruction *inst);
+	void resetAssignmentList();
+
 };
 
 #endif

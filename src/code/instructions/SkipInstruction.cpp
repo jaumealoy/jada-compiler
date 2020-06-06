@@ -1,10 +1,13 @@
 #include "SkipInstruction.h"
 #include "../CodeGeneration.h"
+#include <cassert>
 
 SkipInstruction::SkipInstruction(Label *label) 
 	: Instruction(Instruction::Type::SKIP), preheader(nullptr), loopStart(false)
 {
 	this->label = label;
+	assert(label != nullptr);
+
 
 	// indicar que l'etiqueta és a aquesta instrucció
 	this->label->setTargetInstruction(this);
@@ -30,6 +33,7 @@ void SkipInstruction::generateAssembly(CodeGeneration *code) {
 Label *SkipInstruction::getLabel(){ return this->label; }
 
 void SkipInstruction::setLabel(Label *label){
+	assert(label != nullptr);
 	this->label = label;
 }
 
@@ -38,9 +42,13 @@ void SkipInstruction::setLabel(Label *label){
  * instrucció
  */
 bool SkipInstruction::optimize(CodeGeneration *code){
+	std::cout << "ELIMINAT 100 SKIP" << std::endl;
+	assert(this->label != nullptr);
 	if(!this->label->isUsed() && !this->isAddedAtOptimization() && !this->loopStart){
+		std::cout << "ELIMINAT 1 SKIP" << std::endl;
 		code->remove(this);
-		return true;
+		std::cout << "ELIMINAT SKIP" << std::endl;
+		return false;
 	}
 
 	return false;

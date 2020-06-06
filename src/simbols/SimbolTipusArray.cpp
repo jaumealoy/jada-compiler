@@ -571,6 +571,10 @@ std::string SimbolTipusArray::toString(bool punter){
 
 	std::cout << "esPunter=" << this->esPunter << " creacio=" << this->esCreacio << " referencia=" << this->esReferencia<<std::endl;
 
+	if(!this->tipus.empty()){
+		return this->tipus;
+	}
+
 	if(this->esPunter || (this->esCreacio && punter)){
 		// el tipus és de la forma _tipusBàsic_*_*..._*
 		for(int i = 0; i < this->pointerCount - 1; i++){
@@ -579,13 +583,14 @@ std::string SimbolTipusArray::toString(bool punter){
 
 		tmp += "*";
 	}else if(!this->esReferencia){
+		std::cout << "HELLO FROM esREferencia " << this->tipus << std::endl;
 		// el tipus és de la forma _tipusBàsic_dim1_dim2..._dimN
-		int mida = (int) dimensions.size();
+		int mida = (int) this->dimensions.size();
 		for(int i = 0; i < mida - 1; i++){
-			tmp += std::to_string(dimensions[i]) + "_";
+			tmp += std::to_string(this->dimensions[i]) + "_";
 		}
 
-		tmp += std::to_string(dimensions[mida - 1]);
+		tmp += std::to_string(this->dimensions[mida - 1]);
 	}
     
     return tmp;

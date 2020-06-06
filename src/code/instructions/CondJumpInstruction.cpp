@@ -1,5 +1,6 @@
 #include "CondJumpInstruction.h"
 #include "GoToInstruction.h"
+#include "AssignmentInstruction.h"
 #include "../CodeGeneration.h"
 
 CondJumpInstruction::CondJumpInstruction(Operator op, Variable *e1, Variable *e2, Label *l) 
@@ -183,8 +184,9 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 	// comprovar canvi de condició: només és aplicable si la següent és un salt
 	// incondicional
 	// no s'ha de detectar el cas en què el goto va a la següent línia
-	if(!invertit && this->getNext() != nullptr && this->getNext()->getType() == Instruction::GOTO
-		&& (Instruction *)((GoToInstruction *) this->getNext())->getTarget()->getTargetInstruction() != this->getNext()->getNext()){
+	if(this->getNext() != nullptr && this->getNext()->getType() == Instruction::GOTO
+		&& (Instruction *)((GoToInstruction *) this->getNext())->getTarget()->getTargetInstruction() != this->getNext()->getNext()
+		&& !this->getNext()->isAddedAtOptimization()){
 
 		invertit = true;
 
@@ -215,6 +217,47 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 	Label *old = this->l;
 	this->l = code->getTargetLabel(old);
 	canvis = canvis || (old != this->l);
+
+	// optimització assignacions de booleans
+	if(this->e1->getTSB() == TipusSubjacentBasic::BOOLEAN && this->e2->getTSB() == TipusSubjacentBasic::BOOLEAN){
+		// detectar l'estructura
+		// if BOOL == BOOL goto E2
+		// a = True
+		// goto Ef
+
+		if(this->getNext() != nullptr && this->getNext()->getType() == Instruction::Type::ASSIGNMENT){
+			AssignmentInstruction *next1 = (AssignmentInstruction *) this->getNext();
+
+			if(next1->getDesti()->getTSB() == TipusSubjacentBasic::BOOLEAN 
+				&& next1->getOrigen() == nullptr){
+				Instruction *next2 = next1->getNext();
+				if(next2 != nullptr && next2->getType() == Instruction::Type::GOTO){
+					if(next2->getNext() == (Instruction *) this->l->getTargetInstruction()){
+						// comprovar que a continuació hi ha un a = False
+						Instruction *next3 = next2->getNext()->getNext();
+						if(next3 != nullptr && next3->getType() == Instruction::Type::ASSIGNMENT){
+							AssignmentInstruction *next3A = (AssignmentInstruction *) next3;
+							if(next3A->getDesti() == next1->getDesti()){
+								Instruction *move1 = code->addInstruction(new AssignmentInstruction(
+									((AssignmentInstruction *) next1)->getDesti(),
+									this->e2
+								));
+
+								Instruction *move2 = code->addInstruction(new GoToInstruction(
+									((GoToInstruction *) next2)->getTarget()
+								));
+
+								code->move(move1, move2, this->getPrevious());
+								code->remove(this);
+
+								return true;
+							}
+						}		
+					}
+				}
+			}
+		}
+	}
 
 	return canvis;
 }

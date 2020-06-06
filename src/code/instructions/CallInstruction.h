@@ -16,6 +16,10 @@ public:
     CallInstruction(SubProgram *programa, Variable *retorn);
     ~CallInstruction();
 
+	void updateConstants();
+	bool optimize(CodeGeneration *code);
+
+	void setDesti(Variable *var);
 	SubProgram *getSubProgram();
 
     std::string toString();

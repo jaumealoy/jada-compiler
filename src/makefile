@@ -3,8 +3,8 @@ SIMBOLS_DIR = simbols
 UTILS_DIR = utils
 CODE_DIR = code
 
-SOURCES = $(wildcard $(SOURCES_DIR)/*.cpp) $(wildcard $(SIMBOLS_DIR)/*.cpp) $(wildcard $(UTILS_DIR)/*.cpp) $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/instructions/*.cpp)  Errors.cpp main.cpp  Lexic.cpp Syntax.tab.cpp Driver.cpp
-HEADERS =  Driver.h Syntax.tab.hpp Lexic.h $(wildcard $(SOURCES_DIR)/*.h) $(wildcard $(UTILS_DIR)/*.h) $(wildcard $(CODE_DIR)/*.h) $(wildcard $(CODE_DIR)/*.hpp) $(wildcard $(CODE_DIR)/instructions/*.h) Errors.h location.hh Token.h $(wildcard $(SIMBOLS_DIR)/*.h)
+SOURCES = $(wildcard $(SOURCES_DIR)/*.cpp) $(wildcard $(SIMBOLS_DIR)/*.cpp) $(wildcard $(UTILS_DIR)/*.cpp) $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/instructions/*.cpp) $(wildcard $(CODE_DIR)/optimizations/*.cpp)  Errors.cpp main.cpp  Lexic.cpp Syntax.tab.cpp Driver.cpp
+HEADERS =  Driver.h Syntax.tab.hpp Lexic.h $(wildcard $(SOURCES_DIR)/*.h) $(wildcard $(UTILS_DIR)/*.h) $(wildcard $(CODE_DIR)/*.h) $(wildcard $(CODE_DIR)/*.hpp) $(wildcard $(CODE_DIR)/instructions/*.h) $(wildcard $(CODE_DIR)/optimizations/*.h) Errors.h location.hh Token.h $(wildcard $(SIMBOLS_DIR)/*.h)
 
 # Object files to either reference or create                          
 OBJECTS = $(SOURCES:.cpp=.o) 

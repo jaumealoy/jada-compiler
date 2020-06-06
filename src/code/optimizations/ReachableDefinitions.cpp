@@ -244,6 +244,14 @@ Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Var
 		it++;
 	}
 
+	Set<Instruction>::iterator tmpIt = ud.begin();
+	std::cout << "DA per " << inst->toString() << " = ";
+	while(tmpIt < ud.end()){
+		std::cout << (*tmpIt)->toString() << ", ";
+		tmpIt++;
+	}
+	std::cout << std::endl;
+
 	return ud;
 }
 

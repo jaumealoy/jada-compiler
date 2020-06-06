@@ -160,9 +160,11 @@ std::shared_ptr<ValueContainer> Variable::getValor(){
  * a quan s'aplica resetConstant entre iteracions
  */
 void Variable::lockConstant(){
-	std::cout << "Bloquejant " << this->name << " amb valors locked=" << this->locked << ", constant=" << this->constant << ", firstTime="<< this->firstTime << std::endl;
-
 	this->locked = true;
+}
+
+void Variable::unlockConstant(){
+	//this->locked = false;
 }
 
 int Variable::getId(){
@@ -211,4 +213,16 @@ void Variable::addUseList(Instruction *inst){
  */
 void Variable::resetUseList(){
 	this->useList.clear();
+}
+
+std::list<Instruction *> &Variable::getAssignmentList(){
+	return this->assignmentList;
+}
+
+void Variable::addAssignment(Instruction *inst){
+	this->assignmentList.push_back(inst);
+}
+
+void Variable::resetAssignmentList(){
+	this->assignmentList.clear();
 }

@@ -52,6 +52,8 @@ private:
 	Table<BasicBlock *, MAX_BLOCKS> basicBlocks;
 	void updateBasicBlocks();
 
+	void leaveSubProgram(bool updateLast);
+
 public:
 	CodeGeneration();
 	~CodeGeneration();

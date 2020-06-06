@@ -39,6 +39,7 @@ private:
 	};
 
 	std::map<BasicBlock *, struct AvailableExpressions::GK> inOut;
+	std::map<std::string, int> expressionCounter;
 
 	void calculateGK(struct AvailableExpressions::GK &gk, Instruction *inst);
 	struct AvailableExpressions::GK calculateGK(BasicBlock *block);

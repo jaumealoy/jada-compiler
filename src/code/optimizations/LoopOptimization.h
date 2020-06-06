@@ -41,8 +41,24 @@ private:
 
 	// extracció d'invariants
 	void checkInvariant(Instruction *inst, std::map<Instruction *, int> &invariants, std::list<BasicBlock *> &blocs);
-
 	ReachableDefinitions definitions;
+
+	// variables d'inducció
+	struct InductionVariable{
+		Variable *var;
+		long factor;
+		long constant;
+		bool basica;
+		Instruction *inst;
+	};
+
+	struct InductionAux {
+		int counter;
+		Instruction *inst;
+		Variable *var;
+	};
+
+	bool optimizeInductionVariables(CodeGeneration *code);
 
 public:
 	LoopOptimization(CodeGeneration *code, SubProgram *programa);

@@ -45,6 +45,8 @@ public:
 	void updateConstants();
 
 	Variable *getDesti();
+	void setDesti(Variable *desti);
+
 	Variable *getFirstOperand();
 	Variable *getSecondOperand();
 	ArithmeticInstruction::Type getOperator();

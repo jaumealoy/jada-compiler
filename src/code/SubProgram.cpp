@@ -261,7 +261,7 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 			// necessàriament existeix una instrucció anterior
 			// perquè com a mínim hi haurà l'skip del subprograma
 			assert(actual->getPrevious() != nullptr);
-			actual->setBasicBlock(actual->getPrevious()->getBasicBlock());
+			actual->setBasicBlock(last);
 		}
 
 		actual = actual->getNext();
@@ -479,16 +479,20 @@ bool SubProgram::optimize(CodeGeneration *code){
 
 	std::cout << "Optimització local de " << this->nom << " loops" << std::endl;
 
-	
+
+	this->updateBasicBlocks(code);
+
+
 	LoopOptimization loopOptimization = LoopOptimization(code, this);
 	
 	if(!firstTime){
-		loopOptimization.optimize(code);
+		canvis = loopOptimization.optimize(code) || canvis;
 	}else{
 		firstTime = false;
 	}
 
-	return canvis;
+
+	return canvis || firstTime;
 }
 
 /**
@@ -529,12 +533,14 @@ void SubProgram::deleteBasicBlock(CodeGeneration *code, BasicBlock *block){
 	delete block;
 }
 
+int myTmpId = 0;
+
 void SubProgram::draw(){
 	if(!this->start->isUsed()){
 		return;
 	}
 
-	std::ofstream f(this->getNom() + "_blocs.dot");
+	std::ofstream f(this->getNom() + "_blocs_" + std::to_string(myTmpId++) + ".dot");
 
 	f << "digraph {" << std::endl;
 

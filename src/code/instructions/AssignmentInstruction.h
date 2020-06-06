@@ -54,6 +54,7 @@ public:
 	// informació sobre la pròpia instrucció
 	AssignmentInstruction::Type getType();
 	Variable *getDesti();
+
 	Variable *getOrigen();
 	void setOrigen(Variable *origen);
 };

@@ -254,6 +254,8 @@ LoopOptimization::~LoopOptimization()
 bool LoopOptimization::optimize(CodeGeneration *code){
 	std::cout << "Optimització de bucles: inici" << std::endl;
 
+	bool canvis = false;
+
 	// detecció d'invariants per cada bucle
 	// detectar les possibles instruccions invariants, és a dir, variables
 	// que només reben una assignació dins el bucle
@@ -329,7 +331,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 
 					if(desti != nullptr){
 						auto variable = variables.find(desti);
-						if(variable != variables.end()){
+						if(variable != variables.end() && variable->second.counter == 1){
 							// comprovar que la instrucció no és una invariant
 							auto inv = invariant.find(variable->second.inst);
 							int original = inv->second;
@@ -365,7 +367,18 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 					// és necessari garantir que el seu bloc bàsic domina 
 					// a la sortida del bucle
 					BasicBlock *invariantBlock = aux->getBasicBlock();
+
+					std::cout << "Dominadors de exit = ";
+					Set<BasicBlock> &auxDom = this->loops[i].jump->getDominadors();
+					Set<BasicBlock>::iterator auxDomIt =  auxDom.begin();
+					while(auxDomIt < auxDom.end()){
+						std::cout << (*auxDomIt)->mId << ", ";
+						auxDomIt++;
+					}
+					std::cout << std::endl;
+
 					if(this->loops[i].jump->getDominadors().contains(invariantBlock)){
+						std::cout << "INVARIANT " << aux->toString() << " domina sortida (dom de "<<this->loops[i].jump->mId <<" conté "<< invariantBlock->mId <<") " << std::endl;
 						code->move(
 							aux, 
 							aux,
@@ -382,7 +395,10 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 
 	}
 
-	return false;
+	std::cout << "Comença VARIABLES d'INDUCCIÓ" << std::endl;
+	canvis = this->optimizeInductionVariables(code) || canvis;
+
+	return canvis;
 }
 
 /**
@@ -479,6 +495,8 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 	bool esquerraInvariant = (invariant->second == 1) || (invariant->second == -1);
 	bool dretaInvariant = (invariant->second == 1) || (invariant->second == -2);
 
+	std::cout << "EI = " << esquerraInvariant << " - DI = " << dretaInvariant << std::endl;
+
 	// evitar duplicar el codi entre l'argument esquerra i el dret
 	// obtenir els operands de les instruccions
 	bool* esInvariant[] = {&esquerraInvariant, &dretaInvariant};
@@ -516,11 +534,14 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 				*esInvariant[i] = true;
 			}
 
+			std::cout << "1esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
+
 			if(!*esInvariant[i]){
 				// b) comprovar que totes les definicions accessibles són
 				// de fora del bloc
 				bool totsFora = true;
 
+				//this->definitions = ReachableDefinitions(this->programa);
 				Set<Instruction> ud = this->definitions.useDefinitionChain(inst, operand);
 				Set<Instruction>::iterator it = ud.begin();
 
@@ -541,6 +562,9 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 
 				*esInvariant[i] = totsFora;
 
+				std::cout << "2esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
+
+
 				if(!*esInvariant[i]){
 					// c) comprovar si té única definició accessible i
 					// és invariant
@@ -555,6 +579,9 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 						}
 					}
 				}
+
+			std::cout << "3esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
+
 			}
 		}
 	}
@@ -571,4 +598,372 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 	}
 
 	std::cout << "Instrucció " << inst->toString() << " té invariant " << invariant->second << std::endl;
+}
+
+/**
+ * Determina quines són les variables d'inducció i aplica les
+ * optimitzacions possibles
+ */
+bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
+{
+	bool canvisLoop = false;
+	for(int i = 0; i < this->loops.size(); i++){
+		struct Loop &currentLoop = this->loops[i];
+
+		// 1. identificar les possibles variables d'inducció, que són
+		// aquelles instruccions que reben només una assignació
+		std::map<Variable *, struct InductionAux> f;
+
+		std::list<BasicBlock *> blocs = this->getBasicBlocksInLoop(currentLoop);
+		std::list<BasicBlock *>::iterator blocIt = blocs.begin();
+		while(blocIt != blocs.end()){
+			Instruction *aux = (*blocIt)->getStart();
+			Instruction *end = (*blocIt)->getEnd()->getNext();
+
+			while(aux != nullptr && aux != end){
+				Variable *desti = nullptr;
+				if(aux->getType() == Instruction::ASSIGNMENT){
+					desti = ((AssignmentInstruction *) aux)->getDesti();
+				}else if(aux->getType() == Instruction::ARITHMETIC){
+					desti = ((ArithmeticInstruction *) aux)->getDesti();
+				}
+
+				if(desti != nullptr){
+					auto v = f.find(desti);
+					if(v == f.end()){
+						// és la primera assignació
+						struct InductionAux tmp;
+						tmp.counter = 1;
+						tmp.inst = aux;
+						tmp.var = nullptr;
+						
+						if(aux->getType() == Instruction::Type::ARITHMETIC){
+							tmp.var = ((ArithmeticInstruction *) aux)->getDesti();
+						}else if(aux->getType() == Instruction::Type::ASSIGNMENT){
+							tmp.var = ((AssignmentInstruction *) aux)->getDesti();
+						}
+
+						f.emplace(desti, tmp);
+						std::cout << "VIND => possible nova " << tmp.inst->toString() << std::endl;
+					}else{
+						// s'ha fet més d'una assignació
+						v->second.counter++;
+					}
+				}
+
+				aux = aux->getNext();
+			}
+			blocIt++;
+		}
+
+		std::map<Variable *, struct InductionVariable> vind;
+		
+		std::map<Variable *, struct InductionAux>::iterator tmpIt = f.begin();
+		while(tmpIt != f.end()){
+			if(tmpIt->second.counter == 1){
+				// és una possible variable d'inducció
+				// comprovar si és una variable d'inducció simple
+				if(tmpIt->second.inst->getType() == Instruction::Type::ARITHMETIC){
+					ArithmeticInstruction *aInst = (ArithmeticInstruction *) tmpIt->second.inst;
+					// comprovar que és de la forma x = x +/- c
+					switch(aInst->getOperator()){
+						case ArithmeticInstruction::Type::ADDITION:
+						case ArithmeticInstruction::Type::SUBTRACTION:
+						{
+							std::cout << "Analitzant (2) " << tmpIt->second.inst->toString() << std::endl; 
+							if(aInst->getFirstOperand() == aInst->getDesti() && aInst->getSecondOperand()->isConstant()){
+								// x = x +/- c
+								struct InductionVariable tmp;
+								tmp.var = aInst->getDesti();
+								tmp.factor = 1;
+								tmp.basica = true;
+								tmp.constant = *(int *) aInst->getSecondOperand()->getValor()->get();
+								tmp.inst = aInst;
+								
+								if(aInst->getOperator() == ArithmeticInstruction::Type::SUBTRACTION){
+									tmp.constant *= -1;
+								}
+
+								vind.emplace(aInst->getDesti(), tmp);
+
+								std::cout << "["<< aInst->toString() <<"] variable inducció bàsica" << std::endl;
+							}else if(aInst->getSecondOperand() == aInst->getDesti() && aInst->getFirstOperand()->isConstant()){
+								// x = c +/- x
+								struct InductionVariable tmp;
+								tmp.var = aInst->getDesti();
+								tmp.factor = 1;
+								tmp.constant = *(int *) aInst->getFirstOperand()->getValor()->get();
+								tmp.basica = true;
+								tmp.inst = aInst;
+
+								aInst->markAtOptimization();
+								
+								if(aInst->getOperator() == ArithmeticInstruction::Type::SUBTRACTION){
+									tmp.factor = -1;
+								}
+
+								vind.emplace(aInst->getDesti(), tmp);
+								std::cout << "["<< aInst->toString() <<"] variable inducció bàsica" << std::endl;
+							}
+							
+							break;
+						}
+
+						default: 
+							// no és del tipus d'una variable d'inducció bàsica
+							break;
+					}
+				}
+			}
+			tmpIt++;
+		}
+
+		bool canvis = true;
+		while(canvis){
+			canvis = false;
+			
+			tmpIt = f.begin();
+			while(tmpIt != f.end()){
+				if(tmpIt->second.counter == 1){
+					auto varInd = vind.find(tmpIt->second.var);
+					if(varInd == vind.end()){
+						// no és una variable d'inducció
+						// comprovar que és de la forma valida
+						if(tmpIt->second.inst->getType() == Instruction::Type::ARITHMETIC && !tmpIt->second.inst->isAddedAtOptimization()){
+							ArithmeticInstruction *aInst = (ArithmeticInstruction *) tmpIt->second.inst;
+
+							// quina és l'altre variable d'inducció (si existeix)
+							Variable *v = nullptr;
+							long k;
+							if(!aInst->getFirstOperand()->isConstant() && aInst->getSecondOperand()->isConstant()){
+								// és de la forma x = a +/-/* k
+								v = aInst->getFirstOperand();
+								k = *(int *) aInst->getSecondOperand()->getValor()->get();
+							}else if(aInst->getFirstOperand()->isConstant() && !aInst->getSecondOperand()->isConstant()){
+								// és de la forma x = k +/-/* a
+								v = aInst->getSecondOperand();
+								k = *(int *) aInst->getFirstOperand()->getValor()->get();
+							}
+
+							// comprovar que v és una variable d'inducció
+							auto varInd = vind.find(v);
+							if(varInd != vind.end()){
+								struct InductionVariable varBasica = varInd->second;
+								struct InductionVariable varOriginal = varInd->second;
+								std::cout << "1. Variable " << varInd->first->getNom() << " d'inducció amb f = " << varInd->second.factor << ", k =" << varInd->second.constant << " i b = " << varInd->second.basica << std::endl; 
+								if(!varInd->second.basica){
+									auto aux = vind.find(varInd->second.var);
+									varBasica = aux->second;
+								}
+								std::cout << "2. Variable " << varInd->first->getNom() << " d'inducció amb f = " << varInd->second.factor << ", k =" << varInd->second.constant << " i b = " << varInd->second.basica << std::endl; 
+
+
+								// és una altra variable d'inducció
+								// comprovar que és una suma/resta/multiplicació
+								switch(aInst->getOperator()){
+									case ArithmeticInstruction::Type::ADDITION:
+									{
+										// és de la forma x = x0 + k o x = k + x0
+										struct InductionVariable tmp;
+										tmp.var = varBasica.var;
+										
+										if(varOriginal.basica){
+											tmp.factor = 1;
+											tmp.constant = k;
+										}else{
+											tmp.factor = varOriginal.factor;
+											tmp.constant = varOriginal.constant + k;
+										}
+
+										tmp.basica = false;
+										tmp.inst = aInst;
+										vind.emplace(tmpIt->second.var, tmp);
+										std::cout << "["<< tmpIt->second.inst->toString() << "] ADD variable d'inducció derivada" << std::endl;
+										canvis = true;
+										break;
+									}
+
+									case ArithmeticInstruction::Type::SUBTRACTION:
+									{
+										// és de la forma x = x0 - k o x = k - x0
+										struct InductionVariable tmp;
+										tmp.var = varBasica.var;
+
+										if(aInst->getFirstOperand() == varInd->first){
+											// és de la forma x = x0 - k
+											if(varOriginal.basica){
+												tmp.factor = 1;
+												tmp.constant = -k;
+											}else{
+												tmp.factor = varOriginal.factor;
+												tmp.constant = varOriginal.constant - k;
+											}
+										}else{
+											// és de la forma x = k - x0
+											if(varOriginal.basica){
+												tmp.factor = -1;
+												tmp.constant = k;
+											}else{
+												tmp.factor = - varOriginal.factor;
+												tmp.constant = k - varOriginal.constant;
+											}
+										}
+
+										tmp.basica = false;
+										tmp.inst = aInst;
+										vind.emplace(tmpIt->second.var, tmp);
+										std::cout << "sub["<< tmpIt->second.inst->toString() << "] variable d'inducció derivada amb f = " << tmp.factor << " i k = " << tmp.constant << std::endl;
+										canvis = true;
+										break;
+									}
+									case ArithmeticInstruction::Type::MULTIPLICATION:
+									{
+										// és de la forma x = x0 * k o x = k * x0
+										struct InductionVariable tmp;
+										tmp.var = varBasica.var;
+
+										if(varOriginal.basica){
+											tmp.factor = k * varBasica.factor;
+											tmp.constant = 0;
+										}else{
+											tmp.factor = k * varOriginal.factor;
+											tmp.constant = k * varOriginal.constant;
+										}
+
+										tmp.basica = false;
+										tmp.inst = aInst;
+										vind.emplace(tmpIt->second.var, tmp);
+
+										std::cout << "mul["<< tmpIt->second.inst->toString() << "] b = " << tmp.basica << " MUL variable d'inducció derivada amb f = " << tmp.factor << " i k = " << tmp.constant << std::endl;
+
+										canvis = true;
+										break;
+									}
+
+									default:
+										// els altres casos no defineixen variables d'inducció
+										// derivades
+										break;
+								}
+							}
+						}
+					}
+				}
+
+				tmpIt++;
+			}
+		}
+
+		// una vegada s'han identificat les variables d'inducció s'ha de transformar el codi
+		std::map<Variable *, struct InductionVariable>::iterator vindIt = vind.begin();
+		while(vindIt != vind.end()){
+			if(!vindIt->second.basica){
+				struct InductionVariable &tmp = vindIt->second;
+
+				// obtenir les dades de la variable d'inducció bàsica
+				auto x0 = vind.find(tmp.var);
+
+				// s'han de modificar les variables d'inducció derivades
+				Variable *sy = code->addVariable(TipusSubjacentBasic::INT);
+				
+				int increment = vindIt->second.factor * x0->second.constant;
+				ArithmeticInstruction::Type op1 = ArithmeticInstruction::Type::ADDITION;
+				if(increment < 0){
+					op1 = ArithmeticInstruction::Type::SUBTRACTION;
+					increment = -increment;
+				}
+
+				Variable *tmpIncrement = code->addVariable(TipusSubjacentBasic::INT);
+
+				// sy = sy + w
+				ArithmeticInstruction *incrementInst = new ArithmeticInstruction(
+					op1,
+					sy,
+					sy,
+					tmpIncrement
+				);
+
+				// per evitar que es detecti com a variable d'inducció a la pròxima iteració
+				incrementInst->markAtOptimization();
+
+				// canviar la instrucció y = x0 +/-/* k per y = sy
+				Instruction *newAssignment = code->addInstruction(new AssignmentInstruction(
+					vindIt->first,
+					sy
+				));
+
+				code->addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					tmpIncrement,
+					std::make_shared<ValueContainer>((char *) &increment, sizeof(int))
+				));
+
+				code->addInstruction(incrementInst);
+				
+				// moure les noves instruccions després de l'antiga instrucció
+				code->move(newAssignment, incrementInst, vindIt->second.inst);
+				code->remove(vindIt->second.inst);
+
+				// afegir al final de la precapçalera
+				Variable *t1 = code->addVariable(TipusSubjacentBasic::INT);
+				Variable *t2 = code->addVariable(TipusSubjacentBasic::INT);
+
+				// t1 = x0 * factor
+				Variable *factor = code->addVariable(TipusSubjacentBasic::INT);
+				Instruction *first = code->addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					factor,
+					std::make_shared<ValueContainer>((char *) &vindIt->second.factor, sizeof(int))
+				));
+
+				ArithmeticInstruction *t1Init = new ArithmeticInstruction(
+					ArithmeticInstruction::Type::MULTIPLICATION,
+					t1,
+					vindIt->second.var,
+					factor
+				);
+				code->addInstruction(t1Init);
+
+				// t2 = t1 + constant
+				Variable *constant = code->addVariable(TipusSubjacentBasic::INT);
+
+				long constantValor = vindIt->second.constant;
+				ArithmeticInstruction::Type operacio = ArithmeticInstruction::Type::ADDITION;
+				if(vindIt->second.constant < 0){
+					operacio = ArithmeticInstruction::Type::SUBTRACTION;
+					constantValor = -constantValor;
+				}
+
+				code->addInstruction(new AssignmentInstruction(
+					TipusSubjacentBasic::INT,
+					constant,
+					std::make_shared<ValueContainer>((char *) &constantValor, sizeof(int))
+				));
+				
+				ArithmeticInstruction *t2Init = new ArithmeticInstruction(
+					operacio,
+					t2,
+					t1,
+					constant
+				);
+				code->addInstruction(t2Init);
+
+				// sy = t2
+				Instruction *syInit = code->addInstruction(new AssignmentInstruction(
+					sy,
+					t2
+				));
+
+				// trobar el final de la precapçalera
+				code->move(first, syInit, currentLoop.header->getStart()->getPrevious());
+
+				// indicar que s'han realitzat canvis
+				canvisLoop = true;
+			}
+
+			vindIt++;
+		}
+	}
+
+	return canvisLoop;
 }

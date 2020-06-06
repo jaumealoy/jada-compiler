@@ -1,4 +1,5 @@
 #include "CallInstruction.h"
+#include "AssignmentInstruction.h"
 #include "../CodeGeneration.h"
 
 CallInstruction::CallInstruction(SubProgram *program) : Instruction(Instruction::Type::CALL){
@@ -13,8 +14,33 @@ CallInstruction::CallInstruction(SubProgram *program, Variable *var) : Instructi
 
 CallInstruction::~CallInstruction() {}
 
+/**
+ * Optimització de les assignacions diferides
+ */
+bool CallInstruction::optimize(CodeGeneration *code){
+	if(this->var != nullptr){
+		
+	}
+
+	return false;
+}
+
+void CallInstruction::updateConstants(){
+	if(this->var != nullptr){
+		this->var->addAssignment(this);
+	}
+}
+
+void CallInstruction::setDesti(Variable *var){
+	this->var = var;
+}
+
 std::string CallInstruction::toString() {
-    return "call " + this->program->getNom();
+	if(this->var != nullptr){
+		return this->var->getNom() + " = call " + this->program->getNom();
+	}else{
+    	return "call " + this->program->getNom();
+	}
 }
 
 /**

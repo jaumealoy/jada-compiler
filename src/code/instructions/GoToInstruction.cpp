@@ -1,4 +1,5 @@
 #include "GoToInstruction.h"
+#include "SkipInstruction.h"
 #include "../CodeGeneration.h"
 
 GoToInstruction::GoToInstruction(Label *label) : Instruction(Instruction::Type::GOTO) {
@@ -56,7 +57,7 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 
 	Instruction *next = this->getNext();
 	Instruction *originalNext = this->getNext();
-	while(next != nullptr && next->getType() != Instruction::Type::SKIP){
+	while(next != nullptr && (next->getType() != Instruction::Type::SKIP || !((SkipInstruction *) next)->getLabel()->isUsed())){
 		Instruction *tmp = next->getNext();
 		code->remove(next);
 		next = tmp;

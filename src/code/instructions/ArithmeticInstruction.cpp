@@ -157,6 +157,10 @@ void ArithmeticInstruction::updateConstants(){
 		this->desti->setConstant(false);
 	}
 
+	this->v1->addUseList(this);
+	this->v2->addUseList(this);
+
+	this->desti->addAssignment(this);
 }
 
 /**
@@ -238,6 +242,30 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 		return true;
 	}
 
+	// si la variable destí només s'utilitza a un únic lloc
+	// a = b + c
+	// x = a
+	// es pot fer directament x = b + c
+	/*std::list<Instruction *> &useList = this->desti->getUseList();
+	if(useList.size() == 1){
+		Instruction *inst = useList.front();
+		
+		if(inst->getType() == Instruction::Type::ASSIGNMENT){
+			AssignmentInstruction *aInst = (AssignmentInstruction *) inst;
+			this->desti = aInst->getDesti();
+			code->remove(aInst);
+			
+			this->desti->unlockConstant();
+			this->desti->resetConstant();
+			this->desti->setConstant(false);
+			this->desti->lockConstant();
+			
+			this->updateConstants();
+
+			return true;
+		}
+	}*/
+
 	return canvis;
 }
 
@@ -254,7 +282,7 @@ std::string ArithmeticInstruction::getExpressionId(){
 		var1 += "_v" + std::to_string(this->v1->getId());
 	}
 
-	std::string var2 = this->v1->getNom();
+	std::string var2 = this->v2->getNom();
 	if(!this->v2->isConstant()){
 		var2 += "_v" + std::to_string(this->v2->getId());
 	}
@@ -264,6 +292,10 @@ std::string ArithmeticInstruction::getExpressionId(){
 
 Variable * ArithmeticInstruction::getDesti(){
 	return this->desti;
+}
+
+void ArithmeticInstruction::setDesti(Variable *desti){
+	this->desti = desti;
 }
 
 Variable *ArithmeticInstruction::getFirstOperand(){

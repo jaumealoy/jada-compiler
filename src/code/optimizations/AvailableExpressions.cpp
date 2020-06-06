@@ -22,6 +22,8 @@ AvailableExpressions::AvailableExpressions(SubProgram *programa)
 			ArithmeticInstruction *tmp = (ArithmeticInstruction *) actual;
 			std::string expressionId = tmp->getExpressionId();
 
+			std::cout << "Instrucció " << actual->toString() << " amb id = " << expressionId << std::endl;
+
 			auto x = hashExpressions.find(expressionId);
 			if(x == hashExpressions.end()){
 				// no s'havia detectat aquesta expressió
@@ -35,6 +37,13 @@ AvailableExpressions::AvailableExpressions(SubProgram *programa)
 				aux->first = actual;
 
 				aux->exp = nullptr;
+			}
+
+			auto counter = this->expressionCounter.find(expressionId);
+			if(counter != this->expressionCounter.end()){
+				counter->second++;
+			}else{
+				this->expressionCounter.emplace(expressionId, 1);
 			}
 
 			// afegir als dos operands les expressions
@@ -265,66 +274,72 @@ bool AvailableExpressions::optimize(CodeGeneration *code)
 				ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
 				struct Expression *setElement = this->hashExpressions.find(aInst->getExpressionId())->second;
 
-				if(ed.gains.contains(setElement)){
-					// es pot substituir directament per la instrucció x = t
-					Instruction *initA = code->addInstruction(new AssignmentInstruction(
-						aInst->getDesti(),
-						setElement->exp
-					));
-
-					initA->markAtOptimization();
-
-					code->move(initA, initA, aInst);
-					code->remove(aInst);
-
-					this->calculateGK(ed, initA);
-				}else{
-					// no està disponible, és la primera vegada que es troba l'expressió
-					// substituir la instrucció de
-					// d = a op b per x = t
-					// i afegir abans de x = t la instrucció t = a op b
-
-					if(aInst->isAddedAtOptimization()){
-						// aquesta instrucció es pot haver aplicar en passades anteriors
-						// no es tornarà a crear una altra instrucció
-						if(setElement->exp == nullptr){
-							setElement->exp = aInst->getDesti();
-						}
-
-						this->calculateGK(ed, aInst);
-					}else{
-						Variable *t = setElement->exp;
-						if(t == nullptr){
-							// és la primera vegada que apareix aquesta expressió
-							setElement->exp = code->addVariable(aInst->getDesti()->getTSB());
-							t = setElement->exp;
-							t->setConstant(false);
-						}
-
-						// creació de t = a op b
-						Instruction *assignmentT = code->addInstruction(new ArithmeticInstruction(
-							aInst->getOperator(),
-							t,
-							aInst->getFirstOperand(),
-							aInst->getSecondOperand()
-						));
-
-						assignmentT->markAtOptimization();
-
-						// substituir càlcul expressió per assignació
+				// només té sentit aplicar l'optimització si l'expressió apareix més d'una vegada
+				auto count = this->expressionCounter.find(aInst->getExpressionId());
+				if(count != this->expressionCounter.end() && count->second > 1){
+					if(ed.gains.contains(setElement)){
+						// es pot substituir directament per la instrucció x = t
 						Instruction *initA = code->addInstruction(new AssignmentInstruction(
 							aInst->getDesti(),
-							t
+							setElement->exp
 						));
 
 						initA->markAtOptimization();
 
-						code->move(assignmentT, initA, aInst);
+						code->move(initA, initA, aInst);
 						code->remove(aInst);
 
-						this->calculateGK(ed, assignmentT);
 						this->calculateGK(ed, initA);
+					}else{
+						// no està disponible, és la primera vegada que es troba l'expressió
+						// substituir la instrucció de
+						// d = a op b per x = t
+						// i afegir abans de x = t la instrucció t = a op b
+
+						if(aInst->isAddedAtOptimization()){
+							// aquesta instrucció es pot haver aplicar en passades anteriors
+							// no es tornarà a crear una altra instrucció
+							if(setElement->exp == nullptr){
+								setElement->exp = aInst->getDesti();
+							}
+
+							this->calculateGK(ed, aInst);
+						}else{
+							Variable *t = setElement->exp;
+							if(t == nullptr){
+								// és la primera vegada que apareix aquesta expressió
+								setElement->exp = code->addVariable(aInst->getDesti()->getTSB());
+								t = setElement->exp;
+								t->setConstant(false);
+							}
+
+							// creació de t = a op b
+							Instruction *assignmentT = code->addInstruction(new ArithmeticInstruction(
+								aInst->getOperator(),
+								t,
+								aInst->getFirstOperand(),
+								aInst->getSecondOperand()
+							));
+
+							assignmentT->markAtOptimization();
+
+							// substituir càlcul expressió per assignació
+							Instruction *initA = code->addInstruction(new AssignmentInstruction(
+								aInst->getDesti(),
+								t
+							));
+
+							initA->markAtOptimization();
+
+							code->move(assignmentT, initA, aInst);
+							code->remove(aInst);
+
+							this->calculateGK(ed, assignmentT);
+							this->calculateGK(ed, initA);
+						}
 					}
+				}else{
+					this->calculateGK(ed, aux);
 				}
 			}else if(aux->getType() == Instruction::Type::ASSIGNMENT){
 				this->calculateGK(ed, aux);

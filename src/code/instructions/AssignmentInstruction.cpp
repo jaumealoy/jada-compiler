@@ -1,4 +1,6 @@
 #include "AssignmentInstruction.h"
+#include "ArithmeticInstruction.h"
+#include "CallInstruction.h"
 #include "../CodeGeneration.h"
 #include <exception>
 #include <iostream>
@@ -197,6 +199,7 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 };
 
 void AssignmentInstruction::updateConstants(){
+	std::cout << "[" << this->toString() << "] inst" << std::endl;
 	std::cout << "Comprovant constant de " << this->desti->getNom() << std::endl;
 	if(this->type == AssignmentInstruction::Type::SIMPLE && (this->origen == nullptr || this->origen->isConstant())){
 		// és una assignació de l'estil variable = <constant>
@@ -211,21 +214,35 @@ void AssignmentInstruction::updateConstants(){
 		}
 	}else{
 		std::cout << "Comprovant constant (2) de " << this->desti->getNom() << std::endl;
-
 		this->desti->setConstant(false);
 	}
+
+	// indicar ús de variable
+	switch(this->type){
+		case AssignmentInstruction::Type::SIMPLE:
+			if(this->origen != nullptr){
+				this->origen->addUseList(this);
+			}
+			break;
+	}
+
+	this->desti->addAssignment(this);
+
+	std::cout << "FI [" << this->toString() << "] inst" << std::endl;
+
 }
 
 /**
  * Optimització de les instruccions d'assignació
  * - Les instruccions de l'estil variable = <constant> es poden eliminar
  * - Assignació simple
+ * - assignació única
  */
 bool AssignmentInstruction::optimize(CodeGeneration *code){
 	bool canvis = false;
 
 	if(this->desti->isConstant()){
-		std::cout << "Borrant AssignmentInstruction" << std::endl;
+		std::cout << "Borrant AssignmentInstruction (desti = " << this->desti->getId() << ")" << std::endl;
 		code->remove(this);
 		return true;
 	}
@@ -238,18 +255,74 @@ bool AssignmentInstruction::optimize(CodeGeneration *code){
 	}
 
 	// si la variable 
-	if(this->type == AssignmentInstruction::Type::SIMPLE){
+	/*if(this->type == AssignmentInstruction::Type::SIMPLE){
 		// és de la forma a = b
 		std::list<Instruction *> &list = this->desti->getUseList();
 		Instruction *inst = list.front();
-		if(list.size() == 1 && inst->getType() == Instruction::Type::ASSIGNMENT){
+		if(list.size() == 1 && inst->getType() == Instruction::Type::ASSIGNMENT && inst != this){
 			// si l'única instrucció que utilitza la variable "a" és una altra assignació 
 			// simple c = a, es pot convertir amb c = b i elimiar a = b
 			AssignmentInstruction *aInst = (AssignmentInstruction *) inst;
-			aInst->setOrigen(this->desti);
-			return true;
+			if(aInst->getType() == AssignmentInstruction::Type::SIMPLE && aInst->getOrigen() == this->desti){
+				std::cout << "CANVIANTTTTTT!!!!!" << std::endl;
+
+				std::list<Instruction *> &altresInstruccions = this->desti->getAssignmentList();
+				std::list<Instruction *>::iterator it = altresInstruccions.begin();
+				while(it != altresInstruccions.end()){
+					std::cout << "Altres instruccions ("<< this->desti->getId() << ") són " << (*it)->toString() << std::endl;
+					if(*it != aInst){
+						Instruction *aux = *it;
+						if(aux->getType() == Instruction::Type::ASSIGNMENT){
+							((AssignmentInstruction *) aux)->desti = aInst->getDesti();
+						}
+					}
+					it++;
+				}
+				
+				this->desti = aInst->getDesti();
+				code->remove(aInst);
+				this->updateConstants();
+				return true;
+			}		
 		}
-	} 
+	}*/
+
+	if(this->type == AssignmentInstruction::Type::SIMPLE && this->origen != nullptr){
+		// la instrucció és la forma a = b
+		// és possible que aquest b només s'utilitzi a aquesta instrucció
+		std::list<Instruction *> &list = this->origen->getUseList();
+		if(list.size() == 1){
+			// canviar totes les assignacions de b:
+			// b = x op_arit -> a = x op_arit y
+			// b = x -> a = x
+			std::cout << "Assignació simple i un únic ús " << this->toString() << std::endl; 
+			std::list<Instruction *> &assignacions = this->origen->getAssignmentList();
+			std::list<Instruction *>::iterator it = assignacions.begin();
+			while(it != assignacions.end()){
+				Instruction *aux = *it;
+				if(!aux->isAddedAtOptimization()){
+					if(aux->getType() == Instruction::Type::ASSIGNMENT){
+						((AssignmentInstruction *) aux)->desti = this->desti;
+					}else if(aux->getType() == Instruction::Type::ARITHMETIC){
+						((ArithmeticInstruction *) aux)->setDesti(this->desti);
+						this->desti->unlockConstant();
+						this->desti->setConstant(false);
+						this->desti->setConstant(false);
+						this->desti->lockConstant();
+					}else if(aux->getType() == Instruction::Type::CALL){
+						((CallInstruction *) aux)->setDesti(this->desti);
+					}
+					it = assignacions.erase(it);
+				}else{
+					it++;
+				}
+			}
+
+			if(assignacions.size() == 0){
+				code->remove(this);
+			}
+		}
+	}
 
 	return canvis;
 }

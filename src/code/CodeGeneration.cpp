@@ -152,12 +152,19 @@ void CodeGeneration::enterSubProgram(SubProgram *subprogram) {
  * Recuperar el subprograma anterior.
  * En cas de no tenir cap subprograma es produirà un error
  */
-void CodeGeneration::leaveSubProgram() {
-	// indicar quina és la darrera instrucció
-	this->subprogrames.top()->setLastInstruction(this->last);
+void CodeGeneration::leaveSubProgram(bool updateLast)
+{
+	if(updateLast){
+		// indicar quina és la darrera instrucció
+		this->subprogrames.top()->setLastInstruction(this->last);
+	}
 
 	this->subprogrames.pop();
 	this->nivellProfunditat = this->subprogrames.top()->getNivellProfunditat();
+}
+
+void CodeGeneration::leaveSubProgram() {
+	this->leaveSubProgram(true);
 }
 
 /**
@@ -166,7 +173,11 @@ void CodeGeneration::leaveSubProgram() {
 void CodeGeneration::writeToFile(std::ofstream &file){
 	Instruction *act = this->first;
 	while(act != nullptr){
-		file << act->toString() << std::endl;
+		file << act->toString();
+		if(act->getBasicBlock() != nullptr){
+			file << " || BB = " << act->getBasicBlock()->mId;
+		}
+		file<<std::endl;
 		act = act->getNext();
 	}
 }
@@ -591,6 +602,7 @@ void CodeGeneration::store(Instruction *inst, CodeGeneration::Register reg, Vari
  * Aplica les optimitzacions sobre el codi intermedi
  */
 void CodeGeneration::optimize(){
+	int canviIt = 0;
 	bool canvis = true;
 	while(canvis){
 		canvis = false;
@@ -603,7 +615,7 @@ void CodeGeneration::optimize(){
 
 		Instruction *tmp = this->first;
 		while(tmp != nullptr){
-			std::cout << "Analitzant instrucció " << tmp->getType() << std::endl;
+			std::cout << "Analitzant instrucció " << tmp->getType() << " " << tmp->toString() << std::endl;
 			Instruction *next = tmp->getNext();
 
 			switch (tmp->getType()) {
@@ -620,12 +632,13 @@ void CodeGeneration::optimize(){
 					// un nombre indeterminat d'instruccions
 					// la propera instrucció segura és un skip
 					Instruction *safeNext = next;
-					while(safeNext != nullptr && safeNext->getType() != Instruction::Type::SKIP){
+					while(safeNext != nullptr 
+							&& (safeNext->getType() != Instruction::Type::SKIP 
+								|| !((SkipInstruction *) safeNext)->getLabel()->isUsed())){
 						safeNext = safeNext->getNext();
 					}
 
 					bool canvisLocals = ((GoToInstruction *) tmp)->optimize(this);
-
 					canvis = canvisLocals || canvis;
 
 					if(canvisLocals){
@@ -638,6 +651,7 @@ void CodeGeneration::optimize(){
 					// l'optimització d'un salt condicional pot provocar l'eliminació de
 					// la següent instrucció si és un salt incondicional
 					bool nextGoTo = false;
+					Instruction *prev = tmp->getPrevious();
 					Instruction *safeNext = nullptr;
 					if(next != nullptr && next->getType() == Instruction::Type::GOTO){
 						std::cout << "Següent instrucció a salt condicional és GOTO" << std::endl;
@@ -647,10 +661,13 @@ void CodeGeneration::optimize(){
 	
 					bool canvisLocals = ((CondJumpInstruction *) tmp)->optimize(this);
 
-					if(canvisLocals && nextGoTo){
+					/*if(canvisLocals && nextGoTo){
 						// és possible que s'hagi eliminat el next
 						next = safeNext;
 						std::cout << "Salt condicional canviant futures instruccions" << std::endl;
+					}*/
+					if(canvisLocals){
+						next = prev->getNext();
 					}
 
 					canvis = canvisLocals || canvis;
@@ -660,7 +677,9 @@ void CodeGeneration::optimize(){
 				case Instruction::Type::SKIP: {
 					// és possible que es borri aquesta instrucció skip si l'etiqueta
 					// no s'utilitza a cap salt
+					std::cout << "HOLAAAA!!!!!!" << std::endl;
 					bool canvisLocals = ((SkipInstruction *) tmp)->optimize(this);
+					//bool canvisLocals = false;
 					canvis = canvisLocals || canvis;
 
 					if(canvisLocals){
@@ -669,9 +688,18 @@ void CodeGeneration::optimize(){
 				}
 				break;
 
+				case Instruction::Type::CALL:
+					canvis = ((CallInstruction *) tmp)->optimize(this) || canvis;
+					break;
+
 				default:
 					canvis = canvis || false;
 			}
+
+			/*if(next != tmp->getNext() && tmp->getNext() != nullptr){
+			*	next = tmp->getNext();
+			}*/
+
 			tmp = next;
 		}
 
@@ -685,12 +713,14 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
-		std::ofstream tmpfilef("tmpresultat_prev.txt");
+		std::ofstream tmpfilef("tmpresultat_" + std::to_string(canviIt++) + ".txt");
 		this->writeToFile(tmpfilef);
 
 		// TODO: reordenar un poc
 		for(int i = 0; i < this->programs.size(); i++){
+			this->enterSubProgram(this->programs[i]);
 			canvis = this->programs[i]->optimize(this) || canvis;
+			this->leaveSubProgram(false);
 			this->programs[i]->draw();
 		}
 
@@ -710,7 +740,9 @@ void CodeGeneration::optimize(){
 void CodeGeneration::updateConstants(){
 	// indicar que totes les variables són possibles constants
 	for(int i = 0; i < this->vars.size(); i++){
-		this->vars.get(i)->resetConstant();
+		this->vars[i]->resetConstant();
+		this->vars[i]->resetUseList();
+		this->vars[i]->resetAssignmentList();
 	}
 
 	for(int i = 0; i < this->labels.size(); i++){
@@ -725,10 +757,12 @@ void CodeGeneration::updateConstants(){
 		switch (inst->getType()) {
 			case Instruction::Type::ASSIGNMENT:
 				((AssignmentInstruction *) inst)->updateConstants();
+				//((AssignmentInstruction *) inst)->getDesti()->addUseList(inst);
 				break;
 
 			case Instruction::Type::ARITHMETIC:
 				((ArithmeticInstruction *) inst)->updateConstants();
+				//((ArithmeticInstruction *) inst)->getDesti()->addUseList(inst);
 				break;
 
 			case Instruction::Type::GOTO:
@@ -740,6 +774,7 @@ void CodeGeneration::updateConstants(){
 				break;
 
 			case Instruction::Type::CALL:
+				((CallInstruction *) inst)->updateConstants();
 				((CallInstruction *) inst)->getSubProgram()->markUsage();
 		}
 		inst = inst->getNext();
@@ -763,7 +798,13 @@ Label *CodeGeneration::getTargetLabel(Label *label){
 	
 	while(inst != nullptr && inst->getType() == Instruction::Type::GOTO){
 		label = ((GoToInstruction *) inst)->getTarget();
-		inst = label->getTargetInstruction()->getNext();
+		
+		Instruction *aux = label->getTargetInstruction()->getNext();
+		if(inst == aux){
+			break;
+		}else{
+			inst = aux;
+		}
 	}
 
 	return label;
