@@ -26,7 +26,11 @@ void ReturnInstruction::setPrograma(SubProgram *program){
 }
 
 std::string ReturnInstruction::toString(){
-	return "return";
+	std::string tmp = "return";
+	if(this->var != nullptr){
+		tmp += " " + this->var->getNom();
+	}
+	return tmp;
 }
 
 /**

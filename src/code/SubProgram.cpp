@@ -343,20 +343,19 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 		}
 	}
 
-	// recòrrer i eliminar tots aquells blocs que no estiguin dins visitats
-	/*BasicBlock *aux = this->getEntryBlock();
-	while(aux != nullptr){
-		BasicBlock *next = aux->getNext();
-		auto visitat = visitats.find(aux);
+	// eliminar aquells blocs bàsics no accessibles
+	bloc = this->basicBlocks;
+	while(bloc != nullptr){
+		BasicBlock *next = bloc->getNext();
 
-		if(visitat == visitats.end()){
-			// no s'ha visitat
-			// per tant es pot eliminar el bloc bàsic
-			this->deleteBasicBlock(code, aux);
+		auto accessible = visitats.find(bloc);
+		if(accessible == visitats.end()){
+			// aquest bloc no és accessible
+			this->deleteBasicBlock(code, bloc);
 		}
 
-		aux = next;
-	}*/
+		bloc = next;
+	}
 
 	// actualitzar els dominadors
 	this->updateDominadors();
@@ -461,28 +460,25 @@ void SubProgram::updateDominadors(){
  * Aplica els mètodes d'optimització locals al subprograma
  */
 bool SubProgram::optimize(CodeGeneration *code){
-	std::cout << "Optimització local de " << this->nom << std::endl;
-
 	if(this->basicBlocks == nullptr){
 		return false;
 	}
 
-	std::cout << "Optimització local de " << this->nom << " comença" << std::endl;
-
-
 	bool canvis = false;
 
 
-	AvailableExpressions availableExpressions = AvailableExpressions(this);
-
-	std::cout << "Optimització local de " << this->nom << " comença opti" << std::endl;
-	availableExpressions.optimize(code);
-
-	std::cout << "Optimització local de " << this->nom << " loops" << std::endl;
-
+	std::cout << "Variables vives init" << std::endl;
+	LiveVariables liveVariables = LiveVariables(code, this);
+	std::cout << "Variables vives optimització start" << std::endl;
+	canvis = liveVariables.optimize(code) || canvis;
+	std::cout << "Variables vives optimització end" << std::endl;
 
 	this->updateBasicBlocks(code);
 
+	AvailableExpressions availableExpressions = AvailableExpressions(this);
+	canvis = availableExpressions.optimize(code) || canvis;
+
+	this->updateBasicBlocks(code);
 
 	LoopOptimization loopOptimization = LoopOptimization(code, this);
 	
@@ -491,14 +487,6 @@ bool SubProgram::optimize(CodeGeneration *code){
 	}else{
 		firstTime = false;
 	}
-
-	this->updateBasicBlocks(code);
-
-	std::cout << "Variables vives init" << std::endl;
-	LiveVariables liveVariables = LiveVariables(code, this);
-	std::cout << "Variables vives optimització start" << std::endl;
-	liveVariables.optimize(code);
-	std::cout << "Variables vives optimització end" << std::endl;
 
 
 
@@ -546,11 +534,11 @@ void SubProgram::deleteBasicBlock(CodeGeneration *code, BasicBlock *block){
 int myTmpId = 0;
 
 void SubProgram::draw(){
-	if(!this->start->isUsed()){
+	if(!this->start->isUsed() || this->codiExtern){
 		return;
 	}
 
-	std::ofstream f(this->getNom() + "_blocs_" + std::to_string(myTmpId++) + ".dot");
+	std::ofstream f(this->getNom() + "_blocs_" + std::to_string(myTmpId) + ".dot");
 
 	f << "digraph {" << std::endl;
 

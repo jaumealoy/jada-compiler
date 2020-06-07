@@ -6,6 +6,7 @@
 #include "ArithmeticInstruction.h"
 #include "AssignmentInstruction.h"
 #include "CallInstruction.h"
+#include "PreCallInstruction.h"
 #include "PreAmbleInstruction.h"
 #include "PutParamInstruction.h"
 #include "ReturnInstruction.h"
@@ -92,6 +93,10 @@ std::string Instruction::toString(){
 			tmp = ((ReturnInstruction *) this)->toString();
 			break;
 
+		case PRECALL:
+			tmp = "";
+			break;
+
 		default:
 			tmp = "undefined instruction (" + std::to_string(this->opcode) + ")";
 	}
@@ -148,6 +153,10 @@ void Instruction::generateAssembly(CodeGeneration *code){
 
 		case Type::MEMORY:
 			((MemoryInstruction *) this)->generateAssembly(code);
+			break;
+
+		case PRECALL:
+			((PreCallInstruction *) this)->generateAssembly(code);
 			break;
 
 		default:

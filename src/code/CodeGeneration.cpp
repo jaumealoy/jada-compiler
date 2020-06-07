@@ -106,6 +106,9 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, bool parameter){
 	// comprovar si es tracta del subprograma global
 	if(actual->getNivellProfunditat() == 0){
 		this->globalVariables.push_back(tmp);
+	}else{
+		auto aux = this->subprogramVariables.find(actual);
+		aux->second.push_back(tmp);
 	}
 
 	return tmp;
@@ -129,6 +132,9 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name,
 	// comprovar si es tracta del subprograma global
 	if(actual->getNivellProfunditat() == 0){
 		this->globalVariables.push_back(tmp);
+	}else{
+		auto aux = this->subprogramVariables.find(actual);
+		aux->second.push_back(tmp);
 	}
 
 	return tmp;
@@ -141,6 +147,11 @@ std::list<Variable *> &CodeGeneration::getGlobalVariables(){
 	return this->globalVariables;
 }
 
+std::list<Variable *> &CodeGeneration::getSubProgramVariables(SubProgram *programa){
+	auto tmp = this->subprogramVariables.find(programa);
+	return tmp->second;
+}
+
 /**
  * Crea un subprograma a la generació de codi
  */
@@ -148,6 +159,7 @@ SubProgram *CodeGeneration::addSubProgram(std::string id, Label *label, bool esE
 	// el nivell d'aquest subprograma és l'actual
 	SubProgram *programa = new SubProgram(this->nivellProfunditat + 1, label, id, esExtern);
 	this->programs.add(programa);
+	this->subprogramVariables.emplace(programa, std::list<Variable *>());
 	return programa;
 }
 
@@ -190,10 +202,11 @@ void CodeGeneration::writeToFile(std::ofstream &file){
 	Instruction *act = this->first;
 	while(act != nullptr){
 		file << act->toString();
-		if(act->getBasicBlock() != nullptr){
-			file << " || BB = " << act->getBasicBlock()->mId;
+		
+		if(act->getType() != Instruction::Type::PRECALL){
+			file << std::endl;
 		}
-		file<<std::endl;
+
 		act = act->getNext();
 	}
 }
@@ -636,12 +649,31 @@ void CodeGeneration::optimize(){
 
 			switch (tmp->getType()) {
 				case Instruction::Type::ASSIGNMENT:
-					canvis = ((AssignmentInstruction *) tmp)->optimize(this) || canvis;
-					break;
+				{
+					Instruction *safeNext = (next != nullptr) ? next->getNext() : nullptr;
 
-				case Instruction::Type::ARITHMETIC:
-					canvis = ((ArithmeticInstruction *) tmp)->optimize(this) || canvis;
+					bool canvisLocals = ((AssignmentInstruction *) tmp)->optimize(this);
+					canvis = canvisLocals || canvis;
+
+					if(canvisLocals){
+						next = safeNext;
+					}
+
 					break;
+				}
+				case Instruction::Type::ARITHMETIC:
+				{
+					Instruction *safeNext = (next != nullptr) ? next->getNext() : nullptr;
+					bool canvisLocals = ((ArithmeticInstruction *) tmp)->optimize(this);
+
+					canvis = canvisLocals || canvis;
+
+					if(canvisLocals){
+						next = safeNext;
+					}
+
+					break;
+				}
 
 				case Instruction::Type::GOTO: {
 					// l'optimització d'aquesta instrucció pot provocar que s'eliminin
@@ -694,8 +726,8 @@ void CodeGeneration::optimize(){
 					// és possible que es borri aquesta instrucció skip si l'etiqueta
 					// no s'utilitza a cap salt
 					std::cout << "HOLAAAA!!!!!!" << std::endl;
-					bool canvisLocals = ((SkipInstruction *) tmp)->optimize(this);
-					//bool canvisLocals = false;
+					//bool canvisLocals = ((SkipInstruction *) tmp)->optimize(this);
+					bool canvisLocals = false;
 					canvis = canvisLocals || canvis;
 
 					if(canvisLocals){
@@ -705,16 +737,21 @@ void CodeGeneration::optimize(){
 				break;
 
 				case Instruction::Type::CALL:
-					canvis = ((CallInstruction *) tmp)->optimize(this) || canvis;
+				{	
+					Instruction *safeNext = (next != nullptr) ? next->getNext() : nullptr;
+					bool canvisLocals = ((CallInstruction *) tmp)->optimize(this);
+					canvis = canvisLocals || canvis;
+
+					if(canvisLocals){
+					//	next = safeNext;
+					}
+
 					break;
+				}
 
 				default:
 					canvis = canvis || false;
 			}
-
-			/*if(next != tmp->getNext() && tmp->getNext() != nullptr){
-			*	next = tmp->getNext();
-			}*/
 
 			tmp = next;
 		}
@@ -745,6 +782,29 @@ void CodeGeneration::optimize(){
 
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
+
+	// les etiquetes s'eliminen al final de l'optimització
+	this->updateConstants();
+	Instruction *aux = this->first;
+	while(aux != nullptr){
+		Instruction *next = aux->getNext();
+
+		if(aux->getType() == Instruction::Type::SKIP){
+			std::cout << "Analitzant etiqueta " << aux->toString() << std::endl;
+			SkipInstruction *skip = (SkipInstruction *) aux;
+			if(!skip->getLabel()->isUsed()){
+				this->remove(skip);
+			}
+		}
+
+		aux = next;
+	}
+
+	for(int i = 0; i < this->programs.size(); i++){
+		this->programs[i]->updateBasicBlocks(this);
+		this->programs[i]->draw();
+	}
+
 }
 
 /**
@@ -786,6 +846,7 @@ void CodeGeneration::updateConstants(){
 				break;
 
 			case Instruction::Type::CONDJUMP:
+				//((CondJumpInstruction *) inst)->updateConstants();
 				((CondJumpInstruction *) inst)->getTarget()->markUsage();
 				break;
 

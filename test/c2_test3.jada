@@ -11,6 +11,12 @@ proc main() begin
 	boolean c;
 
 	b = a;
+	//n = 1200;
+
+	if a do
+		print("hola");
+		k = n + 3;
+	end;
 
 	/*for(int x = 0; false or true; x++) do
 		k = 3 + n;
@@ -20,10 +26,15 @@ proc main() begin
 		//k = 3 + n;
 
 		j = 3 * i - 8;
+		printInt(j);
 		i++;
 	end;
 
-	k = 7;
+	j = 7 + n;
+
+	k = j;
+	printInt(k);
+
 	k = 3;
 
 	/*while (i < j) do

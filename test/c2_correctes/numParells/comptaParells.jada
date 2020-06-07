@@ -1,0 +1,36 @@
+func demanaVector(int n) : int[] begin
+    int[] v = int[n];
+    
+    int i = 0;
+    print("Vols comptar ");
+    printInt(n);
+    printChar('\n');
+    while (n > 0) do
+        print("Introdueix el número ");
+        printInt(++i);
+        printChar(':');
+        printChar(' ');
+
+        v[i - 1] = readInt();
+        n--;
+    end;
+
+    return v;
+end demanaVector;
+
+proc main() begin
+    print("Quants de números vols comptar? ");
+    int k = readInt();
+    int[] vector = demanaVector(k);
+
+    for (int i = 0; i < k; ++i) do
+        print("El número ");
+        printInt(vector[i]);
+
+        if((vector[i] % 2) == 0) do
+            print(" és parell\n");
+        else do
+            print(" és imparell\n");
+        end;
+    end;
+end main;

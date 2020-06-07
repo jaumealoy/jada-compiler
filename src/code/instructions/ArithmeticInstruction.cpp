@@ -232,12 +232,7 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 		
 		assi->setInvokingSubProgram(this->getInvokingSubProgram());
 
-		std::cout << "generant Assigment Bàsic" << std::endl;
-
 		code->move(assi, assi, this);
-
-		std::cout << "eliminant instrucció" << std::endl;
-
 		code->remove(this);
 		return true;
 	}
@@ -246,8 +241,8 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 	// a = b + c
 	// x = a
 	// es pot fer directament x = b + c
-	/*std::list<Instruction *> &useList = this->desti->getUseList();
-	if(useList.size() == 1){
+	std::list<Instruction *> &useList = this->desti->getUseList();
+	if(useList.size() == 1 && this->desti->getAssignmentList().size() == 1){
 		Instruction *inst = useList.front();
 		
 		if(inst->getType() == Instruction::Type::ASSIGNMENT){
@@ -264,7 +259,7 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 
 			return true;
 		}
-	}*/
+	}
 
 	return canvis;
 }

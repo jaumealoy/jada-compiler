@@ -1,0 +1,34 @@
+func factorialR(int num) : int begin
+    if num == 0 do
+        return 1;
+    else do
+        return num * factorialR(num - 1);
+    end;
+end factorialR;
+
+func factorialI(int num) : int begin
+    int tmp = 1;
+
+    for (int i = 2; i <= num; i++) do
+        tmp *= i;
+    end;
+
+    return tmp;
+end factorialI;
+
+proc main() begin
+    print("Introdueix un número: ");
+    int n = readInt();
+
+    print("El factorial de ");
+    printInt(n);
+    print(" és ");
+    printInt(factorialI(n));
+    printChar('\n');
+
+    print("El factorial de ");
+    printInt(n);
+    print(" és ");
+    printInt(factorialR(n));
+    printChar('\n');
+end main;

@@ -19,7 +19,27 @@ CallInstruction::~CallInstruction() {}
  */
 bool CallInstruction::optimize(CodeGeneration *code){
 	if(this->var != nullptr){
-		
+		std::list<Instruction *> &useList = this->var->getUseList();
+		if(useList.size() == 1){
+			Instruction *aux = useList.front();
+			if(aux->getType() == Instruction::ASSIGNMENT 
+				&& ((AssignmentInstruction *) aux)->getType() == AssignmentInstruction::Type::SIMPLE)
+			{
+				/*this->var->getAssignmentList().clear();
+				this->var->getUseList().clear();
+
+				this->var = ((AssignmentInstruction *) aux)->getDesti();
+				this->var->unlockConstant();
+				this->var->setConstant(false);
+				this->var->lockConstant();
+				code->remove(aux);
+
+				this->var->getAssignmentList().clear();
+				this->updateConstants();
+
+				return true;*/
+			}
+		}
 	}
 
 	return false;
@@ -28,6 +48,7 @@ bool CallInstruction::optimize(CodeGeneration *code){
 void CallInstruction::updateConstants(){
 	if(this->var != nullptr){
 		this->var->addAssignment(this);
+		this->var->setConstant(false);
 	}
 }
 

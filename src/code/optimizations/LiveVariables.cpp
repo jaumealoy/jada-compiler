@@ -4,60 +4,15 @@
 #include "../instructions/CallInstruction.h"
 #include "../instructions/PutParamInstruction.h"
 #include "../instructions/ReturnInstruction.h"
+#include "../instructions/CondJumpInstruction.h"
 #include "../CodeGeneration.h"
-
-void addIfNotExists(std::map<Variable *, bool> &map, Variable *var);
 
 LiveVariables::LiveVariables(CodeGeneration *code, SubProgram *programa)
 	: programa(programa)
 {
 	// identificar el domini, és a dir, totes les variables
 	// que s'utilitzen
-	/*std::map<Variable *, bool> varTrobades;
-
-	Instruction *aux = programa->getFirstInstruction();
-	Instruction *end = programa->getLastInstruction()->getNext();
-	while(aux != end){
-		switch(aux->getType()){
-			case Instruction::ASSIGNMENT:
-			{
-				AssignmentInstruction *aInst = (AssignmentInstruction *) aux;
-				
-				switch(aInst->getType()){
-					case AssignmentInstruction::Type::SIMPLE: 
-					{
-						// de la forma a = b o a = constant
-						if(aInst->getOrigen() != nullptr){
-							addIfNotExists(varTrobades, aInst->getOrigen());
-						}
-						break;
-					}
-
-					default:
-					{
-						// altres casos a[c] = b o a = b[c]
-						addIfNotExists(varTrobades, aInst->getOrigen());
-						addIfNotExists(varTrobades, aInst->getDesti());
-						addIfNotExists(varTrobades, aInst->getOffset());
-					}
-				}
-
-				break;
-			}
-
-			case Instruction::ARITHMETIC:
-			case Instruction::CALL: 
-			{
-				break;
-			}
-			case Instruction::PUTPARAM:
-			case Instruction::CONDJUMP:
-		}
-
-		aux = aux->getNext();
-	}*/
-
-	std::list<Variable *> variables = programa->getVariables();
+	std::list<Variable *> variables = code->getSubProgramVariables(programa);
 	std::list<Variable *> &globals = code->getGlobalVariables();
 	std::list<Variable *>::iterator gIt = globals.begin();
 	while(gIt != globals.end()){
@@ -66,6 +21,16 @@ LiveVariables::LiveVariables(CodeGeneration *code, SubProgram *programa)
 	}
 
 	this->domini = std::make_shared<Domain<Variable>>(variables);
+
+	std::cout << "Variables identificades per "<< this->programa->getNom() <<": ";
+	gIt = variables.begin();
+	while(gIt != variables.end()){
+		std::cout << (*gIt)->getNom() << " ("<< (*gIt)->getId() <<"), ";
+		gIt++;
+	}
+	std::cout << std::endl;
+
+	this->calculateInOut();
 }
 
 LiveVariables::~LiveVariables()
@@ -79,6 +44,9 @@ LiveVariables::~LiveVariables()
  */
 void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actual)
 {
+
+	std::cout << "Actualitzant GK per inst => " << actual->toString() << std::endl;
+
 	switch(actual->getType()){
 		case Instruction::ARITHMETIC:
 		{
@@ -132,12 +100,15 @@ void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actua
 					break;
 				}
 			}
+
+			break;
 		}
 
 		case Instruction::PUTPARAM:
 		{
 			// només té un única variable que és l'argument que es passa
 			PutParamInstruction *ppinst = (PutParamInstruction *) actual;
+			std::cout << "Afegit variable al conjunt GK GAINS " << ppinst->getValor()->getNom() << std::endl;
 			gk.gains.put(ppinst->getValor());
 			break;
 		}
@@ -164,6 +135,15 @@ void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actua
 	
 			break;
 		}
+
+		case Instruction::CONDJUMP:
+		{
+			CondJumpInstruction *cInst = (CondJumpInstruction *) actual;
+			std::cout << "COND Utilitza " << cInst->getFirstOperand()->getNom() << " i " << cInst->getSecondOperand()->getNom() << std::endl;
+			gk.gains.put(cInst->getFirstOperand());
+			gk.gains.put(cInst->getSecondOperand());
+			break;
+		}
 	}
 }
 
@@ -174,33 +154,56 @@ struct LiveVariables::GK LiveVariables::calculateGK(BasicBlock *bloc)
 {
 	struct LiveVariables::GK gk;
 	gk.gains = Set<Variable>(this->domini);
+	gk.gains.removeAll();
 	gk.kills = Set<Variable>(this->domini);
+	gk.kills.removeAll();
 	
+	if(bloc == this->programa->getEntryBlock()){
+		return gk;
+	}
+
 	Instruction *aux = bloc->getEnd();
 	Instruction *end = bloc->getStart()->getPrevious();
-	while(aux != end){
+	while(aux != nullptr && aux != end){
 		this->calculateGK(gk, aux);
 		aux = aux->getPrevious();
 	}
+
+	std::cout << "GK BLOCK " << bloc->mId << std::endl;
+	Set<Variable>::iterator auxIt = gk.gains.begin();
+	std::cout << "==> Gains bloc = ";
+	while(auxIt < gk.gains.end()){
+		std::cout << (*auxIt)->getNom() << ", ";
+		auxIt++;
+	}
+	std::cout << std::endl;
 
 	return gk;
 }
 
 void LiveVariables::calculateInOut(){
+	std::list<BasicBlock *> pendents;
+
 	// inicialitzar el conjunt d'in dels diferents blocs bàsics
 	BasicBlock *aux = this->programa->getEntryBlock()->getNext();
 	while(aux != nullptr && aux != this->programa->getExitBlock()){
 		struct LiveVariables::GK tmp;
 		tmp.gains = Set<Variable>(this->domini);
+		tmp.gains.removeAll();
 		tmp.kills = Set<Variable>(this->domini);
+		tmp.kills.removeAll();
 		this->inOut.emplace(aux, tmp);
+
+		pendents.push_back(aux);
+
 		aux = aux->getNext();
 	}
+
+	std::cout << "comença in out" << std::endl;
 
 	// TODO: determinar quin és el conjunt d'entrada del exit block
 	// totes les variables globals i punters/arrays
 
-	std::list<BasicBlock *> pendents = this->programa->getExitBlock()->getPredecessors();
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();
 		pendents.pop_front();
@@ -229,6 +232,15 @@ void LiveVariables::calculateInOut(){
 		if(aux != this->inOut.end()){
 			aux->second.kills = tmpOut;
 
+			std::cout << "IN OUT BLOCK " << actual->mId << std::endl;
+			Set<Variable>::iterator auxIt = inNou.begin();
+			std::cout << "In bloc = ";
+			while(auxIt < inNou.end()){
+				std::cout << (*auxIt)->getNom() << ", ";
+				auxIt++;
+			}
+			std::cout << std::endl;
+
 			if(inNou != aux->second.gains){
 				aux->second.gains = inNou;
 				
@@ -250,7 +262,7 @@ void LiveVariables::calculateInOut(){
  */
 bool LiveVariables::optimize(CodeGeneration *code)
 {
-	bool canvis = true;
+	bool canvis = false;
 
 	// aplicar les optimitzacions per blocs bàsics
 	BasicBlock *actual = this->programa->getEntryBlock()->getNext();
@@ -261,7 +273,9 @@ bool LiveVariables::optimize(CodeGeneration *code)
 		struct LiveVariables::GK gk;
 		auto tmp = this->inOut.find(actual);
 		if(tmp != this->inOut.end()){
-			gk = tmp->second;
+			gk.gains = tmp->second.kills; // out del bloc
+			gk.kills = tmp->second.kills; // out del bloc
+			gk.kills.removeAll();
 
 			while(aux != nullptr && aux != end){
 				Instruction *prev = aux->getPrevious();
@@ -274,20 +288,47 @@ bool LiveVariables::optimize(CodeGeneration *code)
 				}
 				std::cout << std::endl;
 
+				bool deleted = false;
 
 				switch(aux->getType()){
 					case Instruction::Type::ASSIGNMENT:
 					{
-						AssignmentInstruction *aInst = (AssignmentInstruction *) actual;
+						AssignmentInstruction *aInst = (AssignmentInstruction *) aux;
+
+						switch(aInst->getType()){
+							case AssignmentInstruction::Type::SIMPLE:
+							{
+								if(aInst->getDesti() != nullptr){
+									// és de la forma a = b
+									if(!gk.gains.contains(aInst->getDesti())){
+										code->remove(aInst);
+										canvis = true;
+										deleted = true;
+									}
+								}
+
+								break;
+							}
+
+							case AssignmentInstruction::Type::SOURCE_OFF:
+							{
+								break;
+							}
+
+							// el cas TARGET_OFF mai eliminarà l'assignació perquè tot són arguments
+						}
+
 						break;
 					}
 
 					case Instruction::Type::ARITHMETIC:
 					{
-						ArithmeticInstruction *aInst = (ArithmeticInstruction *) actual;
+						ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
 						if(!gk.gains.contains(aInst->getDesti())){
+							std::cout << "És possible eliminar " << aInst->getDesti()->getNom() << " - " << aInst->getDesti()->getId() << std::endl;
 							code->remove(aInst);
 							canvis = true;
+							deleted = true;
 						}
 
 						break;
@@ -300,6 +341,10 @@ bool LiveVariables::optimize(CodeGeneration *code)
 						break;
 				}
 
+				if(!deleted){
+					this->calculateGK(gk, aux);
+				}
+
 				aux = prev;
 			}
 		}
@@ -308,15 +353,4 @@ bool LiveVariables::optimize(CodeGeneration *code)
 	}
 
 	return canvis;
-}
-
-/**
- * Afegeix una variable al mapping si aquesta no hi és
- */
-void addIfNotExists(std::map<Variable *, bool> &map, Variable *var)
-{
-	auto v = map.find(var);
-	if(v == map.end()){
-		map.emplace(var, true);
-	}
 }

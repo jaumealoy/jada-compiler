@@ -21,10 +21,11 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
         driver->error( error_break_invalid() );
     }
 
+    DescripcioFuncio *df;
     if(bloc.conteReturn()){
         // Comprovar que els tipus són compatibles
         // 1. Obtenir el tipus de retorn de la funció
-        DescripcioFuncio *df = (DescripcioFuncio *) driver->ts.consulta(cap.getNomFuncio());
+        df = (DescripcioFuncio *) driver->ts.consulta(cap.getNomFuncio());
 
         // Hem de comprovar que cada un dels returns és compatible amb el valor de 
         // retorn de la funció
@@ -72,6 +73,7 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
 
 	// backpatch al final de l'instrucció
 	Label *finalPrograma = driver->code.addLabel();
+    driver->code.addInstruction(new ReturnInstruction(df->getSubPrograma()));
 	driver->code.addInstruction(new SkipInstruction(finalPrograma));
 	driver->code.backpatch(finalPrograma, m1.getSeg());
 

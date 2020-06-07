@@ -3,7 +3,7 @@
 #include "../code/instructions/CallInstruction.h"
 #include "../code/instructions/PutParamInstruction.h"
 #include "../code/instructions/PreAmbleInstruction.h"
-#include "../code/instructions/AssemblyInstruction.h"
+#include "../code/instructions/PreCallInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
 
@@ -81,10 +81,7 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
     // generacio de codi
 	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
 		// no té paràmetres, però el valor de retorn és com un paràmetre més
-		int espai = program->getOcupacioParametres();
-		driver->code.addInstruction(new AssemblyInstruction(
-			"subq\t$" + std::to_string(espai) + ", %" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8)
-		));
+		driver->code.addInstruction(new PreCallInstruction(program));
 	}
 	
 	// si és una funció, té un tipus de retorn
@@ -95,20 +92,6 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 	}
 
     driver->code.addInstruction(new CallInstruction(program, this->r));
-	
-	/*if(d->getTipus() == Descripcio::Tipus::FUNCIO){
-		// guardar el valor de retorn dins la variable creada
-		driver->code.addInstruction(new AssemblyInstruction(
-			"mov" + CodeGeneration::getSizeTag(true, TSB::sizeOf(this->tsb)) + "\t(%rsp), %" + 
-			CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(this->tsb))
-		));
-
-		driver->code.addInstruction(new AssemblyInstruction(
-			"mov" + CodeGeneration::getSizeTag(true, TSB::sizeOf(this->tsb)) + "\t%"
-			+ CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(this->tsb)) + ", " 
-			+ std::to_string(this->r->getOffset()) + "(%rbp)"
-		));
-	}*/
 }
 
 /**
@@ -171,10 +154,7 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 
 	// reservar espai per tots els paràmetres
 	// és la primera instrucció que s'ha d'executar
-	int espai = programa->getOcupacioParametres();
-	Instruction *aux = driver->code.addInstruction(new AssemblyInstruction(
-		"subq\t$" + std::to_string(espai) + ", %" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8)
-	));
+	Instruction *aux = driver->code.addInstruction(new PreCallInstruction(programa));
 
 	driver->code.move(aux, aux, cont.getInici().getInstruction());
 	driver->code.remove(cont.getInici().getInstruction());

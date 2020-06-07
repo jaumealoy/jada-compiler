@@ -265,3 +265,16 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 bool CondJumpInstruction::isInvertit(){
 	return this->invertit;
 }
+
+Variable *CondJumpInstruction::getFirstOperand(){
+	return this->e1;
+}
+
+Variable *CondJumpInstruction::getSecondOperand(){
+	return this->e2;
+}
+
+void CondJumpInstruction::updateConstants(){
+	this->e1->addUseList(this);
+	this->e2->addUseList(this);
+}

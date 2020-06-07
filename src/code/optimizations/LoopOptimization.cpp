@@ -52,6 +52,8 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 		// aquesta sempre serà la primera instrucció del bloc bàsic
 		SkipInstruction *start = (SkipInstruction *) tmp.header->getStart();
 
+		assert(start != nullptr);
+
 		// comprovar si està associada a cap altre bloc bàsic
 		if(start->getPreHeaderInstruction() == nullptr){
 			// s'ha de crear la precapçalera
@@ -254,7 +256,7 @@ LoopOptimization::~LoopOptimization()
 bool LoopOptimization::optimize(CodeGeneration *code){
 	std::cout << "Optimització de bucles: inici" << std::endl;
 
-	bool canvis = false;
+	bool canvisG = false;
 
 	// detecció d'invariants per cada bucle
 	// detectar les possibles instruccions invariants, és a dir, variables
@@ -320,7 +322,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 				Instruction *aux = (*it)->getStart();
 				Instruction *end = (*it)->getEnd()->getNext();
 
-				while(aux != end){
+				while(aux != nullptr && aux != end){
 					// comprovar que es tracta d'una assignació o operació aritmètica
 					Variable *desti = nullptr;
 					if(aux->getType() == Instruction::Type::ARITHMETIC){
@@ -384,6 +386,8 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 							aux,
 							this->loops[i].header->getStart()->getPrevious()	
 						);
+
+						canvisG = true;
 					}
 				}
 
@@ -396,9 +400,9 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 	}
 
 	std::cout << "Comença VARIABLES d'INDUCCIÓ" << std::endl;
-	canvis = this->optimizeInductionVariables(code) || canvis;
+	canvisG = this->optimizeInductionVariables(code) || canvisG;
 
-	return canvis;
+	return canvisG;
 }
 
 /**

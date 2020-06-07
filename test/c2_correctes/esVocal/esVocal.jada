@@ -1,0 +1,45 @@
+const int numVocals = 5;
+
+proc inicialitzaVocals(char[numVocals] vocals) begin
+	vocals[0] = 'a';
+	vocals[1] = 'e';
+	vocals[2] = 'i';
+	vocals[3] = 'o';
+	vocals[4] = 'u';
+end inicialitzaVocals;
+
+proc main() begin
+	string txt1;
+	txt1 = "Introdueix una lletra: ";
+
+	char[numVocals] v;
+	inicialitzaVocals(v);
+
+	print(txt1);
+	char caracter = readChar();
+
+	boolean trobat = false;
+	int j = 0;
+	while ((j < numVocals) and (not trobat)) do
+        printChar(v[j]);
+        printChar(caracter);
+        printChar('\n');
+		if (v[j] == caracter) do
+			trobat = true;
+		end;
+		j = j + 1;
+	end;
+
+	if (trobat) do
+		print("És una vocal\n");
+	else do
+		print("No és una vocal\n");
+	end;
+
+	int i = 0;
+	while (i != 5) do
+		printChar(v[i]);
+		printChar('\n');
+		i = i + 1;
+	end;
+end main;

@@ -23,6 +23,7 @@ public:
 		RETURN,
 		ASSEMBLY,
 		MEMORY,
+		PRECALL,
 		NUL
 	};
 private:

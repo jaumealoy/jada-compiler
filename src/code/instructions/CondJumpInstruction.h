@@ -37,8 +37,12 @@ public:
 	void generateAssembly(CodeGeneration *code);
 
 	// optimització
+	void updateConstants();
 	bool optimize(CodeGeneration *code);
 	bool isInvertit();
+
+	Variable *getFirstOperand();
+	Variable *getSecondOperand();
 };
 
 #endif
