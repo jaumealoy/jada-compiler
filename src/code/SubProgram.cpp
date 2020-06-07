@@ -492,9 +492,14 @@ bool SubProgram::optimize(CodeGeneration *code){
 		firstTime = false;
 	}
 
-	//this->updateBasicBlocks(code);
+	this->updateBasicBlocks(code);
 
-	//LiveVariables liveVariables = LiveVariables(code, this);
+	std::cout << "Variables vives init" << std::endl;
+	LiveVariables liveVariables = LiveVariables(code, this);
+	std::cout << "Variables vives optimització start" << std::endl;
+	liveVariables.optimize(code);
+	std::cout << "Variables vives optimització end" << std::endl;
+
 
 
 	return canvis || firstTime;
