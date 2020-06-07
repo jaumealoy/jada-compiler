@@ -58,3 +58,7 @@ void ReturnInstruction::generateAssembly(CodeGeneration *code){
 	code->output << "ret";
 
 }
+
+Variable *ReturnInstruction::getValor(){
+	return this->var;
+}

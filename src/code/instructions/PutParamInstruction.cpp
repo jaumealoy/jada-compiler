@@ -38,3 +38,7 @@ void PutParamInstruction::generateAssembly(CodeGeneration *code){
 	code->output << std::to_string(this->argument->getOffset() - 8) + "(%"; // - 8 perquè encara no s'ha inserit @return
 	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + ")";
 }
+
+Variable *PutParamInstruction::getValor(){
+	return this->valor;
+}

@@ -54,6 +54,9 @@ private:
 
 	void leaveSubProgram(bool updateLast);
 
+	// llistat de variables globals
+	std::list<Variable *> globalVariables;
+
 public:
 	CodeGeneration();
 	~CodeGeneration();
@@ -66,6 +69,7 @@ public:
 	Variable *addVariable(TipusSubjacentBasic tsb, bool);
 	Variable *addVariable(TipusSubjacentBasic tsb, std::string name);
 	Variable *addVariable(TipusSubjacentBasic tsb, std::string name, bool);
+	std::list<Variable *> &getGlobalVariables();
 	
 	// gestió dels subprogrames
 	SubProgram *addSubProgram(std::string id, Label *label);

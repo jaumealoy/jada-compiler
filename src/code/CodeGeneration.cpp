@@ -103,11 +103,15 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, bool parameter){
 	// indicar l'ocupació
 	tmp->setOcupacio(tsb);
 
+	// comprovar si es tracta del subprograma global
+	if(actual->getNivellProfunditat() == 0){
+		this->globalVariables.push_back(tmp);
+	}
+
 	return tmp;
 }
 
 Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name){
-	std::cout << "Afegint variable (o no) amb nom " << name << std::endl;
 	return this->addVariable(tsb, name, false);
 }
 
@@ -122,7 +126,19 @@ Variable *CodeGeneration::addVariable(TipusSubjacentBasic tsb, std::string name,
 	// indicar l'ocupació
 	tmp->setOcupacio(tsb);
 
+	// comprovar si es tracta del subprograma global
+	if(actual->getNivellProfunditat() == 0){
+		this->globalVariables.push_back(tmp);
+	}
+
 	return tmp;
+}
+
+/**
+ * Retorna una llista amb les variables definides a nivell global
+ */
+std::list<Variable *> &CodeGeneration::getGlobalVariables(){
+	return this->globalVariables;
 }
 
 /**

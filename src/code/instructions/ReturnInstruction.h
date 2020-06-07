@@ -23,6 +23,8 @@ public:
 	
 	std::string toString();
 	void generateAssembly(CodeGeneration *);
+
+	Variable *getValor();
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "../utils/Set.hpp"
 #include "optimizations/AvailableExpressions.h"
 #include "optimizations/LoopOptimization.h"
+#include "optimizations/LiveVariables.h"
 #include <iostream>
 
 SubProgram::SubProgram(int np, Label *start, std::string id, bool esExtern) 
@@ -490,6 +491,10 @@ bool SubProgram::optimize(CodeGeneration *code){
 	}else{
 		firstTime = false;
 	}
+
+	//this->updateBasicBlocks(code);
+
+	//LiveVariables liveVariables = LiveVariables(code, this);
 
 
 	return canvis || firstTime;

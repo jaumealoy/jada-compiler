@@ -20,6 +20,8 @@ public:
 	bool optimize(CodeGeneration *code);
 
 	void setDesti(Variable *var);
+	Variable *getDesti();
+	
 	SubProgram *getSubProgram();
 
     std::string toString();

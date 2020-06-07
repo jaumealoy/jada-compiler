@@ -336,6 +336,10 @@ Variable * AssignmentInstruction::getDesti(){
 	return this->desti;
 }
 
+Variable * AssignmentInstruction::getOffset(){
+	return this->offset;
+}
+
 /**
  * Canvia l'origen d'una instrucció d'assignació
  */

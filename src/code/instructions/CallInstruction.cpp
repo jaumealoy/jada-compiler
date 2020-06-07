@@ -35,6 +35,10 @@ void CallInstruction::setDesti(Variable *var){
 	this->var = var;
 }
 
+Variable *CallInstruction::getDesti(){
+	return this->var;
+}
+
 std::string CallInstruction::toString() {
 	if(this->var != nullptr){
 		return this->var->getNom() + " = call " + this->program->getNom();
