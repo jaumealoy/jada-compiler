@@ -1,6 +1,7 @@
 #include "SimbolExpressio.h"
 #include "SimbolRelExpr.h"
 #include "SimbolArithmeticExpression.h"
+#include "SimbolDimensionList.h"
 #include "../Driver.h"
 #include "../code/Reference.h"
 #include "../code/instructions/CondJumpInstruction.h"
@@ -10,6 +11,8 @@
 #include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/AssemblyInstruction.h"
 #include "../code/instructions/MemoryInstruction.h"
+#include "../code/instructions/MallocInstruction.h"
+#include <memory>
 
 /**
  * L'operació de dues expressions constants dona lloc a una expressió constant
@@ -318,6 +321,7 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 		// calcular el total de memòria
 		std::vector<SimbolExpressio> dimensions = ref.getArrayDimensions();
 		Variable *totalBytes = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+		totalBytes->setOcupacioExtra(0);
 		
 		long valor = ((DescripcioTipus *) driver->ts.consulta(ref.getTipusBasic()))->getOcupacio();
 		driver->code.addInstruction(new AssignmentInstruction(
@@ -337,13 +341,8 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
 			));
 		}
 
-		driver->code.addInstruction(new MemoryInstruction(false, totalBytes, CodeGeneration::Register::A));
-		driver->code.addInstruction(new AssemblyInstruction("push\t%rax"));
-		driver->code.addInstruction(new AssemblyInstruction("push\t%rax"));
-		driver->code.addInstruction(new AssemblyInstruction("call\tjada_malloc"));
-		driver->code.addInstruction(new AssemblyInstruction("pop\t%rax"));
-		driver->code.addInstruction(new MemoryInstruction(true, this->r, CodeGeneration::Register::A));
-		driver->code.addInstruction(new AssemblyInstruction("pop\t%rax"));
+		this->r->setOcupacioExtra(0);
+		driver->code.addInstruction(new MallocInstruction(this->r, totalBytes));
 
 		// inicialitzar el bloc de dades
 		for(int i = 0; i < dimensions.size(); i++){
@@ -771,6 +770,117 @@ void SimbolExpressio::make(Driver *driver, int tipus, SimbolReferencia ref){
 	// el valor resultant serà
 	this->r = resultat;
 	this->d = nullptr;
+}
+
+/**
+ * exprSimple -> new ID dimList
+ */
+void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionList list)
+{
+	// comprovar que el tipus és realment un tipus del qual es poden definir arrays dinàmics
+	Descripcio *d = nullptr;
+	try{
+		d = driver->ts.consulta(tipus);
+	}catch(TaulaSimbols::NomNoExistent e){
+		this->makeNull();
+		driver->error( error_no_tipus(tipus), true);
+		return;
+	}
+
+	// d != nullptr
+	if(d->getTipus() != Descripcio::Tipus::TIPUS){
+		this->makeNull();
+		driver->error( error_no_tipus(tipus), true);
+		return;
+	}
+
+	DescripcioTipus *dt = (DescripcioTipus *) d;
+
+	// no es poden crear arrays dinàmics d'arrays o punters
+	if(dt->getTSB() == TipusSubjacentBasic::ARRAY || dt->getTSB() == TipusSubjacentBasic::POINTER){
+		this->makeNull();
+		driver->error( error_creacio_punter(dt->getTSB()), true );
+		return;
+	}
+
+	std::list<SimbolExpressio> &dimensions = list.getDimensionList();
+	if(dimensions.empty()){
+		this->makeNull();
+		return;
+	}
+
+	// indicar informació sobre el tipus
+	std::string aux = "";
+	for(int i = 0; i < dimensions.size() - 1; i++){
+		aux += "*_";
+	}
+	aux += "*";
+
+	this->tipus = tipus + "_" + aux;
+	this->tsb = TipusSubjacentBasic::POINTER;
+
+	// variables
+	this->r = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+	this->r->setOcupacioExtra(0);
+	this->d = nullptr;
+
+	// calcular l'espai total i reservar l'espai
+	Variable *totalBytes = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+	totalBytes->setOcupacioExtra(0);
+
+	long unitat = TSB::sizeOf(dt->getTSB());
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::POINTER,
+		totalBytes,
+		std::make_shared<ValueContainer>((char *) &unitat, sizeof(long))
+	));
+
+	std::list<SimbolExpressio>::iterator it = dimensions.begin();
+	while(it != dimensions.end()){
+		SimbolExpressio &aux = *it;
+		Variable *auxVar = aux.dereference(driver, aux.getTSB());
+		
+		driver->code.addInstruction(new ArithmeticInstruction(
+			ArithmeticInstruction::Type::MULTIPLICATION,
+			totalBytes,
+			totalBytes,
+			auxVar
+		));
+
+		it++;
+	}
+
+	// reservar la memòria
+	driver->code.addInstruction(new MallocInstruction(this->r, totalBytes));
+
+	// inicialitzar el bloc de dades
+	it = dimensions.begin();
+	for(int i = 0; it != dimensions.end(); i++){
+		int constantOffset = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
+		Variable *tmp = driver->code.addVariable(TipusSubjacentBasic::INT);
+		driver->code.addInstruction(new AssignmentInstruction(
+			TipusSubjacentBasic::INT,
+			tmp,
+			std::make_shared<ValueContainer>((const char *) &constantOffset, sizeof(int))
+		));
+
+		SimbolExpressio &aux = (*it);
+		Variable *dim = aux.dereference(driver, aux.getTSB());
+		driver->code.addInstruction(new AssignmentInstruction(
+			AssignmentInstruction::Type::TARGET_OFF,
+			this->r,
+			dim,
+			tmp
+		));
+
+		it++;
+	}
+
+	// pintar l'arbre
+	this->fills.push_back( "new" );
+	this->fills.push_back( tipus );
+	this->fills.push_back( std::to_string(list.getNodeId()) );
+    Simbol::toDotFile(driver);
 }
 
 std::string SimbolExpressio::getTipus(){

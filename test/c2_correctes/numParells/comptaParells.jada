@@ -11,7 +11,7 @@ func demanaVector(int n) : int[] begin
         printChar(':');
         printChar(' ');
 
-        v[i - 1] = readInt();
+        v[i] = readInt();
         n--;
     end;
 

@@ -58,6 +58,8 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
     this->tsb = dt->getTSB();
     this->tipus = tipus;
 
+    std::cout << "=====> defininint variable de tipus " << this->tipus << std::endl;
+
 	Variable *var = driver->code.addVariable(this->tsb, id);
 
 	if(this->tsb == TipusSubjacentBasic::ARRAY){

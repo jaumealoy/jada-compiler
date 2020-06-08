@@ -5,6 +5,11 @@
 #include <exception>
 #include <iostream>
 
+AssignmentInstruction::AssignmentInstruction()
+	: Instruction(Instruction::Type::ASSIGNMENT)
+{
+}
+
 AssignmentInstruction::AssignmentInstruction(TipusSubjacentBasic tsb, Variable *desti, std::shared_ptr<ValueContainer> value)
 	: Instruction(Instruction::Type::ASSIGNMENT)
 {
@@ -87,6 +92,12 @@ std::string AssignmentInstruction::toString(){
 
 			case TipusSubjacentBasic::INT: {
 				int intValue = *(int *) this->value->get();
+				tmp += std::to_string(intValue);
+				break;
+			}
+
+			case TipusSubjacentBasic::POINTER: {
+				long intValue = *(long *) this->value->get();
 				tmp += std::to_string(intValue);
 				break;
 			}

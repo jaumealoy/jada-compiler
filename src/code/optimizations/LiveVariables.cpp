@@ -5,6 +5,7 @@
 #include "../instructions/PutParamInstruction.h"
 #include "../instructions/ReturnInstruction.h"
 #include "../instructions/CondJumpInstruction.h"
+#include "../instructions/MallocInstruction.h"
 #include "../CodeGeneration.h"
 
 LiveVariables::LiveVariables(CodeGeneration *code, SubProgram *programa)
@@ -142,6 +143,15 @@ void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actua
 			std::cout << "COND Utilitza " << cInst->getFirstOperand()->getNom() << " i " << cInst->getSecondOperand()->getNom() << std::endl;
 			gk.gains.put(cInst->getFirstOperand());
 			gk.gains.put(cInst->getSecondOperand());
+			break;
+		}
+
+		case Instruction::MALLOC:
+		{
+			MallocInstruction *mInst = (MallocInstruction *) actual;
+			gk.gains.remove(mInst->getDesti());
+			gk.gains.put(mInst->getBytes());
+			gk.kills.put(mInst->getDesti());
 			break;
 		}
 	}

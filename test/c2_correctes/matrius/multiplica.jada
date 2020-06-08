@@ -1,0 +1,22 @@
+func identitat(int a) : int begin
+    int[1][2] a = int{ {1, 2} };
+
+
+
+    return 5;
+end identitat;
+
+proc pintaMatrius(int sb, char c) begin
+    
+end pintaMatrius;
+
+
+
+proc main() begin
+    print("Introdueix les dimensions de la matriu (NxN): ");
+    int n = readInt();
+
+    //int[][] i = identitat(n);
+    //pintaMatriu(i, n);
+
+end main;

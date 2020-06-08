@@ -78,23 +78,9 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 				this->refIndex.push_back(tmp);
             }
         }else{
-			if(!exp.isNull() && exp.getTSB() == TipusSubjacentBasic::INT){
-				// és potencialment la creació d'un array dinàmic
-				// perquè l'expressió no és constant
-				struct SimbolTipusArray::ArrayIndex tmp;
-				tmp.dimensio = nullptr;
-				tmp.index = exp;
-				this->refIndex.push_back(tmp);
-				this->esReferencia = false;
-
-				std::cout << "És array dinàmic" << std::endl;
-				this->dimensions.push_back(-1);
-			}else{
-				driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
-				this->makeNull();
-				return;
-			}
-            
+			driver->error(error_valor_no_constant(TipusSubjacentBasic::INT), true);
+			this->makeNull();
+			return;
         }
     }else if(d->getTipus() == Descripcio::Tipus::VARIABLE || d->getTipus() == Descripcio::Tipus::CONSTANT){
         if(exp.isNull()){
@@ -105,7 +91,6 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 
         // és una referència
         this->esReferencia = true;
-		this->esCreacio = false;
 
         // comprovar que efectivament id és una constant / variable d'un tipus array
         DescripcioTipus *dt = nullptr;
@@ -402,7 +387,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		}else if(this->esPunter){
 			// els punters no són més que una sèrie d'elements contingus
 			// però és possible accedir-hi fent ús de múltiples dimensions
-			// un tipus punter no guarda les dimensions d'aquestes dimensions
+			// un tipus punter no guarda les dimensions d'aqueste
 			// però el bloc de memòria conté un valor per cada dimensió
 			
 			intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;

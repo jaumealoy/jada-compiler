@@ -12,6 +12,7 @@
 #include "ReturnInstruction.h"
 #include "AssemblyInstruction.h"
 #include "MemoryInstruction.h"
+#include "MallocInstruction.h"
 
 #include <fstream>
 #include <cassert>
@@ -93,6 +94,10 @@ std::string Instruction::toString(){
 			tmp = ((ReturnInstruction *) this)->toString();
 			break;
 
+		case MALLOC:
+			tmp = ((MallocInstruction *) this)->toString();
+			break;
+
 		case PRECALL:
 			tmp = "";
 			break;
@@ -157,6 +162,10 @@ void Instruction::generateAssembly(CodeGeneration *code){
 
 		case PRECALL:
 			((PreCallInstruction *) this)->generateAssembly(code);
+			break;
+
+		case MALLOC:
+			((MallocInstruction *) this)->generateAssembly(code);
 			break;
 
 		default:
@@ -233,15 +242,30 @@ Instruction* Instruction::copy(Instruction *original)
 	Instruction *inst = nullptr;
 	switch(original->getType()){
 		case ASSIGNMENT: {
-			AssignmentInstruction *tmp = (AssignmentInstruction *) new char[sizeof(AssignmentInstruction)];
-			*tmp = *(AssignmentInstruction *) original; 
+			AssignmentInstruction *aux = (AssignmentInstruction *) original;
+			AssignmentInstruction *tmp = new AssignmentInstruction();
+			*tmp = *aux;
+
+			
 			inst = tmp;
 			break;
 		}
 
 		case ARITHMETIC: {
-			ArithmeticInstruction *tmp = (ArithmeticInstruction *) new char[sizeof(ArithmeticInstruction)];
-			*tmp = *(ArithmeticInstruction *) original; 
+			//ArithmeticInstruction *tmp = (ArithmeticInstruction *) new char[sizeof(ArithmeticInstruction)];
+			//*tmp = *(ArithmeticInstruction *) original;
+			ArithmeticInstruction *aux = (ArithmeticInstruction *) original;
+			ArithmeticInstruction *tmp = new ArithmeticInstruction(
+				aux->getOperator(),
+				aux->getDesti(),
+				aux->getFirstOperand(),
+				aux->getSecondOperand()
+			);
+
+			aux->getFirstOperand()->addUseList(tmp);
+			aux->getSecondOperand()->addUseList(tmp);
+			aux->getDesti()->addAssignment(tmp);
+
 			inst = tmp;
 			break;
 		}

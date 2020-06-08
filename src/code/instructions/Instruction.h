@@ -24,6 +24,7 @@ public:
 		ASSEMBLY,
 		MEMORY,
 		PRECALL,
+		MALLOC,
 		NUL
 	};
 private:

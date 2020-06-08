@@ -100,6 +100,8 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
 		this->creacioArray = true;
 		this->tipusBasic = array.getTipusUnitari();
 
+        std::cout << "TIPUS ÉS ===== " << this->tipus << std::endl;
+
 		// guardar les dimensions per reservar la memòria quan 
 		// es passi a una expressió
 		std::vector<struct SimbolTipusArray::ArrayIndex> indexos = array.getArrayIndex();

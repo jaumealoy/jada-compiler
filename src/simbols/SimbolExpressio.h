@@ -5,6 +5,7 @@
 #include "SimbolReferencia.h"
 #include "SimbolLiteral.h"
 #include "SimbolMarcador.h"
+#include "SimbolDimensionList.h"
 #include "../taulasimbols/TipusSubjacentBasic.h"
 #include "../utils/ValueContainer.h"
 #include "../code/instructions/Instruction.h"
@@ -53,6 +54,7 @@ public:
     void make(Driver *driver, SimbolArithmeticExpression exp);
 	void make(Driver *driver, SimbolReferencia ref, int tipus);
 	void make(Driver *driver, int tipus, SimbolReferencia ref);
+    void make(Driver *driver, std::string tipus, SimbolDimensionList list);
 
     // Per marcar com una referència errònia
     bool isNull();

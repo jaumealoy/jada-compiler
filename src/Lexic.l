@@ -78,6 +78,7 @@ r_const const
 r_and and
 r_or or
 r_not not
+r_new new
 
 /* Altres */
 new_line ([\n\r]|(\n\r))+
@@ -160,6 +161,7 @@ begin_comment "/*"
 {r_and}			{ return token::AND; }
 {r_or}			{ return token::OR; }
 {r_not}			{ return token::NOT; }
+{r_new}			{ return token::NEW; }
 
 {integer}		{
 	lval->emplace<int>() = atoi(this->YYText());

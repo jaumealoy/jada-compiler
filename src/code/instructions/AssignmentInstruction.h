@@ -40,6 +40,7 @@ public:
 	AssignmentInstruction(TipusSubjacentBasic tsb, Variable *desti, std::shared_ptr<ValueContainer> value);
 	AssignmentInstruction(Variable *desti, Variable *origen);
 	AssignmentInstruction(AssignmentInstruction::Type, Variable *a, Variable *b, Variable *c);
+	AssignmentInstruction();
 	~AssignmentInstruction();
 
 	std::string toString();

@@ -91,10 +91,19 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
             d = (Descripcio *) dv;
 			dv->setVariable(var);
         }
-        
+
+            std::cout << "AFEGINT 1 PARÀMETRES = " << it.getId() << std::endl;
+
         driver->ts.posar(it.getId(), d);
+            std::cout << "AFEGINT 2 PARÀMETRES" << std::endl;
+
         it.next();
+
+            std::cout << "AFEGINT 0 PARÀMETRES" << std::endl;
+
     }
+
+    std::cout << "AFEGIT PARÀMETRES" << std::endl;
 
     // pintar a l'arbre
     this->fills.push_back( std::to_string(cap.getNodeId()) );

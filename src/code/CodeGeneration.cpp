@@ -825,6 +825,11 @@ void CodeGeneration::updateConstants(){
 		this->labels[i]->resetUsage();
 	}
 
+	for(int i = 0; i < this->programs.size(); i++){
+		if(this->programs[i]->isExtern()) continue;
+		((SkipInstruction *) this->programs[i]->getFirstInstruction())->getLabel()->markUsage();
+	}
+
 	// les instruccions que poden determinar si una variable
 	// és una constant o no són les aritmètiques i les d'assignació
 
