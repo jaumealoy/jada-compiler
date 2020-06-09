@@ -89,6 +89,9 @@ void SimbolSubProgramCall::make(Driver *driver, std::string id){
 	this->d = nullptr;
 	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
 		this->r = driver->code.addVariable(this->tsb);
+		if(this->tsb == TipusSubjacentBasic::POINTER){
+			this->r->setOcupacioExtra(0);
+		}
 	}
 
     driver->code.addInstruction(new CallInstruction(program, this->r));
@@ -224,6 +227,9 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 	this->d = nullptr;
 	if(d->getTipus() == Descripcio::Tipus::FUNCIO){
 		this->r = driver->code.addVariable(this->tsb);
+		if(this->tsb == TipusSubjacentBasic::POINTER){
+			this->r->setOcupacioExtra(0);
+		}
 	}
 
 	// invocar el subprograma

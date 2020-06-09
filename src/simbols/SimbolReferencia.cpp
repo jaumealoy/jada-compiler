@@ -77,39 +77,22 @@ void SimbolReferencia::make(Driver *driver, SimbolTipusArray array){
     // és una refereǹcia a un array vàlida
 	// o bé és una estructura vàlida per assignar memòria dinàmica
 	// necessàriament serà una cosa o una altra, mai les dues
-	if(array.isReferencia()){
-		this->tsb = array.getTSB();
-		this->tipus = array.getTipus();
-		this->id = array.getId();
-		this->mode = array.getMode();
+	this->tsb = array.getTSB();
+	this->tipus = array.getTipus();
+	this->id = array.getId();
+	this->mode = array.getMode();
 
-		// i pintar a l'arbre
-		this->fills.push_back( std::to_string(array.getNodeId()) );
-		Simbol::toDotFile(driver);
+	// i pintar a l'arbre
+	this->fills.push_back( std::to_string(array.getNodeId()) );
+	Simbol::toDotFile(driver);
 
-		// TODO: el desplaçament representa el número d'element que es vol consultar
-		if(array.isAccessConstant()){
-			this->dconst = array.dconst;
-		}
-
-		this->r = array.getBase();
-		this->d = array.getOffset();
-	}else{
-		this->tsb = TipusSubjacentBasic::POINTER;
-		this->tipus = array.toString(true);
-		this->creacioArray = true;
-		this->tipusBasic = array.getTipusUnitari();
-
-        std::cout << "TIPUS ÉS ===== " << this->tipus << std::endl;
-
-		// guardar les dimensions per reservar la memòria quan 
-		// es passi a una expressió
-		std::vector<struct SimbolTipusArray::ArrayIndex> indexos = array.getArrayIndex();
-		for(int i = 0; i < indexos.size(); i++){
-			std::cout << "Afegint dimensions a referència" << std::endl;
-			this->dimensions.push_back(indexos[i].index);
-		}
+	// TODO: el desplaçament representa el número d'element que es vol consultar
+	if(array.isAccessConstant()){
+		this->dconst = array.dconst;
 	}
+
+	this->r = array.getBase();
+	this->d = array.getOffset();
 }
 
 

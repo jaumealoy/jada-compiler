@@ -39,6 +39,8 @@ private:
 	void initPrint();
 	void initRead();
 
+	void initRandom();
+
 public:
     class Error : public std::exception {};
 

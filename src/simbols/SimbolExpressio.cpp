@@ -307,67 +307,6 @@ void SimbolExpressio::make(Driver *driver, SimbolReferencia ref){
         return;
     }
 
-	if(ref.isArrayCreation()){
-		// indicar el tipus
-		this->tipus = ref.getTipus();
-		this->tsb = TipusSubjacentBasic::POINTER;
-		this->mode = SimbolExpressio::Mode::VAR;
-
-		// és la creació d'un array amb memòria dinàmica
-		this->r = driver->code.addVariable(TipusSubjacentBasic::POINTER);
-		this->d = nullptr;
-
-		// inicialitzar el bloc de memòria amb les dades necessàries
-		// calcular el total de memòria
-		std::vector<SimbolExpressio> dimensions = ref.getArrayDimensions();
-		Variable *totalBytes = driver->code.addVariable(TipusSubjacentBasic::POINTER);
-		totalBytes->setOcupacioExtra(0);
-		
-		long valor = ((DescripcioTipus *) driver->ts.consulta(ref.getTipusBasic()))->getOcupacio();
-		driver->code.addInstruction(new AssignmentInstruction(
-			TipusSubjacentBasic::POINTER,
-			totalBytes,
-			std::make_shared<ValueContainer>((const char *) &valor, sizeof(long))
-		));		
-
-		for(int i = 0; i < dimensions.size(); i++){
-			SimbolExpressio aux = dimensions[i];
-			Variable *tmp = aux.dereference(driver, aux.getTSB());
-			driver->code.addInstruction(new ArithmeticInstruction(
-				ArithmeticInstruction::Type::MULTIPLICATION,
-				totalBytes,
-				totalBytes,
-				tmp
-			));
-		}
-
-		this->r->setOcupacioExtra(0);
-		driver->code.addInstruction(new MallocInstruction(this->r, totalBytes));
-
-		// inicialitzar el bloc de dades
-		for(int i = 0; i < dimensions.size(); i++){
-			int constantOffset = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
-			Variable *tmp = driver->code.addVariable(TipusSubjacentBasic::INT);
-			driver->code.addInstruction(new AssignmentInstruction(
-				TipusSubjacentBasic::INT,
-				tmp,
-				std::make_shared<ValueContainer>((const char *) &constantOffset, sizeof(int))
-			));
-
-			SimbolExpressio aux = dimensions[i];
-			Variable *dim = aux.dereference(driver, aux.getTSB());
-			driver->code.addInstruction(new AssignmentInstruction(
-				AssignmentInstruction::Type::TARGET_OFF,
-				this->r,
-				dim,
-				tmp
-			));
-		}
-
-		return;	
-	}
-
-
     this->tsb = ref.getTSB();
     this->tipus = ref.getTipus();
 
@@ -850,12 +789,27 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 		it++;
 	}
 
+	Variable *dimList = driver->code.addVariable(TipusSubjacentBasic::INT);
+	long dimListSize = dimensions.size() * TSB::sizeOf(TipusSubjacentBasic::INT);
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::POINTER,
+		dimList,
+		std::make_shared<ValueContainer>((char *) &dimListSize, sizeof(long))
+	));
+
+	driver->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::ADDITION,
+		totalBytes,
+		totalBytes,
+		dimList
+	));
+
 	// reservar la memòria
 	driver->code.addInstruction(new MallocInstruction(this->r, totalBytes));
 
 	// inicialitzar el bloc de dades
 	it = dimensions.begin();
-	for(int i = 0; it != dimensions.end(); i++){
+	for(int i = 0; i < dimensions.size(); i++){
 		int constantOffset = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
 		Variable *tmp = driver->code.addVariable(TipusSubjacentBasic::INT);
 		driver->code.addInstruction(new AssignmentInstruction(
@@ -865,7 +819,20 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 		));
 
 		SimbolExpressio &aux = (*it);
-		Variable *dim = aux.dereference(driver, aux.getTSB());
+
+		Variable *dim;
+		if(i == dimensions.size() - 1){
+			constantOffset = 1;
+			dim = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				dim,
+				std::make_shared<ValueContainer>((char *) &constantOffset, sizeof(int))
+			));
+		}else{
+			dim = aux.dereference(driver, aux.getTSB());
+		}
+
 		driver->code.addInstruction(new AssignmentInstruction(
 			AssignmentInstruction::Type::TARGET_OFF,
 			this->r,
@@ -875,6 +842,8 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 
 		it++;
 	}
+
+	// la darrera dimensió ha de ser 1
 
 	// pintar l'arbre
 	this->fills.push_back( "new" );

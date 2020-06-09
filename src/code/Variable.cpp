@@ -8,6 +8,7 @@ Variable::Variable(){
 	this->constant = false;
 	this->locked = false;
 	this->firstTime = true;
+	this->ocupacioExtra = 0;
 }
 
 Variable::Variable(SubProgram *program, int id, bool parameter){
@@ -19,6 +20,7 @@ Variable::Variable(SubProgram *program, int id, bool parameter){
 	this->constant = false;
 	this->locked = false;
 	this->firstTime = true;
+	this->ocupacioExtra = 0;
 }
 
 Variable::Variable(SubProgram *program, int id, std::string name, bool parameter){
@@ -29,6 +31,7 @@ Variable::Variable(SubProgram *program, int id, std::string name, bool parameter
 	this->constant = false;
 	this->locked = false;
 	this->firstTime = true;
+	this->ocupacioExtra = 0;
 }
 
 Variable::~Variable(){};

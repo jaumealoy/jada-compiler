@@ -116,7 +116,7 @@ void SimbolTipusArray::make(Driver *driver, std::string id, SimbolExpressio exp)
 			// és un punter, també un tipus elemental
 			this->esPunter = true;
 			this->tipusBasic = ((DescripcioTipusPunter *) dt)->getTipusElement();
-			std::cout << "Accés a punter: referència a punter" << std::endl;
+			std::cout << "Accés a punter: referència a punter amb tipus " << tipus << std::endl;
 		}else if(dt->getTSB() == TipusSubjacentBasic::ARRAY){
 			this->esPunter = false;
         	this->tipusBasic = ((DescripcioTipusArray *) dt)->getTipusElement();
@@ -208,41 +208,51 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray contArray, SimbolEx
             return;
         }
 
-        this->it = contArray.it;
-        this->it.next();
+		struct SimbolTipusArray::ArrayIndex tmp;
+		
 
-        if(!this->it.valid()){
-            // s'han introduit massa dimensions!
-            this->makeNull();
-            driver->error( error_sobren_dimensions() );
-            return;
-        }
+		if(!contArray.esPunter){
+			this->it = contArray.it;
+			this->it.next();
 
-        DescripcioDimensio *ddim = (DescripcioDimensio *) this->it.get();
+			if(!this->it.valid()){
+				// s'han introduit massa dimensions!
+				this->makeNull();
+				driver->error( error_sobren_dimensions() );
+				return;
+			}
 
-        // si l'expressió és constant, comprovar que és dins els límits
-        if(exp.getMode() == SimbolExpressio::Mode::CONST){
-			int tmpValue = *(int *) exp.getValue()->get();
-            if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
-                this->makeNull();
-                driver->error( error_fora_de_rang(tmpValue) );
-                return;
-            }
-        }
+			DescripcioDimensio *ddim = (DescripcioDimensio *) this->it.get();
+
+			// si l'expressió és constant, comprovar que és dins els límits
+			if(exp.getMode() == SimbolExpressio::Mode::CONST){
+				int tmpValue = *(int *) exp.getValue()->get();
+				if(tmpValue < 0 || tmpValue >= ddim->getDimensio()){
+					this->makeNull();
+					driver->error( error_fora_de_rang(tmpValue) );
+					return;
+				}
+			}
+
+			tmp.dimensio = ddim;
+		}else{
+			this->pointerCount = contArray.pointerCount + 1;
+			std::cout << "Referència amb pointerCount " << this->pointerCount << std::endl;
+			tmp.dimensio = nullptr;
+		}
+
+		tmp.index = exp;
+
+		// afegir l'índex que s'ha processat a la llista d'índexos
+		this->refIndex = contArray.refIndex;
+		this->refIndex.push_back(tmp);
         
         this->tipus = contArray.tipus;
         this->tsb = contArray.tsb;
         this->mode = contArray.mode;
         this->id = contArray.id;
         this->tipusBasic = contArray.tipusBasic;
-
-		// afegir l'índex que s'ha processat a la llista d'índexos
-		this->refIndex = contArray.refIndex;
-
-		struct SimbolTipusArray::ArrayIndex tmp;
-		tmp.index = exp;
-		tmp.dimensio = ddim;
-		this->refIndex.push_back(tmp);
+		this->esPunter = contArray.esPunter;
 
 		this->r = contArray.r;
 		this->d = contArray.d;
@@ -302,7 +312,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
         }
 
 		this->esPunter = array.esPunter;
-		std::cout << "esPunter = " << this->esPunter << std::endl;
+		std::cout << "F esPunter = " << this->esPunter << std::endl;
 
 		if(this->esPunter){
 			// comprovar que s'han proporcionat totes les dimensions
@@ -310,7 +320,9 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 			if(array.pointerCount != dtp->getDimensions()){
 				// s'esperen més dimensions però no s'han proporcionat
 				this->makeNull();
+				std::cout << "Hola Jaume tenc " << dtp->getDimensions() << std::endl;
 				driver->error( error_falten_dimensions() );
+
 				return;
 			}
 		}else{ // accés a array
@@ -337,32 +349,41 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
         this->mode = array.mode;
         this->esReferencia = true;
 
-		int productori = 1 * TSB::sizeOf(this->tsb);
 		bool totConstant = true;
 		int numElement = 0;
 		this->refIndex = array.refIndex;
+		int productori = 1 * TSB::sizeOf(this->tsb) * this->refIndex[this->refIndex.size() - 1].dimensio->getDimensio();
 
 		// indicar la base de la variable
 		this->r = array.r;
 
 		// calcular el desplaçament en temps d'execució
-		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
-		int intValue = 0;
+		int intValue = 4;
+		Variable *initD = driver->code.addVariable(TipusSubjacentBasic::INT);
 		driver->code.addInstruction(new AssignmentInstruction(
 			TipusSubjacentBasic::INT,
+			initD,
+			std::make_shared<ValueContainer>((char *) &intValue, sizeof(int))
+		));
+
+		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
+		driver->code.addInstruction(new ArithmeticInstruction(
+			ArithmeticInstruction::Type::MULTIPLICATION,
 			this->d,
-			std::make_shared<ValueContainer>((const char *) &intValue, sizeof(int))
+			this->refIndex[this->refIndex.size() - 1].index.dereference(driver, this->refIndex[this->refIndex.size() - 1].index.getTSB()),
+			initD
 		));
 
 		if(!this->esPunter){
-			for(int i = this->refIndex.size() - 1; i >= 0; i--){
+			for(int i = this->refIndex.size() - 2; i >= 0; i--){
 				Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
+				Variable *paux1 = driver->code.addVariable(TipusSubjacentBasic::INT);
 				Variable *paux = driver->code.addVariable(TipusSubjacentBasic::INT);
 
 				// carregar productori dins variable temporal
 				driver->code.addInstruction(new AssignmentInstruction(
 					TipusSubjacentBasic::INT,
-					paux,
+					paux1,
 					std::make_shared<ValueContainer>((const char *) &productori, sizeof(int))
 				));
 
@@ -370,7 +391,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 				driver->code.addInstruction(new ArithmeticInstruction(
 					ArithmeticInstruction::Type::MULTIPLICATION,
 					paux,
-					paux,
+					paux1,
 					tmp
 				));
 
@@ -390,17 +411,17 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 			// un tipus punter no guarda les dimensions d'aqueste
 			// però el bloc de memòria conté un valor per cada dimensió
 			
-			intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;
+			//intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;
+			intValue = 0;
 			driver->code.addInstruction(new AssignmentInstruction(
-				TipusSubjacentBasic::INT,
 				this->d,
-				std::make_shared<ValueContainer>((const char *) &intValue, sizeof(int))
+				this->refIndex[array.pointerCount - 1].index.dereference(driver, this->refIndex[array.pointerCount - 1].index.getTSB())
 			));
-
 
 			Variable *tmpProductori = driver->code.addVariable(TipusSubjacentBasic::INT);
 			
 			// carregar productori dins variable temporal
+			productori = 1;
 			driver->code.addInstruction(new AssignmentInstruction(
 				TipusSubjacentBasic::INT,
 				tmpProductori,
@@ -409,48 +430,89 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 
 			// desplaçament auxiliar per calcular el productori dinàmicament
 			int dauxValue = 0;
-			Variable *daux = driver->code.addVariable(TipusSubjacentBasic::INT);
 
 
-			for(int i = array.pointerCount - 1; i >= 0; i--){
+			for(int i = array.pointerCount - 2; i >= 0; i--){
 				std::cout << "Aplicant càlculs punters" << std::endl;
 
-
-				dauxValue = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
+				// actualitzar el productori
+				// 1. calcular l'offset de la dimensió
+				int offsetConstantValue = TSB::sizeOf(TipusSubjacentBasic::INT) * i;
+				Variable *offsetConstant = driver->code.addVariable(TipusSubjacentBasic::INT);
 				driver->code.addInstruction(new AssignmentInstruction(
 					TipusSubjacentBasic::INT,
-					daux,
-					std::make_shared<ValueContainer>((const char *) &dauxValue, sizeof(int))
+					offsetConstant,
+					std::make_shared<ValueContainer>((char *) &offsetConstantValue, sizeof(int))
 				));
 
+				// 2. obtenir la dimensió
+				Variable *dimensioActual = driver->code.addVariable(TipusSubjacentBasic::INT);
 				driver->code.addInstruction(new AssignmentInstruction(
 					AssignmentInstruction::Type::SOURCE_OFF,
-					daux, 
+					dimensioActual,
 					this->r,
-					daux
+					offsetConstant
 				));
 
+				// 3. actualitzar el productori
 				driver->code.addInstruction(new ArithmeticInstruction(
 					ArithmeticInstruction::Type::MULTIPLICATION,
 					tmpProductori,
-					daux,
-					tmpProductori
+					tmpProductori,
+					dimensioActual
 				));
 
+				// calcular la contribució d'aquesta dimensió
+				Variable *dtmp = driver->code.addVariable(TipusSubjacentBasic::INT);
 				driver->code.addInstruction(new ArithmeticInstruction(
 					ArithmeticInstruction::Type::MULTIPLICATION,
-					daux,
+					dtmp,
 					tmpProductori,
 					this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB())
 				));
 
+				// acumular al desplaçament
 				driver->code.addInstruction(new ArithmeticInstruction(
 					ArithmeticInstruction::Type::ADDITION,
 					this->d,
 					this->d,
-					daux
+					dtmp
 				));
 			}
+
+			// convertir el número d'elements a bytes
+			intValue = TSB::sizeOf(this->tsb);
+			Variable *midaUnitat = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				midaUnitat,
+				std::make_shared<ValueContainer>((char *) &intValue, sizeof(int))
+			));
+
+			Variable *newD = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::MULTIPLICATION,
+				newD,
+				this->d,
+				midaUnitat
+			));
+
+			this->d = newD;
+
+			intValue = TSB::sizeOf(TipusSubjacentBasic::INT) * array.pointerCount;
+			Variable *midaDimensions = driver->code.addVariable(TipusSubjacentBasic::INT);
+			driver->code.addInstruction(new AssignmentInstruction(
+				TipusSubjacentBasic::INT,
+				midaDimensions,
+				std::make_shared<ValueContainer>((char *) &intValue, sizeof(int))
+			));
+
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::ADDITION,
+				newD,
+				newD,
+				midaDimensions
+			));
 		}
 
 		/*for(int i = this->refIndex.size() - 1; i >= 0; i--){

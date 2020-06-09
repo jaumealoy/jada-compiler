@@ -1,0 +1,54 @@
+const int N = 500;
+
+proc identitat(int[N][N] matriu) begin
+    for (int i = 0; i < N; i++) do
+        for (int j = 0; j < N; j++) do
+            if i == j do
+                matriu[i][j] = 1;
+            else do
+                matriu[i][j] = 0;
+            end;
+        end;
+    end;
+end identitat;
+
+proc pintaMatriu(int[N][N] matriu) begin
+    print("Pintant matriu\n");
+    for (int i = 0; i < N; i++) do
+        for (int j = 0; j < N; ++j) do
+            printInt(matriu[i][j]);
+            printChar(' ');
+        end;
+        printChar('\n');
+    end;
+end pintaMatriu;
+
+proc multiplica(int[N][N] a, int[N][N] b, int[N][N] resultat) begin
+    for (int i = 0; i < N; i++) do
+        for (int j = 0; j < N; j++) do
+            int suma = 0;
+            for (int k = 0; k < N; k++) do
+                suma += a[i][k] * b[k][j];
+            end;
+
+            resultat[i][j] = suma;
+        end;
+    end;
+end multiplica;
+
+proc main() begin
+    //print("Introdueix les dimensions de la matriu (NxN): ");
+
+    int[N][N] i;
+    identitat(i);
+    //pintaMatriu(i);
+    
+    int[N][N] i2;
+    identitat(i2);
+    //pintaMatriu(i2);
+    
+    int[N][N] resultat;
+    multiplica(i, i2, resultat);
+
+    //pintaMatriu(resultat);
+end main;

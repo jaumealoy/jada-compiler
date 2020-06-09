@@ -75,6 +75,8 @@ Driver::Driver(char *filename, bool debugMode)
 	this->initPrintInt();
 	this->initReadInt();
 
+	this->initRandom();
+
     // inicialitzar fitxer de l'arbre
     this->writeToTree("digraph arbreSintactic {");
 }
@@ -310,4 +312,37 @@ void Driver::initReadInt(){
 
 	// indicar el seu valor de retorn
 	readIntFunction->setTipusRetorn(TipusSubjacentBasic::INT);
+}
+
+/**
+ * Inicialitza la funció que retorna un valor aleatori entre dos valors
+ *
+ * random(int minim, int maxim) : int
+ */
+void Driver::initRandom()
+{
+	// crear la funció
+	Label *start = this->code.addLabel("randInt");
+	SubProgram *randomFunction = this->code.addSubProgram("randInt", start, true);
+	DescripcioFuncio *random = new DescripcioFuncio(randomFunction);
+	//start->markUsage();
+	this->ts.posar("randInt", random);
+
+	//this->code.enterSubProgram(randomFunction);
+
+	DescripcioArgument *dArgMinim = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
+	//Variable *minim = this->code.addVariable(TipusSubjacentBasic::INT, "minim", true);
+	//dArgMinim->setVariable(minim);
+	//randomFunction->addParameter(minim);
+	//this->ts.posarParam("randInt", "minimss", dArgMinim);
+
+	/*DescripcioArgument *dArgMaxim = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
+	Variable *maxim = this->code.addVariable(TipusSubjacentBasic::INT, true);
+	dArgMaxim->setVariable(maxim);
+	randomFunction->addParameter(maxim);
+	this->ts.posarParam("random", "maxim", dArgMaxim);*/
+
+	//this->code.leaveSubProgram();
+
+	//randomFunction->setTipusRetorn(TipusSubjacentBasic::INT);
 }

@@ -404,3 +404,45 @@ printInt:
 	pop		%rdx
 	pop		%rax
 	ret
+
+/**
+ * Genera un enter aleatori entre els valors establers
+ * Paràmetres:
+ * 1) In - mínim (4 bytes, int)
+ * 2) In - màxim (4 bytes, int)
+ * 3) Out - valor generat (4 bytes, int)
+ */
+random:
+	push	%rax
+	push	%rdi
+	push	%rsi
+	push	%rdx
+
+	/* char __user *buf, size_t count, unsigned int flags	*/
+	movq	$318, %rax				/* sys_getrandom */
+	leaq	4*8+8+2*4(%rsp), %rdi	/* registres, @retorn, paràmetres in */
+	movq	$4, %rsi				/* bytes que volem generar */
+	movq	$0, %rdx				/* flags */
+
+	movl	4*8+8+4(%rsp), %edx		/* màxim */
+	movl	4*8+8(%rsp), %eax		/* mínim */
+
+	xorq	%rdi, %rdi
+	movl	4*8+8+2*4(%rsp), %edi
+	jns		1f
+	negl	%edi
+
+1:	movl	%edi, 4*8+8+2*4(%rsp)
+	subq	%rdx, %rax
+	movq	%rax, %rdx
+	movq	%rdi, %rax
+	movq	%rdx, %rdi
+	xorq	%rdx, %rdx
+	idiv	%rdi
+	addl	%edx, 4*8+8+2*4(%rsp)
+
+	pop		%rax
+	pop		%rdi
+	pop		%rsi
+	pop		%rdx
+	ret

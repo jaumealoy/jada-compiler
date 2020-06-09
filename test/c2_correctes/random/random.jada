@@ -1,0 +1,6 @@
+proc main() begin
+    print("Valor random: ");
+
+   
+    printInt(randInt());
+end main;
