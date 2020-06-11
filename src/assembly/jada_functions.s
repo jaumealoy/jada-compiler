@@ -5,6 +5,7 @@
 .global printInt
 .global printChar
 .global memcpy
+.global randInt
 
 /**
  * Funció que imprimeix per stdout una cadena de text acabat amb
@@ -412,7 +413,7 @@ printInt:
  * 2) In - màxim (4 bytes, int)
  * 3) Out - valor generat (4 bytes, int)
  */
-random:
+randInt:
 	push	%rax
 	push	%rdi
 	push	%rsi
@@ -423,25 +424,34 @@ random:
 	leaq	4*8+8+2*4(%rsp), %rdi	/* registres, @retorn, paràmetres in */
 	movq	$4, %rsi				/* bytes que volem generar */
 	movq	$0, %rdx				/* flags */
+	syscall
 
-	movl	4*8+8+4(%rsp), %edx		/* màxim */
-	movl	4*8+8(%rsp), %eax		/* mínim */
+	xorq	%rax, %rax
+	xorq	%rdx, %rdx
+	movl	4*8+8+4(%rsp), %eax		/* màxim */
+	movl	4*8+8(%rsp), %edx		/* mínim */
+	subl	%edx, %eax
+	jne		3f
 
-	xorq	%rdi, %rdi
+	movl	%edx, 4*8+8+2*4(%rsp)
+	jmp		2f
+
+3:	xorq	%rdi, %rdi
 	movl	4*8+8+2*4(%rsp), %edi
 	jns		1f
 	negl	%edi
 
-1:	movl	%edi, 4*8+8+2*4(%rsp)
-	subq	%rdx, %rax
-	movq	%rax, %rdx
+1:	movq	%rax, %rdx
 	movq	%rdi, %rax
-	movq	%rdx, %rdi
+	movq	%rdx, %rsi
 	xorq	%rdx, %rdx
-	idiv	%rdi
-	addl	%edx, 4*8+8+2*4(%rsp)
+	incq	%rsi
+	idiv	%rsi
+	addl	4*8+8(%rsp), %edx	
 
-	pop		%rax
+	movl	%edx, 4*8+8+2*4(%rsp)
+
+2:	pop		%rax
 	pop		%rdi
 	pop		%rsi
 	pop		%rdx

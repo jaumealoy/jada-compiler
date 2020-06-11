@@ -324,25 +324,25 @@ void Driver::initRandom()
 	// crear la funció
 	Label *start = this->code.addLabel("randInt");
 	SubProgram *randomFunction = this->code.addSubProgram("randInt", start, true);
+	randomFunction->setTipusRetorn(TipusSubjacentBasic::INT);
 	DescripcioFuncio *random = new DescripcioFuncio(randomFunction);
-	//start->markUsage();
+	random->setTipusRetorn("int");
+	start->markUsage();
 	this->ts.posar("randInt", random);
 
-	//this->code.enterSubProgram(randomFunction);
+	this->code.enterSubProgram(randomFunction);
 
 	DescripcioArgument *dArgMinim = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
-	//Variable *minim = this->code.addVariable(TipusSubjacentBasic::INT, "minim", true);
-	//dArgMinim->setVariable(minim);
-	//randomFunction->addParameter(minim);
-	//this->ts.posarParam("randInt", "minimss", dArgMinim);
+	Variable *minim = this->code.addVariable(TipusSubjacentBasic::INT, "minim", true);
+	dArgMinim->setVariable(minim);
+	randomFunction->addParameter(minim);
+	this->ts.posarParam("randInt", "minim", dArgMinim);
 
-	/*DescripcioArgument *dArgMaxim = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
+	DescripcioArgument *dArgMaxim = new DescripcioArgument("int", DescripcioArgument::Tipus::VALOR);
 	Variable *maxim = this->code.addVariable(TipusSubjacentBasic::INT, true);
 	dArgMaxim->setVariable(maxim);
 	randomFunction->addParameter(maxim);
-	this->ts.posarParam("random", "maxim", dArgMaxim);*/
+	this->ts.posarParam("randInt", "maxim", dArgMaxim);
 
-	//this->code.leaveSubProgram();
-
-	//randomFunction->setTipusRetorn(TipusSubjacentBasic::INT);
+	this->code.leaveSubProgram();
 }

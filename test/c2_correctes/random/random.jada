@@ -1,6 +1,15 @@
 proc main() begin
-    print("Valor random: ");
+    print("Introdueix el valor mínim: ");
+    int minim = readInt();
+    print("Introdueix el valor màxim: ");
+    int maxim = readInt();
 
-   
-    printInt(randInt());
+    print("Un valor aleatori a l'interval [");
+    printInt(minim);
+    printChar(',');
+    printChar(' ');
+    printInt(maxim);
+    print("] és ");
+    printInt(randInt(minim, maxim));
+    printChar('\n');
 end main;
