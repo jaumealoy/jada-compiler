@@ -352,7 +352,6 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		bool totConstant = true;
 		int numElement = 0;
 		this->refIndex = array.refIndex;
-		int productori = 1 * TSB::sizeOf(this->tsb) * this->refIndex[this->refIndex.size() - 1].dimensio->getDimensio();
 
 		// indicar la base de la variable
 		this->r = array.r;
@@ -375,6 +374,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		));
 
 		if(!this->esPunter){
+			int productori = 1 * TSB::sizeOf(this->tsb) * this->refIndex[this->refIndex.size() - 1].dimensio->getDimensio();
 			for(int i = this->refIndex.size() - 2; i >= 0; i--){
 				Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
 				Variable *paux1 = driver->code.addVariable(TipusSubjacentBasic::INT);
@@ -421,7 +421,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 			Variable *tmpProductori = driver->code.addVariable(TipusSubjacentBasic::INT);
 			
 			// carregar productori dins variable temporal
-			productori = 1;
+			int productori = 1;
 			driver->code.addInstruction(new AssignmentInstruction(
 				TipusSubjacentBasic::INT,
 				tmpProductori,
