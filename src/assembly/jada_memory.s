@@ -15,6 +15,8 @@
 .global jada_init
 .global jada_free
 .global jada_malloc
+.global jada_reference_add
+.global jada_reference_decrement
 
 .equ BLOCK_HEADER, 29
 .equ BLOCK_STATE_OFFSET, 0
@@ -174,6 +176,7 @@ jada_malloc:
 	movq	%r8, BLOCK_SIZE_OFFSET(%rbp)
 
 	movb	$0xFF, BLOCK_STATE_OFFSET(%rbp)
+	movw	$0, BLOCK_COUNTER_OFFSET(%rbp)	/* indicar que no hi ha cap referència al bloc */
 
 	/* actualitzar l'end del heap */
 	movq	%rdi, jada_memory_end
@@ -235,9 +238,16 @@ jada_reference_add:
 	movq	8+reference_add_local(%rsp), %rbp
 	subq	$BLOCK_HEADER, %rbp		/* inici del bloc de memòria */
 
+	/* comprovar que l'adreça es troba entre les adreces d'inici i final */
+	cmpq	jada_memory_start, %rbp
+	jl		1f
+
+	cmpq	jada_memory_end, %rbp
+	jge		1f
+
 	incw	BLOCK_COUNTER_OFFSET(%rbp)
 
-	pop		%rbp
+1:	pop		%rbp
 	ret
 
 
@@ -254,7 +264,20 @@ jada_reference_decrement:
 	movq	8+reference_add_local(%rsp), %rbp
 	subq	$BLOCK_HEADER, %rbp		/* inici del bloc de memòria */
 
-	decw	BLOCK_COUNTER_OFFSET(%rbp)
+	/* comprovar que l'adreça es troba entre les adreces d'inici i final */
+	cmpq	jada_memory_start, %rbp
+	jl		1f
 
-	pop		%rbp
+	cmpq	jada_memory_end, %rbp
+	jge		1f
+
+	decw	BLOCK_COUNTER_OFFSET(%rbp)
+	jne		1f
+
+	/* alliberar la memòria, té 0 referències */
+	push	8+reference_add_local(%rsp)
+	call	jada_free
+	addq	$8, %rsp
+
+1:	pop		%rbp
 	ret

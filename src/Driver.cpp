@@ -3,16 +3,14 @@
 #include "code/instructions/SkipInstruction.h"
 #include "code/instructions/AssignmentInstruction.h"
 #include "code/instructions/ReturnInstruction.h"
-#include "code/instructions/AssemblyInstruction.h"
 #include "code/instructions/PreAmbleInstruction.h"
 #include "code/instructions/CondJumpInstruction.h"
 #include "code/instructions/ArithmeticInstruction.h"
-#include "code/instructions/MemoryInstruction.h"
 
 #include <exception>
 
-Driver::Driver(char *filename, bool debugMode) 
-	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode), code()
+Driver::Driver(char *filename, bool debugMode, std::string outputFilename) 
+	: treeFile("tree.dot", std::fstream::out), errorsFile("errors.txt", std::fstream::out), debug(debugMode), code(outputFilename)
 {
     this->scanner = new Lexic(filename, "tokens.txt", this);
     this->parser = new Syntax(this->scanner, this);

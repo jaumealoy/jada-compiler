@@ -1,19 +1,49 @@
 #include "MemoryInstruction.h"
+#include "../CodeGeneration.h"
 
-MemoryInstruction::MemoryInstruction(bool store, Variable *var, CodeGeneration::Register reg)
-	: Instruction(Instruction::Type::MEMORY)
+MemoryInstruction::MemoryInstruction(Variable *var, MemoryInstruction::Type type)
+	: Instruction(Instruction::Type::MEMORY), var(var), tipus(type)
 {
-	this->store = store;
-	this->var = var;
-	this->reg = reg;
+
 }
 
-MemoryInstruction::~MemoryInstruction(){}
+MemoryInstruction::~MemoryInstruction()
+{
 
-void MemoryInstruction::generateAssembly(CodeGeneration *code){
-	if(this->store){
-		code->store(this, this->reg, this->var);
-	}else{
-		code->load(this, this->var, this->reg);
+}
+
+std::string MemoryInstruction::toString()
+{
+	switch(this->tipus){
+		case MemoryInstruction::Type::INCREMENT:
+			return "increment " + this->var->getNom();
+
+		case MemoryInstruction::Type::DECREMENT:
+			return "decrement " + this->var->getNom();
+	}
+
+	return "";
+}
+
+void MemoryInstruction::generateAssembly(CodeGeneration *code)
+{
+	switch(this->tipus){
+		case MemoryInstruction::Type::INCREMENT:
+		{
+			code->load(this, this->var, CodeGeneration::Register::A);
+			code->output << "push\t%" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->var->getOcupacio()) << std::endl;
+			code->output << "call\tjada_reference_add" << std::endl;
+			code->output << "addq\t$" << this->var->getOcupacio() << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) << std::endl; 
+			break;
+		}
+
+		case MemoryInstruction::Type::DECREMENT:
+		{
+			code->load(this, this->var, CodeGeneration::Register::A);
+			code->output << "push\t%" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->var->getOcupacio()) << std::endl;
+			code->output << "call\tjada_reference_decrement" << std::endl;
+			code->output << "addq\t$" << this->var->getOcupacio() << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) << std::endl; 
+			break;
+		}
 	}
 }

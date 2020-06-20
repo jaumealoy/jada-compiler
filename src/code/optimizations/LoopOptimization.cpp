@@ -20,7 +20,7 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 	otb(nodes, visited, this->programa->getEntryBlock());
 
 	// els bucles més interns es troben abans que els bucles més externs
-	for(int i = 0; i < nodes.size(); i++){
+	for(int i = nodes.size() - 1; i >= 0; i--){
 		// identificar els diferents bucles
 		// això és identificar aquelles arestes x -> d tals que 
 		// d domina a x
@@ -37,12 +37,14 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				if(tmp.jump->getEnd()->getType() == Instruction::Type::GOTO){
 					this->loops.push_back(tmp);
 					std::cout << "Detectat bucle entre block " << nodes[i]->mId << " i " << (*it)->mId << std::endl;
+					std::cout << "Bloc inicial amb instruccio " << tmp.header->getStart()->toString() << std::endl;
 				}
 
 			}
 			it++;
 		}
 	}
+
 
 	// crear les precapçaleres o identificar-les si no existeixen
 	for(int i = 0; i < this->loops.size(); i++){
@@ -53,6 +55,7 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 		SkipInstruction *start = (SkipInstruction *) tmp.header->getStart();
 
 		assert(start != nullptr);
+
 
 		// comprovar si està associada a cap altre bloc bàsic
 		if(start->getPreHeaderInstruction() == nullptr){
@@ -81,11 +84,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 
 				aux = aux->getNext();
 			}
-
-			std::ofstream tmpF("tmpfile_loop.txt");
-			code->writeToFile(tmpF);
-
-			std::cout << "Modificat bucle" << std::endl;
 
 			// és la primera vegada que s'optimitza aquest bucle
 			// realitzar la inversió
@@ -238,6 +236,9 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			std::cout << "Copy OK" << std::endl;
 		}else{
 			// obtenir la precapçalera ja existent de passades iteracions
+			std::cout << "Intent d'agafar precapçalera" << std::endl;
+			assert(start->getPreHeaderInstruction() != nullptr);
+			std::cout << "Intent d'agafar precapçalera " << ((Instruction *) start->getPreHeaderInstruction())->toString() << std::endl;
 			std::cout << "Precapçalera és: "  << start->getPreHeaderInstruction()->toString() << std::endl;
 			//tmp.header = start->getPreHeaderInstruction()->getBasicBlock();
 			std::cout << "Header és: "  << start->toString() << std::endl;
@@ -269,15 +270,15 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 		std::list<BasicBlock *> blocsLoop = this->getBasicBlocksInLoop(this->loops[i]);
 		std::list<BasicBlock *>::iterator it = blocsLoop.begin();
 
-		std::cout << "Optimitzant bucles" << std::endl;
+		std::cout << "Optimitzant bucles amb capçalera = " << this->loops[i].header->mId << std::endl;
 
 		while(it != blocsLoop.end()){
+			std::cout << "Optimitzant bucles: bloc " << (*it)->mId << std::endl;
 			Instruction *aux = (*it)->getStart();
 			Instruction *end = (*it)->getEnd()->getNext();
 
-			std::cout << "Optimitzant bucles: bloc" << std::endl;
-
 			while(aux != nullptr && aux != end){
+				std::cout << aux->toString() << std::endl;
 				Variable *desti = nullptr;
 				if(aux->getType() == Instruction::Type::ARITHMETIC){
 					ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
@@ -310,6 +311,8 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 			it++;
 		}
 
+		blocsLoop = this->getBasicBlocksInLoop(this->loops[i]);
+
 		// s'han identificat totes les instruccions que poden ser invariants
 		// analitzar cada potencial invariant
 		bool canvis = true;
@@ -322,7 +325,10 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 				Instruction *aux = (*it)->getStart();
 				Instruction *end = (*it)->getEnd()->getNext();
 
+				std::cout << "Analitzant 2 invariants del bloc " << (*it)->mId << std::endl; 
+
 				while(aux != nullptr && aux != end){
+					std::cout << "instrucció " << aux->toString() << std::endl;
 					// comprovar que es tracta d'una assignació o operació aritmètica
 					Variable *desti = nullptr;
 					if(aux->getType() == Instruction::Type::ARITHMETIC){
@@ -362,6 +368,8 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 			Instruction *aux = (*it)->getStart();
 			Instruction *end = (*it)->getEnd()->getNext();
 
+			std::cout << "Acabat invariants de " << (*it)->mId << std::endl;
+
 			while(aux != nullptr && aux != end){
 				auto mode = invariant.find(aux);
 				if(mode != invariant.end() && mode->second > 0){
@@ -381,6 +389,10 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 
 					if(this->loops[i].jump->getDominadors().contains(invariantBlock)){
 						std::cout << "INVARIANT " << aux->toString() << " domina sortida (dom de "<<this->loops[i].jump->mId <<" conté "<< invariantBlock->mId <<") " << std::endl;
+						std::cout << "S'ha mogut després de " << this->loops[i].header->getStart()->getPrevious()->toString() << std::endl;
+						//this->loops[i].header->getStart()->getPrevious()->getBasicBlock()->setEnd(aux);
+						//aux->setBasicBlock(this->loops[i].header->getStart()->getPrevious()->getBasicBlock());
+						
 						code->move(
 							aux, 
 							aux,
@@ -388,6 +400,8 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 						);
 
 						canvisG = true;
+					}else{
+						std::cout << "INVARIANT " << aux->toString() << " NO domina sortida (dom de "<<this->loops[i].jump->mId <<" conté "<< invariantBlock->mId <<") " << std::endl;
 					}
 				}
 
@@ -400,7 +414,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 	}
 
 	std::cout << "Comença VARIABLES d'INDUCCIÓ" << std::endl;
-	canvisG = this->optimizeInductionVariables(code) || canvisG;
+	canvisG = this->optimizeInductionVariables(code) | canvisG;
 
 	return canvisG;
 }
@@ -534,7 +548,7 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 			Variable *operand = operands[i];
 
 			// a) comprovar si es tracta d'una constant
-			if(operand->isConstant()){
+			if(operand->isConstant(true)){
 				*esInvariant[i] = true;
 			}
 
@@ -545,7 +559,7 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 				// de fora del bloc
 				bool totsFora = true;
 
-				//this->definitions = ReachableDefinitions(this->programa);
+				this->definitions = ReachableDefinitions(this->programa);
 				Set<Instruction> ud = this->definitions.useDefinitionChain(inst, operand);
 				Set<Instruction>::iterator it = ud.begin();
 
@@ -566,7 +580,7 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 
 				*esInvariant[i] = totsFora;
 
-				std::cout << "2esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
+				std::cout << "2esInvariant[" << i << "] " << *esInvariant[i] << " operand = " << operand->name << std::endl;
 
 
 				if(!*esInvariant[i]){
@@ -771,13 +785,13 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 										struct InductionVariable tmp;
 										tmp.var = varBasica.var;
 										
-										if(varOriginal.basica){
+										/*if(varOriginal.basica){
 											tmp.factor = 1;
 											tmp.constant = k;
-										}else{
+										}else{*/
 											tmp.factor = varOriginal.factor;
 											tmp.constant = varOriginal.constant + k;
-										}
+										//}
 
 										tmp.basica = false;
 										tmp.inst = aInst;
@@ -795,22 +809,22 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 
 										if(aInst->getFirstOperand() == varInd->first){
 											// és de la forma x = x0 - k
-											if(varOriginal.basica){
+											/*if(varOriginal.basica){
 												tmp.factor = 1;
 												tmp.constant = -k;
-											}else{
+											}else{*/
 												tmp.factor = varOriginal.factor;
 												tmp.constant = varOriginal.constant - k;
-											}
+											//}
 										}else{
 											// és de la forma x = k - x0
-											if(varOriginal.basica){
+											/*if(varOriginal.basica){
 												tmp.factor = -1;
 												tmp.constant = k;
-											}else{
+											}else{*/
 												tmp.factor = - varOriginal.factor;
 												tmp.constant = k - varOriginal.constant;
-											}
+											//}
 										}
 
 										tmp.basica = false;
@@ -906,7 +920,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 				
 				// moure les noves instruccions després de l'antiga instrucció
 				code->move(newAssignment, incrementInst, vindIt->second.inst);
-				code->remove(vindIt->second.inst);
 
 				// afegir al final de la precapçalera
 				Variable *t1 = code->addVariable(TipusSubjacentBasic::INT);
@@ -961,6 +974,105 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 				// trobar el final de la precapçalera
 				code->move(first, syInit, currentLoop.header->getStart()->getPrevious());
 
+				std::cout << "La derivada és " << vindIt->second.inst->toString() << " i la bàsica és " << x0->second.inst->toString() << std::endl; 
+
+				// determinar si la variable d'inducció bàsica es troba per 
+				// abans o després de la variable d'inducció derivada
+				bool basicaDespres = false;
+				if(vindIt->second.inst->getBasicBlock() == x0->second.inst->getBasicBlock()){
+					// estan al mateix bloc bàsic
+					// anar des de la derivada fins al final de bloc bàsic
+					// si es troba, estarà després
+					BasicBlock *derivadaBlock = vindIt->second.inst->getBasicBlock();
+					Instruction *aux = vindIt->second.inst;
+					Instruction *end = derivadaBlock->getEnd()->getNext();
+					bool trobada = false;
+
+					while(!trobada && aux != nullptr && aux != end){
+						trobada = aux == x0->second.inst;
+						aux = aux->getNext();
+					}
+
+					basicaDespres = trobada;
+
+					std::cout << "VInd " << vindIt->second.inst->toString() << " amb basica " << basicaDespres << std::endl;
+
+				}else{
+					// recòrrer els blocs successors de la variable d'inducció
+					// derivada. 
+					BasicBlock *derivadaBlock = vindIt->second.inst->getBasicBlock();
+					std::list<BasicBlock *> pendents;
+					std::map<BasicBlock *, bool> visitats;
+
+					std::cout << "Vinducció és " << vindIt->second.inst->toString() << std::endl; 
+					assert(vindIt->second.inst != nullptr);
+					assert(derivadaBlock != nullptr);
+
+					std::cout << "HOLA TROBANT DESPRES?" << std::endl;
+
+					pendents.push_back(derivadaBlock);
+
+					bool trobat = false;
+					while(!trobat && pendents.size() > 0){
+						BasicBlock *block = pendents.front();
+						pendents.pop_front();
+
+						std::cout << "HOLA TROBANT DESPRES? 1" << std::endl;
+
+
+						trobat = block == x0->second.inst->getBasicBlock();
+
+
+						std::cout << "HOLA TROBANT DESPRES? 2" << std::endl;
+
+						assert(block != nullptr);
+						std::list<BasicBlock *> &successors = block->getSuccessors();
+							std::cout << "HOLA TROBANT DESPRES? 2.1 " << block->mId << std::endl;
+
+						std::list<BasicBlock *>::iterator successorIt = successors.begin();
+							std::cout << "HOLA TROBANT DESPRES? 2.2" << std::endl;
+
+						while(successorIt != successors.end()){
+							std::cout << "HOLA TROBANT DESPRES? 3" << std::endl;
+
+							// no s'ha d'arribar a la precapçalera, només interessen
+							// els blocs que es troben per davall de la variable derivada
+							if(*successorIt != currentLoop.jump 
+								&& *successorIt != currentLoop.header 
+								&& visitats.find(*successorIt) == visitats.end()){
+								visitats.emplace(*successorIt, true);
+								pendents.push_back(*successorIt);
+							}
+							successorIt++;
+						}
+					}
+
+					basicaDespres = trobat;
+				} 
+
+				
+				std::cout << "VInd " << vindIt->second.inst->toString() << " amb basica " << basicaDespres << std::endl;
+				if(basicaDespres){
+					Variable *auxConst = code->addVariable(TipusSubjacentBasic::INT);
+					Instruction *aux1 = code->addInstruction(new AssignmentInstruction(
+						TipusSubjacentBasic::INT,
+						auxConst,
+						std::make_shared<ValueContainer>((const char *) &increment, sizeof(int))						
+					));
+
+					Instruction *aux2 = code->addInstruction(new ArithmeticInstruction(
+						ArithmeticInstruction::Type::SUBTRACTION,
+						sy,
+						sy,
+						auxConst
+					));
+
+					code->move(aux1, aux2, syInit);
+				}
+
+				// eliminar l'antiga instrucció
+				code->remove(vindIt->second.inst);
+				
 				// indicar que s'han realitzat canvis
 				canvisLoop = true;
 			}

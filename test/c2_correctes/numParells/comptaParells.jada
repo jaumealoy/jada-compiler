@@ -1,5 +1,5 @@
 func demanaVector(int n) : int[] begin
-    int[] v = int[n];
+    int[] v = new int[n];
     
     int i = 0;
     print("Vols comptar ");
@@ -11,7 +11,7 @@ func demanaVector(int n) : int[] begin
         printChar(':');
         printChar(' ');
 
-        v[i] = readInt();
+        v[i - 1] = readInt();
         n--;
     end;
 

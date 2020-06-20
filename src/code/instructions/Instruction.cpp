@@ -10,9 +10,8 @@
 #include "PreAmbleInstruction.h"
 #include "PutParamInstruction.h"
 #include "ReturnInstruction.h"
-#include "AssemblyInstruction.h"
-#include "MemoryInstruction.h"
 #include "MallocInstruction.h"
+#include "MemoryInstruction.h"
 
 #include <fstream>
 #include <cassert>
@@ -98,6 +97,10 @@ std::string Instruction::toString(){
 			tmp = ((MallocInstruction *) this)->toString();
 			break;
 
+		case MEMORY:
+			tmp = ((MemoryInstruction *) this)->toString();
+			break;
+
 		case PRECALL:
 			tmp = "";
 			break;
@@ -152,20 +155,16 @@ void Instruction::generateAssembly(CodeGeneration *code){
 			((ReturnInstruction *) this)->generateAssembly(code);
 			break;
 
-		case Type::ASSEMBLY:
-			((AssemblyInstruction *) this)->generateAssembly(code);
-			break;
-
-		case Type::MEMORY:
-			((MemoryInstruction *) this)->generateAssembly(code);
-			break;
-
 		case PRECALL:
 			((PreCallInstruction *) this)->generateAssembly(code);
 			break;
 
 		case MALLOC:
 			((MallocInstruction *) this)->generateAssembly(code);
+			break;
+
+		case MEMORY:
+			((MemoryInstruction *) this)->generateAssembly(code);
 			break;
 
 		default:
@@ -290,6 +289,21 @@ Instruction* Instruction::copy(Instruction *original)
 			inst = tmp;
 			break;
 		}
+
+		case PRECALL: {
+			PreCallInstruction *tmp = (PreCallInstruction *) new char[sizeof(PreCallInstruction)];
+			*tmp = *(PreCallInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
+		case MEMORY: {
+			MemoryInstruction *tmp = (MemoryInstruction *) new char[sizeof(MemoryInstruction)];
+			*tmp = *(MemoryInstruction *) original; 
+			inst = tmp;
+			break;
+		}
+
 
 		case PUTPARAM: {
 			PutParamInstruction *tmp = (PutParamInstruction *) new char[sizeof(PutParamInstruction)];

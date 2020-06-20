@@ -4,6 +4,7 @@
 #include "../taulasimbols/DescripcioConstant.h"
 #include "../Driver.h"
 #include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/MemoryInstruction.h"
 
 #include <string>
 
@@ -52,6 +53,14 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
                 driver->error(error_tipus_no_compatibles(tipus), true);
                 return;
             }
+        }
+
+        if(init.getTSB() == TipusSubjacentBasic::POINTER){
+            // incrementar la referència del punter
+            driver->code.addInstruction(new MemoryInstruction(
+                init.getBase(),
+                MemoryInstruction::Type::INCREMENT
+            ));
         }
     }
 

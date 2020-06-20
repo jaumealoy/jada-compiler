@@ -9,7 +9,9 @@
 #include <iostream>
 #include <cassert>
 
-CodeGeneration::CodeGeneration() : output("codi.asm") {
+CodeGeneration::CodeGeneration(std::string filename) 
+	: output(filename + ".s"), filename(filename)
+{
 	this->first = nullptr;
 	this->last = nullptr;
 
@@ -198,7 +200,11 @@ void CodeGeneration::leaveSubProgram() {
 /**
  * Escriu el codi actual a un arxiu de text
  */
-void CodeGeneration::writeToFile(std::ofstream &file){
+
+int vCount = 0;
+void CodeGeneration::writeToFile(){
+	std::ofstream file(this->filename + "_v" + std::to_string(vCount++) + ".txt");
+
 	Instruction *act = this->first;
 	while(act != nullptr){
 		file << act->toString();
@@ -229,9 +235,6 @@ void CodeGeneration::generateAssembly() {
 
 	this->output << ".global _start" << std::endl;
 
-	// secció .data
-	this->output << ".data" << std::endl;
-
 	// secció .bss
 	this->output << ".bss" << std::endl;
 
@@ -241,10 +244,31 @@ void CodeGeneration::generateAssembly() {
 		Variable *tmp = this->vars.get(i);
 		if(tmp->getSubPrograma() != start) continue;
 		
-		this->output << "\t" << tmp->getAssemblyTag() + ":";
-		this->output << "\t.fill\t" << tmp->getOcupacio() << ", 1, 0";
+		if(tmp->getTSB() == TipusSubjacentBasic::ARRAY || tmp->getTSB() == TipusSubjacentBasic::POINTER){
+			// reservar espai per l'ocupació extra
+			this->output << "\t" << tmp->getAssemblyTag() << "_data" << ":";
+			this->output << "\t.fill\t" << tmp->getOcupacioExtra() << ", 1, 0";
+		}else{
+			this->output << "\t" << tmp->getAssemblyTag() + ":";
+			this->output << "\t.fill\t" << tmp->getOcupacio() << ", 1, 0";
+		}
 		this->output << std::endl;
 	}
+
+	// secció .data
+	this->output << ".data" << std::endl;
+	for(int i = 0; i < this->vars.size(); i++){
+		Variable *tmp = this->vars[i];
+		if(tmp->getSubPrograma() != start) continue;
+
+			if(tmp->getTSB() == TipusSubjacentBasic::ARRAY || tmp->getTSB() == TipusSubjacentBasic::POINTER){
+			// reservar espai per l'ocupació extra
+			this->output << "\t" << tmp->getAssemblyTag() << ":";
+			this->output << "\t.quad\t" << tmp->getAssemblyTag() << "_data"  << std::endl;
+		}
+	}
+
+	
 	
 	this->output << ".text" << std::endl;
 	this->output << "_start:" << std::endl;
@@ -325,6 +349,21 @@ void CodeGeneration::move(Instruction *start, Instruction *end, Instruction *aft
  * Precondicions: inst != after, inst != null, after != null
  */
 void CodeGeneration::move(Instruction *inst, Instruction *after){
+	// gestionar els blocs bàsics si és necessari
+	if(inst->getBasicBlock() != nullptr && after->getBasicBlock() != nullptr){
+		if(inst->getBasicBlock()->getEnd() == inst){
+			inst->getBasicBlock()->setEnd(inst->getPrevious());
+		}
+
+		if(after->getBasicBlock()->getEnd() == after){
+			after->getBasicBlock()->setEnd(inst);
+		}
+
+		inst->setBasicBlock(after->getBasicBlock());
+	}else if(after->getBasicBlock() != nullptr && inst->getBasicBlock() == nullptr){
+		inst->setBasicBlock(after->getBasicBlock());
+	}
+	
 	// elimina la instrucció
 	this->remove(inst, false);
 
@@ -766,8 +805,7 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
-		std::ofstream tmpfilef("tmpresultat_" + std::to_string(canviIt++) + ".txt");
-		this->writeToFile(tmpfilef);
+		this->writeToFile();
 
 		// TODO: reordenar un poc
 		for(int i = 0; i < this->programs.size(); i++){
@@ -777,8 +815,7 @@ void CodeGeneration::optimize(){
 			this->programs[i]->draw();
 		}
 
-		std::ofstream tmpfile("tmpresultat.txt");
-		this->writeToFile(tmpfile);
+		this->writeToFile();
 
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
@@ -835,6 +872,7 @@ void CodeGeneration::updateConstants(){
 
 	Instruction *inst = this->first;
 	while(inst != nullptr){
+		std::cout << "=== > comprovant constants per " << inst->toString() << std::endl;
 		switch (inst->getType()) {
 			case Instruction::Type::ASSIGNMENT:
 				((AssignmentInstruction *) inst)->updateConstants();
@@ -851,7 +889,7 @@ void CodeGeneration::updateConstants(){
 				break;
 
 			case Instruction::Type::CONDJUMP:
-				//((CondJumpInstruction *) inst)->updateConstants();
+				((CondJumpInstruction *) inst)->updateConstants();
 				((CondJumpInstruction *) inst)->getTarget()->markUsage();
 				break;
 

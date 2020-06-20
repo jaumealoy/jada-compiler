@@ -25,7 +25,7 @@ bool CallInstruction::optimize(CodeGeneration *code){
 			if(aux->getType() == Instruction::ASSIGNMENT 
 				&& ((AssignmentInstruction *) aux)->getType() == AssignmentInstruction::Type::SIMPLE)
 			{
-				/*this->var->getAssignmentList().clear();
+				this->var->getAssignmentList().clear();
 				this->var->getUseList().clear();
 
 				this->var = ((AssignmentInstruction *) aux)->getDesti();
@@ -37,7 +37,7 @@ bool CallInstruction::optimize(CodeGeneration *code){
 				this->var->getAssignmentList().clear();
 				this->updateConstants();
 
-				return true;*/
+				return true;
 			}
 		}
 	}

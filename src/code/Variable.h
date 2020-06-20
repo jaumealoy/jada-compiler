@@ -10,7 +10,10 @@
 class Variable {
 private:
 	int id;
+
+public:
 	std::string name;
+private:
 
 	// interessa poder tenir "variables" nul·les, cosa que pot ser
 	// servir al desplaçament per indicar que no n'hi ha
@@ -74,6 +77,7 @@ public:
 
 	// gestió de si és o no constant
 	bool isConstant();
+	bool isConstant(bool locked);
 	void resetConstant();
 	void setConstant(std::shared_ptr<ValueContainer> valor);
 	void setConstant(bool constant);

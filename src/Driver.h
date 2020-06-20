@@ -44,7 +44,7 @@ private:
 public:
     class Error : public std::exception {};
 
-    Driver(char *filename, bool debugMode);
+    Driver(char *filename, bool debugMode, std::string outputFilename);
     ~Driver();
 
     void parse();

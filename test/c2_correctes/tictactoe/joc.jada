@@ -158,28 +158,55 @@ proc main() begin
     print("Introdueix una dimensió del tauler: ");
     dimensions = readInt();
 
+    // mode multijugador o un jugador?
+    boolean ia = false;
+    
+    print("Vols jugar contra la màquina? Introdueix 'S' per jugar-hi: ");
+    string iaInput = read();
+    int jugadorLocal;
+    if iaInput[0] == 'S' or iaInput[0] == 's' do
+        ia = true;
+
+        // seleccionar jugador
+        jugadorLocal = randInt(1, 2);
+        print("Tu ets el jugador ");
+        printChar(jugadorsIcona[jugadorLocal]);
+        print("\n");
+    end; 
+
     // inicialitzar el joc
     taulerActual = creaTauler(dimensions);
     torn = randInt(1, 2);
     int numTorns = 1;
 
-    boolean jocFi = false;
     while (not jocAcabat(taulerActual, dimensions)) do
         print("Torn ");
         printInt(numTorns);
+        print(". Toca a ");
+        printChar(jugadorsIcona[torn]);
+        print(".\n");
 
-        //pintaTauler(taulerActual, dimensions);
+        pintaTauler(taulerActual, dimensions);
 
-        print("Introdueix la fila: ");
-        //int fila = readInt();
+        if ia and (torn != jugadorLocal) do
+            int[2] best = int{0, 0};
 
-        print("Introdueix la columna: ");
-        //int columna = readInt();
+            int[][] copia = copiaTauler(taulerActual, dimensions);
+            int score = resol(copia, dimensions, torn, best, 0);
 
-        //taulerActual[fila - 1][columna - 1] = torn;
+            taulerActual[best[0]][best[1]] = torn;
+        else do
+            print("Introdueix la fila: ");
+            int fila = readInt();
+
+            print("Introdueix la columna: ");
+            int columna = readInt();
+
+            taulerActual[fila - 1][columna - 1] = torn;
+        end;
 
         numTorns = numTorns + 1;
-        //torn = if torn == 1 do 2 else 1;
+        torn = if torn == 1 do 2 else 1;
         print("\n\n");
     end;
 

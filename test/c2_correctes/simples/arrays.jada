@@ -1,0 +1,55 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) creació d'arrays estàtics
+ * 2) accés als valors dels arrays
+ * 3) arrays globals
+ */
+const int LLETRES = 5;
+
+const char[LLETRES] vocals = char{'a', 'e', 'i', 'o', 'u'};
+
+func cerca(char[LLETRES][2] array, char valor) : char begin  
+    int i = 0;
+    while ((i < LLETRES) and (array[i][0] != valor)) do
+        ++i;
+    end;
+
+    if i == LLETRES do
+        return '\0';
+    else do
+        return array[i][1];
+    end;    
+end cerca;
+
+proc main() begin
+    char[LLETRES][2] substituir = char{
+        { 'a', 'b' },
+        { 'e', 'c' },
+        { 'i', 'd' },
+        { 'o', 't' },
+        { 'u', 'f' }
+    };
+
+    string str;
+    str = "Les vocals son unes lletres necessaries\n";
+    print(str);
+
+    int i = 0;
+    while (str[i] != '\0') do
+        char tmp = cerca(substituir, str[i]);
+        if tmp != '\0' do
+            str[i] = tmp;
+        end;
+        ++i;
+    end;
+    print(str);
+
+    print("Les vocals són: ");
+    for (int i = 0; i < LLETRES; ++i) do
+        printChar(vocals[i]);
+        printChar(' ');
+    end;
+    printChar('\n');
+
+    print(prova);
+end main;

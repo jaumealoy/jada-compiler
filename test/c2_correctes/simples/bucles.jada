@@ -1,0 +1,42 @@
+/**
+ * Funcionalitat que es comproven:
+ * 1) bucles while
+ * 2) bucles for amb diferents variants d'operacions o inicialitzacions
+ */
+
+proc taulaDeMultiplicar(int n) begin
+    int i = 1;
+    while (i <= 10) do
+        printInt(n);
+        print(" x ");
+        printInt(i);
+        print(" = ");
+        printInt(i * n);
+        printChar('\n');
+        i++;
+    end;
+    
+    printChar('\n');
+    for (int i = 0; i < 10; ++i) do
+        printChar('=');
+    end;
+    printChar('\n');
+    printChar('\n');
+
+    i = 0;
+    for(; i <= 10; i += 1) do
+        printInt(n);
+        print(" x ");
+        printInt(i);
+        print(" = ");
+        printInt(i * n);
+        printChar('\n');
+    end;
+end taulaDeMultiplicar;
+
+proc main() begin
+    string str = "Quina taula de multiplicar vols aprendre? ";
+    print(str);
+    int n = readInt();
+    taulaDeMultiplicar(n);
+end main;

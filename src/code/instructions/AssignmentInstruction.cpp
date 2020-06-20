@@ -112,7 +112,7 @@ std::string AssignmentInstruction::toString(){
 				break;
 
 			default:
-				tmp += this->origen->getNom();
+				tmp += this->origen->getNom() +" (real "+this->origen->name+")" ;
 		}
 		
 	}
@@ -163,23 +163,33 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			break;
 
 		case AssignmentInstruction::Type::SOURCE_OFF: // a = b[c]
+		{
 			// carregar b i c dins registres, sumar-los i accedir al seu contingut
 			code->load(this, this->origen, CodeGeneration::Register::A);
 			code->output << "movq\t$0, %rbx" << std::endl;
 
+			int constantOffset = 0;
 			if(this->offset->isConstant()){
-				code->load(this->offset->getValor(), CodeGeneration::Register::B, TipusSubjacentBasic::INT);				
+				constantOffset = *(int *) this->offset->getValor()->get();
 			}else{
 				code->load(this, this->offset, CodeGeneration::Register::B);
 			}
 
 			code->output << "mov" << CodeGeneration::getSizeTag(true, this->desti->getOcupacio()) << "\t";
-			code->output << "(%rax, %rbx), %" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->desti->getOcupacio()) << std::endl;
+			if(this->offset->isConstant()){
+				code->output << constantOffset << "(%rax)";
+			}else{
+				code->output << "(%rax, %rbx)";
+			}
+
+			code->output << ", %" << CodeGeneration::getRegister(CodeGeneration::Register::A, this->desti->getOcupacio()) << std::endl;
 
 			code->store(this, CodeGeneration::Register::A, this->desti);
 			break;
+		}
 
 		case AssignmentInstruction::Type::TARGET_OFF:  // a[c] = b
+		{
 			// carregar el valor a guardar (b) dins un registre
 			if(this->origen->isConstant()){
 				code->load(this->origen->getValor(), CodeGeneration::Register::C, this->origen->getTSB());
@@ -191,8 +201,9 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			code->load(this, this->desti, CodeGeneration::Register::A);
 			code->output << "movq\t$0, %rbx" << std::endl;
 			
+			int constantOffset = 0;
 			if(this->offset->isConstant()){
-				code->load(this->offset->getValor(), CodeGeneration::Register::B, TipusSubjacentBasic::INT);				
+				constantOffset = *(int *) this->offset->getValor()->get();
 			}else{
 				code->load(this, this->offset, CodeGeneration::Register::B);
 			}
@@ -200,9 +211,16 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 			// mov %rcx, (%rax, %rbp)
 			code->output << "mov" << CodeGeneration::getSizeTag(true, this->origen->getOcupacio()) << "\t%";
 			code->output << CodeGeneration::getRegister(CodeGeneration::Register::C, this->origen->getOcupacio()) << ", ";
-			code->output << "(%rax, %rbx)";
+
+			if(this->offset->isConstant()){
+				code->output << constantOffset << "(%rax)";
+			}else{
+				code->output << "(%rax, %rbx)";
+			}
 
 			break;
+		}
+
 		default:
 			tmp = "";
 	}
@@ -212,13 +230,13 @@ void AssignmentInstruction::generateAssembly(CodeGeneration *code){
 void AssignmentInstruction::updateConstants(){
 	std::cout << "[" << this->toString() << "] inst" << std::endl;
 	std::cout << "Comprovant constant de " << this->desti->getNom() << std::endl;
-	if(this->type == AssignmentInstruction::Type::SIMPLE && (this->origen == nullptr || this->origen->isConstant())){
+	if(this->type == AssignmentInstruction::Type::SIMPLE && (this->origen == nullptr || (this->origen->isConstant(true)))){
 		// és una assignació de l'estil variable = <constant>
 		std::cout << "Comprovant constant (1) de " << this->desti->getNom() << std::endl;
 
-		if(this->origen != nullptr && this->origen->isConstant()){
+		if(this->origen != nullptr && this->origen->isConstant(true)){
 			this->desti->setConstant(this->origen->getValor());
-			std::cout << "Comprovant constant (1.1) de " << this->desti->getNom() << std::endl;
+			std::cout << "Comprovant constant (1.1) de " << this->origen->name << std::endl;
 		}else{
 			std::cout << "Comprovant constant (1.2) de " << this->desti->getNom() << std::endl;
 			this->desti->setConstant(this->value);
@@ -253,7 +271,12 @@ bool AssignmentInstruction::optimize(CodeGeneration *code){
 	bool canvis = false;
 
 	if(this->desti->isConstant()){
-		std::cout << "Borrant AssignmentInstruction (desti = " << this->desti->getId() << ")" << std::endl;
+		code->remove(this);
+		return true;
+	}
+
+	if(this->type == AssignmentInstruction::Type::SIMPLE && this->origen != nullptr && this->origen == this->desti){
+		// és de la forma a = a
 		code->remove(this);
 		return true;
 	}

@@ -1,0 +1,82 @@
+/**
+ * Funcionalitats que es proven:
+ * 1) funcionament de strings: globals i locals de subprogrames
+ * 2) entrada per teclat
+ */
+
+func strLen(string str) : int begin
+    int length = 0;
+
+    while (str[length] != '\0') do
+        length++;
+    end;
+
+    return length;
+end strLen;
+
+string TXT_1 = "És una cadena de text global.";
+const string TXT_2 = "I aquesta una cadena de text global constant.";
+
+func strCat(string a, string b) : string begin
+    int lengthA;
+    int lengthB;
+    string aux = new char[1000];
+
+    int total = 0;
+    int i = 0;
+    while (a[i] != '\0') do
+        aux[total++] = a[i++];
+    end;
+
+    i = 0;
+    while (b[i] != '\0') do
+        aux[total++] = b[i++];
+    end;
+
+    aux[total] = '\0';
+
+    return aux;
+end strCat;
+
+func esVocal(char a) : boolean begin
+    return a == 'a' or a == 'e' or a == 'i' or a == 'o' or a == 'u';
+end esVocal;
+
+proc main() begin
+    print(TXT_1);
+    printChar('\n');
+    print(TXT_2);
+    printChar('\n');
+
+    print("La primera, té ");
+    printInt(strLen(TXT_1));
+    print(" caràcters\n");
+
+    print("La segona, té ");
+    printInt(strLen(TXT_2));
+    print(" caràcters\n");
+
+    print("La seva concatenació és: \n\"");
+    string cat = strCat(TXT_1, TXT_2);
+    print(cat);
+    print("\"\n");
+
+    print("Introdueix una cadena de text de qualsevol longitud: \n");
+    string input = read();
+
+    int numVocals = 0;
+    int inputLength = strLen(input);
+    for (int i = 0; i < inputLength; i++) do
+        if esVocal(input[i]) do
+            numVocals++;
+        end;
+    end;
+
+    print("El text introduït té ");
+    printInt(inputLength);
+    print(" caràcters\n");
+
+    print("Hi ha ");
+    printInt(numVocals);
+    print(" vocals\n");
+end main;

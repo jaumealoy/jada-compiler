@@ -1,0 +1,26 @@
+/**
+ * Demana un número per consola. Si aquest és parell dirà que és parell i el mostrarà per pantalla
+ * En cas contrari, el convertirà en parell.
+ *
+ * Funcionalitat que s'està comprovant:
+ * 1) operador ternari amb assignació de booleans
+ * 2) operador ternari amb qualsevol altre tipus
+ */
+
+proc main() begin
+    print("Introdueix un número: ");
+    int n = readInt();
+
+    boolean esParell = if (n % 2) == 0 do true else false;
+    int m = if (not esParell) do n * 2 else n;
+
+    if esParell do
+        print("És parell!\n");
+    else do
+        print("No és parell!\n");
+    end;
+
+    print("Un número parell és ");
+    printInt(m);
+    printChar('\n');
+end main;

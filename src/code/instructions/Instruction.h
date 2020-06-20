@@ -21,10 +21,9 @@ public:
 		PUTPARAM,
 		PREAMBLE,
 		RETURN,
-		ASSEMBLY,
-		MEMORY,
 		PRECALL,
 		MALLOC,
+		MEMORY,
 		NUL
 	};
 private:

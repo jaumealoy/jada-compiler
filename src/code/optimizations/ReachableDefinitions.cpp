@@ -96,7 +96,9 @@ struct ReachableDefinitions::GK ReachableDefinitions::calculateGK(BasicBlock *ac
 {
 	struct ReachableDefinitions::GK tmp;
 	tmp.gains = Set<Instruction>(this->domini);
+	tmp.gains.removeAll();
 	tmp.kills = Set<Instruction>(this->domini);
+	tmp.kills.removeAll();
 
 	Instruction *aux = actual->getStart();
 	Instruction *end = nullptr;
@@ -125,19 +127,25 @@ void ReachableDefinitions::calculateInOut(){
 	while(aux != nullptr && aux != this->program->getExitBlock()){
 		struct ReachableDefinitions::GK tmp = this->calculateGK(aux);
 		tmp.kills = tmp.gains;
-		tmp.kills.removeAll();
+		tmp.gains.removeAll();
 		this->inOut.emplace(aux, tmp);
 		aux = aux->getNext();
 	}
 	
 	// afegir tots els successors del bloc d'entrada
 	std::list<BasicBlock *> pendents;
-	std::list<BasicBlock *> &successors = this->program->getEntryBlock()->getSuccessors();
+	BasicBlock *tmpBlock = this->program->getEntryBlock()->getNext();
+	while(tmpBlock != nullptr && tmpBlock != this->program->getExitBlock()){
+		pendents.push_back(tmpBlock);
+		tmpBlock = tmpBlock->getNext();
+	}
+	
+	/*std::list<BasicBlock *> &successors = this->program->getEntryBlock()->getSuccessors();
 	std::list<BasicBlock *>::iterator it = successors.begin();
 	while(it != successors.end()){
 		pendents.push_back(*it);
 		it++;
-	}
+	}*/
 
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();
@@ -217,6 +225,15 @@ Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Var
 
 	auto inOutBlock = this->inOut.find(block);
 	rd = inOutBlock->second;
+
+	std::cout << "Bloc de la funció és " << inst->getBasicBlock()->mId << std::endl;
+	std::cout << "In del bloc ("<< inst->getBasicBlock()->getStart()->toString() <<") és ";
+	Set<Instruction>::iterator tmpIt2 = rd.gains.begin();
+	while(tmpIt2 < rd.gains.end()){
+		std::cout << (*tmpIt2)->toString() << ", ";
+		tmpIt2++;
+	}
+	std::cout << std::endl;
 
 	Instruction *aux = block->getStart();
 	if(aux != inst){

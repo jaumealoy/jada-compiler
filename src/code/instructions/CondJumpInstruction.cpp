@@ -188,29 +188,35 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		&& (Instruction *)((GoToInstruction *) this->getNext())->getTarget()->getTargetInstruction() != this->getNext()->getNext()
 		&& !this->getNext()->isAddedAtOptimization()){
 
-		invertit = true;
+		if(!(this->getNext()->getNext() != nullptr 
+			&& this->getNext()->getNext()->getType() == Instruction::GOTO
+			&& ((GoToInstruction *) this->getNext()->getNext())->isAddedAtOptimization()))
+		{
+			invertit = true;
 
-		this->l = ((GoToInstruction *) this->getNext())->getTarget();
+			this->l = ((GoToInstruction *) this->getNext())->getTarget();
 
-		// invertir la condició
-		Variable *tmp;
+			// invertir la condició
+			Variable *tmp;
 
-		CondJumpInstruction::Operator invers[] = {
-			Operator::NEQ,	// EQ => !(a = b) === (a != b)
-			Operator::EQ,	// NEQ => !(a != b) === (a = b)
-			Operator::GT,	// LTE => !(a <= b) === (a > b)
-			Operator::GTE,	// LT => !(a < b) === (a >= b)
-			Operator::LT,	// GTE => !(a >= b) === (a < b)
-			Operator::LTE	// GT => !(a > b) === (a <= b)
-		};
+			CondJumpInstruction::Operator invers[] = {
+				Operator::NEQ,	// EQ => !(a = b) === (a != b)
+				Operator::EQ,	// NEQ => !(a != b) === (a = b)
+				Operator::GT,	// LTE => !(a <= b) === (a > b)
+				Operator::GTE,	// LT => !(a < b) === (a >= b)
+				Operator::LT,	// GTE => !(a >= b) === (a < b)
+				Operator::LTE	// GT => !(a > b) === (a <= b)
+			};
 
-		// canviar l'operador
-		this->op = invers[this->op];
-		
-		// eliminar la següent instrucció
-		code->remove(this->getNext());
+			// canviar l'operador
+			this->op = invers[this->op];
+			
+			// eliminar la següent instrucció
+			code->remove(this->getNext());
 
-		canvis = true;
+			canvis = true;
+		}
+
 	}
 
 	// canviar etiqueta de destí (en cas de concatenar salts incondicionals)

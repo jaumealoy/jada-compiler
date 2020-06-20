@@ -11,7 +11,8 @@ public:
 		SUBTRACTION,
 		MULTIPLICATION,
 		DIVISION,
-		MOD
+		MOD,
+		LEFT_SHIFT
 	};
 
 private:

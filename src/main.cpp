@@ -4,6 +4,7 @@
 #include "taulasimbols/TaulaSimbols.h"
 #include <iostream>
 #include <cstring>
+#include <unistd.h>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ int main(int argc, char **argv){
 	std::cout << "Debug = " << debugMode << std::endl;
 
 	// anàlisi lèxica, sintàctica i semàntica
-	Driver myDriver(argv[1], debugMode);
+	Driver myDriver(argv[1], debugMode, outputFile);
 	myDriver.parse();
 	myDriver.closeFiles();
 
@@ -42,12 +43,19 @@ int main(int argc, char **argv){
 
 		// si no s'han generat errors, es pot generar el codi
 		// representació en codi intermedi
-		ofstream codeOutput("codi.txt");
-		myDriver.code.writeToFile(codeOutput);
+		myDriver.code.writeToFile();
 
 		// representació en assemblador
 		myDriver.code.generateAssembly();
 		
+		string objectFile = outputFile + ".o";
+		string assemblyFile = outputFile + ".s";
+
+		// assemblar i linkear el programa
+		/*if(execvp("as", { assemblyFile, string("-o"), objectFile }) == 0){
+			// 
+		}*/
+
 		cout << "Compilació exitosa" << endl;
 	}
 

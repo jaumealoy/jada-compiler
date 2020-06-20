@@ -92,14 +92,13 @@ void SimbolArrayInit::make(Driver *driver, std::string tipusBasic, SimbolArrayEl
 	int mida = dt->getOcupacio();
 	char *buffer = new char[mida * list.getElements().size()];
 
-	Variable *varOffset = driver->code.addVariable(TipusSubjacentBasic::INT);
-
 	unsigned int offset = 0;
 	for(int i = 0; i < elements.size(); i++){
 		ValueContainer *valor = elements[i].getValue().get();
 		memcpy(buffer + offset, valor->get(), valor->getSize());
 
 		// inicialitzar l'array
+        Variable *varOffset = driver->code.addVariable(TipusSubjacentBasic::INT);
 		driver->code.addInstruction(new AssignmentInstruction(
 			TipusSubjacentBasic::INT,
 			varOffset,

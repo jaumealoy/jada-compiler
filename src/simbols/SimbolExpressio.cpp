@@ -9,8 +9,6 @@
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/ArithmeticInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
-#include "../code/instructions/AssemblyInstruction.h"
-#include "../code/instructions/MemoryInstruction.h"
 #include "../code/instructions/MallocInstruction.h"
 #include <memory>
 
@@ -55,6 +53,8 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 
 			int espaiExtra = literal.getValue()->getSize() + TSB::sizeOf(TipusSubjacentBasic::INT);
 			this->r->setOcupacioExtra(espaiExtra);
+
+			std::cout << "RESERVANT ESPAI EXTRA PER STR de " << espaiExtra <<std::endl;
 
 			// inicialitzar l'string amb el valor adequat
 			// valors constants
@@ -767,12 +767,24 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 	Variable *totalBytes = driver->code.addVariable(TipusSubjacentBasic::POINTER);
 	totalBytes->setOcupacioExtra(0);
 
-	long unitat = TSB::sizeOf(dt->getTSB());
+	long mida = TSB::sizeOf(dt->getTSB());
+	Variable *midaTSB = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+	midaTSB->setOcupacioExtra(0);
 	driver->code.addInstruction(new AssignmentInstruction(
 		TipusSubjacentBasic::POINTER,
-		totalBytes,
+		midaTSB,
+		std::make_shared<ValueContainer>((char *) &mida, sizeof(long))
+	));
+
+	long unitat = 1;
+	Variable *elements = driver->code.addVariable(TipusSubjacentBasic::POINTER);
+	elements->setOcupacioExtra(0);
+	driver->code.addInstruction(new AssignmentInstruction(
+		TipusSubjacentBasic::POINTER,
+		elements,
 		std::make_shared<ValueContainer>((char *) &unitat, sizeof(long))
 	));
+
 
 	std::list<SimbolExpressio>::iterator it = dimensions.begin();
 	while(it != dimensions.end()){
@@ -781,13 +793,20 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 		
 		driver->code.addInstruction(new ArithmeticInstruction(
 			ArithmeticInstruction::Type::MULTIPLICATION,
-			totalBytes,
-			totalBytes,
+			elements,
+			elements,
 			auxVar
 		));
 
 		it++;
 	}
+
+	driver->code.addInstruction(new ArithmeticInstruction(
+		ArithmeticInstruction::Type::MULTIPLICATION,
+		totalBytes,
+		elements,
+		midaTSB
+	));
 
 	Variable *dimList = driver->code.addVariable(TipusSubjacentBasic::INT);
 	long dimListSize = dimensions.size() * TSB::sizeOf(TipusSubjacentBasic::INT);

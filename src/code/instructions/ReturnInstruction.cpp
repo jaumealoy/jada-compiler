@@ -40,7 +40,11 @@ std::string ReturnInstruction::toString(){
 void ReturnInstruction::generateAssembly(CodeGeneration *code){
 	// si és el return d'una funció actualitzar la variable de retorn
 	if(this->var != nullptr){
-		code->load(this, this->var, CodeGeneration::Register::A);
+		if(this->var->isConstant(true)){
+			code->load(this->var->getValor(), CodeGeneration::Register::A, this->var->getTSB());
+		}else{
+			code->load(this, this->var, CodeGeneration::Register::A);
+		}
 
 		code->output << "mov" << CodeGeneration::getSizeTag(true, this->var->getOcupacio()) << "\t%";
 		code->output << CodeGeneration::getRegister(CodeGeneration::Register::A, this->var->getOcupacio());
@@ -53,9 +57,6 @@ void ReturnInstruction::generateAssembly(CodeGeneration *code){
 	code->output << CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) << std::endl;
 
 	// recuperar el base pointer
-	/*tmp += "mov" + CodeGeneration::getSizeTag(true, 8) + "\t";
-	tmp += "(%" + CodeGeneration::getRegister(CodeGeneration::Register::SP, 8) + "), %";
-	tmp += CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) + ")\n";*/
 	code->output << "pop\t%" + CodeGeneration::getRegister(CodeGeneration::Register::BP, 8) << std::endl;
 	
 	// retornar al subprograma invocador

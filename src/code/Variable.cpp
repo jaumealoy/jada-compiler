@@ -104,6 +104,13 @@ bool Variable::isParameter(){
 	return this->parameter;
 }
 
+bool Variable::isConstant(bool locked){
+	if(locked){
+		return this->locked && this->constant;	
+	}
+	return this->constant;
+}
+
 bool Variable::isConstant(){
 	return this->constant;
 }

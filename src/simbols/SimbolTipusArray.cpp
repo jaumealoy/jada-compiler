@@ -357,7 +357,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		this->r = array.r;
 
 		// calcular el desplaçament en temps d'execució
-		int intValue = 4;
+		int intValue = TSB::sizeOf(this->tsb);
 		Variable *initD = driver->code.addVariable(TipusSubjacentBasic::INT);
 		driver->code.addInstruction(new AssignmentInstruction(
 			TipusSubjacentBasic::INT,
@@ -366,14 +366,16 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 		));
 
 		this->d = driver->code.addVariable(TipusSubjacentBasic::INT);
-		driver->code.addInstruction(new ArithmeticInstruction(
-			ArithmeticInstruction::Type::MULTIPLICATION,
-			this->d,
-			this->refIndex[this->refIndex.size() - 1].index.dereference(driver, this->refIndex[this->refIndex.size() - 1].index.getTSB()),
-			initD
-		));
+		
 
 		if(!this->esPunter){
+			driver->code.addInstruction(new ArithmeticInstruction(
+				ArithmeticInstruction::Type::MULTIPLICATION,
+				this->d,
+				this->refIndex[this->refIndex.size() - 1].index.dereference(driver, this->refIndex[this->refIndex.size() - 1].index.getTSB()),
+				initD
+			));
+
 			int productori = 1 * TSB::sizeOf(this->tsb) * this->refIndex[this->refIndex.size() - 1].dimensio->getDimensio();
 			for(int i = this->refIndex.size() - 2; i >= 0; i--){
 				Variable *tmp = this->refIndex[i].index.dereference(driver, this->refIndex[i].index.getTSB());
@@ -578,7 +580,7 @@ void SimbolTipusArray::make(Driver *driver, SimbolTipusArray array){
 				}
 
 				// actualitzar l'entrada de la taula de símbols
-				dt->setOcupacio(ocupacio);
+				dt->setOcupacio(ocupacio + array.dimensions.size() * TSB::sizeOf(TipusSubjacentBasic::INT));
 
 		        this->dimensions = array.dimensions;
 			}

@@ -1,0 +1,36 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) pas d'arrays per referència
+ */
+
+const int N = 3;
+
+func factorial(int n) : int begin
+    if n == 0 do
+        return 1;
+    else do
+        return n * factorial(n - 1);
+    end;
+end factorial;
+
+proc multiplicaEscalar(int[N] vector, int factor) begin
+    for (int i = 0; i < N; i++) do
+        vector[i] *= factor;
+    end;
+end multiplicaEscalar;
+
+proc pintaVector(int[N] vector) begin
+    for (int i = 0; i < N; i++) do
+        printInt(vector[i]);
+        printChar(' ');
+    end;
+    print("\n");
+end pintaVector;
+
+proc main() begin
+    int[N] vector = int{1, 3, 2};
+    int aux = factorial(5);
+
+    multiplicaEscalar(vector, aux);
+    pintaVector(vector);
+end main;

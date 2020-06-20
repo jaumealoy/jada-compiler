@@ -2,22 +2,28 @@
 #define _H_CODE_MEMORY_INSTRUCTION
 
 #include "Instruction.h"
-#include "../CodeGeneration.h"
+#include "../Variable.h"
 
-class MemoryInstruction : public Instruction {
+class CodeGeneration;
+
+class MemoryInstruction : public Instruction
+{
+public:
+    enum Type {
+        INCREMENT,
+        DECREMENT
+    };
+
 private:
-	// indica si es tracta d'un store o load
-	bool store;
-
-	// dades
-	CodeGeneration::Register reg;
-	Variable *var;
+    Variable *var;
+    MemoryInstruction::Type tipus;
 
 public:
-	MemoryInstruction(bool store, Variable *var, CodeGeneration::Register reg);
-	~MemoryInstruction();
+    MemoryInstruction(Variable *var, MemoryInstruction::Type type);
+    ~MemoryInstruction();
 
-	void generateAssembly(CodeGeneration *code);
+    std::string toString();
+    void generateAssembly(CodeGeneration *);
 };
 
 #endif

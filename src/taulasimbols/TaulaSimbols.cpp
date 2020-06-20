@@ -298,6 +298,7 @@ void TaulaSimbols::posarParam(std::string idSubprograma, std::string idParam, De
 
         this->tExpansio[nouIndex].identificador = idParam;
         this->tExpansio[nouIndex].declaracio = arg;
+        this->tExpansio[nouIndex].next = TaulaSimbols::NUL;
 
         // no s'ha de canviar de taula en fer un surtBloc
         this->tExpansio[nouIndex].nivellProfunditat = TaulaSimbols::NUL;

@@ -4,6 +4,7 @@
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/ArithmeticInstruction.h"
+#include "../code/instructions/MemoryInstruction.h"
 
 SimbolAssignacio::SimbolAssignacio() : Simbol("Assignació"){}
 SimbolAssignacio::~SimbolAssignacio(){}
@@ -51,9 +52,7 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 	switch(tipus){
 		case 0: // ref = exprSimple
 		{
-			std::cout << "desreferenciant variable" << std::endl;
 			Variable *tmp = exp.dereference(driver, exp.getTSB());
-			std::cout << "desreferenciat variable" << std::endl;
 
 			if(exp.getTSB() == TipusSubjacentBasic::BOOLEAN){
 				// és un boolean, s'haurà fet qualque salt condicional
@@ -92,9 +91,23 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 			}else{
 				if(ref.getOffset() == nullptr){
 					// no existeix desplaçament en temps de compilació
+
+					// l'assignació de punters sempre és de l'estil a = b
+					if(ref.getTSB() == TipusSubjacentBasic::POINTER){
+						// s'ha de decrementar el comptador de la referència
+						driver->code.addInstruction(new MemoryInstruction(
+							ref.getBase(),
+							MemoryInstruction::Type::DECREMENT
+						));
+
+						// i augmentar el nou valor referenciat
+						driver->code.addInstruction(new MemoryInstruction(
+							tmp,
+							MemoryInstruction::Type::INCREMENT
+						));
+					}
+
 					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
-					assert(tmp != nullptr && ref.getBase() != nullptr);
-					std::cout << "Assignació a referència vàlida" << std::endl;
 				}else{
 					// és una assignació de l'estil a[c] = b
 					driver->code.addInstruction(new AssignmentInstruction(

@@ -58,8 +58,11 @@ private:
 	std::list<Variable *> globalVariables;
 	std::map<SubProgram *, std::list<Variable *>> subprogramVariables;
 
+	// nom de l'arxiu de sortida
+	std::string filename;
+
 public:
-	CodeGeneration();
+	CodeGeneration(std::string filename);
 	~CodeGeneration();
 
 	Label *addLabel();
@@ -95,7 +98,7 @@ public:
 	void remove(Instruction *inst);
 
 	// generació de codi
-	void writeToFile(std::ofstream &file);
+	void writeToFile();
 	void generateAssembly();
 	
 	// funcions auxiliar

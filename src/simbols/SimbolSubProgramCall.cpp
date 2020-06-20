@@ -6,6 +6,7 @@
 #include "../code/instructions/PreCallInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
+#include "../code/instructions/MemoryInstruction.h"
 
 #include "../Driver.h"
 
@@ -218,6 +219,14 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 			Variable *var = valor.dereference(driver, valor.getTSB());
 			driver->code.addInstruction(new PutParamInstruction(var, da->getVariable(), programa));
 			driver->code.remove(parametre.m.getInstruction());
+
+			// en cas de ser punters, s'ha d'incrementar el seu comptador de referències
+			if(valor.getTSB() == TipusSubjacentBasic::POINTER){
+				driver->code.addInstruction(new MemoryInstruction(
+					var,
+					MemoryInstruction::Type::INCREMENT
+				));
+			}
 		}
 
 		tmp.next();
