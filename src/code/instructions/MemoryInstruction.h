@@ -24,6 +24,11 @@ public:
 
     std::string toString();
     void generateAssembly(CodeGeneration *);
+
+    void updateConstants();
+
+    MemoryInstruction::Type getType();
+    Variable *getVariable();
 };
 
 #endif

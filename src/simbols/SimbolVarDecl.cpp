@@ -55,7 +55,7 @@ void SimbolVarDecl::make(Driver *driver, SimbolTipus tipus, std::string id, Simb
             }
         }
 
-        if(init.getTSB() == TipusSubjacentBasic::POINTER){
+        if(init.getTSB() == TipusSubjacentBasic::POINTER && init.getMode() != SimbolExpressio::Mode::RESULTAT){
             // incrementar la referència del punter
             driver->code.addInstruction(new MemoryInstruction(
                 init.getBase(),
@@ -184,6 +184,14 @@ void SimbolVarDecl::make(Driver *driver, SimbolVarDecl varDecl, std::string id, 
                 driver->error( error_tipus_no_compatibles(this->tsb, init.getTSB()) , true);
                 return;
             }
+        }
+
+        if(init.getTSB() == TipusSubjacentBasic::POINTER && init.getMode() != SimbolExpressio::Mode::RESULTAT){
+            // incrementar la referència del punter
+            driver->code.addInstruction(new MemoryInstruction(
+                init.getBase(),
+                MemoryInstruction::Type::INCREMENT
+            ));
         }
     }
 

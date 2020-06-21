@@ -1,5 +1,6 @@
 #include "CallInstruction.h"
 #include "AssignmentInstruction.h"
+#include "MemoryInstruction.h"
 #include "../CodeGeneration.h"
 
 CallInstruction::CallInstruction(SubProgram *program) : Instruction(Instruction::Type::CALL){
@@ -25,6 +26,14 @@ bool CallInstruction::optimize(CodeGeneration *code){
 			if(aux->getType() == Instruction::ASSIGNMENT 
 				&& ((AssignmentInstruction *) aux)->getType() == AssignmentInstruction::Type::SIMPLE)
 			{
+				if(aux->getPrevious()->getType() == Instruction::Type::MEMORY
+					&& ((MemoryInstruction *) aux->getPrevious())->getType() == MemoryInstruction::Type::DECREMENT){
+					MemoryInstruction *mem = (MemoryInstruction *) aux->getPrevious();
+					if(mem->getVariable() == ((AssignmentInstruction *) aux)->getDesti()){
+						code->move(mem, mem, this->getPrevious());
+					}
+				}
+				
 				this->var->getAssignmentList().clear();
 				this->var->getUseList().clear();
 

@@ -755,7 +755,7 @@ void SimbolExpressio::make(Driver *driver, std::string tipus, SimbolDimensionLis
 	}
 	aux += "*";
 
-	this->tipus = tipus + "_" + aux;
+	this->tipus = "_" + tipus + "_" + aux;
 	this->tsb = TipusSubjacentBasic::POINTER;
 
 	// variables

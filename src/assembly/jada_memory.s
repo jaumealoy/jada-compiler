@@ -26,17 +26,15 @@
 .equ BLOCK_SIZE_OFFSET, 21
 .equ BLOCK_DATA_OFFSET, BLOCK_SIZE_OFFSET + 8
 
-
 .bss
-jada_memory_start:		.fill	8, 0	/* adreça de l'inici del heap */
-jada_memory_end:		.fill	8, 0	/* adreça de final del heap */
-
 .data
 jada_memory_free:	.quad	0		/* indica quin és el primer bloc lliure */
+jada_memory_start:	.quad 	0	/* adreça de l'inici del heap */
+jada_memory_end:	.quad	0	/* adreça de final del heap */
 
 .text
 
-/*call	jada_init
+call	jada_init
 
 push	$8
 push	$0
@@ -65,9 +63,19 @@ call	jada_malloc
 pop		%r10
 addq	$8, %rsp
 
+push	%r10
+call	jada_free
+addq	$8, %rsp
+
+push	$4
+push	$0
+call	jada_malloc
+pop		%r10
+addq	$8, %rsp
+
 movq $1, %rax
 movq $0, %rbx
-int	$0x80*/
+int	$0x80
 
 
 jada_init:
@@ -125,7 +133,7 @@ jada_malloc:
 	movq	%r9, BLOCK_NEXT_OFFSET(%rax)
 
 	movq	BLOCK_NEXT_OFFSET(%rbp), %rax
-	je		.bloc_update		/* if bloc.next = 0 goto bloc_update */
+	je		.bloc_update					/* if bloc.next = 0 goto bloc_update (no hi ha més blocs) */
 
 	movq	BLOCK_PREV_OFFSET(%rbp), %r9	/* bloc.next.prev = bloc.prev */
 	movq	%r9, BLOCK_PREV_OFFSET(%rax)
@@ -208,7 +216,7 @@ jada_free:
 
 	/* només es pot alliberar el bloc si el seu comptador és 0 */
 	cmpw	$0, BLOCK_COUNTER_OFFSET(%rbp)
-	je		1f		/* el bloc està referenciat per algú */
+	jne		1f		/* el bloc està referenciat per algú */
 
 .free_block:
 	/* marcar el bloc com a lliure */
@@ -240,10 +248,10 @@ jada_reference_add:
 
 	/* comprovar que l'adreça es troba entre les adreces d'inici i final */
 	cmpq	jada_memory_start, %rbp
-	jl		1f
+	js		1f
 
 	cmpq	jada_memory_end, %rbp
-	jge		1f
+	jns		1f
 
 	incw	BLOCK_COUNTER_OFFSET(%rbp)
 
@@ -266,10 +274,10 @@ jada_reference_decrement:
 
 	/* comprovar que l'adreça es troba entre les adreces d'inici i final */
 	cmpq	jada_memory_start, %rbp
-	jl		1f
+	js		1f
 
 	cmpq	jada_memory_end, %rbp
-	jge		1f
+	jns		1f
 
 	decw	BLOCK_COUNTER_OFFSET(%rbp)
 	jne		1f

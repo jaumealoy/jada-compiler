@@ -106,54 +106,6 @@ func jocAcabat(int[][] tauler, int n) : boolean begin
             or guanya(tauler, n, 2);
 end jocAcabat;
 
-func copiaTauler(int[][] tauler, int n) : int[][] begin
-    int[][] nouTauler = new int[n][n];
-
-    for (int i = 0; i < n; i++) do
-        for (int j = 0; j < n; j++) do
-            nouTauler[i][j] = tauler[i][j];
-        end;
-    end;
-
-    return nouTauler;
-end copiaTauler;
-
-func resol(int[][] tauler, int n, int torn, int[2] solucio, int moviments) : int begin
-    int contrari = if torn == 1 do 2 else 1;
-
-    if guanya(tauler, n, torn) do
-        return 10;
-    else if guanya(tauler, n, contrari) do
-        return -10;
-    else if taulerPle(tauler, n) do
-        return 0;
-    else do
-        // queden moviments
-        int bestMovement = -100000;
-
-        for (int i = 0; i < n; i++) do
-            for (int j = 0; j < n; j++) do
-                if tauler[i][j] == 0 do
-                    // realitzar moviment perquè aquesta casella és buida
-                    int[][] taulerCopia = copiaTauler(tauler, n);
-                    taulerCopia[i][j] = torn;
-
-                    int[2] aux = int{0, 0};
-                    int tmp = -resol(taulerCopia, n, contrari, aux, moviments + 1);
-
-                    if tmp > bestMovement do
-                        bestMovement = tmp;
-                        solucio[0] = i;
-                        solucio[1] = j;
-                    end;
-                end;
-            end;
-        end;
-
-        return bestMovement;
-    end;
-end resol;
-
 proc main() begin
     print("Introdueix una dimensió del tauler: ");
     dimensions = readInt();
@@ -163,23 +115,26 @@ proc main() begin
     torn = randInt(1, 2);
     int numTorns = 1;
 
-    boolean jocFi = false;
-    while (not jocAcabat(taulerActual, dimensions)) do
-        print("Torn ");
+    while (true) do
+        /*print("Torn ");
         printInt(numTorns);
+        print(". Toca a ");
+        printChar(jugadorsIcona[torn]);
+        print(".\n");*/
 
-        //pintaTauler(taulerActual, dimensions);
+        pintaTauler(taulerActual, dimensions);
 
         print("Introdueix la fila: ");
-        //int fila = readInt();
+        int fila = readInt();
 
         print("Introdueix la columna: ");
-        //int columna = readInt();
+        int columna = readInt();
 
-        //taulerActual[fila - 1][columna - 1] = torn;
+        taulerActual[fila - 1][columna - 1] = torn;
+        
 
         numTorns = numTorns + 1;
-        //torn = if torn == 1 do 2 else 1;
+        torn = if torn == 1 do 2 else 1;
         print("\n\n");
     end;
 

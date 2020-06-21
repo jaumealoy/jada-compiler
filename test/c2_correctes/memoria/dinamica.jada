@@ -1,0 +1,61 @@
+int[] VECTOR_GLOBAL = new int[5];
+
+func creaVector(int n) : int[] begin
+    int[] v = new int[n];
+    for (int i = 0; i < n; i++) do
+        v[i] = randInt(1, 100);
+    end;
+    return v; 
+end creaVector;
+
+proc pintaVector(int[] v, int n) begin
+    for (int i = 0; i < n; i++) do
+        printInt(v[i]);
+        printChar(' ');
+    end;
+    printChar('\n');
+end pintaVector;
+
+proc main() begin
+    // crea un vector amb memòria dinàmica
+    // aquest vector tendrà el comptador de referències a 1
+    int n = 5;
+    int[] v = new int[n];
+
+    const int V2_1 = 30;
+    if true do
+        // crear un vector local
+        int[] v2 = new int[n];
+        v2[0] = V2_1;
+        v2[1] = 04;
+        v2[2] = 99;
+
+        // es toca alliberar en sortir d'aquest bloc
+    end;
+
+    // aquest bloc de memòria ha de ser el mateix que el de v2
+    // perquè les dades que hi havia no s'eliminen
+    int[] v3 = new int[n - 1];
+    if v3[0] == V2_1 do
+        print("v3 ocupa el mateix espai que v2\n");
+    else do
+        print("v3 és un bloc diferent\n");
+    end;
+
+    // reservar un vector des d'un subrprograma
+    int[] v4 = creaVector(n);
+    int[] v5 = new int[n];
+    v5[0] = 909;
+
+    pintaVector(v4, n);
+    pintaVector(v5, n);
+
+    // per l'ordre de les reduccions, primer es reserva un espai de n integers
+    // es decrementa el comptador de v5 (que val 1, i s'allibera el bloc) i després
+    // s'incrementa el comptador del nou bloc
+    v5 = new int[n];
+
+    // així és normal que aquest bloc que es reserva dins la pròpia crida ocupi el mateix
+    // bloc que l'antic bloc v5
+    pintaVector(new int[n], n);
+end main;

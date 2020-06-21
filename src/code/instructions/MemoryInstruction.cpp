@@ -47,3 +47,15 @@ void MemoryInstruction::generateAssembly(CodeGeneration *code)
 		}
 	}
 }
+
+void MemoryInstruction::updateConstants(){
+	this->var->addUseList(this);
+}
+
+MemoryInstruction::Type MemoryInstruction::getType(){
+	return this->tipus;
+}
+
+Variable *MemoryInstruction::getVariable(){
+	return this->var;
+}

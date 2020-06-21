@@ -7,6 +7,7 @@
 #include "../code/instructions/ReturnInstruction.h"
 #include "../code/instructions/AssignmentInstruction.h"
 #include "../code/instructions/SkipInstruction.h"
+#include "../code/instructions/MemoryInstruction.h"
 #include "../code/Label.h"
 #include <iostream>
 
@@ -61,6 +62,43 @@ void SimbolStatement::make(Driver *driver, SimbolExpressio exp){
         return;
     }
     
+    // decrementar els comptadors de referència de tots els punters
+    // del subprograma perquè no es gestiona mitjançant els propis blocs
+    // només es volen les descripcions del subprograma actual NP >= 1
+    // en cas de ser la variable de retorn, no es decrementa
+    std::list<Descripcio *> descripcions = driver->ts.getAllSymbols(1);
+    std::list<Descripcio *>::iterator it = descripcions.begin();
+    while(it != descripcions.end()){
+        Descripcio *d = *it;
+
+        if(d->getTipus() == Descripcio::Tipus::VARIABLE){
+            DescripcioVariable *dv = (DescripcioVariable *) d;
+            DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(dv->getNomTipus());
+            if(!dv->getVariable()->isParameter() 
+                && dv->getVariable() != exp.getBase()
+                && dt->getTSB() == TipusSubjacentBasic::POINTER){
+                driver->code.addInstruction(new MemoryInstruction(
+                    dv->getVariable(),
+                    MemoryInstruction::Type::DECREMENT
+                ));
+            }
+        }else if(d->getTipus() == Descripcio::Tipus::CONSTANT){
+            DescripcioConstant *dc = (DescripcioConstant *) d;
+            DescripcioTipus *dt = (DescripcioTipus *) driver->ts.consulta(dc->getNomTipus());
+            if(!dc->getVariable()->isParameter() 
+                && dc->getVariable() != exp.getBase()
+                && dt->getTSB() == TipusSubjacentBasic::POINTER){
+                driver->code.addInstruction(new MemoryInstruction(
+                    dc->getVariable(),
+                    MemoryInstruction::Type::DECREMENT
+                ));
+            }
+        }
+
+
+        it++;
+    }
+
     // s'ha d'inserir el return dins la llista de returns
     struct ControlInstruccions::ReturnData tmp;
     tmp.tipus = exp.getTipus();

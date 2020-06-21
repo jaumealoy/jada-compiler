@@ -166,6 +166,8 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 	tmp = driver->ts.getParametres();
 	tmp.first(this->id);
 
+	std::list<SimbolExpressio> parametresPunters;
+
 	for(int i = 0; i < size; i++) {
 		DescripcioArgument *da = (DescripcioArgument *) tmp.get();
 		struct SimbolSubProgramContCall::ParametreReal parametre = params.front();
@@ -222,10 +224,14 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 
 			// en cas de ser punters, s'ha d'incrementar el seu comptador de referències
 			if(valor.getTSB() == TipusSubjacentBasic::POINTER){
-				driver->code.addInstruction(new MemoryInstruction(
-					var,
-					MemoryInstruction::Type::INCREMENT
-				));
+				parametresPunters.push_back(valor);
+
+				if(valor.getMode() != SimbolExpressio::Mode::RESULTAT){
+					driver->code.addInstruction(new MemoryInstruction(
+						var,
+						MemoryInstruction::Type::INCREMENT
+					));
+				}
 			}
 		}
 
@@ -243,4 +249,16 @@ void SimbolSubProgramCall::make(Driver *driver, SimbolSubProgramContCall cont){
 
 	// invocar el subprograma
 	driver->code.addInstruction(new CallInstruction(programa, this->r));
+
+	// una vegada s'ha retornat de la crida, s'han de decrementar els comptadors
+	// de referències dels paràmetres
+	while(parametresPunters.size() > 0){
+		SimbolExpressio valor = parametresPunters.front();
+		parametresPunters.pop_front();
+
+		driver->code.addInstruction(new MemoryInstruction(
+			valor.getBase(),
+			MemoryInstruction::Type::DECREMENT
+		));
+	}
 }

@@ -139,6 +139,9 @@ read:
 
 	/* indicar el valor de retorn */
 	movq	%r8, 7*8+8(%rsp)
+	push	%r8
+	call	jada_reference_add
+	addq	$8, %rsp
 
 	/* indicar final de string */
 	movb	$0, -1(%r8, %r10)

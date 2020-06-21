@@ -6,6 +6,7 @@
 #include "instructions/ArithmeticInstruction.h"
 #include "instructions/SkipInstruction.h"
 #include "instructions/CallInstruction.h"
+#include "instructions/MemoryInstruction.h"
 #include <iostream>
 #include <cassert>
 
@@ -896,6 +897,11 @@ void CodeGeneration::updateConstants(){
 			case Instruction::Type::CALL:
 				((CallInstruction *) inst)->updateConstants();
 				((CallInstruction *) inst)->getSubProgram()->markUsage();
+				break;
+
+			case Instruction::Type::MEMORY:
+				((MemoryInstruction *) inst)->updateConstants();
+				break;
 		}
 		inst = inst->getNext();
 	}

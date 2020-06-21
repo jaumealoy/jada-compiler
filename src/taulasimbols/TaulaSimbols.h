@@ -115,5 +115,9 @@ public:
     // Per recòrrer dimensions o paràmetres
     Iterator getParametres();
     Iterator getDimensions();
+
+    // Obtenir els símbols que s'han definit en aquest nivell de profunditat
+    std::list<Descripcio *> getBlockSymbols();
+    std::list<Descripcio *> getAllSymbols(int minNP);
 };
 #endif

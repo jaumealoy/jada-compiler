@@ -54,6 +54,14 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
 
 			std::cout << "Canviant programa a " << df->getSubPrograma() << std::endl;
 			((ReturnInstruction *) ret.returnInst)->setPrograma(df->getSubPrograma());
+
+            // si el return és d'un punter, augmentar-lo
+
+
+            // decrementar els comptadors de referència de totes les variables d'aquest subprograma
+            // excepte les variables dels paràmetres
+            
+
         }
     }else{
         // error (crític)

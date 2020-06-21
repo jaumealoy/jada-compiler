@@ -458,3 +458,37 @@ std::string TaulaSimbols::Iterator::getId(){
 bool TaulaSimbols::Iterator::valid(){
     return this->current != nullptr;
 }
+
+/**
+ * Retorna una llista de les descripcions que s'han creat
+ * en el nivell de profunditat actual
+ */
+std::list<Descripcio *> TaulaSimbols::getBlockSymbols()
+{
+    std::list<Descripcio *> list;
+    for(int i = 0; i < this->indexLliure; i++){
+        if(this->tDescripcio[i].declaracio != nullptr 
+            && this->tDescripcio[i].nivellProfunditat == this->nivellProfunditat){
+            list.push_back(this->tDescripcio[i].declaracio);
+        }
+    }
+
+    return list;
+}
+
+/**
+ * Retorna una llista amb totes les desripcions d'un determinat
+ * nivell de profunditat o superior
+ */
+std::list<Descripcio *> TaulaSimbols::getAllSymbols(int minNP)
+{
+    std::list<Descripcio *> list;
+    for(int i = 0; i < this->indexLliure; i++){
+        if(this->tDescripcio[i].declaracio != nullptr 
+            && this->tDescripcio[i].nivellProfunditat >= minNP){
+            list.push_back(this->tDescripcio[i].declaracio);
+        }
+    }
+
+    return list;
+}

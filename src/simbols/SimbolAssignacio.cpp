@@ -100,11 +100,13 @@ void SimbolAssignacio::make(Driver *driver, SimbolReferencia ref, SimbolExpressi
 							MemoryInstruction::Type::DECREMENT
 						));
 
-						// i augmentar el nou valor referenciat
-						driver->code.addInstruction(new MemoryInstruction(
-							tmp,
-							MemoryInstruction::Type::INCREMENT
-						));
+						// i augmentar el nou valor referenciat, si no es tracta d'una crida
+						if(exp.getMode() != SimbolExpressio::Mode::RESULTAT){
+							driver->code.addInstruction(new MemoryInstruction(
+								tmp,
+								MemoryInstruction::Type::INCREMENT
+							));
+						}
 					}
 
 					driver->code.addInstruction(new AssignmentInstruction(ref.getBase(), tmp));
