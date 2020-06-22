@@ -8,8 +8,10 @@ const int N = 2147483647; // valor màxim enter 32 bits
 proc main() begin
     int j;
     int k;
+    int z;
     for (int i = 0; i < N; i++) do
         j = 3 * i + 7;
         k = 4 * i * 2;
+        z = 7 * i * 2 * 4 * 8;
     end;
 end main;

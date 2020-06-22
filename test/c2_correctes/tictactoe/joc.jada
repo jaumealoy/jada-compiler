@@ -199,8 +199,6 @@ proc main() begin
             print("Introdueix la fila: ");
             int fila = readInt();
 
-            print("Hello");
-
             print("Introdueix la columna: ");
             int columna = readInt();
 

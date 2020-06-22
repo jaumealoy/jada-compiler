@@ -320,8 +320,6 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 	this->basicBlocks = entry;
 	this->exitBlock = exit;
 
-	
-
 	// actualitzar els dominadors
 	this->updateDominadors();
 }

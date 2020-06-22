@@ -1,8 +1,5 @@
+string str = "Hola món\n";
+
 proc main() begin
-    int[] v;
-    int n;
-    int i = 0;
-    while (v[i] < n) do
-        i++;
-    end;
+    print(str);
 end main;

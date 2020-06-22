@@ -1,0 +1,9 @@
+proc main() begin
+    print("Introdueix un valor numèric: ");
+    int a = readInt();
+
+    print("Introdueix un valor numèric: ");
+    int b = readInt();
+
+    
+end main;

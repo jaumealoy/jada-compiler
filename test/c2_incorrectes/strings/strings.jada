@@ -1,0 +1,19 @@
+func malUs() : string begin
+    return "Correcte?\n";
+end malUs;
+
+func factorial(int n) : int begin
+    return if n == 0 do 1 else n * factorial(n - 1);
+end factorial;
+
+proc main() begin
+    // es mostra part bé perquè no s'han sobreescrit les posicions de memòria
+    // de l'string local de la funció, però no és memoria assignada!
+    print(malUs);
+    
+    // si l'execució arriba a n'aquest punt, és molt probable
+    // que no es mostri bé la string
+    string str = malUs();
+    factorial(5);
+    print(str);
+end main;

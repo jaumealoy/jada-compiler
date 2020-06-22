@@ -240,10 +240,9 @@ void CodeGeneration::generateAssembly() {
 	this->output << ".bss" << std::endl;
 
 	// variables globals no inicialitzades
-	// TODO: la inicialització de variables sempre es fa en temps d'execució
 	for(int i = 0; i < this->vars.size(); i++){
 		Variable *tmp = this->vars.get(i);
-		if(tmp->getSubPrograma() != start) continue;
+		if(tmp->getSubPrograma() != start || tmp->isConstant()) continue;
 		
 		if(tmp->getTSB() == TipusSubjacentBasic::ARRAY || tmp->getTSB() == TipusSubjacentBasic::POINTER){
 			// reservar espai per l'ocupació extra
@@ -260,7 +259,7 @@ void CodeGeneration::generateAssembly() {
 	this->output << ".data" << std::endl;
 	for(int i = 0; i < this->vars.size(); i++){
 		Variable *tmp = this->vars[i];
-		if(tmp->getSubPrograma() != start) continue;
+		if(tmp->getSubPrograma() != start || tmp->isConstant()) continue;
 
 			if(tmp->getTSB() == TipusSubjacentBasic::ARRAY || tmp->getTSB() == TipusSubjacentBasic::POINTER){
 			// reservar espai per l'ocupació extra
@@ -810,9 +809,6 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
-		this->writeToFile();
-
-		// TODO: reordenar un poc
 		for(int i = 0; i < this->programs.size(); i++){
 			this->enterSubProgram(this->programs[i]);
 			canvis = this->programs[i]->optimize(this) || canvis;
@@ -823,6 +819,10 @@ void CodeGeneration::optimize(){
 		this->writeToFile();
 
 		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
+	}
+
+	for(int i = 0; i < this->programs.size(); i++){
+		this->programs[i]->deleteUnreachableCode(this);
 	}
 
 	// les etiquetes s'eliminen al final de l'optimització
@@ -843,11 +843,11 @@ void CodeGeneration::optimize(){
 	}
 
 	for(int i = 0; i < this->programs.size(); i++){
-		//this->programs[i]->updateBasicBlocks(this);
-		this->programs[i]->deleteUnreachableCode(this);
 		this->programs[i]->updateBasicBlocks(this);
 		this->programs[i]->draw();
 	}
+
+	this->writeToFile();
 
 }
 
