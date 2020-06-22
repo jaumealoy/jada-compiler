@@ -320,42 +320,7 @@ void SubProgram::updateBasicBlocks(CodeGeneration *code){
 	this->basicBlocks = entry;
 	this->exitBlock = exit;
 
-	// eliminar aquells blocs que no són accessibles
-	std::list<BasicBlock *> pendents;
-	std::map<BasicBlock *, bool> visitats;
-	visitats.emplace(entry, true);
-	pendents.push_back(entry);
-	while(pendents.size() > 0){
-		BasicBlock *aux = pendents.front();
-		pendents.pop_front();
-
-		// afegir tots els successors no visitats
-		std::list<BasicBlock *> &successors = aux->getSuccessors();
-		std::list<BasicBlock *>::iterator it = successors.begin();
-		while(it != successors.end()){
-			auto visitat = visitats.find(*it);
-			if(visitat == visitats.end()){
-				// no s'ha visitat
-				visitats.emplace(*it, true);
-				pendents.push_back(*it);
-			}
-			it++;
-		}
-	}
-
-	// eliminar aquells blocs bàsics no accessibles
-	bloc = this->basicBlocks;
-	while(bloc != nullptr){
-		BasicBlock *next = bloc->getNext();
-
-		auto accessible = visitats.find(bloc);
-		if(accessible == visitats.end()){
-			// aquest bloc no és accessible
-			this->deleteBasicBlock(code, bloc);
-		}
-
-		bloc = next;
-	}
+	
 
 	// actualitzar els dominadors
 	this->updateDominadors();
@@ -608,4 +573,49 @@ Set<BasicBlock> SubProgram::getBasicBlocks(){
 	Set<BasicBlock> bb(domini);
 	
 	return bb;
+}
+
+/**
+ * Elimina aquells blocs de codi que no són accessibles
+ */
+void SubProgram::deleteUnreachableCode(CodeGeneration *code){
+	if(this->codiExtern) return;
+	
+	this->updateBasicBlocks(code);
+
+	std::list<BasicBlock *> pendents;
+	std::map<BasicBlock *, bool> visitats;
+	visitats.emplace(this->basicBlocks, true);
+	pendents.push_back(this->basicBlocks);
+	while(pendents.size() > 0){
+		BasicBlock *aux = pendents.front();
+		pendents.pop_front();
+
+		// afegir tots els successors no visitats
+		std::list<BasicBlock *> successors = aux->getSuccessors();
+		std::list<BasicBlock *>::iterator it = successors.begin();
+		while(it != successors.end()){
+			auto visitat = visitats.find(*it);
+			if(visitat == visitats.end()){
+				// no s'ha visitat
+				visitats.emplace(*it, true);
+				pendents.push_back(*it);
+			}
+			it++;
+		}
+	}
+
+	// eliminar aquells blocs bàsics no accessibles
+	BasicBlock *bloc = this->basicBlocks;
+	while(bloc != nullptr){
+		BasicBlock *next = bloc->getNext();
+
+		auto accessible = visitats.find(bloc);
+		if(accessible == visitats.end()){
+			// aquest bloc no és accessible
+			this->deleteBasicBlock(code, bloc);
+		}
+
+		bloc = next;
+	}
 }

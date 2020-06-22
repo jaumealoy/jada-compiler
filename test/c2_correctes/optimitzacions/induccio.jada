@@ -1,0 +1,19 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) Detecció i optimització de variables d'inducció
+ */
+
+const int N = 2147483647; // valor màxim enter 32 bits
+
+proc main() begin
+    int sum = 0;
+
+    int j;
+    for (int i = 0; i < N; i++) do
+        j = 3 * i + 7;
+        sum = sum + 2 * i + j;
+    end;
+
+    printInt(j); printChar('\n');
+    printInt(sum); printChar('\n');
+end main;

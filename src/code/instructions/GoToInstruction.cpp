@@ -46,6 +46,8 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 		this->label = code->getTargetLabel(old);
 	}
 
+	std::cout << "Fi target" << std::endl;
+
 	bool canvis = old != this->label;
 
 	if((Instruction *) this->label->getTargetInstruction() == this->getNext()){
@@ -58,6 +60,10 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 	Instruction *next = this->getNext();
 	Instruction *originalNext = this->getNext();
 	while(next != nullptr && (next->getType() != Instruction::Type::SKIP || !((SkipInstruction *) next)->getLabel()->isUsed())){
+		if(next->getType() == Instruction::Type::SKIP && ((SkipInstruction *) next)->isLoopStart()){
+			break;
+		}
+		
 		Instruction *tmp = next->getNext();
 		code->remove(next);
 		next = tmp;

@@ -417,6 +417,10 @@ void CodeGeneration::remove(Instruction *inst, bool remove){
 	inst->setPrevious(nullptr);
 
 	if(remove){
+		if(inst->getType() == Instruction::SKIP && ((SkipInstruction *) inst)->isLoopStart()){
+		//	assert(1 < 0);
+		}
+
 		delete inst;
 	}
 }
@@ -828,7 +832,7 @@ void CodeGeneration::optimize(){
 		Instruction *next = aux->getNext();
 
 		if(aux->getType() == Instruction::Type::SKIP){
-			std::cout << "Analitzant etiqueta " << aux->toString() << std::endl;
+			std::cout << "Analitzant etiqueta FI " << aux->toString() << std::endl;
 			SkipInstruction *skip = (SkipInstruction *) aux;
 			if(!skip->getLabel()->isUsed()){
 				this->remove(skip);
@@ -839,6 +843,8 @@ void CodeGeneration::optimize(){
 	}
 
 	for(int i = 0; i < this->programs.size(); i++){
+		//this->programs[i]->updateBasicBlocks(this);
+		this->programs[i]->deleteUnreachableCode(this);
 		this->programs[i]->updateBasicBlocks(this);
 		this->programs[i]->draw();
 	}
@@ -922,8 +928,22 @@ Label *CodeGeneration::getTargetLabel(Label *label){
 	assert(label->getTargetInstruction() != nullptr);
 	Instruction *inst = label->getTargetInstruction()->getNext();
 	
+	std::map<Label *, bool> visitats;
+	visitats.emplace(label, true);
+
+	Label *last = label;
 	while(inst != nullptr && inst->getType() == Instruction::Type::GOTO){
 		label = ((GoToInstruction *) inst)->getTarget();
+
+		if(visitats.find(label) != visitats.end()){
+			break;
+		}
+
+		visitats.emplace(label, true);
+		
+		std::cout << "LABEL ==>> " << label->getId() << std::endl;
+
+		last = label;
 		
 		Instruction *aux = label->getTargetInstruction()->getNext();
 		if(inst == aux){
@@ -933,7 +953,7 @@ Label *CodeGeneration::getTargetLabel(Label *label){
 		}
 	}
 
-	return label;
+	return last;
 }
 
 /**

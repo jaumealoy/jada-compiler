@@ -1,0 +1,39 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) Eliminació d'assignacions constants i càlculs constants
+ * 2) Inversió de salts condicionals
+ * 3) Eliminació de codi inaccessible
+ * 4) Salts sobre salts
+ */
+
+proc prova() begin
+    // aquest subprograma només serveix per demostrar que funciona
+    // correctament la gestió d'un salt sobre un salt:
+    // els subprogrames es troben protegis per un salt incondicional
+    // que va al final del subprograma
+end prova;
+
+proc main() begin
+
+    // es pot considerar una assignació constant equivalent a valorConstant = 28
+    // a més, és l'única assignació a valorConstant i es pot eliminar l'assignació
+    int valorConstant = 4 * 7;
+
+    // es genera directament la instrucció "put param 28"
+    printInt(valorConstant); printChar('\n');
+
+    int j;
+    while (false) do
+        j = j + 1;
+        print("És inaccessible");
+    end;
+
+    while (4 > 5 or true) do
+        print("CTRL+C per aturar\n");
+    end;
+
+    // al codi intermedi no apareix la crida a printnt
+    j = 7;
+    printInt(j);
+    print("Aquest test mai es mostrarà, és inaccessible. Bucle infinit");
+end main;

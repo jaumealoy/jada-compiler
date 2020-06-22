@@ -126,7 +126,7 @@ void Driver::error(std::string msg, yy::location loc, bool error){
 
     if(error){
         // Només per visualitzar els errors s'ha comentat la següent línia
-        //throw Driver::Error();
+        throw Driver::Error();
     }
 }
 

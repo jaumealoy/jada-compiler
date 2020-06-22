@@ -1,0 +1,15 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) Variables vives: 
+ */
+
+const int N = 2147483647; // valor màxim enter 32 bits
+
+proc main() begin
+    int j;
+    int k;
+    for (int i = 0; i < N; i++) do
+        j = 3 * i + 7;
+        k = 4 * i * 2;
+    end;
+end main;

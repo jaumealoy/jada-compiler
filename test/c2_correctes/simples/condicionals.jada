@@ -1,0 +1,38 @@
+/**
+ * Funcionalitats que es proven:
+ * 1) Condicionals if/else if/else
+ * 2) Condicional switch
+ */ 
+
+proc main() begin
+    print("Introdueix un valor numèric: ");
+    int n = readInt();
+
+    if n > 0 do
+        print("És un valor positiu\n");
+    else if n < 0 do
+        print("És un valor negatiu\n");
+    else do
+        print("És zero\n");
+    end;
+
+    switch (n) begin
+        case 0 do
+            print("És zero\n");
+            break;
+        
+        case 1 do
+            print("És 1.\n");
+        
+        default do
+            print("Default\n");
+    end;
+
+    switch (n > 0) begin
+        case true do
+            print("És positiu\n");
+            break;
+        default do
+            print("És <= 0\n");
+    end;
+end main;

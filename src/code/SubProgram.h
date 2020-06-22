@@ -88,6 +88,7 @@ public:
 
 	Set<BasicBlock> getBasicBlocks();
 
+	void deleteUnreachableCode(CodeGeneration *code);
 };
 
 #endif
