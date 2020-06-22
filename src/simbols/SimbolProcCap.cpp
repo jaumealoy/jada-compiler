@@ -29,9 +29,6 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
 	// crear el procedure a la generació de codi
 	Label *start = driver->code.addLabel(nom);
 	SubProgram *subprogram = driver->code.addSubProgram(nom, start);
-
-	// indicar l'etiqueta d'inici del subprograma
-	driver->code.addInstruction(new SkipInstruction(start));
     
 	// Crear un procedure sense paràmetres
     DescripcioProc *d = new DescripcioProc(subprogram);
@@ -46,6 +43,9 @@ void SimbolProcCap::make(Driver *driver, std::string nom){
 
 	// entrar al subprograma (generació de codi)
 	driver->code.enterSubProgram(subprogram);
+
+    // indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(start));
 	driver->code.addInstruction(new PreAmbleInstruction(subprogram));
 
     // pintar a l'arbre
@@ -65,6 +65,9 @@ void SimbolProcCap::make(Driver *driver, SimbolProcContCap cap){
 	// entrar al subprograma (generació de codi)
 	DescripcioProc *dp = (DescripcioProc *) driver->ts.consulta(this->nom);
 	driver->code.enterSubProgram(dp->getSubPrograma());
+
+    // indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(dp->getSubPrograma()->getLabel()));
 	driver->code.addInstruction(new PreAmbleInstruction(dp->getSubPrograma()));
 
     TaulaSimbols::Iterator it = driver->ts.getParametres();

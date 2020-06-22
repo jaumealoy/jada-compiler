@@ -59,9 +59,6 @@ void SimbolFuncContCap::make(Driver *driver, std::string nomFuncio, SimbolArgTyp
 	Label *start = driver->code.addLabel();
 	SubProgram *subprogram = driver->code.addSubProgram(nomFuncio, start);
 
-	// indicar l'etiqueta d'inici del subprograma
-	driver->code.addInstruction(new SkipInstruction(start));
-
     // Inserir la funció a la taula de símbols
     DescripcioFuncio *df = new DescripcioFuncio(subprogram);
     driver->ts.posar(nomFuncio, df);

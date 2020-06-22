@@ -18,10 +18,14 @@
 #include <fstream>
 
 class CodeGeneration {
+public:
+	enum Register { A, B, C, D, SI, DI, BP, SP, R8, R9, R10, R11, R12, R13, R14, R15 };
+
 private:
 	// taules de variables i procediments
 	Table<Variable *, MAX_VAR> vars;
 	Table<SubProgram *, MAX_PROC> programs;
+	SubProgram * global;
 
 	Table<Label *, MAX_LABELS> labels;
 
@@ -57,6 +61,13 @@ private:
 	// llistat de variables globals i de subprogrames
 	std::list<Variable *> globalVariables;
 	std::map<SubProgram *, std::list<Variable *>> subprogramVariables;
+
+	// estructura per gestionar l'optimització de generació de codi
+	const static int MAX_REGISTER = 16; 
+	struct VariableLocation {
+		bool memory;
+		CodeGeneration::Register reg;
+	};
 
 	// nom de l'arxiu de sortida
 	std::string filename;
@@ -99,13 +110,12 @@ public:
 
 	// generació de codi
 	void writeToFile();
-	void generateAssembly();
+	void generateAssembly(bool debug);
 	
 	// funcions auxiliar
 	static std::string getSizeTag(bool, TipusSubjacentBasic);
 	static std::string getSizeTag(bool, int);
 
-	enum Register { A, B, C, D, SI, DI, BP, SP, R8, R9, R10, R11, R12, R13, R14 };
 	static std::string getRegister(Register reg, int size);
 
 	// macros

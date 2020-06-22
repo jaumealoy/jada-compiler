@@ -46,7 +46,7 @@ int main(int argc, char **argv){
 		myDriver.code.writeToFile();
 
 		// representació en assemblador
-		myDriver.code.generateAssembly();
+		myDriver.code.generateAssembly(debugMode);
 		
 		string objectFile = outputFile + ".o";
 		string assemblyFile = outputFile + ".s";

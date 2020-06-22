@@ -7,8 +7,13 @@
 #include "instructions/SkipInstruction.h"
 #include "instructions/CallInstruction.h"
 #include "instructions/MemoryInstruction.h"
+#include "optimizations/LoopOptimization.h"
+#include "optimizations/LiveVariables.h"
+#include "../utils/Set.hpp"
+#include "../utils/Domain.hpp"
 #include <iostream>
 #include <cassert>
+#include <memory>
 
 CodeGeneration::CodeGeneration(std::string filename) 
 	: output(filename + ".s"), filename(filename)
@@ -25,7 +30,7 @@ CodeGeneration::CodeGeneration(std::string filename)
 	// es crearà un subprograma que representa tot el subprograma
 	this->nivellProfunditat = 0;
 	Label *mStart = this->addLabel();
-	SubProgram *global = new SubProgram(this->nivellProfunditat, mStart, "_start", true);
+	this->global = new SubProgram(this->nivellProfunditat, mStart, "_start", true);
 	this->subprogrames.push(global);
 }
 
@@ -225,7 +230,7 @@ void CodeGeneration::writeToFile(){
  * 1.2) .bss són variables globals sense inicialitzar
  * 1.3) .text és el programa (subprogrames i instruccions)
  */
-void CodeGeneration::generateAssembly() {
+void CodeGeneration::generateAssembly(bool debug) {
 	// primer s'han d'actualitzar les taules (amb aquest ordre)
 	this->updateSubProgramTable();
 	this->updateVariableTable();
@@ -269,8 +274,6 @@ void CodeGeneration::generateAssembly() {
 		}
 	}
 
-	
-	
 	this->output << ".text" << std::endl;
 	this->output << "_start:" << std::endl;
 
@@ -278,12 +281,132 @@ void CodeGeneration::generateAssembly() {
 	this->output << "call\tjada_init" << std::endl;
 
 	// ara es pot representar cada instrucció
-	Instruction *act = this->first;
-	while(act != nullptr){
-		this->output << "/* " << act->toString() << " */" << std::endl;
-		act->generateAssembly(this);
-		this->output << std::endl;
-		act = act->getNext();
+	if(!debug){
+		std::cout << "ASSEMBLY OPTIMIZATION DEBUG MODE" << std::endl;
+
+		// les instruccions del subprograma principal es processen exactament
+		// igual que en el mode no optimitzat
+		// els subprogrames es generen seguint un recorregut en profunditat
+		Instruction *act = this->first;
+		while(act != nullptr){
+			if(act->getInvokingSubProgram()->getNivellProfunditat() == 0){
+				this->output << "/* " << act->toString() << " */" << std::endl;
+				act->generateAssembly(this);
+				this->output << std::endl;
+				act = act->getNext();
+			}else{
+				// generar tot el subprograma amb un recorregut amb profunditat
+				// std::vector<BasicBlock *> &nodes, std::map<BasicBlock *, bool> &visitats, BasicBlock *actual
+				act->getInvokingSubProgram()->updateBasicBlocks(this);
+				BasicBlock *entry = act->getInvokingSubProgram()->getEntryBlock();
+				
+				Instruction *end = act->getInvokingSubProgram()->getLastInstruction();
+				if(end != nullptr){
+					end = end->getNext();
+				}
+
+				// estructures auxiliars
+				
+				// domini dels registres i posició de memòra
+				int domainHelper[] = {
+					Register::A, Register::B, Register::C, Register::D,
+					Register::SI, Register::DI, Register::BP, Register::SP,
+					Register::R8, Register::R9, Register::R10, Register::R11, 
+					Register::R12, Register::R13, Register::R14, Register::R15,
+					-1 // valor que indica que es troba a la memòria     
+				};
+
+				Register registerHelper[CodeGeneration::MAX_REGISTER] = {
+					Register::A, Register::B, Register::C, Register::D,
+					Register::SI, Register::DI, Register::BP, Register::SP,
+					Register::R8, Register::R9, Register::R10, Register::R11, 
+					Register::R12, Register::R13, Register::R14, Register::R15
+				};
+
+				std::list<int *> domainList;
+				for(int i = 0; i < CodeGeneration::MAX_REGISTER + 1; i++){
+					domainList.push_back(&domainHelper[i]);
+				}
+
+				std::shared_ptr<Domain<int>> domini = std::make_shared<Domain<int>>(domainList);
+
+				// indica per cada un dels registres les variables que hi ha guardades
+				std::list<Variable *> variablesRegistre[CodeGeneration::MAX_REGISTER];
+
+				// indica els llocs on es troba guardada una variable
+				std::map<Variable *, Set<int>> variableLocation;
+
+				// variables vives
+				LiveVariables liveVariables(this, act->getInvokingSubProgram());
+				
+				BasicBlock *last = nullptr;
+				while(act != end){
+					if(last != act->getBasicBlock()){
+						// ha acabat un bloc bàsic
+						if(last != nullptr){
+							// no és la primera vegada
+
+							// obtenir les variables vives al final del bloc anterior
+							Set<Variable> vv = liveVariables.getLiveVariables(last->getEnd());
+
+							for(int i = 0; i < MAX_REGISTER; i++){
+								std::list<Variable *>::iterator it = variablesRegistre[i].begin();
+								while(it != variablesRegistre[i].end()){
+									Variable *var = *it;
+									if(vv.contains(var)){
+										auto locationSet = variableLocation.find(*it);
+										if(locationSet != variableLocation.end()){
+											if(locationSet->second.contains(&domainHelper[CodeGeneration::MAX_REGISTER])){
+												// guardar a memòria
+												this->store(last->getEnd(), registerHelper[i], *it);
+											}
+										}
+									}
+									it++;
+								}
+							}
+						}
+
+						
+
+						// inicialitzar les estructures auxiliars
+						for(int i = 0; i < CodeGeneration::MAX_REGISTER; i++){
+							variablesRegistre[i].clear();
+						}
+
+						variableLocation.clear();
+						for(int i = 0; i < this->vars.size(); i++){
+							Set<int> aux(domini);
+							aux.removeAll();
+							aux.put(&domainHelper[CodeGeneration::MAX_REGISTER]); // es troba a la memòria
+
+							variableLocation.emplace(this->vars[i], aux);
+						}
+
+						last = act->getBasicBlock();
+					}
+
+					this->output << "/* " << act->toString() << " */" << std::endl;
+
+					if(act->getType() == Instruction::Type::ARITHMETIC){
+						act->generateAssembly(this);
+					}else{
+						act->generateAssembly(this);
+					}
+
+					this->output << std::endl;
+					act = act->getNext();
+				}
+			}
+		}
+	}else{
+		Instruction *act = this->first;
+		while(act != nullptr){
+			this->output << "/* " << act->toString() << " */" << std::endl;
+			act->generateAssembly(this);
+			this->output << std::endl;
+			act = act->getNext();
+		}
 	}
 
 	// indicar fi del programa

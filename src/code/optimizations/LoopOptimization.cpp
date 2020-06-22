@@ -439,7 +439,7 @@ void LoopOptimization::otb(std::vector<BasicBlock *> &nodes, std::map<BasicBlock
 	std::list<BasicBlock *>::iterator it = successors.begin();
 	while(it != successors.end()){
 		// visitar el node
-		otb(nodes, visitats, *it);
+		LoopOptimization::otb(nodes, visitats, *it);
 		it++;
 	}
 

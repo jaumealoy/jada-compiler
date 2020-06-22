@@ -62,6 +62,7 @@ public:
 	void resetOffsets();
 
 	std::string getNom();
+	Label *getLabel();
 
 	void setTipusRetorn(TipusSubjacentBasic tsb);
 	int getOffsetRetorn();

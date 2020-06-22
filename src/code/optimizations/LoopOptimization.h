@@ -36,7 +36,6 @@ private:
 		int counter;
 	};
 
-	void otb(std::vector<BasicBlock *> &resultat, std::map<BasicBlock *, bool> &visitats, BasicBlock *actual);
 	std::list<BasicBlock *> getBasicBlocksInLoop(struct Loop &loop);
 
 	// extracció d'invariants
@@ -65,6 +64,8 @@ public:
 	~LoopOptimization();
 
 	bool optimize(CodeGeneration *code);
+
+	static void otb(std::vector<BasicBlock *> &resultat, std::map<BasicBlock *, bool> &visitats, BasicBlock *actual);
 };
 
 #endif

@@ -364,3 +364,28 @@ bool LiveVariables::optimize(CodeGeneration *code)
 
 	return canvis;
 }
+
+/**
+ * Calcula les variables vives al final d'una instrucció
+ */
+Set<Variable> LiveVariables::getLiveVariables(Instruction *inst)
+{
+	// les variables vives es calculen a partir de l'out del bloc bàsic
+	BasicBlock *block = inst->getBasicBlock();
+	
+	// in és gains, out és kills
+	struct GK vv = this->inOut.find(block)->second;
+	vv.gains = vv.kills;
+	vv.kills.removeAll();
+
+	Instruction *actual = inst;
+	Instruction *end = block->getStart();
+	if(end != nullptr){
+		end = end->getPrevious();
+	}
+
+	while(actual != nullptr && actual != end){
+		this->calculateGK(vv, actual);
+		actual = actual->getPrevious();
+	}
+}

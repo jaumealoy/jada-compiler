@@ -609,3 +609,7 @@ Set<BasicBlock> SubProgram::getBasicBlocks(){
 	
 	return bb;
 }
+
+Label *SubProgram::getLabel(){
+	return this->start;
+}

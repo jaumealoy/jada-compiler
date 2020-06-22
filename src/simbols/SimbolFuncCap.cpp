@@ -115,6 +115,9 @@ void SimbolFuncCap::make(Driver *driver, SimbolFuncContCap cap, SimbolTipus tipu
 
 	// entrar al subprograma (generació de codi)
 	driver->code.enterSubProgram(df->getSubPrograma());
+    
+	// indicar l'etiqueta d'inici del subprograma
+	driver->code.addInstruction(new SkipInstruction(df->getSubPrograma()->getLabel()));
 	driver->code.addInstruction(new PreAmbleInstruction(df->getSubPrograma()));
 
     TaulaSimbols::Iterator it = driver->ts.getParametres();
