@@ -23,14 +23,6 @@ LiveVariables::LiveVariables(CodeGeneration *code, SubProgram *programa)
 
 	this->domini = std::make_shared<Domain<Variable>>(variables);
 
-	std::cout << "Variables identificades per "<< this->programa->getNom() <<": ";
-	gIt = variables.begin();
-	while(gIt != variables.end()){
-		std::cout << (*gIt)->getNom() << " ("<< (*gIt)->getId() <<"), ";
-		gIt++;
-	}
-	std::cout << std::endl;
-
 	this->calculateInOut();
 }
 
@@ -45,9 +37,6 @@ LiveVariables::~LiveVariables()
  */
 void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actual)
 {
-
-	std::cout << "Actualitzant GK per inst => " << actual->toString() << std::endl;
-
 	switch(actual->getType()){
 		case Instruction::ARITHMETIC:
 		{
@@ -109,7 +98,6 @@ void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actua
 		{
 			// només té un única variable que és l'argument que es passa
 			PutParamInstruction *ppinst = (PutParamInstruction *) actual;
-			std::cout << "Afegit variable al conjunt GK GAINS " << ppinst->getValor()->getNom() << std::endl;
 			gk.gains.put(ppinst->getValor());
 			break;
 		}
@@ -140,7 +128,6 @@ void LiveVariables::calculateGK(struct LiveVariables::GK &gk, Instruction *actua
 		case Instruction::CONDJUMP:
 		{
 			CondJumpInstruction *cInst = (CondJumpInstruction *) actual;
-			std::cout << "COND Utilitza " << cInst->getFirstOperand()->getNom() << " i " << cInst->getSecondOperand()->getNom() << std::endl;
 			gk.gains.put(cInst->getFirstOperand());
 			gk.gains.put(cInst->getSecondOperand());
 			break;
@@ -179,15 +166,6 @@ struct LiveVariables::GK LiveVariables::calculateGK(BasicBlock *bloc)
 		aux = aux->getPrevious();
 	}
 
-	std::cout << "GK BLOCK " << bloc->mId << std::endl;
-	Set<Variable>::iterator auxIt = gk.gains.begin();
-	std::cout << "==> Gains bloc = ";
-	while(auxIt < gk.gains.end()){
-		std::cout << (*auxIt)->getNom() << ", ";
-		auxIt++;
-	}
-	std::cout << std::endl;
-
 	return gk;
 }
 
@@ -208,11 +186,6 @@ void LiveVariables::calculateInOut(){
 
 		aux = aux->getNext();
 	}
-
-	std::cout << "comença in out" << std::endl;
-
-	// TODO: determinar quin és el conjunt d'entrada del exit block
-	// totes les variables globals i punters/arrays
 
 	while(pendents.size() > 0){
 		BasicBlock *actual = pendents.front();
@@ -241,15 +214,6 @@ void LiveVariables::calculateInOut(){
 		auto aux = this->inOut.find(actual);
 		if(aux != this->inOut.end()){
 			aux->second.kills = tmpOut;
-
-			std::cout << "IN OUT BLOCK " << actual->mId << std::endl;
-			Set<Variable>::iterator auxIt = inNou.begin();
-			std::cout << "In bloc = ";
-			while(auxIt < inNou.end()){
-				std::cout << (*auxIt)->getNom() << ", ";
-				auxIt++;
-			}
-			std::cout << std::endl;
 
 			if(inNou != aux->second.gains){
 				aux->second.gains = inNou;
@@ -290,14 +254,6 @@ bool LiveVariables::optimize(CodeGeneration *code)
 			while(aux != nullptr && aux != end){
 				Instruction *prev = aux->getPrevious();
 
-				Set<Variable>::iterator tmpIt = gk.gains.begin();
-				std::cout << "Variables vives per ["<< aux->toString() <<"]: ";
-				while(tmpIt < gk.gains.end()){
-					std::cout << (*tmpIt)->getNom() << ", ";
-					tmpIt++;
-				}
-				std::cout << std::endl;
-
 				bool deleted = false;
 
 				switch(aux->getType()){
@@ -335,7 +291,6 @@ bool LiveVariables::optimize(CodeGeneration *code)
 					{
 						ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
 						if(!gk.gains.contains(aInst->getDesti())){
-							std::cout << "És possible eliminar " << aInst->getDesti()->getNom() << " - " << aInst->getDesti()->getId() << std::endl;
 							code->remove(aInst);
 							canvis = true;
 							deleted = true;

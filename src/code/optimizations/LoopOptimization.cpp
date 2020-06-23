@@ -36,8 +36,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 
 				if(tmp.jump->getEnd()->getType() == Instruction::Type::GOTO){
 					this->loops.push_back(tmp);
-					std::cout << "Detectat bucle entre block " << nodes[i]->mId << " i " << (*it)->mId << std::endl;
-					std::cout << "Bloc inicial amb instruccio " << tmp.header->getStart()->toString() << std::endl;
 				}
 
 			}
@@ -66,8 +64,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			newSkip->setPreHeaderInstruction(start);
 			code->move(newSkip, newSkip, start);
 
-			std::cout << "Creant precapçalera: " << newLabel->getId() << std::endl;
-
 			// indicar que aquestes instruccions no s'han d'eliminar
 			newSkip->markAtOptimization();
 			start->markAtOptimization();
@@ -95,7 +91,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				if(endExpression->getType() == Instruction::Type::SKIP){
 					// és un possible final d'expressió
 					if(((SkipInstruction *) endExpression)->isLoopStart()){
-						std::cout << " TROBAT FI ==> " << endExpression->toString() << std::endl;
 						trobat = true;
 						break;
 					}
@@ -105,20 +100,11 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			}
 
 			// l'expressió es troba entre els blocs bàsics header i finalBlock
-			std::cout << "start is " << start->toString() << std::endl;
-			std::cout << "newSkip is " << newSkip->toString() << std::endl;
-			std::cout << "newSkip->next is " << newSkip->getNext()->toString() << std::endl;
 			Instruction *begin = newSkip->getNext();
 			Instruction *end = endExpression->getPrevious();
 
-			std::cout << "inici = " << begin->toString() << std::endl;
-			std::cout << "final = " << end->toString() << std::endl;
-			std::cout << "moure abans de  = " << start->toString() << std::endl;
-
 			// moure l'expressió abans de la precapçalera (newSkip)
 			code->move(begin, end, start->getPrevious());
-
-			std::cout << "Copiant des de " << begin->toString() << " fins a " << begin->toString() << std::endl;
 
 			// copiar l'expressió al final del bucle, abans del salt incondicional
 			// que és tmp.jump->getEnd();
@@ -128,9 +114,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			code->addInstruction(beginCopy);
 				
 			if(begin != end){
-				std::cout << "Inici: " << begin->toString() << std::endl;
-				std::cout << "Final: " << end->toString() << std::endl;
-
 				aux = begin->getNext();
 				while(aux != end->getNext()){
 					lastCopy = Instruction::copy(aux);
@@ -145,8 +128,6 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				lastCopy,
 				tmp.jump->getEnd()->getPrevious()
 			);
-
-			std::cout << "MOVE OK" << std::endl;
 
 			// actualitzar les etiquetes dels salts
 			// l'etiqueta final no s'ha d'actualitzar
@@ -233,16 +214,9 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 
 				aux = aux->getNext();
 			}
-			std::cout << "Copy OK" << std::endl;
 		}else{
 			// obtenir la precapçalera ja existent de passades iteracions
-			std::cout << "Intent d'agafar precapçalera" << std::endl;
 			assert(start->getPreHeaderInstruction() != nullptr);
-			std::cout << "Intent d'agafar precapçalera " << ((Instruction *) start->getPreHeaderInstruction())->toString() << std::endl;
-			std::cout << "Precapçalera és: "  << start->getPreHeaderInstruction()->toString() << std::endl;
-			//tmp.header = start->getPreHeaderInstruction()->getBasicBlock();
-			std::cout << "Header és: "  << start->toString() << std::endl;
-
 			tmp.preheader = start->getPreHeaderInstruction()->getBasicBlock();
 		}
 
@@ -255,8 +229,6 @@ LoopOptimization::~LoopOptimization()
 }
 
 bool LoopOptimization::optimize(CodeGeneration *code){
-	std::cout << "Optimització de bucles: inici" << std::endl;
-
 	bool canvisG = false;
 
 	// detecció d'invariants per cada bucle
@@ -270,15 +242,11 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 		std::list<BasicBlock *> blocsLoop = this->getBasicBlocksInLoop(this->loops[i]);
 		std::list<BasicBlock *>::iterator it = blocsLoop.begin();
 
-		std::cout << "Optimitzant bucles amb capçalera = " << this->loops[i].header->mId << std::endl;
-
 		while(it != blocsLoop.end()){
-			std::cout << "Optimitzant bucles: bloc " << (*it)->mId << std::endl;
 			Instruction *aux = (*it)->getStart();
 			Instruction *end = (*it)->getEnd()->getNext();
 
 			while(aux != nullptr && aux != end){
-				std::cout << aux->toString() << std::endl;
 				Variable *desti = nullptr;
 				if(aux->getType() == Instruction::Type::ARITHMETIC){
 					ArithmeticInstruction *aInst = (ArithmeticInstruction *) aux;
@@ -325,10 +293,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 				Instruction *aux = (*it)->getStart();
 				Instruction *end = (*it)->getEnd()->getNext();
 
-				std::cout << "Analitzant 2 invariants del bloc " << (*it)->mId << std::endl; 
-
 				while(aux != nullptr && aux != end){
-					std::cout << "instrucció " << aux->toString() << std::endl;
 					// comprovar que es tracta d'una assignació o operació aritmètica
 					Variable *desti = nullptr;
 					if(aux->getType() == Instruction::Type::ARITHMETIC){
@@ -368,8 +333,6 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 			Instruction *aux = (*it)->getStart();
 			Instruction *end = (*it)->getEnd()->getNext();
 
-			std::cout << "Acabat invariants de " << (*it)->mId << std::endl;
-
 			while(aux != nullptr && aux != end){
 				auto mode = invariant.find(aux);
 				if(mode != invariant.end() && mode->second > 0){
@@ -378,21 +341,7 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 					// a la sortida del bucle
 					BasicBlock *invariantBlock = aux->getBasicBlock();
 
-					std::cout << "Dominadors de exit = ";
-					Set<BasicBlock> &auxDom = this->loops[i].jump->getDominadors();
-					Set<BasicBlock>::iterator auxDomIt =  auxDom.begin();
-					while(auxDomIt < auxDom.end()){
-						std::cout << (*auxDomIt)->mId << ", ";
-						auxDomIt++;
-					}
-					std::cout << std::endl;
-
-					if(this->loops[i].jump->getDominadors().contains(invariantBlock)){
-						std::cout << "INVARIANT " << aux->toString() << " domina sortida (dom de "<<this->loops[i].jump->mId <<" conté "<< invariantBlock->mId <<") " << std::endl;
-						std::cout << "S'ha mogut després de " << this->loops[i].header->getStart()->getPrevious()->toString() << std::endl;
-						//this->loops[i].header->getStart()->getPrevious()->getBasicBlock()->setEnd(aux);
-						//aux->setBasicBlock(this->loops[i].header->getStart()->getPrevious()->getBasicBlock());
-						
+					if(this->loops[i].jump->getDominadors().contains(invariantBlock)){					
 						code->move(
 							aux, 
 							aux,
@@ -400,8 +349,6 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 						);
 
 						canvisG = true;
-					}else{
-						std::cout << "INVARIANT " << aux->toString() << " NO domina sortida (dom de "<<this->loops[i].jump->mId <<" conté "<< invariantBlock->mId <<") " << std::endl;
 					}
 				}
 
@@ -413,7 +360,6 @@ bool LoopOptimization::optimize(CodeGeneration *code){
 
 	}
 
-	std::cout << "Comença VARIABLES d'INDUCCIÓ" << std::endl;
 	canvisG = this->optimizeInductionVariables(code) | canvisG;
 
 	return canvisG;
@@ -444,7 +390,6 @@ void LoopOptimization::otb(std::vector<BasicBlock *> &nodes, std::map<BasicBlock
 	}
 
 	// afegir a la llista visitats
-	std::cout << "OTB: visitant " << actual->mId << std::endl;
 	nodes.push_back(actual);
 }
 
@@ -513,8 +458,6 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 	bool esquerraInvariant = (invariant->second == 1) || (invariant->second == -1);
 	bool dretaInvariant = (invariant->second == 1) || (invariant->second == -2);
 
-	std::cout << "EI = " << esquerraInvariant << " - DI = " << dretaInvariant << std::endl;
-
 	// evitar duplicar el codi entre l'argument esquerra i el dret
 	// obtenir els operands de les instruccions
 	bool* esInvariant[] = {&esquerraInvariant, &dretaInvariant};
@@ -552,8 +495,6 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 				*esInvariant[i] = true;
 			}
 
-			std::cout << "1esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
-
 			if(!*esInvariant[i]){
 				// b) comprovar que totes les definicions accessibles són
 				// de fora del bloc
@@ -580,9 +521,6 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 
 				*esInvariant[i] = totsFora;
 
-				std::cout << "2esInvariant[" << i << "] " << *esInvariant[i] << " operand = " << operand->name << std::endl;
-
-
 				if(!*esInvariant[i]){
 					// c) comprovar si té única definició accessible i
 					// és invariant
@@ -597,9 +535,6 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 						}
 					}
 				}
-
-			std::cout << "3esInvariant[" << i << "] " << *esInvariant[i] << std::endl;
-
 			}
 		}
 	}
@@ -614,8 +549,6 @@ void LoopOptimization::checkInvariant(Instruction *inst,
 	}else if(!esquerraInvariant && !dretaInvariant){
 		invariant->second = 0;
 	}
-
-	std::cout << "Instrucció " << inst->toString() << " té invariant " << invariant->second << std::endl;
 }
 
 /**
@@ -662,7 +595,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 						}
 
 						f.emplace(desti, tmp);
-						std::cout << "VIND => possible nova " << tmp.inst->toString() << std::endl;
 					}else{
 						// s'ha fet més d'una assignació
 						v->second.counter++;
@@ -688,7 +620,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 						case ArithmeticInstruction::Type::ADDITION:
 						case ArithmeticInstruction::Type::SUBTRACTION:
 						{
-							std::cout << "Analitzant (2) " << tmpIt->second.inst->toString() << std::endl; 
 							if(aInst->getFirstOperand() == aInst->getDesti() && aInst->getSecondOperand()->isConstant()){
 								// x = x +/- c
 								struct InductionVariable tmp;
@@ -703,8 +634,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 								}
 
 								vind.emplace(aInst->getDesti(), tmp);
-
-								std::cout << "["<< aInst->toString() <<"] variable inducció bàsica" << std::endl;
 							}else if(aInst->getSecondOperand() == aInst->getDesti() && aInst->getFirstOperand()->isConstant()){
 								// x = c +/- x
 								struct InductionVariable tmp;
@@ -721,7 +650,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 								}
 
 								vind.emplace(aInst->getDesti(), tmp);
-								std::cout << "["<< aInst->toString() <<"] variable inducció bàsica" << std::endl;
 							}
 							
 							break;
@@ -768,13 +696,10 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 							if(varInd != vind.end()){
 								struct InductionVariable varBasica = varInd->second;
 								struct InductionVariable varOriginal = varInd->second;
-								std::cout << "1. Variable " << varInd->first->getNom() << " d'inducció amb f = " << varInd->second.factor << ", k =" << varInd->second.constant << " i b = " << varInd->second.basica << std::endl; 
 								if(!varInd->second.basica){
 									auto aux = vind.find(varInd->second.var);
 									varBasica = aux->second;
 								}
-								std::cout << "2. Variable " << varInd->first->getNom() << " d'inducció amb f = " << varInd->second.factor << ", k =" << varInd->second.constant << " i b = " << varInd->second.basica << std::endl; 
-
 
 								// és una altra variable d'inducció
 								// comprovar que és una suma/resta/multiplicació
@@ -785,18 +710,12 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 										struct InductionVariable tmp;
 										tmp.var = varBasica.var;
 										
-										/*if(varOriginal.basica){
-											tmp.factor = 1;
-											tmp.constant = k;
-										}else{*/
-											tmp.factor = varOriginal.factor;
-											tmp.constant = varOriginal.constant + k;
-										//}
+										tmp.factor = varOriginal.factor;
+										tmp.constant = varOriginal.constant + k;
 
 										tmp.basica = false;
 										tmp.inst = aInst;
 										vind.emplace(tmpIt->second.var, tmp);
-										std::cout << "["<< tmpIt->second.inst->toString() << "] ADD variable d'inducció derivada" << std::endl;
 										canvis = true;
 										break;
 									}
@@ -809,28 +728,17 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 
 										if(aInst->getFirstOperand() == varInd->first){
 											// és de la forma x = x0 - k
-											/*if(varOriginal.basica){
-												tmp.factor = 1;
-												tmp.constant = -k;
-											}else{*/
-												tmp.factor = varOriginal.factor;
-												tmp.constant = varOriginal.constant - k;
-											//}
+											tmp.factor = varOriginal.factor;
+											tmp.constant = varOriginal.constant - k;
 										}else{
 											// és de la forma x = k - x0
-											/*if(varOriginal.basica){
-												tmp.factor = -1;
-												tmp.constant = k;
-											}else{*/
-												tmp.factor = - varOriginal.factor;
-												tmp.constant = k - varOriginal.constant;
-											//}
+											tmp.factor = - varOriginal.factor;
+											tmp.constant = k - varOriginal.constant;
 										}
 
 										tmp.basica = false;
 										tmp.inst = aInst;
 										vind.emplace(tmpIt->second.var, tmp);
-										std::cout << "sub["<< tmpIt->second.inst->toString() << "] variable d'inducció derivada amb f = " << tmp.factor << " i k = " << tmp.constant << std::endl;
 										canvis = true;
 										break;
 									}
@@ -851,8 +759,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 										tmp.basica = false;
 										tmp.inst = aInst;
 										vind.emplace(tmpIt->second.var, tmp);
-
-										std::cout << "mul["<< tmpIt->second.inst->toString() << "] b = " << tmp.basica << " MUL variable d'inducció derivada amb f = " << tmp.factor << " i k = " << tmp.constant << std::endl;
 
 										canvis = true;
 										break;
@@ -974,8 +880,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 				// trobar el final de la precapçalera
 				code->move(first, syInit, currentLoop.header->getStart()->getPrevious());
 
-				std::cout << "La derivada és " << vindIt->second.inst->toString() << " i la bàsica és " << x0->second.inst->toString() << std::endl; 
-
 				// determinar si la variable d'inducció bàsica es troba per 
 				// abans o després de la variable d'inducció derivada
 				bool basicaDespres = false;
@@ -994,9 +898,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 					}
 
 					basicaDespres = trobada;
-
-					std::cout << "VInd " << vindIt->second.inst->toString() << " amb basica " << basicaDespres << std::endl;
-
 				}else{
 					// recòrrer els blocs successors de la variable d'inducció
 					// derivada. 
@@ -1004,11 +905,8 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 					std::list<BasicBlock *> pendents;
 					std::map<BasicBlock *, bool> visitats;
 
-					std::cout << "Vinducció és " << vindIt->second.inst->toString() << std::endl; 
 					assert(vindIt->second.inst != nullptr);
 					assert(derivadaBlock != nullptr);
-
-					std::cout << "HOLA TROBANT DESPRES?" << std::endl;
 
 					pendents.push_back(derivadaBlock);
 
@@ -1017,24 +915,13 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 						BasicBlock *block = pendents.front();
 						pendents.pop_front();
 
-						std::cout << "HOLA TROBANT DESPRES? 1" << std::endl;
-
-
 						trobat = block == x0->second.inst->getBasicBlock();
-
-
-						std::cout << "HOLA TROBANT DESPRES? 2" << std::endl;
 
 						assert(block != nullptr);
 						std::list<BasicBlock *> &successors = block->getSuccessors();
-							std::cout << "HOLA TROBANT DESPRES? 2.1 " << block->mId << std::endl;
-
 						std::list<BasicBlock *>::iterator successorIt = successors.begin();
-							std::cout << "HOLA TROBANT DESPRES? 2.2" << std::endl;
 
 						while(successorIt != successors.end()){
-							std::cout << "HOLA TROBANT DESPRES? 3" << std::endl;
-
 							// no s'ha d'arribar a la precapçalera, només interessen
 							// els blocs que es troben per davall de la variable derivada
 							if(*successorIt != currentLoop.jump 
@@ -1050,8 +937,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 					basicaDespres = trobat;
 				} 
 
-				
-				std::cout << "VInd " << vindIt->second.inst->toString() << " amb basica " << basicaDespres << std::endl;
 				if(basicaDespres){
 					Variable *auxConst = code->addVariable(TipusSubjacentBasic::INT);
 					Instruction *aux1 = code->addInstruction(new AssignmentInstruction(

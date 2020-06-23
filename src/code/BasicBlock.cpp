@@ -102,14 +102,7 @@ Set<BasicBlock>& BasicBlock::getDominadors(){
 }
 
 void BasicBlock::setDominadors(Set<BasicBlock> dominadors){
-	//dominadors.putAll();
-	std::cout << "Posant dominadors al bloc " << this->mId << std::endl;
 	Set<BasicBlock>::iterator it = dominadors.begin();
-	while(it < dominadors.end()){
-		std::cout << (*it)->mId << ", ";
-		it++;
-	}
-	std::cout  << std::endl;
 	this->dominadors = dominadors;
 }
 
@@ -121,7 +114,6 @@ void BasicBlock::setDominadorImmediat(BasicBlock *dominadorImmediat){
  * Actualitza el dominador immediat d'aquest bloc bàsic
  */
 void BasicBlock::updateDominadorImmediat(){
-	std::cout << "Analitzant bloc " << this->mId << " amb next = " << this->next << std::endl;
 	if(this->next == nullptr){
 		// és el bloc de sortida
 		return;
@@ -141,7 +133,6 @@ void BasicBlock::updateDominadorImmediat(){
 		// de dominadors de la resta d'elements del conjunt
 		Set<BasicBlock> altres = tmpDominadors;
 		assert(*dominadorsIt != nullptr);
-		std::cout << "===> Eliminant BB " << (*dominadorsIt)->mId << std::endl;
 		altres.remove(*dominadorsIt);
 
 		Set<BasicBlock>::iterator it = altres.begin();

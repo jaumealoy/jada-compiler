@@ -1,29 +1,5 @@
 #include "Errors.h"
-
-std::string getNomTSB(TipusSubjacentBasic a){
-    switch(a){
-        case INT:
-            return "enter";
-            break;
-        
-        case BOOLEAN:
-            return "boolean";
-            break;
-        
-        case CHAR:
-            return "caràcter";
-            break;
-
-        case ARRAY:
-            return "array";
-            break;
-
-		case POINTER:
-            return "punter";
-            break;
-    }
-    return "";
-}
+#include "taulasimbols/TipusSubjacentBasic.h"
 
 /**
  * Error que es produeix quan s'intenta redefinir una entrada a la taula
@@ -61,12 +37,12 @@ std::string error_tipus_no_compatibles(std::string a, std::string b){
 }
 
 std::string error_tipus_no_compatibles(TipusSubjacentBasic a, TipusSubjacentBasic b){
-    return "tipus " + getNomTSB(a) + " no és compatible amb " + getNomTSB(b);
+    return "tipus " + TSB::getNomTSB(a) + " no és compatible amb " + TSB::getNomTSB(b);
 }
 
 
 std::string error_tipus_no_compatibles_operador(TipusSubjacentBasic a){
-    return "tipus " + getNomTSB(a) + " no és compatible amb l'operador";
+    return "tipus " + TSB::getNomTSB(a) + " no és compatible amb l'operador";
 }
 
 
@@ -78,7 +54,7 @@ std::string error_tipus_esperat(std::string a){
 }
 
 std::string error_tipus_esperat(TipusSubjacentBasic a){
-    return "s'esperava un " + getNomTSB(a);
+    return "s'esperava un " + TSB::getNomTSB(a);
 }
 
 /**
@@ -114,7 +90,7 @@ std::string error_creacio_array(TipusSubjacentBasic a){
  * Intent de comparar dos valors de tipus diferents
  */
 std::string error_tipus_no_comparable(TipusSubjacentBasic a, TipusSubjacentBasic b){
-    return getNomTSB(a) + " no és comparable amb " + getNomTSB(b);
+    return TSB::getNomTSB(a) + " no és comparable amb " + TSB::getNomTSB(b);
 }
 
 std::string error_tipus_no_comparable(std::string a, std::string b){
@@ -181,7 +157,7 @@ std::string error_no_subprograma(std::string a){
 }
 
 std::string error_return_incompatible(TipusSubjacentBasic a){
-    return getNomTSB(a) + " no és compatible amb el tipus de retorn";
+    return TSB::getNomTSB(a) + " no és compatible amb el tipus de retorn";
 }
 
 std::string error_return_incompatible(std::string a){
@@ -218,7 +194,7 @@ std::string error_valor_no_constant(){
 }
 
 std::string error_valor_no_constant(TipusSubjacentBasic a){
-    return "no és un valor constant de tipus " + getNomTSB(a);
+    return "no és un valor constant de tipus " + TSB::getNomTSB(a);
 }
 
 /**
@@ -253,7 +229,7 @@ std::string error_nom_parametre_nom_funcio(){
 }
 
 std::string error_creacio_punter(TipusSubjacentBasic tsb){
-	return "no es poden declarar punters de " + getNomTSB(tsb);
+	return "no es poden declarar punters de " + TSB::getNomTSB(tsb);
 }
 
 std::string error_tipus_punter(){

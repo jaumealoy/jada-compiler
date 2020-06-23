@@ -100,6 +100,7 @@ public:
 	// generació de codi
 	void writeToFile();
 	void generateAssembly();
+	void dump();
 	
 	// funcions auxiliar
 	static std::string getSizeTag(bool, TipusSubjacentBasic);

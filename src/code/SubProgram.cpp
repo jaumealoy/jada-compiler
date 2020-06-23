@@ -73,8 +73,6 @@ void SubProgram::addParameter(Variable *var) {
 	this->currentOffsetParametres += var->getOcupacio();
 
 	this->numParametres++;
-
-	std::cout << "Afegint paràmetre a " << this->getNom() << ". Total = " << this->ocupacioParametres << std::endl;
 }
 
 /**
@@ -93,8 +91,6 @@ void SubProgram::addVariable(Variable *var) {
 
 	if(var->getTSB() == TipusSubjacentBasic::ARRAY || var->getTSB() == TipusSubjacentBasic::POINTER){
 		// és possible que tengui un espai extra
-		std::cout << "Ocupació (var = "<< var->getNom() <<") extra TSB " << var->getTSB() << " és = " << var->getOcupacioExtra() << std::endl;
-
 		this->currentOffsetVariables -= var->getOcupacioExtra();
 		this->ocupacioVariables += var->getOcupacioExtra();
 	}
@@ -429,12 +425,8 @@ bool SubProgram::optimize(CodeGeneration *code){
 
 	bool canvis = false;
 
-
-	std::cout << "Variables vives init" << std::endl;
 	LiveVariables liveVariables = LiveVariables(code, this);
-	std::cout << "Variables vives optimització start" << std::endl;
 	canvis = liveVariables.optimize(code) || canvis;
-	std::cout << "Variables vives optimització end" << std::endl;
 
 	this->updateBasicBlocks(code);
 
@@ -450,8 +442,6 @@ bool SubProgram::optimize(CodeGeneration *code){
 	}else{
 		firstTime = false;
 	}
-
-
 
 	return canvis || firstTime;
 }

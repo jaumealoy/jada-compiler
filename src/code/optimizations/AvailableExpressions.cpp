@@ -22,8 +22,6 @@ AvailableExpressions::AvailableExpressions(SubProgram *programa)
 			ArithmeticInstruction *tmp = (ArithmeticInstruction *) actual;
 			std::string expressionId = tmp->getExpressionId();
 
-			std::cout << "Instrucció " << actual->toString() << " amb id = " << expressionId << std::endl;
-
 			auto x = hashExpressions.find(expressionId);
 			if(x == hashExpressions.end()){
 				// no s'havia detectat aquesta expressió

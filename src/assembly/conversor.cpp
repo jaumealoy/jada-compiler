@@ -25,14 +25,17 @@ int main(int argc, char **argv)
     }
     
     // inicialitzar l'arxiu de sortida
-    std::string tmp1 = "char " + std::string(argv[3]) + "[] = {\n\t";
+    std::string tmp1 = "const char " + std::string(argv[3]) + "[] = {\n\t";
     int k = write(outputFile, tmp1.c_str(), tmp1.length());
 
     char buffer[BUFFER_SIZE];
     int byteCount = 0;
     int readBytes = 0;
+    int totalBytes = 0;
     while((readBytes = read(inputFile, buffer, BUFFER_SIZE)) > 0){
         char aux[16];
+
+        totalBytes += readBytes;
 
         for(int i = 0; i < readBytes; i++){
             sprintf(aux, "%d, ", buffer[i]);
@@ -48,8 +51,11 @@ int main(int argc, char **argv)
         }
     }
 
-    std::string tmp2 = "0 \n};";
+    std::string tmp2 = "0 \n};\n";
     write(outputFile, tmp2.c_str(), tmp2.length());
+
+    std::string tmp3 = "const unsigned int " + std::string(argv[3]) + "_size = " + std::to_string(totalBytes) + ";";
+    write(outputFile, tmp3.c_str(), tmp3.length());
 
     close(outputFile);
     close(inputFile);

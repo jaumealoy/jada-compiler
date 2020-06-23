@@ -148,8 +148,6 @@ void Variable::setConstant(std::shared_ptr<ValueContainer> valor){
 		// anteriorment
 		this->constant = false;
 	}
-
-	std::cout << "Variable final " << this->name << " amb valors locked=" << this->locked << ", constant=" << this->constant << ", firstTime="<< this->firstTime << std::endl;
 }
 
 void Variable::setConstant(bool constant){

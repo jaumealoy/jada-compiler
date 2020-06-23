@@ -183,13 +183,6 @@ void ReachableDefinitions::calculateInOut(){
 			if(inOutActual->second.kills != tmpOut){
 				inOutActual->second.kills = tmpOut;
 
-				Set<Instruction>::iterator tmpIt = in.begin();
-				while(tmpIt < in.end()){
-					std::cout << (*tmpIt)->toString() << ",";
-					tmpIt++;
-				}
-				std::cout << std::endl;
-
 				// afegir tots els successors a pendents
 				std::list<BasicBlock *> &successors = actual->getSuccessors();
 				std::list<BasicBlock *>::iterator it = successors.begin();
@@ -226,15 +219,6 @@ Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Var
 	auto inOutBlock = this->inOut.find(block);
 	rd = inOutBlock->second;
 
-	std::cout << "Bloc de la funció és " << inst->getBasicBlock()->mId << std::endl;
-	std::cout << "In del bloc ("<< inst->getBasicBlock()->getStart()->toString() <<") és ";
-	Set<Instruction>::iterator tmpIt2 = rd.gains.begin();
-	while(tmpIt2 < rd.gains.end()){
-		std::cout << (*tmpIt2)->toString() << ", ";
-		tmpIt2++;
-	}
-	std::cout << std::endl;
-
 	Instruction *aux = block->getStart();
 	if(aux != inst){
 		while(aux != nullptr && aux != inst){
@@ -260,14 +244,6 @@ Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Var
 
 		it++;
 	}
-
-	Set<Instruction>::iterator tmpIt = ud.begin();
-	std::cout << "DA per " << inst->toString() << " = ";
-	while(tmpIt < ud.end()){
-		std::cout << (*tmpIt)->toString() << ", ";
-		tmpIt++;
-	}
-	std::cout << std::endl;
 
 	return ud;
 }

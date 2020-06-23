@@ -32,8 +32,6 @@ public:
 	LiveVariables(CodeGeneration *code, SubProgram *programa);
 	~LiveVariables();
 
-	Set<Variable> getLiveVariables(Instruction *inst);
-
 	bool optimize(CodeGeneration *code);
 };
 

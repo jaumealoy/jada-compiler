@@ -28,3 +28,8 @@ flex:
 
 bison:
 	bison -dv Syntax.ypp
+
+aux:
+	g++ ./assembly/conversor.cpp -o ./assembly/conversor
+	./assembly/conversor ./assembly/jada_functions.s ./assembly/jada_functions.h jada_functions
+	./assembly/conversor ./assembly/jada_memory.s ./assembly/jada_memory.h jada_memory

@@ -54,8 +54,6 @@ void SimbolExpressio::make(Driver *driver, SimbolLiteral literal){
 			int espaiExtra = literal.getValue()->getSize() + TSB::sizeOf(TipusSubjacentBasic::INT);
 			this->r->setOcupacioExtra(espaiExtra);
 
-			std::cout << "RESERVANT ESPAI EXTRA PER STR de " << espaiExtra <<std::endl;
-
 			// inicialitzar l'string amb el valor adequat
 			// valors constants
 			Variable *unitat = driver->code.addVariable(TipusSubjacentBasic::INT);

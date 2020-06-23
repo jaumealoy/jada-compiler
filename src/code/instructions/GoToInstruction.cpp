@@ -46,8 +46,6 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 		this->label = code->getTargetLabel(old);
 	}
 
-	std::cout << "Fi target" << std::endl;
-
 	bool canvis = old != this->label;
 
 	if((Instruction *) this->label->getTargetInstruction() == this->getNext()){

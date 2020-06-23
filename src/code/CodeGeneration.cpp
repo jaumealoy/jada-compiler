@@ -202,9 +202,8 @@ void CodeGeneration::leaveSubProgram() {
  * Escriu el codi actual a un arxiu de text
  */
 
-int vCount = 0;
 void CodeGeneration::writeToFile(){
-	std::ofstream file(this->filename + "_v" + std::to_string(vCount++) + ".txt");
+	std::ofstream file(this->filename + ".txt");
 
 	Instruction *act = this->first;
 	while(act != nullptr){
@@ -289,8 +288,6 @@ void CodeGeneration::generateAssembly() {
 	this->output << "movq\t$1, %rax" << std::endl;
 	this->output << "movq\t$0, %rbx" << std::endl;
 	this->output << "int\t$0x80" << std::endl;
-	
-	std::cout << "Final assembly" << std::endl;
 }
 
 /**
@@ -400,7 +397,6 @@ void CodeGeneration::remove(Instruction *inst, bool remove){
 	}
 
 	if(inst->getPrevious() != nullptr){
-		std::cout << "Canviant seguent d'anterior => " << inst->getPrevious() << " posant " << inst->getNext() << std::endl;
 		inst->getPrevious()->setNext(inst->getNext());
 	}
 
@@ -512,8 +508,6 @@ void CodeGeneration::updateVariableTable() {
 
 			subprograma->addVariable(actual);
 		}
-
-		std::cout << "Variable " << actual->getNom() << " del subprograma " << subprograma->getNom() << " té mida " << actual->getOcupacio() << " offset: " << actual->getOffset() << std::endl;		
 	}
 }
 
@@ -683,11 +677,9 @@ void CodeGeneration::optimize(){
 		this->updateConstants();
 
 		// eliminar instruccions d'assignació de constants
-		std::cout << "Comença instruccions" << std::endl;
 
 		Instruction *tmp = this->first;
 		while(tmp != nullptr){
-			std::cout << "Analitzant instrucció " << tmp->getType() << " " << tmp->toString() << std::endl;
 			Instruction *next = tmp->getNext();
 
 			switch (tmp->getType()) {
@@ -745,18 +737,12 @@ void CodeGeneration::optimize(){
 					Instruction *prev = tmp->getPrevious();
 					Instruction *safeNext = nullptr;
 					if(next != nullptr && next->getType() == Instruction::Type::GOTO){
-						std::cout << "Següent instrucció a salt condicional és GOTO" << std::endl;
 						nextGoTo = true;
 						safeNext = next->getNext();
 					}
 	
 					bool canvisLocals = ((CondJumpInstruction *) tmp)->optimize(this);
 
-					/*if(canvisLocals && nextGoTo){
-						// és possible que s'hagi eliminat el next
-						next = safeNext;
-						std::cout << "Salt condicional canviant futures instruccions" << std::endl;
-					}*/
 					if(canvisLocals){
 						next = prev->getNext();
 					}
@@ -765,19 +751,9 @@ void CodeGeneration::optimize(){
 				}
 				break;
 
-				case Instruction::Type::SKIP: {
-					// és possible que es borri aquesta instrucció skip si l'etiqueta
-					// no s'utilitza a cap salt
-					std::cout << "HOLAAAA!!!!!!" << std::endl;
-					//bool canvisLocals = ((SkipInstruction *) tmp)->optimize(this);
-					bool canvisLocals = false;
-					canvis = canvisLocals || canvis;
-
-					if(canvisLocals){
-						std::cout << "Eliminat instrucció skip" << std::endl;
-					}
-				}
-				break;
+				case Instruction::Type::SKIP: 
+					// les instruccions skip es borren al final
+					break;
 
 				case Instruction::Type::CALL:
 				{	
@@ -802,7 +778,6 @@ void CodeGeneration::optimize(){
 
 		for(int i = 0; i < this->vars.size(); i++){
 			if(this->vars.get(i)->isConstant()){
-				std::cout << "Bloquejant constant " << i << std::endl;
 				this->vars.get(i)->lockConstant();
 			}
 		}
@@ -818,8 +793,6 @@ void CodeGeneration::optimize(){
 		}
 
 		this->writeToFile();
-
-		std::cout << "acabat instruccions, canvis = " << canvis << std::endl;
 	}
 
 	for(int i = 0; i < this->programs.size(); i++){
@@ -833,7 +806,6 @@ void CodeGeneration::optimize(){
 		Instruction *next = aux->getNext();
 
 		if(aux->getType() == Instruction::Type::SKIP){
-			std::cout << "Analitzant etiqueta FI " << aux->toString() << std::endl;
 			SkipInstruction *skip = (SkipInstruction *) aux;
 			if(!skip->getLabel()->isUsed()){
 				this->remove(skip);
@@ -880,16 +852,13 @@ void CodeGeneration::updateConstants(){
 
 	Instruction *inst = this->first;
 	while(inst != nullptr){
-		std::cout << "=== > comprovant constants per " << inst->toString() << std::endl;
 		switch (inst->getType()) {
 			case Instruction::Type::ASSIGNMENT:
 				((AssignmentInstruction *) inst)->updateConstants();
-				//((AssignmentInstruction *) inst)->getDesti()->addUseList(inst);
 				break;
 
 			case Instruction::Type::ARITHMETIC:
 				((ArithmeticInstruction *) inst)->updateConstants();
-				//((ArithmeticInstruction *) inst)->getDesti()->addUseList(inst);
 				break;
 
 			case Instruction::Type::GOTO:
@@ -915,7 +884,6 @@ void CodeGeneration::updateConstants(){
 
 	for(int i = 0; i < this->vars.size(); i++){
 		if(this->vars.get(i)->isConstant()){
-			std::cout << "Variable " << i << " value = " << this->vars.get(i)->getNom() << " és una constant" <<std::endl;
 		}
 	}
 
@@ -925,7 +893,6 @@ void CodeGeneration::updateConstants(){
  * Obté l'etiqueta final d'una sèrie de sals incondicionals
  */
 Label *CodeGeneration::getTargetLabel(Label *label){
-	std::cout << "LABEL ==>> " << label->getId() << std::endl;
 	assert(label->getTargetInstruction() != nullptr);
 	Instruction *inst = label->getTargetInstruction()->getNext();
 	
@@ -942,8 +909,6 @@ Label *CodeGeneration::getTargetLabel(Label *label){
 
 		visitats.emplace(label, true);
 		
-		std::cout << "LABEL ==>> " << label->getId() << std::endl;
-
 		last = label;
 		
 		Instruction *aux = label->getTargetInstruction()->getNext();
@@ -969,7 +934,43 @@ void CodeGeneration::updateBasicBlocks(){
 			continue;
 		}
 
-		std::cout << "Analitzant " << this->programs[i]->getNom() << std::endl;
 		this->programs[i]->updateBasicBlocks(this);
 	}
+}
+
+/**
+ * Funció per guardar el contingut de la taula de subprogrames i de variables
+ */
+void CodeGeneration::dump(){
+	// taula de subprogrames
+	std::ofstream tSubprogrames("taula_subprogrames.txt");
+
+	for(int i = 0; i < this->programs.size(); i++){
+		SubProgram *p = this->programs[i];
+		tSubprogrames << p->getNom()
+			<< " - Extern: " << p->isExtern() 
+			<< " - Ocupació variables: " << p->getOcupacioVariables() 
+			<< " - Ocupació paràmetres: " << p->getOcupacioParametres();
+		tSubprogrames << std::endl;
+	}
+
+	tSubprogrames.close();
+
+	// taula de variables
+	std::ofstream tVariables("taula_variables.txt");
+
+	for(int i = 0; i < this->vars.size(); i++){
+		Variable *var = this->vars[i];
+
+		tVariables << "#" << var->getId() 
+			<< " - " << var->getNom()
+			<< " - tsb = " << TSB::getNomTSB(var->getTSB())
+			<< " - subprograma " << var->getSubPrograma()->getNom()
+			<< " - paràmetre = " << var->isParameter() 
+			<< " - constant = " << var->isConstant() 
+			<< " - offset " << var->getOffset();
+		tVariables << std::endl;
+	}
+
+	tVariables.close();
 }

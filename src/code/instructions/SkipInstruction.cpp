@@ -43,9 +43,7 @@ void SkipInstruction::setLabel(Label *label){
 bool SkipInstruction::optimize(CodeGeneration *code){
 	assert(this->label != nullptr);
 	if(!this->label->isUsed() && !this->isAddedAtOptimization() && !this->loopStart){
-		std::cout << "ELIMINAT 1 SKIP" << std::endl;
 		code->remove(this);
-		std::cout << "ELIMINAT SKIP" << std::endl;
 		return false;
 	}
 

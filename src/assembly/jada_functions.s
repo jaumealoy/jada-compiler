@@ -394,7 +394,7 @@ printInt:
 1:	/* fer la crida al sistema */
 	lea		1(%rsi, %r8), %rsi		/* buffer */
 	movq	$1, %rax				/* sys_write */
-	movq	$0, %rdi				/* stdout */
+	movq	$1, %rdi				/* stdout */
 	movq	$31, %rdx
 	subq	%r8, %rdx
 	syscall

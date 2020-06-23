@@ -236,8 +236,6 @@ BasicBlock *Instruction::getBasicBlock(){
  */
 Instruction* Instruction::copy(Instruction *original)
 {
-	std::cout << "Copiant instrucció " << original->getType() << std::endl;
-
 	Instruction *inst = nullptr;
 	switch(original->getType()){
 		case ASSIGNMENT: {
@@ -245,14 +243,11 @@ Instruction* Instruction::copy(Instruction *original)
 			AssignmentInstruction *tmp = new AssignmentInstruction();
 			*tmp = *aux;
 
-			
 			inst = tmp;
 			break;
 		}
 
 		case ARITHMETIC: {
-			//ArithmeticInstruction *tmp = (ArithmeticInstruction *) new char[sizeof(ArithmeticInstruction)];
-			//*tmp = *(ArithmeticInstruction *) original;
 			ArithmeticInstruction *aux = (ArithmeticInstruction *) original;
 			ArithmeticInstruction *tmp = new ArithmeticInstruction(
 				aux->getOperator(),
@@ -304,7 +299,6 @@ Instruction* Instruction::copy(Instruction *original)
 			break;
 		}
 
-
 		case PUTPARAM: {
 			PutParamInstruction *tmp = (PutParamInstruction *) new char[sizeof(PutParamInstruction)];
 			*tmp = *(PutParamInstruction *) original; 
@@ -323,8 +317,6 @@ Instruction* Instruction::copy(Instruction *original)
 
 	inst->setNext(nullptr);
 	inst->setPrevious(nullptr);
-
-	std::cout << "Copiada instrucció " << original->getType() << std::endl;
 
 	return inst;
 }

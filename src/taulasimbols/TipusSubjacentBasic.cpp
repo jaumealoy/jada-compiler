@@ -27,3 +27,29 @@ int TSB::sizeOf(TipusSubjacentBasic tsb){
 
 	return size;
 }
+
+std::string TSB::getNomTSB(TipusSubjacentBasic a){
+    switch(a){
+        case INT:
+            return "enter";
+            break;
+        
+        case BOOLEAN:
+            return "boolean";
+            break;
+        
+        case CHAR:
+            return "caràcter";
+            break;
+
+        case ARRAY:
+            return "array";
+            break;
+
+		case POINTER:
+            return "punter";
+            break;
+    }
+	
+    return "";
+}

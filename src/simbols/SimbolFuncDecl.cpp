@@ -52,16 +52,7 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
                 }
             }
 
-			std::cout << "Canviant programa a " << df->getSubPrograma() << std::endl;
-			((ReturnInstruction *) ret.returnInst)->setPrograma(df->getSubPrograma());
-
-            // si el return és d'un punter, augmentar-lo
-
-
-            // decrementar els comptadors de referència de totes les variables d'aquest subprograma
-            // excepte les variables dels paràmetres
-            
-
+			((ReturnInstruction *) ret.returnInst)->setPrograma(df->getSubPrograma());         
         }
     }else{
         // error (crític)
@@ -84,6 +75,4 @@ void SimbolFuncDecl::make(Driver *driver, SimbolFuncCap cap, SimbolBloc bloc, st
     driver->code.addInstruction(new ReturnInstruction(df->getSubPrograma()));
 	driver->code.addInstruction(new SkipInstruction(finalPrograma));
 	driver->code.backpatch(finalPrograma, m1.getSeg());
-
-	std::cout << "Funció final" << std::endl;
 }

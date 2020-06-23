@@ -197,13 +197,7 @@ void ArithmeticInstruction::updateConstants(){
 	// operands són constant i no és cap de les variables
 	// dels operands
 	
-	std::cout << "["<< this->toString() << "] arithmetic constants hello amb dst = " << this->desti->getNom() << std::endl;
-	if(this->v1 == this->desti || this->v2 == this->desti){
-	}
-	std::cout << "["<< this->toString() << "] arithmetic constants hello2 amb dst = " << this->desti->getNom() << std::endl;
-
-		this->desti->setConstant(false);
-
+	this->desti->setConstant(false);
 
 	this->v1->addUseList(this);
 	this->v2->addUseList(this);
