@@ -809,6 +809,7 @@ void CodeGeneration::optimize(){
 
 		this->updateBasicBlocks();
 
+		// optimitzacions locals
 		for(int i = 0; i < this->programs.size(); i++){
 			this->enterSubProgram(this->programs[i]);
 			canvis = this->programs[i]->optimize(this) || canvis;

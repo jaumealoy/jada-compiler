@@ -1,3 +1,7 @@
+/**
+ * Funcionalitats que es comproven:
+ * 1) avaluació condicionada de booleans
+ */
 proc main() begin
     print("Introdueix un valor numèric: ");
     int a = readInt();
@@ -5,5 +9,19 @@ proc main() begin
     print("Introdueix un valor numèric: ");
     int b = readInt();
 
-    
+    // no es produeix cap error perquè si b = 0, l'expressió ja és falsa
+    // i no es continua avaluant l'expressió
+    if (b != 0) and ((a / b) > 0) do
+        print("A\n");
+    else if (b == 0) or ((a / b) < 0) do
+        print("B\n");
+    end;
+
+    print("Potencial excepció no controlada\n");
+    printInt(a);
+    print(" / ");
+    printInt(b);
+    print(" = ");
+    printInt(a / b);
+    printChar('\n');
 end main;

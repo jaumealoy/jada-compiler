@@ -118,17 +118,22 @@ void ArithmeticInstruction::generateAssembly(CodeGeneration *code){
 			code->output << "movq\t$0, %" << CodeGeneration::getRegister(CodeGeneration::Register::R8, 8) << std::endl;
 
 			// carregar els operands
+			if(this->v2->isConstant()){
+				code->load(this->valor2, CodeGeneration::Register::A, this->v2->getTSB());
+			}else{
+				code->load(this, this->v2, CodeGeneration::Register::A);
+			}
+
+			code->output << "cdqe" << std::endl;
+			code->output << "movq\t%rax, %r8" << std::endl;
+
 			if(this->v1->isConstant()){
 				code->load(this->valor1, CodeGeneration::Register::A, this->v1->getTSB());
 			}else{
 				code->load(this, this->v1, CodeGeneration::Register::A);
 			}
 
-			if(this->v2->isConstant()){
-				code->load(this->valor2, CodeGeneration::Register::R8, this->v2->getTSB());
-			}else{
-				code->load(this, this->v2, CodeGeneration::Register::R8);
-			}
+			code->output << "cdqe" << std::endl;
 
 			code->output << "idiv\t%" << CodeGeneration::getRegister(CodeGeneration::Register::R8, 8) << std::endl;
 
