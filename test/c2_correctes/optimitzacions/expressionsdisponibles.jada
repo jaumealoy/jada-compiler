@@ -1,0 +1,21 @@
+const int N = 2147483647;
+
+proc main() begin
+    int n = 0;
+    printInt(n);
+    n = 7;
+    int k = n * 2;
+    printInt(k);
+    printInt(n * 2);
+
+    int sum = 0;
+    for (int i = 0; i < N; i++) do
+        sum += n * 2;
+    end;
+
+    printInt(sum);
+
+    n++;
+    printInt(n*2);
+
+end main;

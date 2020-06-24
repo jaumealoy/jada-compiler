@@ -68,5 +68,8 @@ void SimbolForStatement::make(Driver *driver, SimbolForInit init, SimbolExpressi
 
 	// en qualsevol cas s'ha d'avaluar la condició de nou
 	driver->code.backpatch(inici.getLabel(), bloc.getSeg());
-	driver->code.addInstruction(new GoToInstruction(inici.getLabel()));
+
+    GoToInstruction *gotoInst = new GoToInstruction(inici.getLabel());
+    gotoInst->markAtOptimization();
+	driver->code.addInstruction(gotoInst);
 }

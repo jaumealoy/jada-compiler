@@ -119,7 +119,7 @@ int main(int argc, char **argv){
 		if(errors){
 			cout << "S'han produït errors durant l'assemblatge i vinculació." << endl;
 		}else{
-			cout << "Compilació exitosa (optimitzat = "<< debugMode <<")" << endl;
+			cout << "Compilació exitosa (optimitzat = "<< !debugMode <<")" << endl;
 			cout << "Generats executable ("<< outputFile <<"), codi intermedi ("<< outputFile <<".txt) i assemblador ("<< outputFile << ".s)" << std::endl;
 		}
 

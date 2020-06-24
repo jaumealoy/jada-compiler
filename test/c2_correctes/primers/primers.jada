@@ -1,0 +1,33 @@
+/*
+ * Càlcul de nombres primers. Omple l'array 'primers' dels 'num' nombres primers.
+ */
+const int num = 1000000;
+
+proc main() begin
+	int[num] primers;
+	int n = 1;
+	primers[0] = 1;
+	
+	for (int i = 2; n < num; i++) do
+        boolean primer = true;
+	    for (int j = 1; primer and j < n; j++) do
+	        if ((i % primers[j]) == 0) do
+	            primer = false;
+	        end;
+	    end;
+		
+	    if primer == true do
+	        primers[n] = i;
+	        n++;
+	    end;
+    end;
+
+    print("Els ");
+    printInt(num);
+    print(" primers números primers són: ");
+    for (int i = 0; i < num; i++) do
+        printInt(primers[i]);
+        printChar(' ');
+    end;
+    printChar('\n');
+end main;

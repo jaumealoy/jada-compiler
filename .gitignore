@@ -1,5 +1,4 @@
 /bin/*
-!bin/programs
 *.o
 src/Lexic.cpp
 src/Syntax.cpp
@@ -16,3 +15,6 @@ src/location.hh
 *.xml
 *.out
 *.exe
+src/assembly/conversor
+src/assembly/jada_functions.h
+src/assembly/jada_memory.h

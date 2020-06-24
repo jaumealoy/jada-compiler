@@ -235,7 +235,7 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 			AssignmentInstruction *next1 = (AssignmentInstruction *) this->getNext();
 
 			if(next1->getDesti()->getTSB() == TipusSubjacentBasic::BOOLEAN 
-				&& next1->getOrigen() == nullptr){
+				&& next1->getOrigen() != nullptr){
 				Instruction *next2 = next1->getNext();
 				if(next2 != nullptr && next2->getType() == Instruction::Type::GOTO){
 					if(next2->getNext() == (Instruction *) this->l->getTargetInstruction()){

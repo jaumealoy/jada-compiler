@@ -1,5 +1,22 @@
-string str = "Hola món\n";
+const string str = "Hola món\n";
 
 proc main() begin
-    print(str);
+    boolean a;
+    boolean b = a;
+
+    int j = 0;
+    int i = 0;
+    while (i < 10) do
+        j = i - 1;
+        printInt(j);
+        i++;
+    end;
+
+    if b do
+        print("True\n");
+    end;
+
+    for (int i = 0; true and false; i++) do
+        print("Bucle infinit\n");
+    end;
 end main;
