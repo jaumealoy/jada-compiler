@@ -49,7 +49,6 @@ private:
 	void updateConstants();
 
 	// blocs bàsics i optimització local
-	Table<BasicBlock *, MAX_BLOCKS> basicBlocks;
 	void updateBasicBlocks();
 
 	void leaveSubProgram(bool updateLast);
