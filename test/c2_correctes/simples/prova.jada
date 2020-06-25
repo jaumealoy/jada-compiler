@@ -9,6 +9,11 @@ proc main() begin
     while (i < 10) do
         j = i - 1;
         printInt(j);
+
+        if i == 5 do
+            break;
+        end;
+
         i++;
     end;
 

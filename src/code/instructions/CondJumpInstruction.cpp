@@ -231,11 +231,17 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		// a = True
 		// goto Ef
 
-		if(this->getNext() != nullptr && this->getNext()->getType() == Instruction::Type::ASSIGNMENT){
-			AssignmentInstruction *next1 = (AssignmentInstruction *) this->getNext();
+		Instruction *next = this->getNext();
+		while(next != nullptr && next->getType() == Instruction::Type::SKIP){
+			next = next->getNext();
+		}
+
+		if(next != nullptr && next->getType() == Instruction::Type::ASSIGNMENT){
+			AssignmentInstruction *next1 = (AssignmentInstruction *) next;
 
 			if(next1->getDesti()->getTSB() == TipusSubjacentBasic::BOOLEAN 
 				&& next1->getOrigen() != nullptr){
+
 				Instruction *next2 = next1->getNext();
 				if(next2 != nullptr && next2->getType() == Instruction::Type::GOTO){
 					if(next2->getNext() == (Instruction *) this->l->getTargetInstruction()){

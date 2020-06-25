@@ -51,10 +51,10 @@ int main(int argc, char **argv){
 		// representació en codi intermedi
 		myDriver.code.writeToFile();
 
-		myDriver.code.dump();
-
 		// representació en assemblador
 		myDriver.code.generateAssembly();
+
+		myDriver.code.dump();
 		
 		string objectFile = outputFile + ".o";
 		string assemblyFile = outputFile + ".s";

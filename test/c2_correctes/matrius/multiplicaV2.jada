@@ -1,4 +1,4 @@
-const int N = 500;
+const int N = 10;
 
 proc identitat(int[N][N] matriu) begin
     for (int i = 0; i < N; i++) do
@@ -36,19 +36,25 @@ proc multiplica(int[N][N] a, int[N][N] b, int[N][N] resultat) begin
     end;
 end multiplica;
 
-proc main() begin
-    //print("Introdueix les dimensions de la matriu (NxN): ");
+proc matriuRandom(int[N][N] a) begin
+    for (int i = 0; i < N; i++) do
+        for (int j = 0; j < N; j++) do
+            a[i][j] = randInt(0, 9);
+        end;
+    end;
+end matriuRandom;
 
+proc main() begin
     int[N][N] i;
     identitat(i);
-    //pintaMatriu(i);
+    pintaMatriu(i);
     
     int[N][N] i2;
-    identitat(i2);
-    //pintaMatriu(i2);
+    matriuRandom(i2);
+    pintaMatriu(i2);
     
     int[N][N] resultat;
     multiplica(i, i2, resultat);
 
-    //pintaMatriu(resultat);
+    pintaMatriu(resultat);
 end main;

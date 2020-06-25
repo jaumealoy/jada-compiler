@@ -1,7 +1,7 @@
 /*
  * Càlcul de nombres primers. Omple l'array 'primers' dels 'num' nombres primers.
  */
-const int num = 1000000;
+const int num = 50000;
 
 proc main() begin
 	int[num] primers;

@@ -945,6 +945,7 @@ void CodeGeneration::dump(){
 	// taula de subprogrames
 	std::ofstream tSubprogrames("taula_subprogrames.txt");
 
+	int totalBytesVariablesLocals = 0;
 	for(int i = 0; i < this->programs.size(); i++){
 		SubProgram *p = this->programs[i];
 		tSubprogrames << p->getNom()
@@ -952,7 +953,11 @@ void CodeGeneration::dump(){
 			<< " - Ocupació variables: " << p->getOcupacioVariables() 
 			<< " - Ocupació paràmetres: " << p->getOcupacioParametres();
 		tSubprogrames << std::endl;
+
+		totalBytesVariablesLocals += p->getOcupacioVariables();
 	}
+
+	tSubprogrames << std::endl << "Total variables locals = " << totalBytesVariablesLocals << " bytes" << std::endl;
 
 	tSubprogrames.close();
 
@@ -962,13 +967,16 @@ void CodeGeneration::dump(){
 	for(int i = 0; i < this->vars.size(); i++){
 		Variable *var = this->vars[i];
 
+		if(var->isConstant()) continue;
+
 		tVariables << "#" << var->getId() 
-			<< " - " << var->getNom()
-			<< " - tsb = " << TSB::getNomTSB(var->getTSB())
-			<< " - subprograma " << var->getSubPrograma()->getNom()
-			<< " - paràmetre = " << var->isParameter() 
-			<< " - constant = " << var->isConstant() 
-			<< " - offset " << var->getOffset();
+			<< " - Nom:  " << var->getNom()
+			<< " - TSB: " << TSB::getNomTSB(var->getTSB())
+			<< " - Subprograma: " << var->getSubPrograma()->getNom()
+			<< " - Paràmetre: " << var->isParameter() 
+			<< " - Ocupació: " << var->getOcupacio()
+			<< " - Ocupació extra: " << var->getOcupacioExtra()
+			<< " - Offset: " << var->getOffset();
 		tVariables << std::endl;
 	}
 

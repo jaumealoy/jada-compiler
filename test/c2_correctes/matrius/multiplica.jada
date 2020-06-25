@@ -1,9 +1,6 @@
 func identitat(int n) : int[][] begin
     int[][] matriu = new int[n][n];
 
-    printInt(n);
-    printChar('\n');
-
     int k = n;
 
     for (int i = 0; i < n; i++) do
@@ -17,8 +14,6 @@ func identitat(int n) : int[][] begin
             k = n + 1;
         end;
     end;
-
-    printInt(k);
 
     return matriu;
 end identitat;
@@ -52,16 +47,26 @@ func multiplica(int[][] a, int[][] b, int n) : int[][] begin
     return resultat;
 end multiplica;
 
+proc matriuRandom(int[][] a, int n) begin
+    for (int i = 0; i < n; i++) do
+        for (int j = 0; j < n; j++) do
+            a[i][j] = randInt(0, 9);
+        end;
+    end;
+end matriuRandom;
+
 proc main() begin
     print("Introdueix les dimensions de la matriu (NxN): ");
-    int n = 1000;
+    int n = 100;
 
     int[][] i = identitat(n);
-    //pintaMatriu(i, n);
+    pintaMatriu(i, n);
+
     int[][] i2 = identitat(n);
-    //pintaMatriu(i2, n);
+    matriuRandom(i2, n);
+    pintaMatriu(i2, n);
     
     int[][] resultat = multiplica(i, i2, n);
 
-    //pintaMatriu(resultat, n);
+    pintaMatriu(resultat, n);
 end main;
