@@ -1,0 +1,45 @@
+goto e36
+main: skip
+preamble main
+constant = 0
+constant2 = 0
+i = 0
+if i >= 10 then goto e19
+e38: skip
+constant = 4
+if i <= 50 then goto e18
+constant2 = 4
+e18: skip
+i = i + 1
+if i < 10 then goto e38
+e19: skip
+put param constant
+call printInt
+put param 10
+call printChar
+put param constant2
+call printInt
+put param 10
+call printChar
+constant = -5
+i = 1000
+if i >= 10 then goto e31
+e37: skip
+constant = 4
+if i <= 50 then goto e30
+constant2 = 4
+e30: skip
+i = i + 1
+if i < 10 then goto e37
+e31: skip
+put param constant
+call printInt
+put param 10
+call printChar
+put param constant2
+call printInt
+put param 10
+call printChar
+return
+e36: skip
+call main

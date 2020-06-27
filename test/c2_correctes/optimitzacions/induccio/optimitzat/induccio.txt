@@ -1,0 +1,36 @@
+goto e22
+main: skip
+preamble main
+sum = 0
+i = 0
+if i >= 2147483647 then goto e17
+t44 = i * 3
+t28 = t44
+t26 = t28 + 0
+t34 = t44
+t32 = t34 + 7
+t40 = i * 2
+t38 = t40 + 0
+e23: skip
+t26 = t26 + 3
+j = t32
+t32 = t32 + 3
+t21 = t38
+t38 = t38 + 2
+t22 = sum + t21
+sum = t22 + j
+i = i + 1
+if i >= 2147483647 then goto e17
+goto e23
+e17: skip
+put param j
+call printInt
+put param 10
+call printChar
+put param sum
+call printInt
+put param 10
+call printChar
+return
+e22: skip
+call main

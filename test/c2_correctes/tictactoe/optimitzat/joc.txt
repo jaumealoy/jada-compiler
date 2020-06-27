@@ -1,0 +1,773 @@
+t13[0] = 45
+t13[1] = 88
+t13[2] = 79
+jugadorsIcona = t13
+jugadorsIcona = t13
+goto e237
+e10: skip
+preamble e10
+t24 = 1
+t772 = t24 * n
+t24 = t772
+t772 = t24 * n
+t24 = t772
+t22 = t24 * 4
+t22 = t22 + 8
+t21 = malloc t22
+t21[0] = n
+t21[4] = 1
+increment t21
+tauler = t21
+i = 0
+if i >= n then goto e18
+e238: skip
+j = 0
+if j >= n then goto e17
+e239: skip
+t37 = j
+t38 = 1
+t40 = tauler[0]
+t38 = t38 * t40
+t41 = t38 * i
+t37 = t37 + t41
+t43 = t37 * 4
+t43 = t43 + 8
+tauler[t43] = 0
+j = j + 1
+if j >= n then goto e17
+goto e239
+e17: skip
+i = i + 1
+if i >= n then goto e18
+goto e238
+e18: skip
+return tauler
+goto e237
+e21: skip
+preamble e21
+i = 0
+if i >= n then goto e30
+e240: skip
+j = 0
+if j >= n then goto e28
+e241: skip
+t55 = j
+t56 = 1
+t58 = tauler[0]
+t56 = t56 * t58
+t59 = t56 * i
+t55 = t55 + t59
+t61 = t55 * 4
+t61 = t61 + 8
+t65 = tauler[t61]
+t64 = t65
+t66 = jugadorsIcona[t64]
+put param t66
+call printChar
+put param 32
+call printChar
+j = j + 1
+if j >= n then goto e28
+goto e241
+e28: skip
+put param 10
+call printChar
+i = i + 1
+if i >= n then goto e30
+goto e240
+e30: skip
+return
+goto e237
+e32: skip
+preamble e32
+complet = true
+i = 0
+if i >= n then goto e48
+if 1 != complet then goto e48
+e242: skip
+j = 0
+if j >= n then goto e47
+if 1 != complet then goto e47
+e244: skip
+t80 = j
+t81 = 1
+t83 = tauler[0]
+t81 = t81 * t83
+t84 = t81 * i
+t80 = t80 + t84
+t86 = t80 * 4
+t86 = t86 + 8
+t89 = tauler[t86]
+if t89 == 0 then goto e44
+complet = true
+goto e45
+e44: skip
+complet = false
+e45: skip
+j = j + 1
+if j >= n then goto e47
+if 1 != complet then goto e47
+goto e244
+e47: skip
+i = i + 1
+if i >= n then goto e48
+if 1 != complet then goto e48
+goto e242
+e48: skip
+t90 = complet
+return t90
+goto e237
+e54: skip
+preamble e54
+victoria = true
+i = 0
+if i >= n then goto e66
+if 1 != victoria then goto e66
+e256: skip
+t100 = i
+t101 = 1
+t103 = tauler[0]
+t101 = t101 * t103
+t104 = t101 * i
+t100 = t100 + t104
+t106 = t100 * 4
+t106 = t106 + 8
+t108 = tauler[t106]
+if t108 != jugador then goto e63
+victoria = true
+goto e64
+e63: skip
+victoria = false
+e64: skip
+i = i + 1
+if i >= n then goto e66
+if 1 != victoria then goto e66
+goto e256
+e66: skip
+if 1 == victoria then goto e80
+victoria = true
+i = 0
+if i >= n then goto e80
+if 1 != victoria then goto e80
+e254: skip
+t112 = n - i
+t116 = t112 - 1
+t117 = 1
+t119 = tauler[0]
+t117 = t117 * t119
+t120 = t117 * i
+t116 = t116 + t120
+t122 = t116 * 4
+t122 = t122 + 8
+t124 = tauler[t122]
+if t124 != jugador then goto e76
+victoria = true
+goto e77
+e76: skip
+victoria = false
+e77: skip
+i = i + 1
+if i >= n then goto e80
+if 1 != victoria then goto e80
+goto e254
+e80: skip
+if 1 == victoria then goto e102
+i = 0
+if i >= n then goto e102
+if 1 == victoria then goto e102
+e250: skip
+tmpFila = true
+j = 0
+if j >= n then goto e96
+if 1 != tmpFila then goto e96
+e252: skip
+t134 = j
+t135 = 1
+t137 = tauler[0]
+t135 = t135 * t137
+t138 = t135 * i
+t134 = t134 + t138
+t140 = t134 * 4
+t140 = t140 + 8
+t142 = tauler[t140]
+if t142 != jugador then goto e93
+tmpFila = true
+goto e94
+e93: skip
+tmpFila = false
+e94: skip
+j = j + 1
+if j >= n then goto e96
+if 1 != tmpFila then goto e96
+goto e252
+e96: skip
+victoria = tmpFila
+i = i + 1
+if i >= n then goto e102
+if 1 == victoria then goto e102
+goto e250
+e102: skip
+if 1 == victoria then goto e124
+i = 0
+if i >= n then goto e124
+if 1 == victoria then goto e124
+e246: skip
+tmpColumna = true
+j = 0
+if j >= n then goto e118
+if 1 != tmpColumna then goto e118
+e248: skip
+t152 = i
+t153 = 1
+t155 = tauler[0]
+t153 = t153 * t155
+t156 = t153 * j
+t152 = t152 + t156
+t158 = t152 * 4
+t158 = t158 + 8
+t160 = tauler[t158]
+if t160 != jugador then goto e115
+tmpColumna = true
+goto e116
+e115: skip
+tmpColumna = false
+e116: skip
+j = j + 1
+if j >= n then goto e118
+if 1 != tmpColumna then goto e118
+goto e248
+e118: skip
+victoria = tmpColumna
+i = i + 1
+if i >= n then goto e124
+if 1 == victoria then goto e124
+goto e246
+e124: skip
+t161 = victoria
+return t161
+goto e237
+e130: skip
+preamble e130
+put param tauler
+increment tauler
+put param n
+t164 = call e32
+decrement tauler
+if 1 == t164 then goto e133
+put param tauler
+increment tauler
+put param n
+put param 1
+t166 = call e54
+decrement tauler
+if 1 == t166 then goto e133
+put param tauler
+increment tauler
+put param n
+put param 2
+t169 = call e54
+decrement tauler
+goto e135
+e133: skip
+t169 = true
+e135: skip
+return t169
+goto e237
+e138: skip
+preamble e138
+t175 = 1
+t773 = t175 * n
+t175 = t773
+t773 = t175 * n
+t175 = t773
+t173 = t175 * 4
+t173 = t173 + 8
+t172 = malloc t173
+t172[0] = n
+t172[4] = 1
+increment t172
+nouTauler = t172
+i = 0
+if i >= n then goto e146
+e258: skip
+j = 0
+if j >= n then goto e145
+e259: skip
+t188 = j
+t189 = 1
+t191 = nouTauler[0]
+t189 = t189 * t191
+t192 = t189 * i
+t188 = t188 + t192
+t194 = t188 * 4
+t194 = t194 + 8
+t197 = j
+t198 = 1
+t200 = tauler[0]
+t198 = t198 * t200
+t201 = t198 * i
+t197 = t197 + t201
+t203 = t197 * 4
+t203 = t203 + 8
+t205 = tauler[t203]
+nouTauler[t194] = t205
+j = j + 1
+if j >= n then goto e145
+goto e259
+e145: skip
+i = i + 1
+if i >= n then goto e146
+goto e258
+e146: skip
+return nouTauler
+goto e237
+e149: skip
+preamble e149
+if torn != 1 then goto e151
+t215 = 2
+goto e152
+e151: skip
+t215 = 1
+e152: skip
+contrari = t215
+put param tauler
+increment tauler
+put param n
+put param torn
+t217 = call e54
+decrement tauler
+if 1 != t217 then goto e156
+return 10
+e156: skip
+put param tauler
+increment tauler
+put param n
+put param contrari
+t219 = call e54
+decrement tauler
+if 1 != t219 then goto e159
+return -10
+e159: skip
+put param tauler
+increment tauler
+put param n
+t223 = call e32
+decrement tauler
+if 1 != t223 then goto e162
+return 0
+e162: skip
+bestMovement = -100000
+i = 0
+if i >= n then goto e180
+e260: skip
+j = 0
+if j >= n then goto e179
+e261: skip
+t236 = j
+t237 = 1
+t239 = tauler[0]
+t237 = t237 * t239
+t240 = t237 * i
+t236 = t236 + t240
+t242 = t236 * 4
+t242 = t242 + 8
+t245 = tauler[t242]
+if t245 != 0 then goto e178
+put param tauler
+increment tauler
+put param n
+taulerCopia = call e138
+decrement tauler
+t249 = j
+t250 = 1
+t252 = taulerCopia[0]
+t250 = t250 * t252
+t253 = t250 * i
+t249 = t249 + t253
+t255 = t249 * 4
+t255 = t255 + 8
+taulerCopia[t255] = torn
+t260[0] = 0
+t260[4] = 0
+aux = t260
+t265 = moviments + 1
+put param taulerCopia
+increment taulerCopia
+put param n
+put param contrari
+put param aux
+put param t265
+t266 = call e149
+decrement taulerCopia
+tmp = 0 - t266
+if tmp <= bestMovement then goto e177
+bestMovement = tmp
+solucio[0] = i
+solucio[4] = j
+e177: skip
+decrement taulerCopia
+e178: skip
+j = j + 1
+if j >= n then goto e179
+goto e261
+e179: skip
+i = i + 1
+if i >= n then goto e180
+goto e260
+e180: skip
+return bestMovement
+goto e237
+main: skip
+preamble main
+t276[0] = 1
+t276[4] = 73
+t276[5] = 110
+t276[6] = 116
+t276[7] = 114
+t276[8] = 111
+t276[9] = 100
+t276[10] = 117
+t276[11] = 101
+t276[12] = 105
+t276[13] = 120
+t276[14] = 32
+t276[15] = 117
+t276[16] = 110
+t276[17] = 97
+t276[18] = 32
+t276[19] = 100
+t276[20] = 105
+t276[21] = 109
+t276[22] = 101
+t276[23] = 110
+t276[24] = 115
+t276[25] = 105
+t276[26] = -61
+t276[27] = -77
+t276[28] = 32
+t276[29] = 100
+t276[30] = 101
+t276[31] = 108
+t276[32] = 32
+t276[33] = 116
+t276[34] = 97
+t276[35] = 117
+t276[36] = 108
+t276[37] = 101
+t276[38] = 114
+t276[39] = 58
+t276[40] = 32
+t276[41] = 0
+put param t276
+increment t276
+call print
+decrement t276
+dimensions = call readInt
+ia = false
+t358[0] = 1
+t358[4] = 86
+t358[5] = 111
+t358[6] = 108
+t358[7] = 115
+t358[8] = 32
+t358[9] = 106
+t358[10] = 117
+t358[11] = 103
+t358[12] = 97
+t358[13] = 114
+t358[14] = 32
+t358[15] = 99
+t358[16] = 111
+t358[17] = 110
+t358[18] = 116
+t358[19] = 114
+t358[20] = 97
+t358[21] = 32
+t358[22] = 108
+t358[23] = 97
+t358[24] = 32
+t358[25] = 109
+t358[26] = -61
+t358[27] = -96
+t358[28] = 113
+t358[29] = 117
+t358[30] = 105
+t358[31] = 110
+t358[32] = 97
+t358[33] = 63
+t358[34] = 32
+t358[35] = 73
+t358[36] = 110
+t358[37] = 116
+t358[38] = 114
+t358[39] = 111
+t358[40] = 100
+t358[41] = 117
+t358[42] = 101
+t358[43] = 105
+t358[44] = 120
+t358[45] = 32
+t358[46] = 39
+t358[47] = 83
+t358[48] = 39
+t358[49] = 32
+t358[50] = 112
+t358[51] = 101
+t358[52] = 114
+t358[53] = 32
+t358[54] = 106
+t358[55] = 117
+t358[56] = 103
+t358[57] = 97
+t358[58] = 114
+t358[59] = 45
+t358[60] = 104
+t358[61] = 105
+t358[62] = 58
+t358[63] = 32
+t358[64] = 0
+put param t358
+increment t358
+call print
+decrement t358
+iaInput = call read
+t491 = 0
+t491 = t491 + 4
+t494 = iaInput[t491]
+if t494 == 83 then goto e196
+t500 = 0
+t500 = t500 + 4
+t503 = iaInput[t500]
+if t503 != 115 then goto e204
+e196: skip
+ia = true
+put param 1
+put param 2
+jugadorLocal = call randInt
+t507[0] = 1
+t507[4] = 84
+t507[5] = 117
+t507[6] = 32
+t507[7] = 101
+t507[8] = 116
+t507[9] = 115
+t507[10] = 32
+t507[11] = 101
+t507[12] = 108
+t507[13] = 32
+t507[14] = 106
+t507[15] = 117
+t507[16] = 103
+t507[17] = 97
+t507[18] = 100
+t507[19] = 111
+t507[20] = 114
+t507[21] = 32
+t507[22] = 0
+put param t507
+increment t507
+call print
+decrement t507
+t549 = jugadorLocal
+t550 = jugadorsIcona[t549]
+put param t550
+call printChar
+t551[0] = 1
+t551[4] = 10
+t551[5] = 0
+put param t551
+increment t551
+call print
+decrement t551
+e204: skip
+put param dimensions
+decrement taulerActual
+taulerActual = call e10
+put param 1
+put param 2
+torn = call randInt
+numTorns = 1
+put param taulerActual
+increment taulerActual
+put param dimensions
+t564 = call e130
+decrement taulerActual
+if 1 != t564 then goto e209
+e262: skip
+e209: skip
+t565[0] = 1
+t565[4] = 84
+t565[5] = 111
+t565[6] = 114
+t565[7] = 110
+t565[8] = 32
+t565[9] = 0
+put param t565
+increment t565
+call print
+decrement t565
+put param numTorns
+call printInt
+t580[0] = 1
+t580[4] = 46
+t580[5] = 32
+t580[6] = 84
+t580[7] = 111
+t580[8] = 99
+t580[9] = 97
+t580[10] = 32
+t580[11] = 97
+t580[12] = 32
+t580[13] = 0
+put param t580
+increment t580
+call print
+decrement t580
+t604 = torn
+t605 = jugadorsIcona[t604]
+put param t605
+call printChar
+t606[0] = 1
+t606[4] = 46
+t606[5] = 10
+t606[6] = 0
+put param t606
+increment t606
+call print
+decrement t606
+put param taulerActual
+increment taulerActual
+put param dimensions
+call e21
+decrement taulerActual
+if 1 != ia then goto e222
+if torn == jugadorLocal then goto e222
+t618[0] = 0
+t618[4] = 0
+best = t618
+put param taulerActual
+increment taulerActual
+put param dimensions
+copia = call e138
+decrement taulerActual
+put param copia
+increment copia
+put param dimensions
+put param torn
+put param best
+put param 0
+t625 = call e149
+decrement copia
+t635 = best[4]
+t634 = t635
+t636 = 1
+t638 = taulerActual[0]
+t636 = t636 * t638
+t640 = best[0]
+t639 = t636 * t640
+t634 = t634 + t639
+t642 = t634 * 4
+t642 = t642 + 8
+taulerActual[t642] = torn
+decrement copia
+goto e228
+e222: skip
+t644[0] = 1
+t644[4] = 73
+t644[5] = 110
+t644[6] = 116
+t644[7] = 114
+t644[8] = 111
+t644[9] = 100
+t644[10] = 117
+t644[11] = 101
+t644[12] = 105
+t644[13] = 120
+t644[14] = 32
+t644[15] = 108
+t644[16] = 97
+t644[17] = 32
+t644[18] = 102
+t644[19] = 105
+t644[20] = 108
+t644[21] = 97
+t644[22] = 58
+t644[23] = 32
+t644[24] = 0
+put param t644
+increment t644
+call print
+decrement t644
+fila = call readInt
+t691[0] = 1
+t691[4] = 73
+t691[5] = 110
+t691[6] = 116
+t691[7] = 114
+t691[8] = 111
+t691[9] = 100
+t691[10] = 117
+t691[11] = 101
+t691[12] = 105
+t691[13] = 120
+t691[14] = 32
+t691[15] = 108
+t691[16] = 97
+t691[17] = 32
+t691[18] = 99
+t691[19] = 111
+t691[20] = 108
+t691[21] = 117
+t691[22] = 109
+t691[23] = 110
+t691[24] = 97
+t691[25] = 58
+t691[26] = 32
+t691[27] = 0
+put param t691
+increment t691
+call print
+decrement t691
+columna = call readInt
+t745 = fila - 1
+t749 = columna - 1
+t750 = 1
+t752 = taulerActual[0]
+t750 = t750 * t752
+t753 = t750 * t745
+t749 = t749 + t753
+t755 = t749 * 4
+t755 = t755 + 8
+taulerActual[t755] = torn
+e228: skip
+numTorns = numTorns + 1
+if torn != 1 then goto e231
+t762 = 2
+goto e232
+e231: skip
+t762 = 1
+e232: skip
+torn = t762
+t763[0] = 1
+t763[4] = 10
+t763[5] = 10
+t763[6] = 0
+put param t763
+increment t763
+call print
+decrement t763
+put param taulerActual
+increment taulerActual
+put param dimensions
+t564 = call e130
+decrement taulerActual
+if 1 != t564 then goto e262
+put param taulerActual
+increment taulerActual
+put param dimensions
+call e21
+decrement taulerActual
+decrement iaInput
+return
+e237: skip
+call main

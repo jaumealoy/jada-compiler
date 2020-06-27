@@ -50,7 +50,9 @@ public:
 
 	Variable *getFirstOperand();
 	Variable *getSecondOperand();
+
 	ArithmeticInstruction::Type getOperator();
+	void setOperator(ArithmeticInstruction::Type operador);
 };
 
 #endif

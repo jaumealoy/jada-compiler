@@ -1,0 +1,115 @@
+goto e61
+e10: skip
+preamble e10
+put param name
+increment name
+call print
+decrement name
+t10[0] = 1
+t10[4] = 32
+t10[5] = 61
+t10[6] = 32
+t10[7] = 0
+put param t10
+increment t10
+call print
+decrement t10
+if 1 != value then goto e15
+t21[0] = 1
+t21[4] = 116
+t21[5] = 114
+t21[6] = 117
+t21[7] = 101
+t21[8] = 10
+t21[9] = 0
+put param t21
+increment t21
+call print
+decrement t21
+goto e17
+e15: skip
+t36[0] = 1
+t36[4] = 102
+t36[5] = 97
+t36[6] = 108
+t36[7] = 115
+t36[8] = 101
+t36[9] = 10
+t36[10] = 0
+put param t36
+increment t36
+call print
+decrement t36
+e17: skip
+return
+goto e61
+main: skip
+preamble main
+a = true
+t55[0] = 1
+t55[4] = 49
+t55[5] = 46
+t55[6] = 32
+t55[7] = 97
+t55[8] = 0
+t68 = a
+put param t68
+put param t55
+increment t55
+call e10
+decrement t55
+a = false
+t69[0] = 1
+t69[4] = 50
+t69[5] = 46
+t69[6] = 32
+t69[7] = 97
+t69[8] = 0
+t82 = a
+put param t82
+put param t69
+increment t69
+call e10
+decrement t69
+b = true
+t87[0] = 1
+t87[4] = 49
+t87[5] = 46
+t87[6] = 32
+t87[7] = 98
+t87[8] = 0
+t100 = b
+put param t100
+put param t87
+increment t87
+call e10
+decrement t87
+b = false
+t103[0] = 1
+t103[4] = 50
+t103[5] = 46
+t103[6] = 32
+t103[7] = 98
+t103[8] = 0
+t116 = b
+put param t116
+put param t103
+increment t103
+call e10
+decrement t103
+b = c
+t118[0] = 1
+t118[4] = 51
+t118[5] = 46
+t118[6] = 32
+t118[7] = 98
+t118[8] = 0
+t131 = b
+put param t131
+put param t118
+increment t118
+call e10
+decrement t118
+return
+e61: skip
+call main

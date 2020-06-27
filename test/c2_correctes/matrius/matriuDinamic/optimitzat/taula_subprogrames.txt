@@ -1,0 +1,14 @@
+readChar - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+printChar - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+print - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+read - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+printInt - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+readInt - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 8
+randInt - Extern: 1 - Ocupació variables: 0 - Ocupació paràmetres: 16
+e10 - Extern: 0 - Ocupació variables: 96 - Ocupació paràmetres: 16
+e27 - Extern: 0 - Ocupació variables: 64 - Ocupació paràmetres: 16
+e39 - Extern: 0 - Ocupació variables: 128 - Ocupació paràmetres: 32
+e55 - Extern: 0 - Ocupació variables: 32 - Ocupació paràmetres: 16
+main - Extern: 0 - Ocupació variables: 112 - Ocupació paràmetres: 0
+
+Total variables locals = 432 bytes

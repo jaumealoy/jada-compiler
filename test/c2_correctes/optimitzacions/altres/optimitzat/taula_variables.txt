@@ -1,0 +1,9 @@
+#3 - Nom:  t3 - TSB: caràcter - Subprograma: printChar - Paràmetre: 1 - Ocupació: 1 - Ocupació extra: 0 - Offset: 8
+#4 - Nom:  t4 - TSB: array - Subprograma: print - Paràmetre: 1 - Ocupació: 8 - Ocupació extra: 0 - Offset: 8
+#5 - Nom:  numero - TSB: enter - Subprograma: printInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 8
+#6 - Nom:  minim - TSB: enter - Subprograma: randInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 8
+#7 - Nom:  t7 - TSB: enter - Subprograma: randInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 12
+#15 - Nom:  t15 - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -12
+#16 - Nom:  t16 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 21 - Offset: -20
+#55 - Nom:  t55 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 23 - Offset: -49
+#97 - Nom:  t97 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 66 - Offset: -80

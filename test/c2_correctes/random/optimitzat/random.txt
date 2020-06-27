@@ -1,0 +1,141 @@
+goto e23
+main: skip
+preamble main
+t8[0] = 1
+t8[4] = 73
+t8[5] = 110
+t8[6] = 116
+t8[7] = 114
+t8[8] = 111
+t8[9] = 100
+t8[10] = 117
+t8[11] = 101
+t8[12] = 105
+t8[13] = 120
+t8[14] = 32
+t8[15] = 101
+t8[16] = 108
+t8[17] = 32
+t8[18] = 118
+t8[19] = 97
+t8[20] = 108
+t8[21] = 111
+t8[22] = 114
+t8[23] = 32
+t8[24] = 109
+t8[25] = -61
+t8[26] = -83
+t8[27] = 110
+t8[28] = 105
+t8[29] = 109
+t8[30] = 58
+t8[31] = 32
+t8[32] = 0
+put param t8
+increment t8
+call print
+decrement t8
+minim = call readInt
+t71[0] = 1
+t71[4] = 73
+t71[5] = 110
+t71[6] = 116
+t71[7] = 114
+t71[8] = 111
+t71[9] = 100
+t71[10] = 117
+t71[11] = 101
+t71[12] = 105
+t71[13] = 120
+t71[14] = 32
+t71[15] = 101
+t71[16] = 108
+t71[17] = 32
+t71[18] = 118
+t71[19] = 97
+t71[20] = 108
+t71[21] = 111
+t71[22] = 114
+t71[23] = 32
+t71[24] = 109
+t71[25] = -61
+t71[26] = -96
+t71[27] = 120
+t71[28] = 105
+t71[29] = 109
+t71[30] = 58
+t71[31] = 32
+t71[32] = 0
+put param t71
+increment t71
+call print
+decrement t71
+maxim = call readInt
+t134[0] = 1
+t134[4] = 85
+t134[5] = 110
+t134[6] = 32
+t134[7] = 118
+t134[8] = 97
+t134[9] = 108
+t134[10] = 111
+t134[11] = 114
+t134[12] = 32
+t134[13] = 97
+t134[14] = 108
+t134[15] = 101
+t134[16] = 97
+t134[17] = 116
+t134[18] = 111
+t134[19] = 114
+t134[20] = 105
+t134[21] = 32
+t134[22] = 97
+t134[23] = 32
+t134[24] = 108
+t134[25] = 39
+t134[26] = 105
+t134[27] = 110
+t134[28] = 116
+t134[29] = 101
+t134[30] = 114
+t134[31] = 118
+t134[32] = 97
+t134[33] = 108
+t134[34] = 32
+t134[35] = 91
+t134[36] = 0
+put param t134
+increment t134
+call print
+decrement t134
+put param minim
+call printInt
+put param 44
+call printChar
+put param 32
+call printChar
+put param maxim
+call printInt
+t205[0] = 1
+t205[4] = 93
+t205[5] = 32
+t205[6] = -61
+t205[7] = -87
+t205[8] = 115
+t205[9] = 32
+t205[10] = 0
+put param t205
+increment t205
+call print
+decrement t205
+put param minim
+put param maxim
+t222 = call randInt
+put param t222
+call printInt
+put param 10
+call printChar
+return
+e23: skip
+call main

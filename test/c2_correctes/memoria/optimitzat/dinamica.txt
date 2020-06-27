@@ -1,0 +1,219 @@
+t12 = 1
+t12 = t12 * 5
+t10 = t12 * 4
+t10 = t10 + 4
+t9 = malloc t10
+t9[0] = 1
+increment t9
+VECTOR_GLOBAL = t9
+goto e49
+e10: skip
+preamble e10
+t21 = 1
+t21 = t21 * n
+t19 = t21 * 4
+t19 = t19 + 4
+t18 = malloc t19
+t18[0] = 1
+increment t18
+v = t18
+i = 0
+if i >= n then goto e15
+e50: skip
+t30 = i
+t33 = t30 * 4
+t33 = t33 + 4
+put param 1
+put param 100
+t37 = call randInt
+v[t33] = t37
+i = i + 1
+if i >= n then goto e15
+goto e50
+e15: skip
+return v
+goto e49
+e18: skip
+preamble e18
+i = 0
+if i >= n then goto e23
+e51: skip
+t44 = i
+t47 = t44 * 4
+t47 = t47 + 4
+t49 = v[t47]
+put param t49
+call printInt
+put param 32
+call printChar
+i = i + 1
+if i >= n then goto e23
+goto e51
+e23: skip
+put param 10
+call printChar
+return
+goto e49
+main: skip
+preamble main
+t57 = 1
+t57 = t57 * 5
+t55 = t57 * 4
+t55 = t55 + 4
+t54 = malloc t55
+t54[0] = 1
+increment t54
+t67 = 1
+t67 = t67 * 5
+t65 = t67 * 4
+t65 = t65 + 4
+t64 = malloc t65
+t64[0] = 1
+increment t64
+v2 = t64
+t267 = 0
+t77 = t267
+t77 = t77 + 4
+v2[t77] = 30
+t84 = 4
+t84 = t84 + 4
+v2[t84] = 4
+t92 = 8
+t92 = t92 + 4
+v2[t92] = 99
+decrement v2
+t100 = 1
+t268 = t100 * 4
+t100 = t268
+t268 = t100 * 4
+t98 = t268
+t98 = t98 + 4
+t97 = malloc t98
+t97[0] = 1
+increment t97
+v3 = t97
+t110 = t267
+t110 = t110 + 4
+t112 = v3[t110]
+if t112 != 30 then goto e39
+t113[0] = 1
+t113[4] = 118
+t113[5] = 51
+t113[6] = 32
+t113[7] = 111
+t113[8] = 99
+t113[9] = 117
+t113[10] = 112
+t113[11] = 97
+t113[12] = 32
+t113[13] = 101
+t113[14] = 108
+t113[15] = 32
+t113[16] = 109
+t113[17] = 97
+t113[18] = 116
+t113[19] = 101
+t113[20] = 105
+t113[21] = 120
+t113[22] = 32
+t113[23] = 101
+t113[24] = 115
+t113[25] = 112
+t113[26] = 97
+t113[27] = 105
+t113[28] = 32
+t113[29] = 113
+t113[30] = 117
+t113[31] = 101
+t113[32] = 32
+t113[33] = 118
+t113[34] = 50
+t113[35] = 10
+t113[36] = 0
+put param t113
+increment t113
+call print
+decrement t113
+goto e41
+e39: skip
+t182[0] = 1
+t182[4] = 118
+t182[5] = 51
+t182[6] = 32
+t182[7] = -61
+t182[8] = -87
+t182[9] = 115
+t182[10] = 32
+t182[11] = 117
+t182[12] = 110
+t182[13] = 32
+t182[14] = 98
+t182[15] = 108
+t182[16] = 111
+t182[17] = 99
+t182[18] = 32
+t182[19] = 100
+t182[20] = 105
+t182[21] = 102
+t182[22] = 101
+t182[23] = 114
+t182[24] = 101
+t182[25] = 110
+t182[26] = 116
+t182[27] = 10
+t182[28] = 0
+put param t182
+increment t182
+call print
+decrement t182
+e41: skip
+put param 5
+v4 = call e10
+t240 = 1
+t240 = t240 * 5
+t238 = t240 * 4
+t238 = t238 + 4
+t237 = malloc t238
+t237[0] = 1
+increment t237
+v5 = t237
+t267 = 0
+t250 = t267
+t250 = t250 + 4
+v5[t250] = 909
+put param v4
+increment v4
+put param 5
+call e18
+decrement v4
+put param v5
+increment v5
+put param 5
+call e18
+decrement v5
+t256 = 1
+t256 = t256 * 5
+t254 = t256 * 4
+t254 = t254 + 4
+t253 = malloc t254
+t253[0] = 1
+decrement v5
+increment t253
+t263 = 1
+t263 = t263 * 5
+t261 = t263 * 4
+t261 = t261 + 4
+t260 = malloc t261
+t260[0] = 1
+put param t260
+increment t260
+put param 5
+call e18
+decrement t260
+decrement v
+decrement v3
+decrement v4
+decrement v5
+return
+e49: skip
+call main

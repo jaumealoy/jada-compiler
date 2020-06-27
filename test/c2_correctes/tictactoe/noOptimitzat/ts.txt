@@ -1,0 +1,86 @@
+=========================
+ Nivell de profunditat actual: 0
+=========================
+
+Índex 0 --> ID: boolean - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 0
+
+Índex 1 --> ID: true - Tipus de descripció: Constant - NP: -1
+
+Índex 2 --> ID: false - Tipus de descripció: Constant - NP: -1
+
+Índex 3 --> ID: char - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 1
+
+Índex 4 --> ID: int - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 2
+
+Índex 5 --> ID: string - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 4
+
+Índex 6 --> ID: readChar - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 7 --> ID: printChar - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (caracter, char) 
+
+Índex 8 --> ID: print - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (msg, string) 
+
+Índex 9 --> ID: read - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 10 --> ID: printInt - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (numero, int) 
+
+Índex 11 --> ID: readInt - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 12 --> ID: randInt - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (minim, int) (maxim, int) 
+
+Índex 13 --> ID: dimensions - Tipus de descripció: Variable - NP: 0
+
+Índex 14 --> ID: _char_3 - Tipus de descripció: Tipus - NP: 0
+-----> TSB: 3
+-----> Tipus unitari char
+-----> Dimensions: 3 
+
+Índex 15 --> ID: jugadorsIcona - Tipus de descripció: Variable - NP: 0
+
+Índex 16 --> ID: torn - Tipus de descripció: Variable - NP: 0
+
+Índex 17 --> ID: _int_*_* - Tipus de descripció: Tipus - NP: 0
+-----> TSB: 4
+
+Índex 18 --> ID: taulerActual - Tipus de descripció: Variable - NP: 0
+
+Índex 19 --> ID: creaTauler - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (n, int) 
+
+Índex 20 --> ID: pintaTauler - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) 
+
+Índex 21 --> ID: taulerPle - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) 
+
+Índex 22 --> ID: guanya - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) (jugador, int) 
+
+Índex 23 --> ID: jocAcabat - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) 
+
+Índex 24 --> ID: copiaTauler - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) 
+
+Índex 25 --> ID: resol - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (tauler, _int_*_*) (n, int) (torn, int) (solucio, _int_2) (moviments, int) 
+
+Índex 26 --> ID: _int_2 - Tipus de descripció: Tipus - NP: 0
+-----> TSB: 3
+-----> Tipus unitari int
+-----> Dimensions: 2 
+
+Índex 27 --> ID: main - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: 
+

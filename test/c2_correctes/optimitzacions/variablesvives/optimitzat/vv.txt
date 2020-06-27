@@ -1,0 +1,13 @@
+goto e20
+main: skip
+preamble main
+i = 0
+if i >= 2147483647 then goto e19
+e21: skip
+i = i + 1
+if i >= 2147483647 then goto e19
+goto e21
+e19: skip
+return
+e20: skip
+call main

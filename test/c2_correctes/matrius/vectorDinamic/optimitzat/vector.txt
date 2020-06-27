@@ -1,0 +1,288 @@
+goto e65
+e10: skip
+preamble e10
+t12 = 1
+t12 = t12 * n
+t10 = t12 * 4
+t10 = t10 + 4
+t9 = malloc t10
+t9[0] = 1
+increment t9
+vector = t9
+i = 0
+if i >= n then goto e18
+e66: skip
+t20[0] = 1
+t20[4] = 118
+t20[5] = 101
+t20[6] = 99
+t20[7] = 116
+t20[8] = 111
+t20[9] = 114
+t20[10] = 91
+t20[11] = 0
+put param t20
+increment t20
+call print
+decrement t20
+put param i
+call printInt
+t39[0] = 1
+t39[4] = 93
+t39[5] = 32
+t39[6] = 61
+t39[7] = 32
+t39[8] = 0
+put param t39
+increment t39
+call print
+decrement t39
+t53 = i
+t56 = t53 * 4
+t56 = t56 + 4
+t58 = call readInt
+vector[t56] = t58
+i = i + 1
+if i >= n then goto e18
+goto e66
+e18: skip
+return vector
+goto e65
+e21: skip
+preamble e21
+i = 0
+put param 40
+call printChar
+t323 = n - 1
+t65 = t323
+if i >= t65 then goto e30
+t65 = t323
+e67: skip
+t67 = i
+t70 = t67 * 4
+t70 = t70 + 4
+t72 = v[t70]
+put param t72
+call printInt
+put param 44
+call printChar
+put param 32
+call printChar
+i = i + 1
+if i >= t65 then goto e30
+goto e67
+e30: skip
+t79 = t323
+t82 = t79 * 4
+t82 = t82 + 4
+t84 = v[t82]
+put param t84
+call printInt
+put param 41
+call printChar
+put param 10
+call printChar
+return
+goto e65
+e35: skip
+preamble e35
+resultat = 0
+i = 0
+if i >= n then goto e40
+e68: skip
+t96 = i
+t99 = t96 * 4
+t99 = t99 + 4
+t102 = i
+t105 = t102 * 4
+t105 = t105 + 4
+t108 = v1[t99]
+t109 = v2[t105]
+t107 = t108 * t109
+resultat = resultat + t107
+i = i + 1
+if i >= n then goto e40
+goto e68
+e40: skip
+return resultat
+goto e65
+e43: skip
+preamble e43
+t116 = 1
+t116 = t116 * n
+t114 = t116 * 4
+t114 = t114 + 4
+t113 = malloc t114
+t113[0] = 1
+increment t113
+v = t113
+i = 0
+if i >= n then goto e48
+e69: skip
+t125 = i
+t128 = t125 * 4
+t128 = t128 + 4
+t131 = i
+t134 = t131 * 4
+t134 = t134 + 4
+t137 = i
+t140 = t137 * 4
+t140 = t140 + 4
+t143 = v1[t134]
+t144 = v2[t140]
+t142 = t143 + t144
+v[t128] = t142
+i = i + 1
+if i >= n then goto e48
+goto e69
+e48: skip
+return v
+goto e65
+main: skip
+preamble main
+t145[0] = 1
+t145[4] = 73
+t145[5] = 110
+t145[6] = 116
+t145[7] = 114
+t145[8] = 111
+t145[9] = 100
+t145[10] = 117
+t145[11] = 101
+t145[12] = 105
+t145[13] = 120
+t145[14] = 32
+t145[15] = 108
+t145[16] = 97
+t145[17] = 32
+t145[18] = 109
+t145[19] = 105
+t145[20] = 100
+t145[21] = 97
+t145[22] = 32
+t145[23] = 100
+t145[24] = 101
+t145[25] = 108
+t145[26] = 32
+t145[27] = 118
+t145[28] = 101
+t145[29] = 99
+t145[30] = 116
+t145[31] = 111
+t145[32] = 114
+t145[33] = 58
+t145[34] = 32
+t145[35] = 0
+put param t145
+increment t145
+call print
+decrement t145
+n = call readInt
+put param n
+v1 = call e10
+put param n
+v2 = call e10
+t218[0] = 1
+t218[4] = 86
+t218[5] = 101
+t218[6] = 99
+t218[7] = 116
+t218[8] = 111
+t218[9] = 114
+t218[10] = 32
+t218[11] = 49
+t218[12] = 58
+t218[13] = 32
+t218[14] = 0
+put param t218
+increment t218
+call print
+decrement t218
+put param v1
+increment v1
+put param n
+call e21
+decrement v1
+t243[0] = 1
+t243[4] = 86
+t243[5] = 101
+t243[6] = 99
+t243[7] = 116
+t243[8] = 111
+t243[9] = 114
+t243[10] = 32
+t243[11] = 50
+t243[12] = 58
+t243[13] = 32
+t243[14] = 0
+put param t243
+increment t243
+call print
+decrement t243
+put param v2
+increment v2
+put param n
+call e21
+decrement v2
+t268[0] = 1
+t268[4] = 118
+t268[5] = 49
+t268[6] = 32
+t268[7] = -62
+t268[8] = -73
+t268[9] = 32
+t268[10] = 118
+t268[11] = 50
+t268[12] = 32
+t268[13] = 61
+t268[14] = 32
+t268[15] = 0
+put param t268
+increment t268
+call print
+decrement t268
+put param v1
+increment v1
+put param v2
+increment v2
+put param n
+t295 = call e35
+decrement v1
+decrement v2
+put param t295
+call printInt
+put param 10
+call printChar
+t297[0] = 1
+t297[4] = 118
+t297[5] = 49
+t297[6] = 32
+t297[7] = 43
+t297[8] = 32
+t297[9] = 118
+t297[10] = 50
+t297[11] = 32
+t297[12] = 61
+t297[13] = 32
+t297[14] = 0
+put param t297
+increment t297
+call print
+decrement t297
+put param v1
+increment v1
+put param v2
+increment v2
+put param n
+t322 = call e43
+decrement v1
+decrement v2
+put param t322
+put param n
+call e21
+decrement t322
+decrement v1
+decrement v2
+return
+e65: skip
+call main

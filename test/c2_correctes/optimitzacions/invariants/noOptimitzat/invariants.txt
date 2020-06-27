@@ -1,0 +1,97 @@
+trueConst = true
+falseConst = false
+goto e36
+main: skip
+preamble main
+t8 = 0
+constant = t8
+e11: skip
+t10 = 0
+constant2 = t10
+e12: skip
+t12 = 0
+i = t12
+e13: skip
+t14 = 10
+if i < t14 then goto e14
+goto e19
+e14: skip
+t16 = 4
+constant = t16
+e15: skip
+t17 = 50
+if i > t17 then goto e16
+goto e18
+e16: skip
+t18 = 4
+constant2 = t18
+e17: skip
+goto e18
+e18: skip
+t15 = 1
+i = i + t15
+goto e13
+e19: skip
+put param constant
+call printInt
+e20: skip
+t19 = 
+
+put param t19
+call printChar
+e21: skip
+put param constant2
+call printInt
+e22: skip
+t20 = 
+
+put param t20
+call printChar
+e23: skip
+t21 = 5
+t23 = 0
+t22 = t23 - t21
+constant = t22
+e24: skip
+t24 = 1000
+i = t24
+e25: skip
+t26 = 10
+if i < t26 then goto e26
+goto e31
+e26: skip
+t28 = 4
+constant = t28
+e27: skip
+t29 = 50
+if i > t29 then goto e28
+goto e30
+e28: skip
+t30 = 4
+constant2 = t30
+e29: skip
+goto e30
+e30: skip
+t27 = 1
+i = i + t27
+goto e25
+e31: skip
+put param constant
+call printInt
+e32: skip
+t31 = 
+
+put param t31
+call printChar
+e33: skip
+put param constant2
+call printInt
+e34: skip
+t32 = 
+
+put param t32
+call printChar
+e35: skip
+return
+e36: skip
+call main

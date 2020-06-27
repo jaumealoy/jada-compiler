@@ -1,0 +1,181 @@
+goto e68
+e10: skip
+preamble e10
+i = 0
+if i >= 500 then goto e21
+e69: skip
+j = 0
+if j >= 500 then goto e20
+e70: skip
+if i != j then goto e17
+t122 = j * 4
+t18 = t122
+t123 = 2000 * i
+t20 = t123
+t18 = t18 + t20
+matriu[t18] = 1
+goto e19
+e17: skip
+t122 = j * 4
+t23 = t122
+t123 = 2000 * i
+t25 = t123
+t23 = t23 + t25
+matriu[t23] = 0
+e19: skip
+j = j + 1
+if j >= 500 then goto e20
+goto e70
+e20: skip
+i = i + 1
+if i >= 500 then goto e21
+goto e69
+e21: skip
+return
+goto e68
+e23: skip
+preamble e23
+t28[0] = 1
+t28[4] = 80
+t28[5] = 105
+t28[6] = 110
+t28[7] = 116
+t28[8] = 97
+t28[9] = 110
+t28[10] = 116
+t28[11] = 32
+t28[12] = 109
+t28[13] = 97
+t28[14] = 116
+t28[15] = 114
+t28[16] = 105
+t28[17] = 117
+t28[18] = 10
+t28[19] = 0
+put param t28
+increment t28
+call print
+decrement t28
+i = 0
+if i >= 500 then goto e33
+t128 = i * 2000
+t126 = t128 + 0
+e71: skip
+j = 0
+if j >= 500 then goto e31
+t72 = t126
+t126 = t126 + 2000
+e72: skip
+t70 = j * 4
+t70 = t70 + t72
+t73 = matriu[t70]
+put param t73
+call printInt
+put param 32
+call printChar
+j = j + 1
+if j >= 500 then goto e31
+goto e72
+e31: skip
+put param 10
+call printChar
+i = i + 1
+if i >= 500 then goto e33
+goto e71
+e33: skip
+return
+goto e68
+e35: skip
+preamble e35
+i = 0
+if i >= 500 then goto e47
+e73: skip
+j = 0
+if j >= 500 then goto e46
+e74: skip
+suma = 0
+k = 0
+if k >= 500 then goto e44
+t124 = 2000 * i
+t93 = t124
+t125 = j * 4
+t134 = k * 2000
+t132 = t134 + 0
+e75: skip
+t91 = k * 4
+t91 = t91 + t93
+t95 = t125
+t97 = t132
+t132 = t132 + 2000
+t95 = t95 + t97
+t99 = a[t91]
+t100 = b[t95]
+t98 = t99 * t100
+suma = suma + t98
+k = k + 1
+if k >= 500 then goto e44
+goto e75
+e44: skip
+t125 = j * 4
+t102 = t125
+t124 = 2000 * i
+t104 = t124
+t102 = t102 + t104
+resultat[t102] = suma
+j = j + 1
+if j >= 500 then goto e46
+goto e74
+e46: skip
+i = i + 1
+if i >= 500 then goto e47
+goto e73
+e47: skip
+return
+goto e68
+e49: skip
+preamble e49
+i = 0
+if i >= 500 then goto e56
+t140 = i * 2000
+t138 = t140 + 0
+e76: skip
+j = 0
+if j >= 500 then goto e55
+t115 = t138
+t138 = t138 + 2000
+e77: skip
+t113 = j * 4
+t113 = t113 + t115
+put param 0
+put param 9
+t118 = call randInt
+a[t113] = t118
+j = j + 1
+if j >= 500 then goto e55
+goto e77
+e55: skip
+i = i + 1
+if i >= 500 then goto e56
+goto e76
+e56: skip
+return
+goto e68
+main: skip
+preamble main
+put param i
+call e10
+put param i
+call e23
+put param i2
+call e49
+put param i2
+call e23
+put param i
+put param i2
+put param resultat
+call e35
+put param resultat
+call e23
+return
+e68: skip
+call main

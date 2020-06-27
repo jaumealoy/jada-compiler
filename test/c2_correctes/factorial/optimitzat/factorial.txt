@@ -1,0 +1,142 @@
+goto e38
+e10: skip
+preamble e10
+if num != 0 then goto e13
+return 1
+e13: skip
+t12 = num - 1
+put param t12
+t13 = call e10
+t14 = num * t13
+return t14
+goto e38
+e17: skip
+preamble e17
+tmp = 1
+i = 2
+if i > num then goto e22
+e39: skip
+tmp = tmp * i
+i = i + 1
+if i > num then goto e22
+goto e39
+e22: skip
+return tmp
+goto e38
+main: skip
+preamble main
+t21[0] = 1
+t21[4] = 73
+t21[5] = 110
+t21[6] = 116
+t21[7] = 114
+t21[8] = 111
+t21[9] = 100
+t21[10] = 117
+t21[11] = 101
+t21[12] = 105
+t21[13] = 120
+t21[14] = 32
+t21[15] = 117
+t21[16] = 110
+t21[17] = 32
+t21[18] = 110
+t21[19] = -61
+t21[20] = -70
+t21[21] = 109
+t21[22] = 101
+t21[23] = 114
+t21[24] = 111
+t21[25] = 58
+t21[26] = 32
+t21[27] = 0
+put param t21
+increment t21
+call print
+decrement t21
+n = call readInt
+t74[0] = 1
+t74[4] = 69
+t74[5] = 108
+t74[6] = 32
+t74[7] = 102
+t74[8] = 97
+t74[9] = 99
+t74[10] = 116
+t74[11] = 111
+t74[12] = 114
+t74[13] = 105
+t74[14] = 97
+t74[15] = 108
+t74[16] = 32
+t74[17] = 100
+t74[18] = 101
+t74[19] = 32
+t74[20] = 0
+put param t74
+increment t74
+call print
+decrement t74
+put param n
+call printInt
+t111[0] = 1
+t111[4] = 32
+t111[5] = -61
+t111[6] = -87
+t111[7] = 115
+t111[8] = 32
+t111[9] = 0
+put param t111
+increment t111
+call print
+decrement t111
+put param n
+t126 = call e17
+put param t126
+call printInt
+put param 10
+call printChar
+t128[0] = 1
+t128[4] = 69
+t128[5] = 108
+t128[6] = 32
+t128[7] = 102
+t128[8] = 97
+t128[9] = 99
+t128[10] = 116
+t128[11] = 111
+t128[12] = 114
+t128[13] = 105
+t128[14] = 97
+t128[15] = 108
+t128[16] = 32
+t128[17] = 100
+t128[18] = 101
+t128[19] = 32
+t128[20] = 0
+put param t128
+increment t128
+call print
+decrement t128
+put param n
+call printInt
+t165[0] = 1
+t165[4] = 32
+t165[5] = -61
+t165[6] = -87
+t165[7] = 115
+t165[8] = 32
+t165[9] = 0
+put param t165
+increment t165
+call print
+decrement t165
+put param n
+t180 = call e10
+put param t180
+call printInt
+put param 10
+call printChar
+return
+e38: skip
+call main

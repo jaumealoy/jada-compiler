@@ -1,0 +1,52 @@
+trueConst = true
+falseConst = false
+t8 = 2147483647
+N = t8
+goto e22
+main: skip
+preamble main
+t10 = 0
+sum = t10
+e11: skip
+e12: skip
+t13 = 0
+i = t13
+e13: skip
+if i < N then goto e14
+goto e17
+e14: skip
+t16 = 3
+t17 = t16 * i
+t18 = 7
+t19 = t17 + t18
+j = t19
+e15: skip
+t20 = 2
+t21 = t20 * i
+t22 = sum + t21
+t23 = t22 + j
+sum = t23
+e16: skip
+t15 = 1
+i = i + t15
+goto e13
+e17: skip
+put param j
+call printInt
+e18: skip
+t24 = 
+
+put param t24
+call printChar
+e19: skip
+put param sum
+call printInt
+e20: skip
+t25 = 
+
+put param t25
+call printChar
+e21: skip
+return
+e22: skip
+call main

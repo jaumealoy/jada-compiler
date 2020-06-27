@@ -1,0 +1,296 @@
+goto e74
+e10: skip
+preamble e10
+t12 = 1
+t280 = t12 * n
+t12 = t280
+t280 = t12 * n
+t12 = t280
+t10 = t12 * 4
+t10 = t10 + 8
+t9 = malloc t10
+t9[0] = n
+t9[4] = 1
+increment t9
+matriu = t9
+i = 0
+if i >= n then goto e24
+e75: skip
+j = 0
+if j >= n then goto e23
+e76: skip
+if i != j then goto e19
+t26 = j
+t27 = 1
+t29 = matriu[0]
+t27 = t27 * t29
+t30 = t27 * i
+t26 = t26 + t30
+t32 = t26 * 4
+t32 = t32 + 8
+matriu[t32] = 1
+goto e21
+e19: skip
+t36 = j
+t37 = 1
+t39 = matriu[0]
+t37 = t37 * t39
+t40 = t37 * i
+t36 = t36 + t40
+t42 = t36 * 4
+t42 = t42 + 8
+matriu[t42] = 0
+e21: skip
+j = j + 1
+if j >= n then goto e23
+goto e76
+e23: skip
+i = i + 1
+if i >= n then goto e24
+goto e75
+e24: skip
+return matriu
+goto e74
+e27: skip
+preamble e27
+t49[0] = 1
+t49[4] = 80
+t49[5] = 105
+t49[6] = 110
+t49[7] = 116
+t49[8] = 97
+t49[9] = 110
+t49[10] = 116
+t49[11] = 32
+t49[12] = 109
+t49[13] = 97
+t49[14] = 116
+t49[15] = 114
+t49[16] = 105
+t49[17] = 117
+t49[18] = 10
+t49[19] = 0
+put param t49
+increment t49
+call print
+decrement t49
+i = 0
+if i >= n then goto e37
+e77: skip
+j = 0
+if j >= n then goto e35
+e78: skip
+t91 = j
+t92 = 1
+t94 = matriu[0]
+t92 = t92 * t94
+t95 = t92 * i
+t91 = t91 + t95
+t97 = t91 * 4
+t97 = t97 + 8
+t99 = matriu[t97]
+put param t99
+call printInt
+put param 32
+call printChar
+j = j + 1
+if j >= n then goto e35
+goto e78
+e35: skip
+put param 10
+call printChar
+i = i + 1
+if i >= n then goto e37
+goto e77
+e37: skip
+return
+goto e74
+e39: skip
+preamble e39
+t108 = 1
+t281 = t108 * n
+t108 = t281
+t281 = t108 * n
+t108 = t281
+t106 = t108 * 4
+t106 = t106 + 8
+t105 = malloc t106
+t105[0] = n
+t105[4] = 1
+increment t105
+resultat = t105
+i = 0
+if i >= n then goto e52
+e79: skip
+j = 0
+if j >= n then goto e51
+e80: skip
+suma = 0
+k = 0
+if k >= n then goto e49
+e81: skip
+t126 = k
+t127 = 1
+t129 = a[0]
+t127 = t127 * t129
+t130 = t127 * i
+t126 = t126 + t130
+t132 = t126 * 4
+t132 = t132 + 8
+t135 = j
+t136 = 1
+t138 = b[0]
+t136 = t136 * t138
+t139 = t136 * k
+t135 = t135 + t139
+t141 = t135 * 4
+t141 = t141 + 8
+t144 = a[t132]
+t145 = b[t141]
+t143 = t144 * t145
+suma = suma + t143
+k = k + 1
+if k >= n then goto e49
+goto e81
+e49: skip
+t147 = j
+t148 = 1
+t150 = resultat[0]
+t148 = t148 * t150
+t151 = t148 * i
+t147 = t147 + t151
+t153 = t147 * 4
+t153 = t153 + 8
+resultat[t153] = suma
+j = j + 1
+if j >= n then goto e51
+goto e80
+e51: skip
+i = i + 1
+if i >= n then goto e52
+goto e79
+e52: skip
+return resultat
+goto e74
+e55: skip
+preamble e55
+i = 0
+if i >= n then goto e62
+e82: skip
+j = 0
+if j >= n then goto e61
+e83: skip
+t164 = j
+t165 = 1
+t167 = a[0]
+t165 = t165 * t167
+t168 = t165 * i
+t164 = t164 + t168
+t170 = t164 * 4
+t170 = t170 + 8
+put param 0
+put param 9
+t174 = call randInt
+a[t170] = t174
+j = j + 1
+if j >= n then goto e61
+goto e83
+e61: skip
+i = i + 1
+if i >= n then goto e62
+goto e82
+e62: skip
+return
+goto e74
+main: skip
+preamble main
+t175[0] = 1
+t175[4] = 73
+t175[5] = 110
+t175[6] = 116
+t175[7] = 114
+t175[8] = 111
+t175[9] = 100
+t175[10] = 117
+t175[11] = 101
+t175[12] = 105
+t175[13] = 120
+t175[14] = 32
+t175[15] = 108
+t175[16] = 101
+t175[17] = 115
+t175[18] = 32
+t175[19] = 100
+t175[20] = 105
+t175[21] = 109
+t175[22] = 101
+t175[23] = 110
+t175[24] = 115
+t175[25] = 105
+t175[26] = 111
+t175[27] = 110
+t175[28] = 115
+t175[29] = 32
+t175[30] = 100
+t175[31] = 101
+t175[32] = 32
+t175[33] = 108
+t175[34] = 97
+t175[35] = 32
+t175[36] = 109
+t175[37] = 97
+t175[38] = 116
+t175[39] = 114
+t175[40] = 105
+t175[41] = 117
+t175[42] = 32
+t175[43] = 40
+t175[44] = 78
+t175[45] = 120
+t175[46] = 78
+t175[47] = 41
+t175[48] = 58
+t175[49] = 32
+t175[50] = 0
+put param t175
+increment t175
+call print
+decrement t175
+put param 500
+i = call e10
+put param i
+increment i
+put param 500
+call e27
+decrement i
+put param 500
+i2 = call e10
+put param i2
+increment i2
+put param 500
+call e55
+decrement i2
+put param i2
+increment i2
+put param 500
+call e27
+decrement i2
+put param i
+increment i
+put param i2
+increment i2
+put param 500
+resultat = call e39
+decrement i
+decrement i2
+put param resultat
+increment resultat
+put param 500
+call e27
+decrement resultat
+decrement i
+decrement i2
+decrement resultat
+return
+e74: skip
+call main

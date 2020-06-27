@@ -895,6 +895,82 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 				// trobar el final de la precapçalera
 				code->move(first, syInit, currentLoop.header->getStart()->getPrevious());
 
+				// determinar si la variable d'inducció bàsica es troba per 
+				// abans o després de la variable d'inducció derivada
+				bool basicaDespres = false;
+				if(vindIt->second.inst->getBasicBlock() == x0->second.inst->getBasicBlock()){
+					// estan al mateix bloc bàsic
+					// anar des de la derivada fins al final de bloc bàsic
+					// si es troba, estarà després
+					BasicBlock *derivadaBlock = vindIt->second.inst->getBasicBlock();
+					Instruction *aux = vindIt->second.inst;
+					Instruction *end = derivadaBlock->getEnd()->getNext();
+					bool trobada = false;
+
+					while(!trobada && aux != nullptr && aux != end){
+						trobada = aux == x0->second.inst;
+						aux = aux->getNext();
+					}
+
+					basicaDespres = trobada;
+				}else{
+					// recòrrer els blocs successors de la variable d'inducció
+					// derivada. 
+					BasicBlock *derivadaBlock = vindIt->second.inst->getBasicBlock();
+					std::list<BasicBlock *> pendents;
+					std::map<BasicBlock *, bool> visitats;
+
+					assert(vindIt->second.inst != nullptr);
+					assert(derivadaBlock != nullptr);
+
+					pendents.push_back(derivadaBlock);
+
+					bool trobat = false;
+					while(!trobat && pendents.size() > 0){
+						BasicBlock *block = pendents.front();
+						pendents.pop_front();
+
+						trobat = block == x0->second.inst->getBasicBlock();
+
+						assert(block != nullptr);
+						std::list<BasicBlock *> &successors = block->getSuccessors();
+						std::list<BasicBlock *>::iterator successorIt = successors.begin();
+
+						while(successorIt != successors.end()){
+							// no s'ha d'arribar a la precapçalera, només interessen
+							// els blocs que es troben per davall de la variable derivada
+							if(*successorIt != currentLoop.header 
+								&& visitats.find(*successorIt) == visitats.end()){
+								visitats.emplace(*successorIt, true);
+								pendents.push_back(*successorIt);
+							}
+							successorIt++;
+						}
+					}
+
+					basicaDespres = trobat;
+				} 
+
+				if(!basicaDespres){
+					Variable *auxConst = code->addVariable(TipusSubjacentBasic::INT);
+					Instruction *aux1 = code->addInstruction(new AssignmentInstruction(
+						TipusSubjacentBasic::INT,
+						auxConst,
+						std::make_shared<ValueContainer>((const char *) &increment, sizeof(int))						
+					));
+
+
+
+					Instruction *aux2 = code->addInstruction(new ArithmeticInstruction(
+						increment > 0 ? ArithmeticInstruction::Type::ADDITION : ArithmeticInstruction::Type::ADDITION,
+						sy,
+						sy,
+						auxConst
+					));
+
+					code->move(aux1, aux2, syInit);
+				}
+
 				// eliminar l'antiga instrucció
 				code->remove(vindIt->second.inst);
 				

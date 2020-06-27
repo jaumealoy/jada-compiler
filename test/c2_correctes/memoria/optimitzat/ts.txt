@@ -1,0 +1,55 @@
+=========================
+ Nivell de profunditat actual: 0
+=========================
+
+Índex 0 --> ID: boolean - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 0
+
+Índex 1 --> ID: true - Tipus de descripció: Constant - NP: -1
+
+Índex 2 --> ID: false - Tipus de descripció: Constant - NP: -1
+
+Índex 3 --> ID: char - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 1
+
+Índex 4 --> ID: int - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 2
+
+Índex 5 --> ID: string - Tipus de descripció: Tipus - NP: -1
+-----> TSB: 4
+
+Índex 6 --> ID: readChar - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 7 --> ID: printChar - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (caracter, char) 
+
+Índex 8 --> ID: print - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (msg, string) 
+
+Índex 9 --> ID: read - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 10 --> ID: printInt - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (numero, int) 
+
+Índex 11 --> ID: readInt - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: 
+
+Índex 12 --> ID: randInt - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (minim, int) (maxim, int) 
+
+Índex 13 --> ID: _int_* - Tipus de descripció: Tipus - NP: 0
+-----> TSB: 4
+
+Índex 14 --> ID: VECTOR_GLOBAL - Tipus de descripció: Variable - NP: 0
+
+Índex 15 --> ID: creaVector - Tipus de descripció: Funcio - NP: 0
+-----> Paràmetres: (n, int) 
+
+Índex 16 --> ID: pintaVector - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: (v, _int_*) (n, int) 
+
+Índex 17 --> ID: main - Tipus de descripció: Procediment - NP: 0
+-----> Paràmetres: 
+

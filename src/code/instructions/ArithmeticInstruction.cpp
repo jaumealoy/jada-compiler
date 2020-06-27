@@ -277,7 +277,7 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 		// a = b * 1 ==> a = b
 		// a = b * 0 ==> a = 0
 		if(this->type == ArithmeticInstruction::Type::MULTIPLICATION){
-			/*if(this->v1->isConstant()){
+			if(this->v1->isConstant()){
 				long a = *(int *) this->valor1->get();
 				if(a == 0){
 					Instruction *assig = code->addInstruction(new AssignmentInstruction(
@@ -298,17 +298,7 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 					code->move(assig, assig, this);
 					code->remove(this);
 					return true;
-				}else if(isPower2(a)){
-					// convertir a una operació de l'estil
-					// desti = (2^n) * b ==> desti = b << a
-					/*this->type = ArithmeticInstruction::Type::LEFT_SHIFT;
-					
-					Variable *aux = this->v1;
-					this->v1 = this->v2;
-					this->v2 = aux;
-					this->valor2 = this->valor1;
-					return true;*/
-			/*	}
+				}
 			}else if(this->v2->isConstant()){
 				long b = *(int *) this->valor2->get();
 				if(b == 0){
@@ -330,13 +320,8 @@ bool ArithmeticInstruction::optimize(CodeGeneration *code){
 					code->move(assig, assig, this);
 					code->remove(this);
 					return true;
-				}else if(isPower2(b)){
-					// convertir a una operació de l'estil
-					// desti = a * (2^n) ==> desti = a << b
-					/*this->type = ArithmeticInstruction::Type::LEFT_SHIFT;
-					return true;*/
-			/*	}
-			}*/
+				}
+			}
 		}
 	}
 
@@ -406,6 +391,10 @@ Variable *ArithmeticInstruction::getSecondOperand(){
 
 ArithmeticInstruction::Type ArithmeticInstruction::getOperator(){
 	return this->type;
+}
+
+void ArithmeticInstruction::setOperator(ArithmeticInstruction::Type operador){
+	this->type = operador;
 }
 
 /**

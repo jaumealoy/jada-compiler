@@ -1,0 +1,34 @@
+goto e25
+main: skip
+preamble main
+n = 0
+put param n
+call printInt
+n = 7
+t28 = n * 2
+k = t28
+put param k
+call printInt
+t17 = t28
+put param t17
+call printInt
+sum = 0
+i = 0
+if i >= 2147483647 then goto e21
+t24 = t28
+e26: skip
+sum = sum + t24
+i = i + 1
+if i >= 2147483647 then goto e21
+goto e26
+e21: skip
+put param sum
+call printInt
+n = n + 1
+t28 = n * 2
+t27 = t28
+put param t27
+call printInt
+return
+e25: skip
+call main

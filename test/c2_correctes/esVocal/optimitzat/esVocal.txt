@@ -1,0 +1,134 @@
+goto e55
+e10: skip
+preamble e10
+vocals[0] = 97
+vocals[1] = 101
+vocals[2] = 105
+vocals[3] = 111
+vocals[4] = 117
+return
+goto e55
+main: skip
+preamble main
+t32[0] = 1
+t32[4] = 73
+t32[5] = 110
+t32[6] = 116
+t32[7] = 114
+t32[8] = 111
+t32[9] = 100
+t32[10] = 117
+t32[11] = 101
+t32[12] = 105
+t32[13] = 120
+t32[14] = 32
+t32[15] = 117
+t32[16] = 110
+t32[17] = 97
+t32[18] = 32
+t32[19] = 108
+t32[20] = 108
+t32[21] = 101
+t32[22] = 116
+t32[23] = 114
+t32[24] = 97
+t32[25] = 58
+t32[26] = 32
+t32[27] = 0
+decrement txt1
+increment t32
+txt1 = t32
+put param v
+call e10
+put param txt1
+increment txt1
+call print
+decrement txt1
+caracter = call readChar
+trobat = false
+j = 0
+if j >= 5 then goto e42
+if 1 != trobat then goto e31
+e56: skip
+e31: skip
+t180 = j
+t91 = t180
+t92 = v[t91]
+put param t92
+call printChar
+put param caracter
+call printChar
+put param 10
+call printChar
+t95 = t180
+t96 = v[t95]
+if t96 != caracter then goto e40
+trobat = true
+e40: skip
+j = j + 1
+if j >= 5 then goto e42
+if 1 != trobat then goto e56
+e42: skip
+if 1 != trobat then goto e45
+t99[0] = 1
+t99[4] = -61
+t99[5] = -119
+t99[6] = 115
+t99[7] = 32
+t99[8] = 117
+t99[9] = 110
+t99[10] = 97
+t99[11] = 32
+t99[12] = 118
+t99[13] = 111
+t99[14] = 99
+t99[15] = 97
+t99[16] = 108
+t99[17] = 10
+t99[18] = 0
+put param t99
+increment t99
+call print
+decrement t99
+goto e47
+e45: skip
+t132[0] = 1
+t132[4] = 78
+t132[5] = 111
+t132[6] = 32
+t132[7] = -61
+t132[8] = -87
+t132[9] = 115
+t132[10] = 32
+t132[11] = 117
+t132[12] = 110
+t132[13] = 97
+t132[14] = 32
+t132[15] = 118
+t132[16] = 111
+t132[17] = 99
+t132[18] = 97
+t132[19] = 108
+t132[20] = 10
+t132[21] = 0
+put param t132
+increment t132
+call print
+decrement t132
+e47: skip
+i = 0
+if i == 5 then goto e54
+e58: skip
+t175 = i
+t176 = v[t175]
+put param t176
+call printChar
+put param 10
+call printChar
+i = i + 1
+if i != 5 then goto e58
+e54: skip
+decrement txt1
+return
+e55: skip
+call main

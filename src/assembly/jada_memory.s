@@ -34,50 +34,6 @@ jada_memory_end:	.quad	0	/* adreça de final del heap */
 
 .text
 
-call	jada_init
-
-push	$8
-push	$0
-call	jada_malloc
-pop		%r10
-addq	$8, %rsp
-
-movq	$0xF00F1234, %rax
-movq	%rax, (%r10)
-
-push	$8
-push	$0
-call	jada_malloc
-pop		%r10
-addq	$8, %rsp
-movq	$0xE00E5678, %rax
-movq	%rax, (%r10)
-
-push	%r10
-call	jada_free
-addq	$8, %rsp
-
-push	$4
-push	$0
-call	jada_malloc
-pop		%r10
-addq	$8, %rsp
-
-push	%r10
-call	jada_free
-addq	$8, %rsp
-
-push	$4
-push	$0
-call	jada_malloc
-pop		%r10
-addq	$8, %rsp
-
-movq $1, %rax
-movq $0, %rbx
-int	$0x80
-
-
 jada_init:
 	/* s'encarrega d'inicialitzar el sistema de memòria dinàmica */
 

@@ -28,7 +28,6 @@ int main(int argc, char **argv){
 	for(int i = 0; i < argc; i++){
 		if(strcmp("-debug", argv[i]) == 0){
 			debugMode = true;
-			break;
 		}else if(strcmp("-o", argv[i]) == 0){
 			if(i + 1 < argc){
 				outputFile = std::string(argv[i + 1]);

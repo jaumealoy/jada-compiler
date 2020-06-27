@@ -1,0 +1,111 @@
+goto e50
+main: skip
+preamble main
+n = 1
+primers[0] = 1
+i = 2
+if n >= 50000 then goto e40
+t133 = n * 4
+t131 = t133 + 0
+e52: skip
+primer = true
+j = 1
+if 1 != primer then goto e29
+if j >= n then goto e29
+t127 = j * 4
+t125 = t127 + 0
+e53: skip
+t26 = t125
+t125 = t125 + 4
+t28 = primers[t26]
+t27 = i % t28
+if t27 != 0 then goto e28
+primer = false
+e28: skip
+j = j + 1
+if 1 != primer then goto e29
+if j >= n then goto e29
+goto e53
+e29: skip
+t30 = primer
+if t30 != 1 then goto e39
+t33 = t131
+t131 = t131 + 4
+primers[t33] = i
+n = n + 1
+e39: skip
+i = i + 1
+if n >= 50000 then goto e40
+goto e52
+e40: skip
+t35[0] = 1
+t35[4] = 69
+t35[5] = 108
+t35[6] = 115
+t35[7] = 32
+t35[8] = 0
+put param t35
+increment t35
+call print
+decrement t35
+put param 50000
+call printInt
+t48[0] = 1
+t48[4] = 32
+t48[5] = 112
+t48[6] = 114
+t48[7] = 105
+t48[8] = 109
+t48[9] = 101
+t48[10] = 114
+t48[11] = 115
+t48[12] = 32
+t48[13] = 110
+t48[14] = -61
+t48[15] = -70
+t48[16] = 109
+t48[17] = 101
+t48[18] = 114
+t48[19] = 111
+t48[20] = 115
+t48[21] = 32
+t48[22] = 112
+t48[23] = 114
+t48[24] = 105
+t48[25] = 109
+t48[26] = 101
+t48[27] = 114
+t48[28] = 115
+t48[29] = 32
+t48[30] = 115
+t48[31] = -61
+t48[32] = -77
+t48[33] = 110
+t48[34] = 58
+t48[35] = 32
+t48[36] = 0
+put param t48
+increment t48
+call print
+decrement t48
+i = 0
+if i >= 50000 then goto e48
+t139 = i * 4
+t137 = t139 + 0
+e51: skip
+t121 = t137
+t137 = t137 + 4
+t122 = primers[t121]
+put param t122
+call printInt
+put param 32
+call printChar
+i = i + 1
+if i >= 50000 then goto e48
+goto e51
+e48: skip
+put param 10
+call printChar
+return
+e50: skip
+call main

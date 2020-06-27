@@ -1,0 +1,43 @@
+goto e30
+prova: skip
+preamble prova
+return
+goto e30
+main: skip
+preamble main
+put param 28
+call printInt
+put param 10
+call printChar
+goto e21
+e21: skip
+goto e24
+e31: skip
+e24: skip
+t55[0] = 1
+t55[4] = 67
+t55[5] = 84
+t55[6] = 82
+t55[7] = 76
+t55[8] = 43
+t55[9] = 67
+t55[10] = 32
+t55[11] = 112
+t55[12] = 101
+t55[13] = 114
+t55[14] = 32
+t55[15] = 97
+t55[16] = 116
+t55[17] = 117
+t55[18] = 114
+t55[19] = 97
+t55[20] = 114
+t55[21] = 10
+t55[22] = 0
+put param t55
+increment t55
+call print
+decrement t55
+goto e31
+e30: skip
+call main

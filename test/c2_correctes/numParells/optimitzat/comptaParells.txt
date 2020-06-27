@@ -1,0 +1,210 @@
+goto e41
+e10: skip
+preamble e10
+t12 = 1
+t12 = t12 * n
+t10 = t12 * 4
+t10 = t10 + 4
+t9 = malloc t10
+t9[0] = 1
+increment t9
+v = t9
+i = 0
+t19[0] = 1
+t19[4] = 86
+t19[5] = 111
+t19[6] = 108
+t19[7] = 115
+t19[8] = 32
+t19[9] = 99
+t19[10] = 111
+t19[11] = 109
+t19[12] = 112
+t19[13] = 116
+t19[14] = 97
+t19[15] = 114
+t19[16] = 32
+t19[17] = 0
+put param t19
+increment t19
+call print
+decrement t19
+put param n
+call printInt
+put param 10
+call printChar
+if n <= 0 then goto e24
+t300 = i
+t298 = t300 - 1
+t298 = t298 + 1
+e42: skip
+t52[0] = 1
+t52[4] = 73
+t52[5] = 110
+t52[6] = 116
+t52[7] = 114
+t52[8] = 111
+t52[9] = 100
+t52[10] = 117
+t52[11] = 101
+t52[12] = 105
+t52[13] = 120
+t52[14] = 32
+t52[15] = 101
+t52[16] = 108
+t52[17] = 32
+t52[18] = 110
+t52[19] = -61
+t52[20] = -70
+t52[21] = 109
+t52[22] = 101
+t52[23] = 114
+t52[24] = 111
+t52[25] = 32
+t52[26] = 0
+put param t52
+increment t52
+call print
+decrement t52
+i = i + 1
+put param i
+call printInt
+put param 58
+call printChar
+put param 32
+call printChar
+t107 = t298
+t298 = t298 + 1
+t110 = t107 * 4
+t110 = t110 + 4
+t112 = call readInt
+v[t110] = t112
+n = n - 1
+if n > 0 then goto e42
+e24: skip
+return v
+goto e41
+main: skip
+preamble main
+t114[0] = 1
+t114[4] = 81
+t114[5] = 117
+t114[6] = 97
+t114[7] = 110
+t114[8] = 116
+t114[9] = 115
+t114[10] = 32
+t114[11] = 100
+t114[12] = 101
+t114[13] = 32
+t114[14] = 110
+t114[15] = -61
+t114[16] = -70
+t114[17] = 109
+t114[18] = 101
+t114[19] = 114
+t114[20] = 111
+t114[21] = 115
+t114[22] = 32
+t114[23] = 118
+t114[24] = 111
+t114[25] = 108
+t114[26] = 115
+t114[27] = 32
+t114[28] = 99
+t114[29] = 111
+t114[30] = 109
+t114[31] = 112
+t114[32] = 116
+t114[33] = 97
+t114[34] = 114
+t114[35] = 63
+t114[36] = 32
+t114[37] = 0
+put param t114
+increment t114
+call print
+decrement t114
+k = call readInt
+put param k
+vector = call e10
+i = 0
+if i >= k then goto e40
+e43: skip
+t192[0] = 1
+t192[4] = 69
+t192[5] = 108
+t192[6] = 32
+t192[7] = 110
+t192[8] = -61
+t192[9] = -70
+t192[10] = 109
+t192[11] = 101
+t192[12] = 114
+t192[13] = 111
+t192[14] = 32
+t192[15] = 0
+put param t192
+increment t192
+call print
+decrement t192
+t220 = i
+t223 = t220 * 4
+t223 = t223 + 4
+t225 = vector[t223]
+put param t225
+call printInt
+t227 = i
+t230 = t227 * 4
+t230 = t230 + 4
+t234 = vector[t230]
+t233 = t234 % 2
+if t233 != 0 then goto e37
+t236[0] = 1
+t236[4] = 32
+t236[5] = -61
+t236[6] = -87
+t236[7] = 115
+t236[8] = 32
+t236[9] = 112
+t236[10] = 97
+t236[11] = 114
+t236[12] = 101
+t236[13] = 108
+t236[14] = 108
+t236[15] = 10
+t236[16] = 0
+put param t236
+increment t236
+call print
+decrement t236
+goto e39
+e37: skip
+t265[0] = 1
+t265[4] = 32
+t265[5] = -61
+t265[6] = -87
+t265[7] = 115
+t265[8] = 32
+t265[9] = 105
+t265[10] = 109
+t265[11] = 112
+t265[12] = 97
+t265[13] = 114
+t265[14] = 101
+t265[15] = 108
+t265[16] = 108
+t265[17] = 10
+t265[18] = 0
+put param t265
+increment t265
+call print
+decrement t265
+e39: skip
+i = i + 1
+if i < k then goto e43
+e40: skip
+decrement vector
+return
+e41: skip
+call main
