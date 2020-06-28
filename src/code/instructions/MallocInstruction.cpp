@@ -29,9 +29,6 @@ void MallocInstruction::generateAssembly(CodeGeneration *code)
     // fer la crida i recuperar els paràmetres
     code->output << "call\tjada_malloc" << std::endl;
     code->output << "pop\t%" << CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(TipusSubjacentBasic::POINTER)) << std::endl;
-    //code->output << "mov" << CodeGeneration::getSizeTag(true, TSB::sizeOf(TipusSubjacentBasic::POINTER)) << "\t"
-    //    << "%" << CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(TipusSubjacentBasic::POINTER)) << ", "
-    //    << this->desti->getAssemblyTag() << std::endl;
     code->store(this, CodeGeneration::Register::A, this->desti);
     code->output << "pop\t%" << CodeGeneration::getRegister(CodeGeneration::Register::A, TSB::sizeOf(TipusSubjacentBasic::POINTER)) << std::endl;
 }
