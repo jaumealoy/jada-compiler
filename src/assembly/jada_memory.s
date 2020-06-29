@@ -258,7 +258,7 @@ jada_reference_decrement:
 
 	/* alliberar la memòria, té 0 referències */
 	push	8+reference_add_local(%rsp)
-	/*call	jada_free*/
+	call	jada_free
 	addq	$8, %rsp
 
 1:	pop		%rbp
