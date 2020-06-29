@@ -1,0 +1,510 @@
+goto e17
+e10: skip
+preamble e10
+length = 0
+t12 = length
+t15 = t12
+t723 = t15 + 4
+t15 = t723
+t18 = str[t15]
+if t18 == 0 then goto e15
+e78: skip
+length = length + 1
+t12 = length
+t15 = t12
+t723 = t15 + 4
+t15 = t723
+t18 = str[t15]
+if t18 == 0 then goto e15
+goto e78
+e15: skip
+return length
+e17: skip
+t20[0] = 1
+t20[4] = -61
+t20[5] = -119
+t20[6] = 115
+t20[7] = 32
+t20[8] = 117
+t20[9] = 110
+t20[10] = 97
+t20[11] = 32
+t20[12] = 99
+t20[13] = 97
+t20[14] = 100
+t20[15] = 101
+t20[16] = 110
+t20[17] = 97
+t20[18] = 32
+t20[19] = 100
+t20[20] = 101
+t20[21] = 32
+t20[22] = 116
+t20[23] = 101
+t20[24] = 120
+t20[25] = 116
+t20[26] = 32
+t20[27] = 103
+t20[28] = 108
+t20[29] = 111
+t20[30] = 98
+t20[31] = 97
+t20[32] = 108
+t20[33] = 46
+t20[34] = 0
+increment t20
+TXT_1 = t20
+t86[0] = 1
+t86[4] = 73
+t86[5] = 32
+t86[6] = 97
+t86[7] = 113
+t86[8] = 117
+t86[9] = 101
+t86[10] = 115
+t86[11] = 116
+t86[12] = 97
+t86[13] = 32
+t86[14] = 117
+t86[15] = 110
+t86[16] = 97
+t86[17] = 32
+t86[18] = 99
+t86[19] = 97
+t86[20] = 100
+t86[21] = 101
+t86[22] = 110
+t86[23] = 97
+t86[24] = 32
+t86[25] = 100
+t86[26] = 101
+t86[27] = 32
+t86[28] = 116
+t86[29] = 101
+t86[30] = 120
+t86[31] = 116
+t86[32] = 32
+t86[33] = 103
+t86[34] = 108
+t86[35] = 111
+t86[36] = 98
+t86[37] = 97
+t86[38] = 108
+t86[39] = 32
+t86[40] = 99
+t86[41] = 111
+t86[42] = 110
+t86[43] = 115
+t86[44] = 116
+t86[45] = 97
+t86[46] = 110
+t86[47] = 116
+t86[48] = 46
+t86[49] = 0
+increment t86
+TXT_2 = t86
+goto e77
+e18: skip
+preamble e18
+t190 = 1
+t190 = t190 * 1000
+t188 = t190
+t188 = t188 + 4
+t187 = malloc t188
+t187[0] = 1
+increment t187
+aux = t187
+total = 0
+i = 0
+t200 = i
+t203 = t200
+t724 = t203 + 4
+t203 = t724
+t206 = a[t203]
+if t206 == 0 then goto e27
+e80: skip
+t213 = total
+t721 = total + 1
+total = t721
+t213 = t213 + 4
+t221 = i
+t722 = i + 1
+i = t722
+t221 = t221 + 4
+t223 = a[t221]
+aux[t213] = t223
+t200 = i
+t203 = t200
+t724 = t203 + 4
+t203 = t724
+t206 = a[t203]
+if t206 == 0 then goto e27
+goto e80
+e27: skip
+i = 0
+t226 = i
+t229 = t226
+t725 = t229 + 4
+t229 = t725
+t232 = b[t229]
+if t232 == 0 then goto e32
+e79: skip
+t239 = total
+t721 = total + 1
+total = t721
+t239 = t239 + 4
+t247 = i
+t722 = i + 1
+i = t722
+t247 = t247 + 4
+t249 = b[t247]
+aux[t239] = t249
+t226 = i
+t229 = t226
+t725 = t229 + 4
+t229 = t725
+t232 = b[t229]
+if t232 == 0 then goto e32
+goto e79
+e32: skip
+t254 = total
+t254 = t254 + 4
+aux[t254] = 0
+return aux
+goto e77
+e36: skip
+preamble e36
+if a == 97 then goto e41
+if a == 101 then goto e41
+if a == 105 then goto e41
+if a == 111 then goto e41
+if a != 117 then goto e42
+e41: skip
+t263 = true
+goto e43
+e42: skip
+t263 = false
+e43: skip
+return t263
+goto e77
+main: skip
+preamble main
+put param TXT_1
+increment TXT_1
+call print
+decrement TXT_1
+put param 10
+call printChar
+put param TXT_2
+increment TXT_2
+call print
+decrement TXT_2
+put param 10
+call printChar
+t266[0] = 1
+t266[4] = 76
+t266[5] = 97
+t266[6] = 32
+t266[7] = 112
+t266[8] = 114
+t266[9] = 105
+t266[10] = 109
+t266[11] = 101
+t266[12] = 114
+t266[13] = 97
+t266[14] = 44
+t266[15] = 32
+t266[16] = 116
+t266[17] = -61
+t266[18] = -87
+t266[19] = 32
+t266[20] = 0
+put param t266
+increment t266
+call print
+decrement t266
+put param TXT_1
+increment TXT_1
+t303 = call e10
+decrement TXT_1
+put param t303
+call printInt
+t304[0] = 1
+t304[4] = 32
+t304[5] = 99
+t304[6] = 97
+t304[7] = 114
+t304[8] = -61
+t304[9] = -96
+t304[10] = 99
+t304[11] = 116
+t304[12] = 101
+t304[13] = 114
+t304[14] = 115
+t304[15] = 10
+t304[16] = 0
+put param t304
+increment t304
+call print
+decrement t304
+t333[0] = 1
+t333[4] = 76
+t333[5] = 97
+t333[6] = 32
+t333[7] = 115
+t333[8] = 101
+t333[9] = 103
+t333[10] = 111
+t333[11] = 110
+t333[12] = 97
+t333[13] = 44
+t333[14] = 32
+t333[15] = 116
+t333[16] = -61
+t333[17] = -87
+t333[18] = 32
+t333[19] = 0
+put param t333
+increment t333
+call print
+decrement t333
+put param TXT_2
+increment TXT_2
+t368 = call e10
+decrement TXT_2
+put param t368
+call printInt
+t369[0] = 1
+t369[4] = 32
+t369[5] = 99
+t369[6] = 97
+t369[7] = 114
+t369[8] = -61
+t369[9] = -96
+t369[10] = 99
+t369[11] = 116
+t369[12] = 101
+t369[13] = 114
+t369[14] = 115
+t369[15] = 10
+t369[16] = 0
+put param t369
+increment t369
+call print
+decrement t369
+t398[0] = 1
+t398[4] = 76
+t398[5] = 97
+t398[6] = 32
+t398[7] = 115
+t398[8] = 101
+t398[9] = 118
+t398[10] = 97
+t398[11] = 32
+t398[12] = 99
+t398[13] = 111
+t398[14] = 110
+t398[15] = 99
+t398[16] = 97
+t398[17] = 116
+t398[18] = 101
+t398[19] = 110
+t398[20] = 97
+t398[21] = 99
+t398[22] = 105
+t398[23] = -61
+t398[24] = -77
+t398[25] = 32
+t398[26] = -61
+t398[27] = -87
+t398[28] = 115
+t398[29] = 58
+t398[30] = 32
+t398[31] = 10
+t398[32] = 34
+t398[33] = 0
+put param t398
+increment t398
+call print
+decrement t398
+put param TXT_1
+increment TXT_1
+put param TXT_2
+increment TXT_2
+cat = call e18
+decrement TXT_1
+decrement TXT_2
+put param cat
+increment cat
+call print
+decrement cat
+t463[0] = 1
+t463[4] = 34
+t463[5] = 10
+t463[6] = 0
+put param t463
+increment t463
+call print
+decrement t463
+t472[0] = 1
+t472[4] = 73
+t472[5] = 110
+t472[6] = 116
+t472[7] = 114
+t472[8] = 111
+t472[9] = 100
+t472[10] = 117
+t472[11] = 101
+t472[12] = 105
+t472[13] = 120
+t472[14] = 32
+t472[15] = 117
+t472[16] = 110
+t472[17] = 97
+t472[18] = 32
+t472[19] = 99
+t472[20] = 97
+t472[21] = 100
+t472[22] = 101
+t472[23] = 110
+t472[24] = 97
+t472[25] = 32
+t472[26] = 100
+t472[27] = 101
+t472[28] = 32
+t472[29] = 116
+t472[30] = 101
+t472[31] = 120
+t472[32] = 116
+t472[33] = 32
+t472[34] = 100
+t472[35] = 101
+t472[36] = 32
+t472[37] = 113
+t472[38] = 117
+t472[39] = 97
+t472[40] = 108
+t472[41] = 115
+t472[42] = 101
+t472[43] = 118
+t472[44] = 111
+t472[45] = 108
+t472[46] = 32
+t472[47] = 108
+t472[48] = 111
+t472[49] = 110
+t472[50] = 103
+t472[51] = 105
+t472[52] = 116
+t472[53] = 117
+t472[54] = 100
+t472[55] = 58
+t472[56] = 32
+t472[57] = 10
+t472[58] = 0
+put param t472
+increment t472
+call print
+decrement t472
+input = call read
+numVocals = 0
+put param input
+increment input
+inputLength = call e10
+decrement input
+i = 0
+if i >= inputLength then goto e70
+e81: skip
+t598 = i
+t598 = t598 + 4
+t600 = input[t598]
+put param t600
+t601 = call e36
+if 1 != t601 then goto e69
+numVocals = numVocals + 1
+e69: skip
+i = i + 1
+if i < inputLength then goto e81
+e70: skip
+t603[0] = 1
+t603[4] = 69
+t603[5] = 108
+t603[6] = 32
+t603[7] = 116
+t603[8] = 101
+t603[9] = 120
+t603[10] = 116
+t603[11] = 32
+t603[12] = 105
+t603[13] = 110
+t603[14] = 116
+t603[15] = 114
+t603[16] = 111
+t603[17] = 100
+t603[18] = 117
+t603[19] = -61
+t603[20] = -81
+t603[21] = 116
+t603[22] = 32
+t603[23] = 116
+t603[24] = -61
+t603[25] = -87
+t603[26] = 32
+t603[27] = 0
+put param t603
+increment t603
+call print
+decrement t603
+put param inputLength
+call printInt
+t654[0] = 1
+t654[4] = 32
+t654[5] = 99
+t654[6] = 97
+t654[7] = 114
+t654[8] = -61
+t654[9] = -96
+t654[10] = 99
+t654[11] = 116
+t654[12] = 101
+t654[13] = 114
+t654[14] = 115
+t654[15] = 10
+t654[16] = 0
+put param t654
+increment t654
+call print
+decrement t654
+t683[0] = 1
+t683[4] = 72
+t683[5] = 105
+t683[6] = 32
+t683[7] = 104
+t683[8] = 97
+t683[9] = 32
+t683[10] = 0
+put param t683
+increment t683
+call print
+decrement t683
+put param numVocals
+call printInt
+t700[0] = 1
+t700[4] = 32
+t700[5] = 118
+t700[6] = 111
+t700[7] = 99
+t700[8] = 97
+t700[9] = 108
+t700[10] = 115
+t700[11] = 10
+t700[12] = 0
+put param t700
+increment t700
+call print
+decrement t700
+decrement cat
+decrement input
+return
+e77: skip
+call main

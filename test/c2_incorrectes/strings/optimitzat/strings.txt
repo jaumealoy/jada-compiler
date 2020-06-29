@@ -1,0 +1,47 @@
+goto e24
+malUs: skip
+preamble malUs
+t8[0] = 1
+t8[4] = 67
+t8[5] = 111
+t8[6] = 114
+t8[7] = 114
+t8[8] = 101
+t8[9] = 99
+t8[10] = 116
+t8[11] = 101
+t8[12] = 63
+t8[13] = 10
+t8[14] = 0
+return t8
+goto e24
+e13: skip
+preamble e13
+if n != 0 then goto e15
+t40 = 1
+goto e16
+e15: skip
+t37 = n - 1
+put param t37
+t38 = call e13
+t40 = n * t38
+e16: skip
+return t40
+goto e24
+main: skip
+preamble main
+t41 = call malUs
+put param t41
+call print
+decrement t41
+str = call malUs
+put param 5
+t45 = call e13
+put param str
+increment str
+call print
+decrement str
+decrement str
+return
+e24: skip
+call main

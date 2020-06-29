@@ -1,0 +1,146 @@
+goto e45
+e10: skip
+preamble e10
+i = 1
+if i > 10 then goto e21
+e48: skip
+put param n
+call printInt
+t12[0] = 1
+t12[4] = 32
+t12[5] = 120
+t12[6] = 32
+t12[7] = 0
+put param t12
+increment t12
+call print
+decrement t12
+put param i
+call printInt
+t23[0] = 1
+t23[4] = 32
+t23[5] = 61
+t23[6] = 32
+t23[7] = 0
+put param t23
+increment t23
+call print
+decrement t23
+t164 = i * n
+t34 = t164
+put param t34
+call printInt
+put param 10
+call printChar
+i = i + 1
+if i <= 10 then goto e48
+e21: skip
+put param 10
+call printChar
+i = 0
+if i >= 10 then goto e26
+e47: skip
+put param 61
+call printChar
+i = i + 1
+if i < 10 then goto e47
+e26: skip
+put param 10
+call printChar
+put param 10
+call printChar
+i = 0
+if i > 10 then goto e38
+e46: skip
+put param n
+call printInt
+t48[0] = 1
+t48[4] = 32
+t48[5] = 120
+t48[6] = 32
+t48[7] = 0
+put param t48
+increment t48
+call print
+decrement t48
+put param i
+call printInt
+t59[0] = 1
+t59[4] = 32
+t59[5] = 61
+t59[6] = 32
+t59[7] = 0
+put param t59
+increment t59
+call print
+decrement t59
+t164 = i * n
+t70 = t164
+put param t70
+call printInt
+put param 10
+call printChar
+i = i + 1
+if i <= 10 then goto e46
+e38: skip
+return
+goto e45
+main: skip
+preamble main
+t72[0] = 1
+t72[4] = 81
+t72[5] = 117
+t72[6] = 105
+t72[7] = 110
+t72[8] = 97
+t72[9] = 32
+t72[10] = 116
+t72[11] = 97
+t72[12] = 117
+t72[13] = 108
+t72[14] = 97
+t72[15] = 32
+t72[16] = 100
+t72[17] = 101
+t72[18] = 32
+t72[19] = 109
+t72[20] = 117
+t72[21] = 108
+t72[22] = 116
+t72[23] = 105
+t72[24] = 112
+t72[25] = 108
+t72[26] = 105
+t72[27] = 99
+t72[28] = 97
+t72[29] = 114
+t72[30] = 32
+t72[31] = 118
+t72[32] = 111
+t72[33] = 108
+t72[34] = 115
+t72[35] = 32
+t72[36] = 97
+t72[37] = 112
+t72[38] = 114
+t72[39] = 101
+t72[40] = 110
+t72[41] = 100
+t72[42] = 114
+t72[43] = 101
+t72[44] = 63
+t72[45] = 32
+t72[46] = 0
+increment t72
+str = t72
+put param str
+increment str
+call print
+decrement str
+n = call readInt
+put param n
+call e10
+decrement str
+return
+e45: skip
+call main

@@ -1,0 +1,20 @@
+/*
+1. Notau l'operador ternari en l'assignació de la variable a.
+2. Notau l'expresió relacional i aritmètica del while. (Control valor boolean i expresions).
+3. Corregir valor del condicional del if. (Control del tipus).
+4. Notau propagació del break dins el bloc condicional fins el procedure. (Propagació breaks).
+5. Corregir return dins bloc else. (Propagació return dins blocs del condicional).
+*/
+
+proc main() begin
+    int a = 0 if true else 1;
+
+    while (false == not 2<(5+6)) do
+        a--;
+        if "Hola" do
+            break;
+        else if 1 do
+            return 0;
+        end;
+    end;
+end main;

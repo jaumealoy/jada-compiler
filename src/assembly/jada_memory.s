@@ -32,6 +32,9 @@ jada_memory_free:	.quad	0		/* indica quin és el primer bloc lliure */
 jada_memory_start:	.quad 	0	/* adreça de l'inici del heap */
 jada_memory_end:	.quad	0	/* adreça de final del heap */
 
+jada_memory_error:	.ascii	"Error: memòria insuficient\n"
+.equ jada_memory_error_length, 28
+
 .text
 
 jada_init:
@@ -129,6 +132,9 @@ jada_malloc:
 	movq	$12, %rax					/* sys_brk system call */
 	syscall
 
+	cmpq	jada_memory_end, %rax
+	je		.not_enough_memory
+
 	/* indicar l'adreça de l'inici de les dades */
 	movq	jada_memory_end, %r9
 	addq	$BLOCK_HEADER, %r9
@@ -145,8 +151,20 @@ jada_malloc:
 	/* actualitzar l'end del heap */
 	movq	%rdi, jada_memory_end
 
-.not_enough_memory:
+	jmp		.end
 
+.not_enough_memory:
+	/* mostrar missatge d'error */
+	movq	$1, %rax
+	lea		jada_memory_error, %rsi
+	movq	$1, %rdi
+	movq	$jada_memory_error_length, %rdx
+	syscall
+
+	/* aturar el programa */
+	movq $60, %rax
+	movq $12, %rbx
+	syscall
 
 .end:
 	pop		%rax
@@ -240,7 +258,7 @@ jada_reference_decrement:
 
 	/* alliberar la memòria, té 0 referències */
 	push	8+reference_add_local(%rsp)
-	call	jada_free
+	/*call	jada_free*/
 	addq	$8, %rsp
 
 1:	pop		%rbp

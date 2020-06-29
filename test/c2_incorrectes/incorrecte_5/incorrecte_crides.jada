@@ -1,0 +1,38 @@
+/*
+1. Corregir error de tipus de retorn de línia 15. (Control tipus retorn).
+2. Corregir parámetres funció suma. (Control paràmetres funció).
+3. Posar parámetres a la crida "suma". (Control parámetres d'entrada).
+4. Corregir return funció resta. (Control tipus retorn dins subfunció).
+*/
+
+int contadorGlobal = 0;
+
+func tornaBool() : boolean begin
+    contadorGlobal++;
+    if (contadorGlobal == 3) do
+        return 3;
+    else do
+        return false;
+    end;
+end tornaBool;
+
+func tornaInt() : int begin
+    return 2;
+end tornaInt;
+
+func suma(int a, int a) : int begin
+    return (a+b);
+end suma;
+
+func resta(int a, int b) : int begin
+    return (a-'c');
+end resta;
+
+proc main() begin
+    while (tornaBool()) do
+        if (tornaInt()) do
+            suma();
+        end;
+    end;
+    main();
+end main;

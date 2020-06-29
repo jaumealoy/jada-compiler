@@ -1,0 +1,73 @@
+goto e36
+e10: skip
+preamble e10
+if n != 0 then goto e13
+return 1
+e13: skip
+t14 = n - 1
+put param t14
+t15 = call e10
+t16 = n * t15
+return t16
+goto e36
+e17: skip
+preamble e17
+i = 0
+if i >= 3 then goto e21
+t53 = i * 4
+t51 = t53 + 0
+e37: skip
+t23 = t51
+t51 = t51 + 4
+t24 = vector[t23]
+t24 = t24 * factor
+vector[t23] = t24
+i = i + 1
+if i >= 3 then goto e21
+goto e37
+e21: skip
+return
+goto e36
+e23: skip
+preamble e23
+i = 0
+if i >= 3 then goto e28
+t59 = i * 4
+t57 = t59 + 0
+e38: skip
+t30 = t57
+t57 = t57 + 4
+t31 = vector[t30]
+put param t31
+call printInt
+put param 32
+call printChar
+i = i + 1
+if i >= 3 then goto e28
+goto e38
+e28: skip
+t33[0] = 1
+t33[4] = 10
+t33[5] = 0
+put param t33
+increment t33
+call print
+decrement t33
+return
+goto e36
+main: skip
+preamble main
+t43[0] = 1
+t43[4] = 3
+t43[8] = 2
+vector = t43
+put param 5
+aux = call e10
+put param vector
+put param aux
+call e17
+put param vector
+call e23
+return
+e36: skip
+call main

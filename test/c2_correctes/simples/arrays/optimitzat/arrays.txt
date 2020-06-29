@@ -1,0 +1,179 @@
+t15[0] = 97
+t15[1] = 101
+t15[2] = 105
+t15[3] = 111
+t15[4] = 117
+vocals = t15
+vocals = t15
+goto e45
+e10: skip
+preamble e10
+i = 0
+if i >= 5 then goto e16
+t29 = 0
+t224 = 2 * i
+t31 = t224
+t225 = t29 + t31
+t29 = t225
+t32 = array[t29]
+if t32 == valor then goto e16
+e46: skip
+i = i + 1
+if i >= 5 then goto e16
+t29 = 0
+t224 = 2 * i
+t31 = t224
+t225 = t29 + t31
+t29 = t225
+t32 = array[t29]
+if t32 == valor then goto e16
+goto e46
+e16: skip
+if i != 5 then goto e19
+return 0
+e19: skip
+t37 = 1
+t224 = 2 * i
+t39 = t224
+t37 = t37 + t39
+t40 = array[t37]
+return t40
+goto e45
+main: skip
+preamble main
+t52[0] = 97
+t52[1] = 98
+t52[2] = 101
+t52[3] = 99
+t52[4] = 105
+t52[5] = 100
+t52[6] = 111
+t52[7] = 116
+t52[8] = 117
+t52[9] = 102
+substituir = t52
+t65[0] = 1
+t65[4] = 76
+t65[5] = 101
+t65[6] = 115
+t65[7] = 32
+t65[8] = 118
+t65[9] = 111
+t65[10] = 99
+t65[11] = 97
+t65[12] = 108
+t65[13] = 115
+t65[14] = 32
+t65[15] = 115
+t65[16] = 111
+t65[17] = 110
+t65[18] = 32
+t65[19] = 117
+t65[20] = 110
+t65[21] = 101
+t65[22] = 115
+t65[23] = 32
+t65[24] = 108
+t65[25] = 108
+t65[26] = 101
+t65[27] = 116
+t65[28] = 114
+t65[29] = 101
+t65[30] = 115
+t65[31] = 32
+t65[32] = 110
+t65[33] = 101
+t65[34] = 99
+t65[35] = 101
+t65[36] = 115
+t65[37] = 115
+t65[38] = 97
+t65[39] = 114
+t65[40] = 105
+t65[41] = 101
+t65[42] = 115
+t65[43] = 10
+t65[44] = 0
+decrement str
+increment t65
+str = t65
+put param str
+increment str
+call print
+decrement str
+i = 0
+t153 = i
+t156 = t153
+t226 = t156 + 4
+t156 = t226
+t159 = str[t156]
+if t159 == 0 then goto e36
+e49: skip
+t164 = i
+t164 = t164 + 4
+put param substituir
+t166 = str[t164]
+put param t166
+tmp = call e10
+if tmp == 0 then goto e34
+t174 = i
+t174 = t174 + 4
+str[t174] = tmp
+e34: skip
+i = i + 1
+t153 = i
+t156 = t153
+t226 = t156 + 4
+t156 = t226
+t159 = str[t156]
+if t159 == 0 then goto e36
+goto e49
+e36: skip
+put param str
+increment str
+call print
+decrement str
+t177[0] = 1
+t177[4] = 76
+t177[5] = 101
+t177[6] = 115
+t177[7] = 32
+t177[8] = 118
+t177[9] = 111
+t177[10] = 99
+t177[11] = 97
+t177[12] = 108
+t177[13] = 115
+t177[14] = 32
+t177[15] = 115
+t177[16] = -61
+t177[17] = -77
+t177[18] = 110
+t177[19] = 58
+t177[20] = 32
+t177[21] = 0
+put param t177
+increment t177
+call print
+decrement t177
+i = 0
+if i >= 5 then goto e43
+t229 = i
+t227 = t229 + 0
+e48: skip
+t220 = t227
+t227 = t227 + 1
+t221 = vocals[t220]
+put param t221
+call printChar
+put param 32
+call printChar
+i = i + 1
+if i < 5 then goto e48
+e43: skip
+put param 10
+call printChar
+decrement str
+return
+e45: skip
+call main

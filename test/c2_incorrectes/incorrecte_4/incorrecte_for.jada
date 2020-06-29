@@ -1,0 +1,45 @@
+/*
+1. Crida a una funció de tipus booleana com condició del bucle. (Control funcions i tipus de retorn).
+2. Postincrement invàlid (no és enter).
+3. For anidats amb breaks i retorns.
+4. Operacions mòdul y assignació amb multiplicació
+*/
+
+func tornaBool() : boolean begin
+    return false;
+end tornaBool;
+
+
+proc main() begin
+    boolean a = false;
+
+    for (; not 3>2!=a;) do
+    end;
+
+    int c = 6 % 3;
+
+    for (;tornaBool();a++) do
+        c *= c;
+    end;
+
+
+    int b = 5;
+    for (;true;) do
+        for (;true;) do
+            for (;true;) do
+                if (a== false) do
+                    break;
+                    return 'A';
+                else if ( true ) do
+                    break;
+                end;
+            end;
+
+            break;
+        end;
+
+        break;
+    end;
+
+end main;
+

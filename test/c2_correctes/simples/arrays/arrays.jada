@@ -50,6 +50,4 @@ proc main() begin
         printChar(' ');
     end;
     printChar('\n');
-
-    print(prova);
 end main;

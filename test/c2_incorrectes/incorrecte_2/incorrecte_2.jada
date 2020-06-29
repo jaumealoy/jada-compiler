@@ -1,0 +1,15 @@
+// S'intenta modificar una constant 
+
+const int A = 6;
+
+func set0(const int[A] arr) : boolean begin
+    for (int i = 0; i < A; i++) do
+        arr[i] = 0;
+    end;
+    return true;
+end set0;
+
+proc main() begin
+    const int[A] array = int{11, 0, 3, 9, 21, 0};
+	set0(array);
+end main;

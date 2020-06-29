@@ -1,0 +1,17 @@
+#3 - Nom:  t3 - TSB: caràcter - Subprograma: printChar - Paràmetre: 1 - Ocupació: 1 - Ocupació extra: 0 - Offset: 8
+#4 - Nom:  t4 - TSB: array - Subprograma: print - Paràmetre: 1 - Ocupació: 8 - Ocupació extra: 0 - Offset: 8
+#5 - Nom:  numero - TSB: enter - Subprograma: printInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 8
+#6 - Nom:  minim - TSB: enter - Subprograma: randInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 8
+#7 - Nom:  t7 - TSB: enter - Subprograma: randInt - Paràmetre: 1 - Ocupació: 4 - Ocupació extra: 0 - Offset: 12
+#8 - Nom:  t8 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 28 - Offset: -16
+#59 - Nom:  t59 - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -48
+#60 - Nom:  n - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -52
+#62 - Nom:  t62 - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -56
+#64 - Nom:  t64 - TSB: boolean - Subprograma: main - Paràmetre: 0 - Ocupació: 1 - Ocupació extra: 0 - Offset: -57
+#65 - Nom:  esParell - TSB: boolean - Subprograma: main - Paràmetre: 0 - Ocupació: 1 - Ocupació extra: 0 - Offset: -58
+#67 - Nom:  t67 - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -62
+#68 - Nom:  t68 - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -66
+#69 - Nom:  m - TSB: enter - Subprograma: main - Paràmetre: 0 - Ocupació: 4 - Ocupació extra: 0 - Offset: -70
+#70 - Nom:  t70 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 17 - Offset: -78
+#99 - Nom:  t99 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 20 - Offset: -103
+#134 - Nom:  t134 - TSB: punter - Subprograma: main - Paràmetre: 0 - Ocupació: 8 - Ocupació extra: 27 - Offset: -131

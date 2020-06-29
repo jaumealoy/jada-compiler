@@ -1,0 +1,176 @@
+goto e30
+main: skip
+preamble main
+t8[0] = 1
+t8[4] = 73
+t8[5] = 110
+t8[6] = 116
+t8[7] = 114
+t8[8] = 111
+t8[9] = 100
+t8[10] = 117
+t8[11] = 101
+t8[12] = 105
+t8[13] = 120
+t8[14] = 32
+t8[15] = 117
+t8[16] = 110
+t8[17] = 32
+t8[18] = 118
+t8[19] = 97
+t8[20] = 108
+t8[21] = 111
+t8[22] = 114
+t8[23] = 32
+t8[24] = 110
+t8[25] = 117
+t8[26] = 109
+t8[27] = -61
+t8[28] = -88
+t8[29] = 114
+t8[30] = 105
+t8[31] = 99
+t8[32] = 58
+t8[33] = 32
+t8[34] = 0
+put param t8
+increment t8
+call print
+decrement t8
+a = call readInt
+t75[0] = 1
+t75[4] = 73
+t75[5] = 110
+t75[6] = 116
+t75[7] = 114
+t75[8] = 111
+t75[9] = 100
+t75[10] = 117
+t75[11] = 101
+t75[12] = 105
+t75[13] = 120
+t75[14] = 32
+t75[15] = 117
+t75[16] = 110
+t75[17] = 32
+t75[18] = 118
+t75[19] = 97
+t75[20] = 108
+t75[21] = 111
+t75[22] = 114
+t75[23] = 32
+t75[24] = 110
+t75[25] = 117
+t75[26] = 109
+t75[27] = -61
+t75[28] = -88
+t75[29] = 114
+t75[30] = 105
+t75[31] = 99
+t75[32] = 58
+t75[33] = 32
+t75[34] = 0
+put param t75
+increment t75
+call print
+decrement t75
+b = call readInt
+if b == 0 then goto e18
+t263 = a / b
+t143 = t263
+if t143 <= 0 then goto e18
+t145[0] = 1
+t145[4] = 65
+t145[5] = 10
+t145[6] = 0
+put param t145
+increment t145
+call print
+decrement t145
+goto e22
+e18: skip
+if b == 0 then goto e20
+t263 = a / b
+t155 = t263
+if t155 >= 0 then goto e22
+e20: skip
+t157[0] = 1
+t157[4] = 66
+t157[5] = 10
+t157[6] = 0
+put param t157
+increment t157
+call print
+decrement t157
+e22: skip
+t166[0] = 1
+t166[4] = 80
+t166[5] = 111
+t166[6] = 116
+t166[7] = 101
+t166[8] = 110
+t166[9] = 99
+t166[10] = 105
+t166[11] = 97
+t166[12] = 108
+t166[13] = 32
+t166[14] = 101
+t166[15] = 120
+t166[16] = 99
+t166[17] = 101
+t166[18] = 112
+t166[19] = 99
+t166[20] = 105
+t166[21] = -61
+t166[22] = -77
+t166[23] = 32
+t166[24] = 110
+t166[25] = 111
+t166[26] = 32
+t166[27] = 99
+t166[28] = 111
+t166[29] = 110
+t166[30] = 116
+t166[31] = 114
+t166[32] = 111
+t166[33] = 108
+t166[34] = 97
+t166[35] = 100
+t166[36] = 97
+t166[37] = 10
+t166[38] = 0
+put param t166
+increment t166
+call print
+decrement t166
+put param a
+call printInt
+t239[0] = 1
+t239[4] = 32
+t239[5] = 47
+t239[6] = 32
+t239[7] = 0
+put param t239
+increment t239
+call print
+decrement t239
+put param b
+call printInt
+t250[0] = 1
+t250[4] = 32
+t250[5] = 61
+t250[6] = 32
+t250[7] = 0
+put param t250
+increment t250
+call print
+decrement t250
+t263 = a / b
+t261 = t263
+put param t261
+call printInt
+put param 10
+call printChar
+return
+e30: skip
+call main
