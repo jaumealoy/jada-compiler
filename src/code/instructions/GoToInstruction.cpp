@@ -61,6 +61,10 @@ bool GoToInstruction::optimize(CodeGeneration *code){
 		if(next->getType() == Instruction::Type::SKIP && ((SkipInstruction *) next)->isLoopStart()){
 			break;
 		}
+
+		if(next->getType() == Instruction::Type::GOTO && next->isAddedAtOptimization()){
+			break;
+		}
 		
 		Instruction *tmp = next->getNext();
 		code->remove(next);

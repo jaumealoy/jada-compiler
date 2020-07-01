@@ -38,7 +38,6 @@ public:
 	struct ReachableDefinitions::GK calculateGK(BasicBlock *block);
 
 	Set<Instruction> useDefinitionChain(Instruction *inst, Variable *x);
-	Set<Instruction> definitionUsage(Instruction *def);
 };
 
 #endif

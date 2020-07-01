@@ -63,8 +63,8 @@ void SimbolForStatement::make(Driver *driver, SimbolForInit init, SimbolExpressi
 		// eliminar instruccions generades artificialment per moure codi
 		driver->code.remove(post.getBegin());
 		driver->code.remove(post.getEnd());
-		driver->code.remove(endBloc.getInstruction());
 	}
+    driver->code.remove(endBloc.getInstruction());
 
 	// en qualsevol cas s'ha d'avaluar la condició de nou
 	driver->code.backpatch(inici.getLabel(), bloc.getSeg());

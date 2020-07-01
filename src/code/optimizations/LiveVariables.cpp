@@ -6,6 +6,7 @@
 #include "../instructions/ReturnInstruction.h"
 #include "../instructions/CondJumpInstruction.h"
 #include "../instructions/MallocInstruction.h"
+#include "ReachableDefinitions.h"
 #include "../CodeGeneration.h"
 
 LiveVariables::LiveVariables(CodeGeneration *code, SubProgram *programa)

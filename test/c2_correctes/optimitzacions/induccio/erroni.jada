@@ -1,0 +1,21 @@
+func f() : int begin
+    return 0;
+end f;
+
+proc main() begin
+    int b;
+    int c = 0;
+    int d = 0;
+    int i = 0;
+    for (int i = 0; i < 10;) do
+        c = 2 * b;
+         b = 4 * i + 3;
+        d = i + 3;
+        //c = 3 * d + 2;
+        i = i + 1;
+    end;
+
+    printInt(b);
+    printInt(c);
+    printInt(d);
+end main;

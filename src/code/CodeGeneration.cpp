@@ -201,7 +201,6 @@ void CodeGeneration::leaveSubProgram() {
 /**
  * Escriu el codi actual a un arxiu de text
  */
-
 void CodeGeneration::writeToFile(){
 	std::ofstream file(this->filename + ".txt");
 
@@ -676,8 +675,6 @@ void CodeGeneration::optimize(){
 		// identificar constants
 		this->updateConstants();
 
-		// eliminar instruccions d'assignació de constants
-
 		Instruction *tmp = this->first;
 		while(tmp != nullptr){
 			Instruction *next = tmp->getNext();
@@ -786,6 +783,7 @@ void CodeGeneration::optimize(){
 
 		// optimitzacions locals
 		for(int i = 0; i < this->programs.size(); i++){
+			this->programs[i]->deleteUnreachableCode(this);
 			this->enterSubProgram(this->programs[i]);
 			canvis = this->programs[i]->optimize(this) || canvis;
 			this->leaveSubProgram(false);

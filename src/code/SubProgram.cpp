@@ -436,7 +436,6 @@ bool SubProgram::optimize(CodeGeneration *code){
 	this->updateBasicBlocks(code);
 
 	LoopOptimization loopOptimization = LoopOptimization(code, this);
-	
 	if(!firstTime){
 		canvis = loopOptimization.optimize(code) || canvis;
 	}else{

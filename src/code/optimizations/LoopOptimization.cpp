@@ -81,6 +81,10 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 				aux = aux->getNext();
 			}
 
+			Label *newEndLabel = code->addLabel();
+			Instruction *newEndLabelSkip = code->addInstruction(new SkipInstruction(newEndLabel));
+			code->move(newEndLabelSkip, newEndLabelSkip, tmp.jump->getEnd()->getPrevious());
+
 			// és la primera vegada que s'optimitza aquest bucle
 			// realitzar la inversió
 			// per això, s'ha de determinar on acaba l'expressió i copiar-la
@@ -93,6 +97,10 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 					if(((SkipInstruction *) endExpression)->isLoopStart()){
 						trobat = true;
 						break;
+					}
+				}else if(endExpression->getType() == Instruction::Type::CONDJUMP){
+					if(((CondJumpInstruction *) endExpression)->getTarget() == start->getLabel()){
+						((CondJumpInstruction *) endExpression)->setLabel(newLabel);
 					}
 				}
 
@@ -126,8 +134,27 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 			code->move(
 				beginCopy,
 				lastCopy,
-				tmp.jump->getEnd()->getPrevious()
+				tmp.jump->getEnd()->getPrevious()->getPrevious()
 			);
+
+			// actualitzar els salts de l'expressió original per anar a la precapçalera
+			if(begin != end){
+				aux = begin;
+				while(aux != end->getNext()){
+					if(aux->getType() == Instruction::CONDJUMP){
+						CondJumpInstruction *cond = (CondJumpInstruction *) aux;
+						if(cond->getTarget()->getTargetInstruction()->isLoopStart()){
+							cond->setLabel(newLabel);
+						}
+					}else if(aux->getType() == Instruction::GOTO){
+						GoToInstruction *cond = (GoToInstruction *) aux;
+						if(cond->getTarget()->getTargetInstruction()->isLoopStart()){
+							cond->setLabel(newLabel);
+						}
+					}
+					aux = aux->getNext();
+				}
+			}
 
 			// actualitzar les etiquetes dels salts
 			// l'etiqueta final no s'ha d'actualitzar
@@ -167,7 +194,8 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 					CondJumpInstruction *condJump = (CondJumpInstruction *) aux;
 					
 					if(condJump->getTarget()->getTargetInstruction() == endExpression){
-						condJump->setLabel(newSkip->getLabel());
+						condJump->setLabel(newEndLabel);
+						condJump->markAtOptimization();
 					}else{
 						auto canvi = etiquetes.find(condJump->getTarget());
 						if(canvi == etiquetes.end()){
@@ -667,7 +695,6 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 		bool canvis = true;
 		while(canvis){
 			canvis = false;
-			
 			tmpIt = f.begin();
 			while(tmpIt != f.end()){
 				if(tmpIt->second.counter == 1){
@@ -696,9 +723,64 @@ bool LoopOptimization::optimizeInductionVariables(CodeGeneration *code)
 							if(varInd != vind.end()){
 								struct InductionVariable varBasica = varInd->second;
 								struct InductionVariable varOriginal = varInd->second;
+								Variable *original = varInd->first;
 								if(!varInd->second.basica){
 									auto aux = vind.find(varInd->second.var);
 									varBasica = aux->second;
+								}
+
+								// la variable d'inducció és una variable d'inducció derivada
+								if(!varOriginal.basica){
+									// comprovar que només existeix una única definició accessible per aquesta
+									// variable
+									ReachableDefinitions rd(this->programa);
+									Set<Instruction> ud = rd.useDefinitionChain(aInst, original);
+									Set<Instruction>::iterator it = ud.begin();
+									it++;
+
+									if(it < ud.end()){
+										// existeix més d'una definició accessible per la variable d'inducció derivada
+										// per tant, la instrucció aInst no defineix una variable d'inducció
+										tmpIt++;
+										break;
+									}
+
+									// comprovar que no existeix cap assignació a la variable d'inducció bàsica
+									// entre aInst (x = y + c) i varOriginal.inst (y = x0 + c)
+									bool trobat = false;
+									if(aInst->getBasicBlock() == varOriginal.inst->getBasicBlock()){
+										Instruction *aux = aInst->getBasicBlock()->getStart();
+										bool permes = true;
+										while(aux != nullptr && aux != varOriginal.inst){
+											if(permes){
+												if(aux == aInst){
+													permes = false;
+												}else if(aux == varOriginal.inst){
+													permes = false;
+												}
+											}else{
+												if(aux == aInst){
+													permes = true;
+												}else if(aux == varOriginal.inst){
+													permes = false;
+												}else if(aux->getType() == Instruction::Type::ARITHMETIC){
+													ArithmeticInstruction *auxInst = (ArithmeticInstruction *) aux;
+													if(auxInst->getDesti() == varOriginal.var){
+														trobat = true;
+														break;
+													}
+												}
+											}
+
+											aux = aux->getNext();
+										}
+									}
+
+									if(trobat){
+										// s'ha trobat una assignació
+										tmpIt++;
+										break;
+									}
 								}
 
 								// és una altra variable d'inducció

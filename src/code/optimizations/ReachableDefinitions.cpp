@@ -1,6 +1,7 @@
 #include "ReachableDefinitions.h"
 #include "../instructions/ArithmeticInstruction.h"
 #include "../instructions/AssignmentInstruction.h"
+#include "../instructions/PutParamInstruction.h"
 #include <cassert>
 #include <iostream>
 
@@ -246,11 +247,4 @@ Set<Instruction> ReachableDefinitions::useDefinitionChain(Instruction *inst, Var
 	}
 
 	return ud;
-}
-
-/**
- * Calcula les instruccions que fan ús d'una definició
- */
-Set<Instruction> ReachableDefinitions::definitionUsage(Instruction *def){
-
 }

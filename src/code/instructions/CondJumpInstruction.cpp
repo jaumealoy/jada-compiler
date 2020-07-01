@@ -188,10 +188,6 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 		&& (Instruction *)((GoToInstruction *) this->getNext())->getTarget()->getTargetInstruction() != this->getNext()->getNext()
 		&& !this->getNext()->isAddedAtOptimization()){
 
-		if(!(this->getNext()->getNext() != nullptr 
-			&& this->getNext()->getNext()->getType() == Instruction::GOTO
-			&& ((GoToInstruction *) this->getNext()->getNext())->isAddedAtOptimization()))
-		{
 			invertit = true;
 
 			this->l = ((GoToInstruction *) this->getNext())->getTarget();
@@ -210,18 +206,18 @@ bool CondJumpInstruction::optimize(CodeGeneration *code){
 
 			// canviar l'operador
 			this->op = invers[this->op];
-			
+
 			// eliminar la següent instrucció
 			code->remove(this->getNext());
 
 			canvis = true;
-		}
-
 	}
 
 	// canviar etiqueta de destí (en cas de concatenar salts incondicionals)
 	Label *old = this->l;
-	this->l = code->getTargetLabel(old);
+	if(!this->isAddedAtOptimization()){
+		this->l = code->getTargetLabel(old);
+	}
 	canvis = canvis || (old != this->l);
 
 	// optimització assignacions de booleans
