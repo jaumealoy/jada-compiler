@@ -174,7 +174,7 @@ LoopOptimization::LoopOptimization(CodeGeneration *code, SubProgram *programa)
 					GoToInstruction *gotoInst = (GoToInstruction *) aux;
 					
 					if(gotoInst->getTarget()->getTargetInstruction() == endExpression){
-						gotoInst->setLabel(newSkip->getLabel());
+						gotoInst->setLabel(newEndLabel);
 					}else{
 						auto canvi = etiquetes.find(gotoInst->getTarget());
 						if(canvi == etiquetes.end()){
