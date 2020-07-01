@@ -145,4 +145,6 @@ int run(char *filename, const char **argv){
 		waitpid(pid, &status, 0);
 		return status;
 	}
+
+	return 0;
 }
